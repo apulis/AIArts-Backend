@@ -86,12 +86,12 @@
 
 ### 6. 推理服务 `/api/inferences`
 
-#### 5.1 `GET /api/inferences` 获取推理列表
+#### 6.1 `GET /api/inferences` 获取推理列表
 
-#### 5.2 `GET /api/inferences/:id` 获取推理详情
+#### 6.2 `GET /api/inferences/:id` 获取推理详情
 
-#### 5.3 `POST /api/inferences` 创建推理
+#### 6.3 `POST /api/inferences` 创建推理
 
-#### 5.4 `POST /api/inferences/:id/upload_image` 上传图片
+#### 6.4 `POST /api/inferences/:id/upload_image` 上传图片
 
-#### 5.5 `POST /api/inferences/:id/recognition` 图片识别
+#### 6.5 `POST /api/inferences/:id/recognition` 图片识别
