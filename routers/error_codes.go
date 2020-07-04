@@ -1,0 +1,10 @@
+package routers
+
+const (
+	SUCCESS         = 0
+	NOT_FOUND       = 10001
+	UNKNOWN_ERROR   = 10002
+	PARAMETER_ERROR = 10003
+	AUTH_ERROR      = 10004
+	SERVER_ERROR    = 10005
+)

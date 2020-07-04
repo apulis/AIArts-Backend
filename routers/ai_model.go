@@ -9,7 +9,7 @@ import (
 func AddGroupModel(r *gin.Engine) {
 	group := r.Group("/api/models")
 
-	group.GET("/", lsAllModels)
+	group.GET("/", wrapper(lsAllModels))
 }
 
 // @Summary sample
@@ -19,11 +19,12 @@ func AddGroupModel(r *gin.Engine) {
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/models [post]
-func lsAllModels(c *gin.Context) {
+func lsAllModels(c *gin.Context) error {
 	res := Resp{
 		Code: 0,
 		Msg:  "success",
 		Data: gin.H{},
 	}
 	c.JSON(http.StatusOK, res)
+	return nil
 }

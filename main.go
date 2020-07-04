@@ -17,6 +17,6 @@ func main() {
 	port := configs.Config.Port
 	router := routers.NewRouter()
 
-	logger.Info("AIArtsBackend started ...")
+	logger.Info("AIArtsBackend started, listening and serving HTTP on: ", 9000)
 	router.Run(fmt.Sprintf(":%d", port))
 }

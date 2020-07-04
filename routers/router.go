@@ -8,15 +8,18 @@ import (
 )
 
 type Resp struct {
-	Code int
-	Msg  string
-	Data gin.H
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data gin.H  `json:"data"`
 }
 
 var logger = loggers.Log
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
+
+	r.NoMethod(HandleNotFound)
+	r.NoRoute(HandleNotFound)
 
 	r.Use(loggers.GinLogger(logger))
 	r.Use(gin.Recovery())

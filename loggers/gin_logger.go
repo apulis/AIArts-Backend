@@ -35,7 +35,7 @@ func GinLogger(logger logrus.FieldLogger) gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			entry.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
 		} else {
-			msg := fmt.Sprintf("%s %s %d (%dμs)", c.Request.Method, path, statusCode, latency)
+			msg := fmt.Sprintf("%s: %s <%d> (%dμs)", c.Request.Method, path, statusCode, latency)
 			if statusCode > 499 {
 				entry.Error(msg)
 			} else if statusCode > 399 {
