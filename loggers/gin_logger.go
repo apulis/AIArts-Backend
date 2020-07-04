@@ -3,7 +3,6 @@ package loggers
 import (
 	"fmt"
 	"math"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,10 +10,6 @@ import (
 )
 
 func GinLogger(logger logrus.FieldLogger) gin.HandlerFunc {
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unknow"
-	}
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
 		start := time.Now()
@@ -31,12 +26,7 @@ func GinLogger(logger logrus.FieldLogger) gin.HandlerFunc {
 		}
 
 		entry := logger.WithFields(logrus.Fields{
-			"hostname":   hostname,
-			"statusCode": statusCode,
-			"latency":    latency, // time to process
 			"clientIP":   clientIP,
-			"method":     c.Request.Method,
-			"path":       path,
 			"referer":    referer,
 			"dataLength": dataLength,
 			"userAgent":  clientUserAgent,
@@ -45,7 +35,7 @@ func GinLogger(logger logrus.FieldLogger) gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			entry.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
 		} else {
-			msg := fmt.Sprintf("%s - %s \"%s %s\" %d %d \"%s\" \"%s\" (%dμs)", clientIP, hostname, c.Request.Method, path, statusCode, dataLength, referer, clientUserAgent, latency)
+			msg := fmt.Sprintf("%s %s %d (%dμs)", c.Request.Method, path, statusCode, latency)
 			if statusCode > 499 {
 				entry.Error(msg)
 			} else if statusCode > 399 {
