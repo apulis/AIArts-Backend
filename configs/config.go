@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"fmt"
@@ -8,6 +8,13 @@ import (
 
 type ProjectConfig struct {
 	Port int
+	Log  LogConfig
+}
+
+type LogConfig struct {
+	WriteFile bool
+	FileDir   string
+	FileName  string
 }
 
 var Config ProjectConfig

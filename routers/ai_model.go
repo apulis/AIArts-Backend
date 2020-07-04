@@ -1,4 +1,4 @@
-package router
+package routers
 
 import (
 	"net/http"
@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddGroupTraining(r *gin.Engine) {
-	group := r.Group("/api/trainings")
+func AddGroupModel(r *gin.Engine) {
+	group := r.Group("/api/models")
 
-	group.GET("/", lsAllTrainings)
+	group.GET("/", lsAllModels)
 }
 
 // @Summary sample
@@ -18,8 +18,8 @@ func AddGroupTraining(r *gin.Engine) {
 // @Param state query int false "State"
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
-// @Router /api/trainings [post]
-func lsAllTrainings(c *gin.Context) {
+// @Router /api/models [post]
+func lsAllModels(c *gin.Context) {
 	res := Resp{
 		Code: 0,
 		Msg:  "success",

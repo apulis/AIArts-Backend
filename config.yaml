@@ -1,1 +1,6 @@
 port: 9000
+
+log:
+  writefile: true
+  filedir: logs
+  filename: ai_arts_backend.log

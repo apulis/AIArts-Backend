@@ -3,19 +3,20 @@ package main
 import (
 	"fmt"
 
-	"github.com/apulis/AIArtsBackend/config"
-	"github.com/apulis/AIArtsBackend/router"
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/loggers"
+	"github.com/apulis/AIArtsBackend/routers"
 
 	_ "github.com/apulis/AIArtsBackend/docs"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
+	_ "github.com/apulis/AIArtsBackend/loggers"
 )
 
+var logger = loggers.Log
+
 func main() {
-	port := config.Config.Port
-	r := router.NewRouter()
+	port := configs.Config.Port
+	router := routers.NewRouter()
 
-	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
-
-	r.Run(fmt.Sprintf(":%d", port))
+	logger.Info("AIArtsBackend started ...")
+	router.Run(fmt.Sprintf(":%d", port))
 }
