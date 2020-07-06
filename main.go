@@ -9,9 +9,9 @@ import (
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/routers"
 
-	_ "github.com/apulis/AIArtsBackend/database"
 	_ "github.com/apulis/AIArtsBackend/docs"
 	_ "github.com/apulis/AIArtsBackend/loggers"
+	_ "github.com/apulis/AIArtsBackend/models"
 )
 
 var logger = loggers.Log

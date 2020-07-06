@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"fmt"
@@ -17,7 +17,8 @@ func init() {
 	dbConf := configs.Config.Db
 	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		dbConf.Username, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Database)
-	Db, err := gorm.Open("mysql", url)
+	var err error
+	Db, err = gorm.Open("mysql", url)
 	if err != nil {
 		panic(err)
 	}
