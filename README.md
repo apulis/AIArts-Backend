@@ -15,6 +15,7 @@ Backend for AIArts.
 * 开发时自行启动mysql
 * 一个实例，定义在`database/db.go`，使用时需引入，无需再创建实例
 * orm使用`gorm`库，[参考文档](https://gorm.io/zh_CN/docs/index.html)
+* 本地开mysql，可使用local_mysql下的docker-compose
 
 
 ### 日志

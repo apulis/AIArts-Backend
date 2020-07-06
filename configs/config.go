@@ -19,11 +19,13 @@ type LogConfig struct {
 }
 
 type DbConfig struct {
-	Username string
-	Password string
-	Host     string
-	Port     int
-	Database string
+	Username     string
+	Password     string
+	Host         string
+	Port         int
+	Database     string
+	MaxOpenConns int
+	MaxIdleConns int
 }
 
 var Config ProjectConfig
