@@ -1,15 +1,22 @@
 package routers
 
 import (
-	"net/http"
-
+	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
 func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/api/datasets")
 
-	group.GET("/", lsAllDatasets)
+	group.GET("/", wrapper(lsAllDatasets))
+	group.POST("/", wrapper(createDataset))
+}
+
+type CreateDatasetReq struct {
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Creator     string `json:"creator" binding:"required"`
+	Path        string `json:"path" binding:"required"`
 }
 
 // @Summary sample
@@ -19,11 +26,22 @@ func AddGroupDataset(r *gin.Engine) {
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/datasets [post]
-func lsAllDatasets(c *gin.Context) {
-	res := Resp{
-		Code: 0,
-		Msg:  "success",
-		Data: gin.H{},
+func lsAllDatasets(c *gin.Context) error {
+	datasets := services.ListDatasets()
+	data := gin.H{"datasets": datasets}
+	return SuccessResp(c, data)
+}
+
+func createDataset(c *gin.Context) error {
+	var req CreateDatasetReq
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
 	}
-	c.JSON(http.StatusOK, res)
+	err = services.CreateDataset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
 }

@@ -20,7 +20,7 @@ func AddGroupModel(r *gin.Engine) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/models [post]
 func lsAllModels(c *gin.Context) error {
-	res := Resp{
+	res := APISuccessResp{
 		Code: 0,
 		Msg:  "success",
 		Data: gin.H{},

@@ -29,6 +29,7 @@ Backend for AIArts.
 ### 路由
 * 路由使用`gin`框架，整体路由在`routers/router.go`
 * 各模块在单独的文件中实现
+* 成功返回，可使用`routers/success_resp.go`中的函数
 * 错误处理已经实现了部分函数`routers/error_handlers.go`
 * 错误码统一定义在`routers/error_codes.go`(待讨论)
 

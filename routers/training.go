@@ -20,7 +20,7 @@ func AddGroupTraining(r *gin.Engine) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/trainings [post]
 func lsAllTrainings(c *gin.Context) {
-	res := Resp{
+	res := APISuccessResp{
 		Code: 0,
 		Msg:  "success",
 		Data: gin.H{},

@@ -12,7 +12,6 @@ type APIException struct {
 	StatusCode int    `json:"-"`
 	Code       int    `json:"code"`
 	Msg        string `json:"msg"`
-	Data       gin.H  `json:"data"`
 }
 
 func wrapper(handler HandlerFunc) func(c *gin.Context) {
@@ -50,19 +49,23 @@ func newAPIException(statusCode, code int, msg string) *APIException {
 }
 
 func ServerError() *APIException {
-	return newAPIException(http.StatusInternalServerError, SERVER_ERROR, http.StatusText(http.StatusInternalServerError))
+	return newAPIException(http.StatusInternalServerError, SERVER_ERROR_CODE, http.StatusText(http.StatusInternalServerError))
 }
 
 func NotFound() *APIException {
-	return newAPIException(http.StatusNotFound, NOT_FOUND, http.StatusText(http.StatusNotFound))
+	return newAPIException(http.StatusNotFound, NOT_FOUND_ERROR_CODE, http.StatusText(http.StatusNotFound))
 }
 
 func UnknownError(msg string) *APIException {
-	return newAPIException(http.StatusForbidden, UNKNOWN_ERROR, msg)
+	return newAPIException(http.StatusForbidden, UNKNOWN_ERROR_CODE, msg)
 }
 
 func ParameterError(msg string) *APIException {
-	return newAPIException(http.StatusBadRequest, PARAMETER_ERROR, msg)
+	return newAPIException(http.StatusBadRequest, PARAMETER_ERROR_CODE, msg)
+}
+
+func AppError(errorCode int, msg string) *APIException {
+	return newAPIException(http.StatusBadRequest, errorCode, msg)
 }
 
 func HandleNotFound(c *gin.Context) {

@@ -7,12 +7,6 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-type Resp struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data gin.H  `json:"data"`
-}
-
 var logger = loggers.Log
 
 func NewRouter() *gin.Engine {
