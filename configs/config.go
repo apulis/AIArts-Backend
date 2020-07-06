@@ -9,12 +9,21 @@ import (
 type ProjectConfig struct {
 	Port int
 	Log  LogConfig
+	Db   DbConfig
 }
 
 type LogConfig struct {
 	WriteFile bool
 	FileDir   string
 	FileName  string
+}
+
+type DbConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     int
+	Database string
 }
 
 var Config ProjectConfig
