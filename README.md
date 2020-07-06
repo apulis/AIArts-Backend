@@ -13,7 +13,7 @@ Backend for AIArts.
 ### 数据库
 * 使用mysql，配置写在`config.yaml`
 * 开发时自行启动mysql
-* 一个实例，定义在`db/db.go`，使用时需引入，无需再创建实例
+* 一个实例，定义在`database/db.go`，使用时需引入，无需再创建实例
 * orm使用`gorm`库，[参考文档](https://gorm.io/zh_CN/docs/index.html)
 
 
