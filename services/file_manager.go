@@ -1,7 +1,9 @@
 package services
 
 import (
+	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"errors"
 	"fmt"
 	"io"
@@ -113,6 +115,44 @@ func extractZip(fromPath, toPath string) error {
 }
 
 func extractTarGz(fromPath, toPath string) error {
+	fileReader, err := os.Open(fromPath)
+	if err != nil {
+		return err
+	}
+	defer fileReader.Close()
+
+	gzipReader, err := gzip.NewReader(fileReader)
+	if err != nil {
+		return err
+	}
+	defer gzipReader.Close()
+
+	tarReader := tar.NewReader(gzipReader)
+	for {
+		headReader, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+		fileInfo := headReader.FileInfo()
+		path := filepath.Join(toPath, fileInfo.Name())
+		if fileInfo.IsDir() {
+			os.MkdirAll(path, fileInfo.Mode())
+			continue
+		}
+
+		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
+		if err != nil {
+			return nil
+		}
+		defer targetFile.Close()
+
+		if _, err := io.Copy(targetFile, tarReader); err != nil {
+			return nil
+		}
+	}
+
 	return nil
 }
 
