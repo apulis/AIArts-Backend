@@ -1,15 +1,13 @@
 package routers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
 func AddGroupCode(r *gin.Engine) {
-	group := r.Group("/api/codes")
+	group := r.Group("/ai_arts/api/codes")
 
-	group.GET("/", lsAllCodes)
+	group.GET("/", wrapper(lsAllCodes))
 }
 
 // @Summary sample
@@ -19,11 +17,7 @@ func AddGroupCode(r *gin.Engine) {
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/codes [post]
-func lsAllCodes(c *gin.Context) {
-	res := APISuccessResp{
-		Code: 0,
-		Msg:  "success",
-		Data: gin.H{},
-	}
-	c.JSON(http.StatusOK, res)
+func lsAllCodes(c *gin.Context) error {
+	data := gin.H{}
+	return SuccessResp(c, data)
 }

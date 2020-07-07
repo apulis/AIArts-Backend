@@ -6,13 +6,13 @@ import (
 )
 
 func AddGroupDataset(r *gin.Engine) {
-	group := r.Group("/api/datasets")
+	group := r.Group("/ai_arts/api/datasets")
 
 	group.GET("/", wrapper(lsAllDatasets))
 	group.POST("/", wrapper(createDataset))
 }
 
-type CreateDatasetReq struct {
+type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Creator     string `json:"creator" binding:"required"`
@@ -33,7 +33,7 @@ func lsAllDatasets(c *gin.Context) error {
 }
 
 func createDataset(c *gin.Context) error {
-	var req CreateDatasetReq
+	var req createDatasetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())

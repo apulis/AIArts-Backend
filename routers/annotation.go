@@ -1,13 +1,11 @@
 package routers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
 func AddGroupAnnotation(r *gin.Engine) {
-	group := r.Group("/api/annotations")
+	group := r.Group("/ai_arts/api/annotations")
 
 	group.GET("/", lsAllAnnotations)
 }
@@ -20,10 +18,6 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/annotations [post]
 func lsAllAnnotations(c *gin.Context) {
-	res := APISuccessResp{
-		Code: 0,
-		Msg:  "success",
-		Data: gin.H{},
-	}
-	c.JSON(http.StatusOK, res)
+	data := gin.H{}
+	return SuccessResp(c, data)
 }

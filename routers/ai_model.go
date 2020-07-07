@@ -1,13 +1,11 @@
 package routers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
 func AddGroupModel(r *gin.Engine) {
-	group := r.Group("/api/models")
+	group := r.Group("/ai_arts/api/models")
 
 	group.GET("/", wrapper(lsAllModels))
 }
@@ -20,11 +18,6 @@ func AddGroupModel(r *gin.Engine) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/models [post]
 func lsAllModels(c *gin.Context) error {
-	res := APISuccessResp{
-		Code: 0,
-		Msg:  "success",
-		Data: gin.H{},
-	}
-	c.JSON(http.StatusOK, res)
-	return nil
+	data := gin.H{}
+	return SuccessResp(c, data)
 }
