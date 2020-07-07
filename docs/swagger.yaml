@@ -1,3 +1,20 @@
+definitions:
+  routers.APIException:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  routers.APISuccessResp:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
 info:
   contact: {}
   license: {}
@@ -5,27 +22,32 @@ paths:
   /ai_arts/api/datasets:
     get:
       parameters:
-      - description: Name
+      - description: page number
         in: query
-        name: name
+        name: page
         required: true
-        type: string
-      - description: State
-        in: query
-        name: state
         type: integer
-      - description: CreatedBy
+      - description: count per page
         in: query
-        name: created_by
+        name: count
+        required: true
         type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
+          description: success
           schema:
-            type: string
-      summary: sample
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list datasets
     post:
       parameters:
       - description: dataset name
@@ -52,10 +74,65 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":0,"data":{},"msg":"success"}'
+          description: success
           schema:
-            type: string
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
       summary: create dataset
+  /ai_arts/api/datasets/:id:
+    get:
+      parameters:
+      - description: dataset id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get dataset by id
+    post:
+      parameters:
+      - description: dataset description
+        in: query
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update dataset
   /api/annotations:
     post:
       parameters:

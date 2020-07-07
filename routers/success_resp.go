@@ -7,9 +7,9 @@ import (
 )
 
 type APISuccessResp struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data gin.H  `json:"data"`
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
 }
 
 func SuccessResp(c *gin.Context, data gin.H) error {

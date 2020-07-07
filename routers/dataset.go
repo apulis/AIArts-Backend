@@ -9,7 +9,18 @@ func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/datasets")
 
 	group.GET("/", wrapper(lsDatasets))
+	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))
+	group.POST("/:id", wrapper(updateDataset))
+}
+
+type datasetId struct {
+	ID int `uri:id binding:"required"`
+}
+
+type lsDatasetsReq struct {
+	Page  int `form:"page"`
+	Count int `form:"count,default=10"`
 }
 
 type createDatasetReq struct {
@@ -19,16 +30,57 @@ type createDatasetReq struct {
 	Path        string `json:"path" binding:"required"`
 }
 
-// @Summary sample
+type updateDatasetReq struct {
+	Description string `json:"description" binding:"required"`
+}
+
+// @Summary list datasets
 // @Produce  json
-// @Param name query string true "Name"
-// @Param state query int false "State"
-// @Param created_by query int false "CreatedBy"
-// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
+// @Param page query int true "page number"
+// @Param count query int true "count per page"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [get]
 func lsDatasets(c *gin.Context) error {
-	datasets := services.ListDatasets()
-	data := gin.H{"datasets": datasets}
+	var req lsDatasetsReq
+	err := c.ShouldBindQuery(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	datasets, total, err := services.ListDatasets(req.Page, req.Count)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{
+		"datasets": datasets,
+		"total":    total,
+		"page":     req.Page,
+		"count":    req.Count,
+	}
+	return SuccessResp(c, data)
+}
+
+// @Summary get dataset by id
+// @Produce  json
+// @Param id query int true "dataset id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/datasets/:id [get]
+func getDataset(c *gin.Context) error {
+	var id datasetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	dataset, err := services.GetDataset(id.ID)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{
+		"dataset": dataset,
+	}
 	return SuccessResp(c, data)
 }
 
@@ -38,7 +90,9 @@ func lsDatasets(c *gin.Context) error {
 // @Param description query string true "dataset description"
 // @Param creator query string true "dataset creator"
 // @Param path query string true "dataset storage path"
-// @Success 200 {string} json "{"code":0,"data":{},"msg":"success"}"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [post]
 func createDataset(c *gin.Context) error {
 	var req createDatasetReq
@@ -47,6 +101,32 @@ func createDataset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	err = services.CreateDataset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary update dataset
+// @Produce  json
+// @Param description query string true "dataset description"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/datasets/:id [post]
+func updateDataset(c *gin.Context) error {
+	var id datasetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	var req updateDatasetReq
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	err = services.UpdateDataset(id.ID, req.Description)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
