@@ -13,3 +13,7 @@ db:
   database: ai_arts
   maxopenconns: 10
   maxidleconns: 2
+
+file:
+  datasetdir: /test_data/dataset
+  modeldir: /test_data/model

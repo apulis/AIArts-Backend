@@ -25,6 +25,7 @@ func NewRouter() *gin.Engine {
 	AddGroupDataset(r)
 	AddGroupAnnotation(r)
 	AddGroupInference(r)
+	AddGroupFile(r)
 
 	return r
 }

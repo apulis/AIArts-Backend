@@ -10,6 +10,7 @@ type ProjectConfig struct {
 	Port int
 	Log  LogConfig
 	Db   DbConfig
+	File FileConfig
 }
 
 type LogConfig struct {
@@ -26,6 +27,11 @@ type DbConfig struct {
 	Database     string
 	MaxOpenConns int
 	MaxIdleConns int
+}
+
+type FileConfig struct {
+	DatasetDir string
+	ModelDir   string
 }
 
 var Config ProjectConfig
