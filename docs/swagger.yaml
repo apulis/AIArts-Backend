@@ -2,6 +2,60 @@ info:
   contact: {}
   license: {}
 paths:
+  /ai_arts/api/datasets:
+    get:
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: State
+        in: query
+        name: state
+        type: integer
+      - description: CreatedBy
+        in: query
+        name: created_by
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: sample
+    post:
+      parameters:
+      - description: dataset name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: dataset description
+        in: query
+        name: description
+        required: true
+        type: string
+      - description: dataset creator
+        in: query
+        name: creator
+        required: true
+        type: string
+      - description: dataset storage path
+        in: query
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"success"}'
+          schema:
+            type: string
+      summary: create dataset
   /api/annotations:
     post:
       parameters:
@@ -27,30 +81,6 @@ paths:
             type: string
       summary: sample
   /api/codes:
-    post:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: CreatedBy
-        in: query
-        name: created_by
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: sample
-  /api/datasets:
     post:
       parameters:
       - description: Name

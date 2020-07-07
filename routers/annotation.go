@@ -7,7 +7,7 @@ import (
 func AddGroupAnnotation(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/annotations")
 
-	group.GET("/", lsAllAnnotations)
+	group.GET("/", wrapper(lsAllAnnotations))
 }
 
 // @Summary sample
@@ -17,7 +17,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/annotations [post]
-func lsAllAnnotations(c *gin.Context) {
+func lsAllAnnotations(c *gin.Context) error {
 	data := gin.H{}
 	return SuccessResp(c, data)
 }

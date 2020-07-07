@@ -8,7 +8,7 @@ import (
 func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/datasets")
 
-	group.GET("/", wrapper(lsAllDatasets))
+	group.GET("/", wrapper(lsDatasets))
 	group.POST("/", wrapper(createDataset))
 }
 
@@ -25,13 +25,21 @@ type createDatasetReq struct {
 // @Param state query int false "State"
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
-// @Router /api/datasets [post]
-func lsAllDatasets(c *gin.Context) error {
+// @Router /ai_arts/api/datasets [get]
+func lsDatasets(c *gin.Context) error {
 	datasets := services.ListDatasets()
 	data := gin.H{"datasets": datasets}
 	return SuccessResp(c, data)
 }
 
+// @Summary create dataset
+// @Produce  json
+// @Param name query string true "dataset name"
+// @Param description query string true "dataset description"
+// @Param creator query string true "dataset creator"
+// @Param path query string true "dataset storage path"
+// @Success 200 {string} json "{"code":0,"data":{},"msg":"success"}"
+// @Router /ai_arts/api/datasets [post]
 func createDataset(c *gin.Context) error {
 	var req createDatasetReq
 	err := c.ShouldBindJSON(&req)
