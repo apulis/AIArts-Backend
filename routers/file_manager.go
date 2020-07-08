@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"errors"
 	"os"
 
 	"github.com/apulis/AIArtsBackend/services"
@@ -22,7 +21,7 @@ func uploadDataset(c *gin.Context) error {
 	}
 
 	if services.CheckFileOversize(file.Size) {
-		return AppError(FILE_OVERSIZE_CODE, errors.New("File over size limit"))
+		return AppError(FILE_OVERSIZE_CODE, "File over size limit")
 	}
 
 	filetype, err := services.CheckFileName(file.Filename)

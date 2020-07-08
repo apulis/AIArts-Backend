@@ -42,6 +42,7 @@ func CheckFileName(filename string) (string, error) {
 func CheckFileOversize(size int64) bool {
 	fileConf := configs.Config.File
 	sizeLimit := fileConf.SizeLimit
+	logger.Info("Upload file size: ", size, ". Config size limit: ", sizeLimit)
 	if int(size) < sizeLimit {
 		return false
 	}
