@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"os"
+
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -36,5 +38,11 @@ func uploadDataset(c *gin.Context) error {
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
+
+	err = os.Remove(filePath)
+	if err != nil {
+		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+	}
+
 	return SuccessResp(c, gin.H{"path": unzippedPath})
 }
