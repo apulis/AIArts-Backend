@@ -139,7 +139,13 @@ func updateDataset(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
-//func deleteData
+// @Summary delete dataset by id
+// @Produce  json
+// @Param id query int true "dataset id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/datasets/:id [delete]
 func DeleteDataset(c *gin.Context) error {
 	var id datasetId
 	err := c.ShouldBindUri(&id)

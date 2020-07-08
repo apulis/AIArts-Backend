@@ -3,7 +3,6 @@ package routers
 import (
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/gin-contrib/cors"
-	//"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"

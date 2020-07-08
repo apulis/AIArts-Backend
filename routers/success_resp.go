@@ -12,7 +12,7 @@ type APISuccessResp struct {
 	Data interface{} `json:"data"`
 }
 
-func SuccessResp(c *gin.Context, data gin.H) error {
+func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{
 		Code: SUCCESS_CODE,
 		Msg:  "success",

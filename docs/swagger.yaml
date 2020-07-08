@@ -87,6 +87,29 @@ paths:
             $ref: '#/definitions/routers.APIException'
       summary: create dataset
   /ai_arts/api/datasets/:id:
+    delete:
+      parameters:
+      - description: dataset id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete dataset by id
     get:
       parameters:
       - description: dataset id
