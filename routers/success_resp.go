@@ -21,3 +21,13 @@ func SuccessResp(c *gin.Context, data gin.H) error {
 	c.JSON(http.StatusOK, res)
 	return nil
 }
+
+func SuccessRsp(c *gin.Context, data interface{}) error {
+	res := APISuccessResp{
+		Code: SUCCESS_CODE,
+		Msg:  "success",
+		Data: data,
+	}
+	c.JSON(http.StatusOK, res)
+	return nil
+}
