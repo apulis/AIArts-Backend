@@ -39,6 +39,15 @@ func CheckFileName(filename string) (string, error) {
 	return "", errors.New("File type not supported")
 }
 
+func CheckFileOversize(size int64) bool {
+	fileConf := configs.Config.File
+	sizeLimit := fileConf.SizeLimit
+	if int(size) < sizeLimit {
+		return false
+	}
+	return true
+}
+
 func GetDirSize(path string) (int, error) {
 	var size int64
 	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
