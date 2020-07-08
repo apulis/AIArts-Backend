@@ -11,12 +11,17 @@ func ListDatasets(page, count int) ([]models.Dataset, int, error) {
 }
 
 func CreateDataset(name, description, creator, version, path string) error {
+	size, err := GetDirSize(path)
+	if err != nil {
+		return err
+	}
 	dataset := models.Dataset{
 		Name:        name,
 		Description: description,
 		Creator:     creator,
 		Version:     version,
 		Path:        path,
+		Size:        size,
 	}
 	return models.CreateDataset(dataset)
 }

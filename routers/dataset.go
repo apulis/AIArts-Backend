@@ -100,6 +100,10 @@ func createDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	err = services.CheckPathExists(req.Path)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
 	err = services.CreateDataset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
