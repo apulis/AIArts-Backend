@@ -17,4 +17,4 @@ db:
 file:
   datasetdir: /test_data/dataset
   modeldir: /test_data/model
-  sizelimit: 100000
+  sizelimit: 1000000000

@@ -12,10 +12,11 @@ func AddGroupDataset(r *gin.Engine) {
 	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))
 	group.POST("/:id", wrapper(updateDataset))
+	group.DELETE("/:id", wrapper(DeleteDataset))
 }
 
 type datasetId struct {
-	ID int `uri:id binding:"required"`
+	ID int `uri:"id" binding:"required"`
 }
 
 type lsDatasetsReq struct {
@@ -131,6 +132,21 @@ func updateDataset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	err = services.UpdateDataset(id.ID, req.Description)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+//func deleteData
+func DeleteDataset(c *gin.Context) error {
+	var id datasetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	err = services.DeleteDataset(id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

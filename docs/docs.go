@@ -197,6 +197,80 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/files/upload/dataset": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upload dataset file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "upload file key 'data'",
+                        "name": "data",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/files/upload/model": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upload dataset file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "upload file key 'data'",
+                        "name": "data",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/api/annotations": {
             "post": {
                 "produces": [
