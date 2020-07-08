@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddGroupDataset(r *gin.Engine) {
+func AddGroupCode(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/code")
 
 	group.GET("/", wrapper(getCodeset))
@@ -14,25 +14,18 @@ func AddGroupDataset(r *gin.Engine) {
 	group.GET("/delete/:id", wrapper(delCodeset))
 }
 
+
 type GetCodesetReq struct {
 	Page  		int `form:"page,default=1"`
 	PageSize 	int `form:"pagesize,default=10"`
 }
 
 type GetCodesetRsp struct {
-	Codesets 	[] models.CodesetItem `json:"codesets"`
+	Codesets 	[] *models.CodesetItem `json:"codesets"`
 	Total		int   `json:"total"`
 	HasNext		bool  `json:"has_next"`
 }
 
-type GetResourceReq struct {
-
-}
-
-type GetResourceRsp struct {
-	AIFrameworkList 	[]models.AIFrameworkItem 	`json:"ai_framework_list"`
-	DeviceList			[]models.DeviceItem      	`json:"device_list"`
-}
 
 type CreateCodesetReq struct {
 	Name 			string `json:"name"`
@@ -68,9 +61,15 @@ func getCodeset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	rsp, err := services.GetCodeset(req.Page, req.PageSize)
+	sets, total, hasNext, err := services.GetCodeset(req.Page, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	rsp := &GetCodesetRsp {
+		sets,
+		total,
+		hasNext,
 	}
 
 	return SuccessRsp(c, rsp)
@@ -89,6 +88,8 @@ func getCodeset(c *gin.Context) error {
 func createCodeset(c *gin.Context) error {
 
 	var req CreateCodesetReq
+        var id string
+
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
@@ -123,7 +124,7 @@ func delCodeset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	err = services.DeleteCodeset(id.ID)
+	err = services.DeleteCodeset(id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

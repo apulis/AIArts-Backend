@@ -19,6 +19,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 
 	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
+
 	AddGroupCode(r)
 	AddGroupModel(r)
 	AddGroupTraining(r)
@@ -26,6 +27,7 @@ func NewRouter() *gin.Engine {
 	AddGroupAnnotation(r)
 	AddGroupInference(r)
 	AddGroupFile(r)
+        AddGroupGeneral(r)
 
 	return r
 }

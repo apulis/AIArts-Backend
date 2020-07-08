@@ -4,11 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddGroupCode(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/codes")
-
-	group.GET("/", wrapper(lsAllCodes))
-}
 
 // @Summary sample
 // @Produce  json
