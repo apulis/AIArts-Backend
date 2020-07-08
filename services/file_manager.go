@@ -23,6 +23,11 @@ const (
 
 var FILETYPES_SUPPORTED = []string{FILETYPE_TAR_GZ, FILETYPE_TAR, FILETYPE_ZIP}
 
+func CheckPathExists(path string) error {
+	_, err := os.Stat(path)
+	return err
+}
+
 func CheckFileName(filename string) (string, error) {
 	for _, filetype := range FILETYPES_SUPPORTED {
 		if strings.HasSuffix(filename, filetype) {
@@ -32,6 +37,30 @@ func CheckFileName(filename string) (string, error) {
 
 	logger.Info("File type not supported: ", filename)
 	return "", errors.New("File type not supported")
+}
+
+func CheckFileOversize(size int64) bool {
+	fileConf := configs.Config.File
+	sizeLimit := fileConf.SizeLimit
+	logger.Info("Upload file size: ", size, ". Config size limit: ", sizeLimit)
+	if int(size) < sizeLimit {
+		return false
+	}
+	return true
+}
+
+func GetDirSize(path string) (int, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return int(size), err
 }
 
 func GetDatasetTempPath(filetype string) (string, error) {
@@ -68,7 +97,7 @@ func ExtractFile(fromPath, filetype string) (string, error) {
 	case FILETYPE_TAR_GZ:
 		err = extractTarGz(fromPath, datasetStoragePath)
 	case FILETYPE_TAR:
-		err = extractTar(fromPath, datasetStoragePath)
+		err = extractTarGz(fromPath, datasetStoragePath)
 	default:
 		err = errors.New("Unknown file type")
 	}
@@ -77,6 +106,7 @@ func ExtractFile(fromPath, filetype string) (string, error) {
 		logger.Info("Extracting '", fromPath, "' failed")
 		return "", err
 	}
+
 	return datasetStoragePath, nil
 }
 
@@ -87,7 +117,6 @@ func extractZip(fromPath, toPath string) error {
 	}
 
 	for _, file := range reader.File {
-		fmt.Println(file)
 		path := filepath.Join(toPath, file.Name)
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
@@ -129,33 +158,35 @@ func extractTarGz(fromPath, toPath string) error {
 
 	tarReader := tar.NewReader(gzipReader)
 	for {
-		headReader, err := tarReader.Next()
-		if err == io.EOF {
+		head, err := tarReader.Next()
+		if head == nil || err == io.EOF {
 			break
-		} else if err != nil {
+		}
+		if err != nil {
 			return err
 		}
-		fileInfo := headReader.FileInfo()
-		path := filepath.Join(toPath, fileInfo.Name())
-		if fileInfo.IsDir() {
-			os.MkdirAll(path, fileInfo.Mode())
-			continue
-		}
+		path := filepath.Join(toPath, head.Name)
+		fileInfo := head.FileInfo()
+		switch head.Typeflag {
 
-		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
-		if err != nil {
-			return nil
-		}
-		defer targetFile.Close()
+		case tar.TypeDir:
+			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
+			if err != nil {
+				return err
+			}
+			defer targetFile.Close()
 
-		if _, err := io.Copy(targetFile, tarReader); err != nil {
-			return nil
+			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				return err
+			}
+		default:
+			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}
 	}
 
-	return nil
-}
-
-func extractTar(fromPath, toPath string) error {
 	return nil
 }

@@ -32,6 +32,7 @@ type DbConfig struct {
 type FileConfig struct {
 	DatasetDir string
 	ModelDir   string
+	SizeLimit  int
 }
 
 var Config ProjectConfig

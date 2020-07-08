@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"os"
+
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -9,12 +11,17 @@ func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
 
 	group.POST("/upload/dataset", wrapper(uploadDataset))
+	group.POST("/upload/model", wrapper(uploadModel))
 }
 
 func uploadDataset(c *gin.Context) error {
 	file, err := c.FormFile("data")
 	if err != nil {
 		return ParameterError(err.Error())
+	}
+
+	if services.CheckFileOversize(file.Size) {
+		return AppError(FILE_OVERSIZE_CODE, "File over size limit")
 	}
 
 	filetype, err := services.CheckFileName(file.Filename)
@@ -36,5 +43,15 @@ func uploadDataset(c *gin.Context) error {
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
+
+	err = os.Remove(filePath)
+	if err != nil {
+		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+	}
+
 	return SuccessResp(c, gin.H{"path": unzippedPath})
+}
+
+func uploadModel(c *gin.Context) error {
+	return nil
 }

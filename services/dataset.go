@@ -4,6 +4,12 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
+const (
+	DATASET_STATUS_NORMAL   = "normal"
+	DATASET_STATUS_OCCUPIED = "occupied"
+	DATASET_STATUS_DELETING = "deleting"
+)
+
 func ListDatasets(page, count int) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
@@ -11,12 +17,18 @@ func ListDatasets(page, count int) ([]models.Dataset, int, error) {
 }
 
 func CreateDataset(name, description, creator, version, path string) error {
+	size, err := GetDirSize(path)
+	if err != nil {
+		return err
+	}
 	dataset := models.Dataset{
 		Name:        name,
 		Description: description,
 		Creator:     creator,
 		Version:     version,
 		Path:        path,
+		Size:        size,
+		Status:      DATASET_STATUS_NORMAL,
 	}
 	return models.CreateDataset(dataset)
 }

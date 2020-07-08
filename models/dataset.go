@@ -14,6 +14,7 @@ type Dataset struct {
 	Creator     string     `gorm:"not null" json:"creator"`
 	Version     string     `gorm:"not null" json:"version"`
 	Path        string     `gorm:"type:text" json:"path"`
+	Status      string     `json:"status"`
 	Size        int        `json:"size"`
 }
 
