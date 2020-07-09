@@ -60,25 +60,25 @@ type APISuccessRespGetResource struct {
 	Data GetResourceRsp `json:"data"`
 }
 
-type APISuccessRespGetAllTrainging struct {
+type APISuccessRespGetAllTraining struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data GetAllTrainingRsp	  `json:"data"`
 }
 
-type APISuccessRespCreateTrainging struct {
+type APISuccessRespCreateTraining struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data CreateTrainingRsp `json:"data"`
 }
 
-type APISuccessRespDeleteTrainging struct {
+type APISuccessRespDeleteTraining struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data DeleteTrainingRsp `json:"data"`
 }
 
-type APISuccessRespGetTrainging struct {
+type APISuccessRespGetTraining struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data GetTrainingRsp `json:"data"`
