@@ -17,7 +17,7 @@ func ListModelSets(page, count int) ([]models.Modelset, int, error) {
 	return models.ListModelSets(offset, limit)
 }
 
-func CreateModelset(name, description, creator, version, path string) error {
+func CreateModelset(name, description, creator, version, path, jobId string) error {
 	size, err := GetDirSize(path)
 	if err != nil {
 		return err
@@ -29,6 +29,7 @@ func CreateModelset(name, description, creator, version, path string) error {
 		Version:     version,
 		Path:        path,
 		Size:        size,
+		JobId:       jobId,
 		Status:      MODELSET_STATUS_NORMAL,
 	}
 	return models.CreateModelset(modelset)

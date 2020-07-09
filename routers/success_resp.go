@@ -36,6 +36,12 @@ type APISuccessRespGetModelsets struct {
 	Data GetModelsetsResp `json:"data"`
 }
 
+type APISuccessRespUploadFile struct {
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
+	Data UploadFileResp `json:"data"`
+}
+
 func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{
 		Code: SUCCESS_CODE,

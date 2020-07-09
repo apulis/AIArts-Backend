@@ -75,12 +75,12 @@ var doc = `{
                 "summary": "create dataset",
                 "parameters": [
                     {
-                        "description": "dataset name",
-                        "name": "name",
+                        "description": "json body",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.createDatasetReq"
                         }
                     },
                     {
@@ -261,7 +261,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespUploadFile"
                         }
                     },
                     "400": {
@@ -284,7 +284,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "upload dataset file",
+                "summary": "upload model file, not implemented yet",
                 "parameters": [
                     {
                         "description": "upload file key 'data'",
@@ -368,39 +368,12 @@ var doc = `{
                 "summary": "create model",
                 "parameters": [
                     {
-                        "description": "model name",
-                        "name": "name",
+                        "description": "json body",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model description",
-                        "name": "description",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model creator",
-                        "name": "creator",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model storage path",
-                        "name": "path",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.createModelsetReq"
                         }
                     }
                 ],
@@ -431,11 +404,11 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "get model by id",
+                "summary": "download model by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "dataset id",
+                        "description": "model id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -445,7 +418,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetModelset"
+                            "$ref": "#/definitions/routers.APISuccessResp"
                         }
                     },
                     "400": {
@@ -846,6 +819,20 @@ var doc = `{
                 }
             }
         },
+        "routers.APISuccessRespUploadFile": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.UploadFileResp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.GetDatasetResp": {
             "type": "object",
             "properties": {
@@ -905,6 +892,64 @@ var doc = `{
                 },
                 "totalPage": {
                     "type": "integer"
+                }
+            }
+        },
+        "routers.UploadFileResp": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.createDatasetReq": {
+            "type": "object",
+            "required": [
+                "creator",
+                "description",
+                "name",
+                "path"
+            ],
+            "properties": {
+                "creator": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.createModelsetReq": {
+            "type": "object",
+            "required": [
+                "creator",
+                "description",
+                "jobId",
+                "name",
+                "path"
+            ],
+            "properties": {
+                "creator": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
                 }
             }
         }

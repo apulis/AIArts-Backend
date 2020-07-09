@@ -3,6 +3,7 @@ package services
 import (
 	"archive/tar"
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"errors"
 	"fmt"
@@ -84,6 +85,57 @@ func GetDatasetTempPath(filetype string) (string, error) {
 	}
 	datasetTempPath := fmt.Sprintf("%s/%d%s", datasetTempDir, time.Now().UnixNano(), filetype)
 	return datasetTempPath, nil
+}
+
+func CompressFile(path string) (string, error) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return "", err
+	}
+	dirName := filepath.Dir(path)
+	fileName := fileInfo.Name()
+	targetPath := dirName + "/" + fileName + ".tar.gz"
+
+	var buf bytes.Buffer
+	gzipWriter := gzip.NewWriter(&buf)
+	tarWriter := tar.NewWriter(gzipWriter)
+
+	filepath.Walk(path, func(file string, fi os.FileInfo, err error) error {
+		header, err := tar.FileInfoHeader(fi, file)
+		if err != nil {
+			return err
+		}
+		header.Name = strings.TrimPrefix(filepath.ToSlash(file), dirName)
+		if err := tarWriter.WriteHeader(header); err != nil {
+			return err
+		}
+		if !fi.IsDir() {
+			data, err := os.Open(file)
+			if err != nil {
+				return err
+			}
+			if _, err := io.Copy(tarWriter, data); err != nil {
+				return err
+			}
+		}
+		return err
+	})
+
+	if err := tarWriter.Close(); err != nil {
+		return "", err
+	}
+	if err := gzipWriter.Close(); err != nil {
+		return "", err
+	}
+
+	fileToWrite, err := os.OpenFile(targetPath, os.O_CREATE|os.O_RDWR, os.FileMode(fileInfo.Mode()))
+	if err != nil {
+		return "", err
+	}
+	if _, err := io.Copy(fileToWrite, &buf); err != nil {
+		return "", err
+	}
+	return targetPath, nil
 }
 
 func ExtractFile(fromPath, filetype string) (string, error) {

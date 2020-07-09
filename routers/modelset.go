@@ -30,6 +30,7 @@ type createModelsetReq struct {
 	Description string `json:"description" binding:"required"`
 	Creator     string `json:"creator" binding:"required"`
 	Path        string `json:"path" binding:"required"`
+	JobId       string `json:"jobId" binding:"required"`
 }
 
 type updateModelsetReq struct {
@@ -99,10 +100,7 @@ func getModelset(c *gin.Context) error {
 
 // @Summary create model
 // @Produce  json
-// @Param name body string true "model name"
-// @Param description body string true "model description"
-// @Param creator body string true "model creator"
-// @Param path body string true "model storage path"
+// @Param body body createModelsetReq true "json body"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -117,7 +115,7 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	err = services.CreateModelset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	err = services.CreateModelset(req.Name, req.Description, req.Creator, "0.0.1", req.Path, req.JobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

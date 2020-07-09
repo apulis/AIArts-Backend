@@ -33,6 +33,6 @@ func createTableIfNotExists(modelType interface{}) {
 }
 
 func (t UnixTime) MarshalJSON() ([]byte, error) {
-	stamp := fmt.Sprintf("%d", time.Time(t).Unix())
+	stamp := fmt.Sprintf("%d", time.Time(t).Unix()*1000)
 	return []byte(stamp), nil
 }
