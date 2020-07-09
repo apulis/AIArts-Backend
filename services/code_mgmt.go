@@ -20,7 +20,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
+func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 
 	rand.Seed(time.Now().Unix())
 	item := &models.CodesetItem{
@@ -28,7 +28,7 @@ func GetCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 		Status: "started",
 		Engine: "tf_1.15",
 		CodePath: "/home/bifeng.peng/",
-		CreateTime: time.Now().Unix() * 1000,
+		CreateTime: time.Now().Unix(),
 		Desc: "test test test",
 	}
 

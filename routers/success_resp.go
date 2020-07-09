@@ -39,7 +39,7 @@ type APISuccessRespGetModelsets struct {
 type APISuccessRespGetCodeset struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data GetCodesetRsp	  `json:"data"`
+	Data GetAllCodesetRsp	  `json:"data"`
 }
 
 type APISuccessRespCreateCodeset struct {
