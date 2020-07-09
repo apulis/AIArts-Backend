@@ -75,32 +75,40 @@ var doc = `{
                 "summary": "create dataset",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "dataset name",
                         "name": "name",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
-                        "type": "string",
                         "description": "dataset description",
                         "name": "description",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
-                        "type": "string",
                         "description": "dataset creator",
                         "name": "creator",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
-                        "type": "string",
                         "description": "dataset storage path",
                         "name": "path",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -136,7 +144,7 @@ var doc = `{
                         "type": "integer",
                         "description": "dataset id",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -171,7 +179,7 @@ var doc = `{
                         "type": "string",
                         "description": "dataset description",
                         "name": "description",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -206,7 +214,7 @@ var doc = `{
                         "type": "integer",
                         "description": "dataset id",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -240,11 +248,13 @@ var doc = `{
                 "summary": "upload dataset file",
                 "parameters": [
                     {
-                        "type": "integer",
                         "description": "upload file key 'data'",
                         "name": "data",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -277,11 +287,13 @@ var doc = `{
                 "summary": "upload dataset file",
                 "parameters": [
                     {
-                        "type": "integer",
                         "description": "upload file key 'data'",
                         "name": "data",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {

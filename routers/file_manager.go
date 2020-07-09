@@ -16,7 +16,7 @@ func AddGroupFile(r *gin.Engine) {
 
 // @Summary upload dataset file
 // @Produce  json
-// @Param data query int true "upload file key 'data'"
+// @Param data body string true "upload file key 'data'"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -61,7 +61,7 @@ func uploadDataset(c *gin.Context) error {
 
 // @Summary upload dataset file
 // @Produce  json
-// @Param data query int true "upload file key 'data'"
+// @Param data body string true "upload file key 'data'"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"

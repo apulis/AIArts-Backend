@@ -112,25 +112,29 @@ paths:
     post:
       parameters:
       - description: dataset name
-        in: query
+        in: body
         name: name
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset description
-        in: query
+        in: body
         name: description
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset creator
-        in: query
+        in: body
         name: creator
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset storage path
-        in: query
+        in: body
         name: path
         required: true
-        type: string
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -151,7 +155,7 @@ paths:
     delete:
       parameters:
       - description: dataset id
-        in: query
+        in: path
         name: id
         required: true
         type: integer
@@ -174,7 +178,7 @@ paths:
     get:
       parameters:
       - description: dataset id
-        in: query
+        in: path
         name: id
         required: true
         type: integer
@@ -197,7 +201,7 @@ paths:
     post:
       parameters:
       - description: dataset description
-        in: query
+        in: path
         name: description
         required: true
         type: string
@@ -221,10 +225,11 @@ paths:
     get:
       parameters:
       - description: upload file key 'data'
-        in: query
+        in: body
         name: data
         required: true
-        type: integer
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -245,10 +250,11 @@ paths:
     get:
       parameters:
       - description: upload file key 'data'
-        in: query
+        in: body
         name: data
         required: true
-        type: integer
+        schema:
+          type: string
       produces:
       - application/json
       responses:

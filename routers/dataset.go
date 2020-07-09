@@ -76,7 +76,7 @@ func lsDatasets(c *gin.Context) error {
 
 // @Summary get dataset by id
 // @Produce  json
-// @Param id query int true "dataset id"
+// @Param id path int true "dataset id"
 // @Success 200 {object} APISuccessRespGetDataset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -97,10 +97,10 @@ func getDataset(c *gin.Context) error {
 
 // @Summary create dataset
 // @Produce  json
-// @Param name query string true "dataset name"
-// @Param description query string true "dataset description"
-// @Param creator query string true "dataset creator"
-// @Param path query string true "dataset storage path"
+// @Param name body string true "dataset name"
+// @Param description body string true "dataset description"
+// @Param creator body string true "dataset creator"
+// @Param path body string true "dataset storage path"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -129,7 +129,7 @@ func createDataset(c *gin.Context) error {
 
 // @Summary update dataset
 // @Produce  json
-// @Param description query string true "dataset description"
+// @Param description path string true "dataset description"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -155,7 +155,7 @@ func updateDataset(c *gin.Context) error {
 
 // @Summary delete dataset by id
 // @Produce  json
-// @Param id query int true "dataset id"
+// @Param id path int true "dataset id"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
