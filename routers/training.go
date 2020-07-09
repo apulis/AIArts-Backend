@@ -57,7 +57,7 @@ type GetTrainingRsp struct {
 
 }
 
-// @Summary list Trainings
+// @Summary get all trainings
 // @Produce  json
 // @Param page query int true "page number"
 // @Param pagesize query int true "size per page"
@@ -87,7 +87,7 @@ func getAllTraining(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
-// @Summary get Training
+// @Summary create Training
 // @Produce  json
 // @Param name query string true "dataset name"
 // @Param description query string true "dataset description"
@@ -115,7 +115,7 @@ func createTraining(c *gin.Context) error {
 	return SuccessResp(c, id)
 }
 
-// @Summary create Training
+// @Summary get specific training
 // @Produce  json
 // @Param name query string true "dataset name"
 // @Param description query string true "dataset description"
@@ -143,13 +143,13 @@ func getTraining(c *gin.Context) error {
 	return SuccessResp(c, nil)
 }
 
-// @Summary delete Training
+// @Summary delete one training
 // @Produce  json
 // @Param description query string true "dataset description"
 // @Success 200 {object} APISuccessRespDeleteTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training/:id [post]
+// @Router /ai_arts/api/training/:id [delete]
 func delTraining(c *gin.Context) error {
 
 	var id string

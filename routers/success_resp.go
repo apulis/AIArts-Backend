@@ -12,6 +12,7 @@ type APISuccessResp struct {
 	Data interface{} `json:"data"`
 }
 
+// dataset
 type APISuccessRespGetDataset struct {
 	Code int            `json:"code"`
 	Msg  string         `json:"msg"`
@@ -24,6 +25,7 @@ type APISuccessRespGetDatasets struct {
 	Data GetDatasetsResp `json:"data"`
 }
 
+// models
 type APISuccessRespGetModelset struct {
 	Code int             `json:"code"`
 	Msg  string          `json:"msg"`
@@ -36,6 +38,7 @@ type APISuccessRespGetModelsets struct {
 	Data GetModelsetsResp `json:"data"`
 }
 
+// codes
 type APISuccessRespAllGetCodeset struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`

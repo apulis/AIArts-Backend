@@ -28,9 +28,11 @@ type GetAllCodesetRsp struct {
 
 type CreateCodesetReq struct {
 	Name 			string `json:"name"`
-	Description 	string `json:"description" binding:"required"`
+	Engine          string `json:"engine"`
+	DeviceType		string `json:"deviceType"`
+	DeviceNum 		int `json:"deviceNum"`
+	Desc 			string `json:"desc"`
 	CodePath		string `json:"codePath"`
-	FrameworkInfo 	models.AIFrameworkItem `json:"frameworkInfo"`
 }
 
 type CreateCodesetRsp struct {
@@ -45,10 +47,10 @@ type DeleteCodesetRsp struct {
 
 }
 
-// @Summary list codesets
+// @Summary get all codes
 // @Produce  json
-// @Param page query int true "page number"
-// @Param pagesize query int true "size per page"
+// @Param pageNum query int true "page number"
+// @Param pageSize query int true "size per page"
 // @Success 200 {object} APISuccessRespAllGetCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -77,10 +79,11 @@ func getAllCodeset(c *gin.Context) error {
 
 // @Summary create codeset
 // @Produce  json
-// @Param name query string true "codeset name"
-// @Param description query string true "codeset description"
-// @Param creator query string true "codeset creator"
-// @Param path query string true "codeset storage path"
+// @Param name query string true "code name"
+// @Param engine query string true "engine"
+// @Param deviceType query string true "device type"
+// @Param deviceNum query string true "device number"
+// @Param codePath query string true "code path"
 // @Success 200 {object} APISuccessRespCreateCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -88,7 +91,7 @@ func getAllCodeset(c *gin.Context) error {
 func createCodeset(c *gin.Context) error {
 
 	var req CreateCodesetReq
-        var id string
+	var id string
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -105,7 +108,7 @@ func createCodeset(c *gin.Context) error {
 
 // @Summary delete codeset
 // @Produce  json
-// @Param description query string true "codeset description"
+// @Param id query string true "code set id"
 // @Success 200 {object} APISuccessRespDeleteCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
