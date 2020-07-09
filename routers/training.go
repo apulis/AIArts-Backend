@@ -28,13 +28,15 @@ type GetAllTrainingRsp struct {
 
 type CreateTrainingReq struct {
 	Name 			string `json:"name"`
-	Desc 			string `json:"desc"`
-	FrameworkInfo 	models.AIFrameworkItem `json:"frameworkInfo"`
+	Engine          string `json:"engine"`
+	DeviceType		string `json:"deviceType"`
+	DeviceNum 		int `json:"deviceNum"`
 	CodePath		string `json:"codePath"`
 	StartupFile		string `json:"startupFile"`
 	OutputPath		string `json:"outputPath"`
 	DatasetPath		string `json:"datasetPath"`
 	Params 			map[string]string `json:"params"`
+	Desc 			string `json:"desc"`
 }
 
 type CreateTrainingRsp struct {
@@ -59,8 +61,8 @@ type GetTrainingRsp struct {
 
 // @Summary get all trainings
 // @Produce  json
-// @Param page query int true "page number"
-// @Param pagesize query int true "size per page"
+// @Param pageNum query int true "page number"
+// @Param pageSize query int true "size per page"
 // @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -89,10 +91,7 @@ func getAllTraining(c *gin.Context) error {
 
 // @Summary create Training
 // @Produce  json
-// @Param name query string true "dataset name"
-// @Param description query string true "dataset description"
-// @Param creator query string true "dataset creator"
-// @Param path query string true "dataset storage path"
+// @Param type body CreateTrainingReq true "dataset description"
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
