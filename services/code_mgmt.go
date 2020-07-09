@@ -20,7 +20,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetCodeset(page, size int) ([] *models.CodesetItem, int, bool, error) {
+func GetCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 
 	rand.Seed(time.Now().Unix())
 	item := &models.CodesetItem{
@@ -36,7 +36,7 @@ func GetCodeset(page, size int) ([] *models.CodesetItem, int, bool, error) {
 	codes := make([] *models.CodesetItem, 0)
 	codes = append(codes, item)
 
-	return codes, 1, false, nil
+	return codes, 1, 1, nil
 }
 
 func CreateCodeset(name, description string, framework models.AIFrameworkItem) (string, error) {

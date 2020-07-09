@@ -17,13 +17,13 @@ type GetResourceReq struct {
 }
 
 type GetResourceRsp struct {
-        AIFrameworkList         []models.AIFrameworkItem        `json:"ai_framework_list"`
-        DeviceList                      []models.DeviceItem             `json:"device_list"`
+        AIFrameworkList         []models.AIFrameworkItem `json:"aiFrameworkList"`
+        DeviceList              []models.DeviceItem `json:"deviceList"`
 }
 
 // @Summary get available resource
 // @Produce  json
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespGetResource "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/common/resource [get]
@@ -38,5 +38,5 @@ func getResource(c *gin.Context) error {
 		framework,
 		devices,
 	}
-	return SuccessRsp(c, rsp)
+	return SuccessResp(c, rsp)
 }

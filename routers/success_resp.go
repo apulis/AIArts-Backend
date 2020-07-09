@@ -36,17 +36,31 @@ type APISuccessRespGetModelsets struct {
 	Data GetModelsetsResp `json:"data"`
 }
 
-func SuccessResp(c *gin.Context, data interface{}) error {
-	res := APISuccessResp{
-		Code: SUCCESS_CODE,
-		Msg:  "success",
-		Data: data,
-	}
-	c.JSON(http.StatusOK, res)
-	return nil
+type APISuccessRespGetCodeset struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetCodesetRsp	  `json:"data"`
 }
 
-func SuccessRsp(c *gin.Context, data interface{}) error {
+type APISuccessRespCreateCodeset struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data CreateCodesetRsp `json:"data"`
+}
+
+type APISuccessRespDeleteCodeset struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data DeleteCodesetRsp `json:"data"`
+}
+
+type APISuccessRespGetResource struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetResourceRsp `json:"data"`
+}
+
+func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{
 		Code: SUCCESS_CODE,
 		Msg:  "success",

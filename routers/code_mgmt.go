@@ -16,21 +16,21 @@ func AddGroupCode(r *gin.Engine) {
 
 
 type GetCodesetReq struct {
-	Page  		int `form:"page,default=1"`
-	PageSize 	int `form:"pagesize,default=10"`
+	PageNum 	int 	`json:"pageNum"`
+	PageSize 	int 	`json:"pageSize"`
 }
 
 type GetCodesetRsp struct {
 	Codesets 	[] *models.CodesetItem `json:"codesets"`
-	Total		int   `json:"total"`
-	HasNext		bool  `json:"has_next"`
+	Total		int   	`json:"total"`
+	totalPage	int 	`json:"totalPage"`
 }
 
 
 type CreateCodesetReq struct {
 	Name 			string `json:"name"`
 	Description 	string `json:"description" binding:"required"`
-	FrameworkInfo 	models.AIFrameworkItem `json:"framework_info"`
+	FrameworkInfo 	models.AIFrameworkItem `json:"frameworkInfo"`
 }
 
 type CreateCodesetRsp struct {
@@ -49,7 +49,7 @@ type DeleteCodesetRsp struct {
 // @Produce  json
 // @Param page query int true "page number"
 // @Param pagesize query int true "size per page"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespGetCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/code [get]
@@ -61,7 +61,7 @@ func getCodeset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	sets, total, hasNext, err := services.GetCodeset(req.Page, req.PageSize)
+	sets, total, totalPage, err := services.GetCodeset(req.PageNum, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -69,10 +69,10 @@ func getCodeset(c *gin.Context) error {
 	rsp := &GetCodesetRsp {
 		sets,
 		total,
-		hasNext,
+		totalPage,
 	}
 
-	return SuccessRsp(c, rsp)
+	return SuccessResp(c, rsp)
 }
 
 // @Summary create codeset
@@ -81,7 +81,7 @@ func getCodeset(c *gin.Context) error {
 // @Param description query string true "dataset description"
 // @Param creator query string true "dataset creator"
 // @Param path query string true "dataset storage path"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespCreateCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [post]
@@ -100,13 +100,13 @@ func createCodeset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	return SuccessRsp(c, id)
+	return SuccessResp(c, id)
 }
 
 // @Summary delete codeset
 // @Produce  json
 // @Param description query string true "dataset description"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespDeleteCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id [post]
@@ -130,5 +130,5 @@ func delCodeset(c *gin.Context) error {
 	}
 
 	data := gin.H{}
-	return SuccessRsp(c, data)
+	return SuccessResp(c, data)
 }
