@@ -1,12 +1,10 @@
 package models
 
-import "time"
-
 type Modelset struct {
-	ID        int        `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	ID        int       `gorm:"primary_key" json:"id"`
+	CreatedAt UnixTime  `json:"createdAt"`
+	UpdatedAt UnixTime  `json:"updatedAt"`
+	DeletedAt *UnixTime `json:"deletedAt"`
 
 	Name        string `gorm:"unique_index;not null" json:"name"`
 	Description string `gorm:"type:text" json:"description"`
@@ -16,7 +14,7 @@ type Modelset struct {
 	Status      string `json:"status"`
 	Size        int    `json:"size"`
 	Type        string `json:"type"`
-	JobId       string `json:"job_id"`
+	JobId       string `json:"jobId"`
 }
 
 func ListModelSets(offset, limit int) ([]Modelset, int, error) {

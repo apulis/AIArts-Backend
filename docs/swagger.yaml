@@ -1,11 +1,11 @@
 definitions:
   models.Dataset:
     properties:
-      created_at:
+      createdAt:
         type: string
       creator:
         type: string
-      deleted_at:
+      deletedAt:
         type: string
       description:
         type: string
@@ -19,24 +19,24 @@ definitions:
         type: integer
       status:
         type: string
-      updated_at:
+      updatedAt:
         type: string
       version:
         type: string
     type: object
   models.Modelset:
     properties:
-      created_at:
+      createdAt:
         type: string
       creator:
         type: string
-      deleted_at:
+      deletedAt:
         type: string
       description:
         type: string
       id:
         type: integer
-      job_id:
+      jobId:
         type: string
       name:
         type: string
@@ -48,7 +48,7 @@ definitions:
         type: string
       type:
         type: string
-      updated_at:
+      updatedAt:
         type: string
       version:
         type: string
@@ -112,15 +112,17 @@ definitions:
     type: object
   routers.GetDatasetsResp:
     properties:
-      count:
-        type: integer
       datasets:
         items:
           $ref: '#/definitions/models.Dataset'
         type: array
-      page:
+      pageNum:
+        type: integer
+      pageSize:
         type: integer
       total:
+        type: integer
+      totalPage:
         type: integer
     type: object
   routers.GetModelsetResp:
@@ -130,15 +132,17 @@ definitions:
     type: object
   routers.GetModelsetsResp:
     properties:
-      count:
-        type: integer
       models:
         items:
           $ref: '#/definitions/models.Modelset'
         type: array
-      page:
+      pageNum:
+        type: integer
+      pageSize:
         type: integer
       total:
+        type: integer
+      totalPage:
         type: integer
     type: object
 info:
@@ -150,12 +154,12 @@ paths:
       parameters:
       - description: page number, from 1
         in: query
-        name: page
+        name: pageNum
         required: true
         type: integer
       - description: count per page
         in: query
-        name: count
+        name: pageSize
         required: true
         type: integer
       produces:
@@ -341,12 +345,12 @@ paths:
       parameters:
       - description: page number, from 1
         in: query
-        name: page
+        name: pageNum
         required: true
         type: integer
       - description: count per page
         in: query
-        name: count
+        name: pageSize
         required: true
         type: integer
       produces:

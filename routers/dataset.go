@@ -21,8 +21,8 @@ type datasetId struct {
 }
 
 type lsDatasetsReq struct {
-	Page  int `form:"page"`
-	Count int `form:"count,default=10"`
+	PageNum  int `form:"pageNum"`
+	PageSize int `form:"pageSize,default=10"`
 }
 
 type createDatasetReq struct {
@@ -41,16 +41,17 @@ type GetDatasetResp struct {
 }
 
 type GetDatasetsResp struct {
-	Datasets []models.Dataset `json:"datasets"`
-	Total    int              `json:"total"`
-	Page     int              `json:"page"`
-	Count    int              `json:"count"`
+	Datasets  []models.Dataset `json:"datasets"`
+	Total     int              `json:"total"`
+	TotalPage int              `json:"totalPage"`
+	PageNum   int              `json:"pageNum"`
+	PageSize  int              `json:"pageSize"`
 }
 
 // @Summary list datasets
 // @Produce  json
-// @Param page query int true "page number, from 1"
-// @Param count query int true "count per page"
+// @Param pageNum query int true "page number, from 1"
+// @Param pageSize query int true "count per page"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -61,15 +62,16 @@ func lsDatasets(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	datasets, total, err := services.ListDatasets(req.Page, req.Count)
+	datasets, total, err := services.ListDatasets(req.PageNum, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := GetDatasetsResp{
-		Datasets: datasets,
-		Total:    total,
-		Page:     req.Page,
-		Count:    req.Count,
+		Datasets:  datasets,
+		Total:     total,
+		PageNum:   req.PageNum,
+		PageSize:  req.PageSize,
+		TotalPage: total/req.PageSize + 1,
 	}
 	return SuccessResp(c, data)
 }
