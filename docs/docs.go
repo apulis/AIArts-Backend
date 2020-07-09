@@ -25,6 +25,78 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ai_arts/api/code": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list codesets",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size per page",
+                        "name": "pagesize",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/common/resource": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get available resource",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/datasets": {
             "get": {
                 "produces": [
@@ -72,7 +144,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "create dataset",
+                "summary": "create codeset",
                 "parameters": [
                     {
                         "type": "string",
@@ -165,7 +237,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "update dataset",
+                "summary": "delete codeset",
                 "parameters": [
                     {
                         "type": "string",

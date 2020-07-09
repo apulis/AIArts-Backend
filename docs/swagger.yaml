@@ -19,6 +19,53 @@ info:
   contact: {}
   license: {}
 paths:
+  /ai_arts/api/code:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pagesize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list codesets
+  /ai_arts/api/common/resource:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get available resource
   /ai_arts/api/datasets:
     get:
       parameters:
@@ -85,7 +132,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: create dataset
+      summary: create codeset
   /ai_arts/api/datasets/:id:
     get:
       parameters:
@@ -132,7 +179,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: update dataset
+      summary: delete codeset
   /api/annotations:
     post:
       parameters:

@@ -7,11 +7,11 @@ import (
 )
 
 func AddGroupCode(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/code")
+	group := r.Group("/ai_arts/api/codes")
 
 	group.GET("/", wrapper(getCodeset))
-	group.GET("/create/:id", wrapper(createCodeset))
-	group.GET("/delete/:id", wrapper(delCodeset))
+	group.POST("/:id", wrapper(createCodeset))
+	group.DELETE("/:id", wrapper(delCodeset))
 }
 
 
