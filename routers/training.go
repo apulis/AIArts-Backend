@@ -49,11 +49,19 @@ type DeleteTrainingRsp struct {
 
 }
 
+type GetTrainingReq struct {
+	Id 				string `json:"id"`
+}
+
+type GetTrainingRsp struct {
+
+}
+
 // @Summary list Trainings
 // @Produce  json
 // @Param page query int true "page number"
 // @Param pagesize query int true "size per page"
-// @Success 200 {object} APISuccessRespGetTraining "success"
+// @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/training [get]
@@ -113,13 +121,13 @@ func createTraining(c *gin.Context) error {
 // @Param description query string true "dataset description"
 // @Param creator query string true "dataset creator"
 // @Param path query string true "dataset storage path"
-// @Success 200 {object} APISuccessRespCreateTraining "success"
+// @Success 200 {object} APISuccessRespGetTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/training/:id [get]
 func getTraining(c *gin.Context) error {
 
-	var req CreateTrainingReq
+	var req GetTrainingReq
 	var id string
 
 	err := c.ShouldBindJSON(&req)
@@ -127,12 +135,12 @@ func getTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateTraining(req.Name, "", req.FrameworkInfo)
+	err = services.GetTraining(id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	return SuccessResp(c, id)
+	return SuccessResp(c, nil)
 }
 
 // @Summary delete Training

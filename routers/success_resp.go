@@ -36,7 +36,7 @@ type APISuccessRespGetModelsets struct {
 	Data GetModelsetsResp `json:"data"`
 }
 
-type APISuccessRespGetCodeset struct {
+type APISuccessRespAllGetCodeset struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data GetAllCodesetRsp	  `json:"data"`
@@ -59,6 +59,31 @@ type APISuccessRespGetResource struct {
 	Msg  string           `json:"msg"`
 	Data GetResourceRsp `json:"data"`
 }
+
+type APISuccessRespGetAllTrainging struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetAllTrainingRsp	  `json:"data"`
+}
+
+type APISuccessRespCreateTrainging struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data CreateTrainingRsp `json:"data"`
+}
+
+type APISuccessRespDeleteTrainging struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data DeleteTrainingRsp `json:"data"`
+}
+
+type APISuccessRespGetTrainging struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetTrainingRsp `json:"data"`
+}
+
 
 func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{

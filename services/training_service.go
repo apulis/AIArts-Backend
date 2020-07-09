@@ -31,3 +31,7 @@ func CreateTraining(name, description string, framework models.AIFrameworkItem) 
 func DeleteTraining(id string) error {
 	return nil
 }
+
+func GetTraining(id string) error {
+	return nil
+}

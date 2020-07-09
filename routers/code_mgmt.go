@@ -49,7 +49,7 @@ type DeleteCodesetRsp struct {
 // @Produce  json
 // @Param page query int true "page number"
 // @Param pagesize query int true "size per page"
-// @Success 200 {object} APISuccessRespGetCodeset "success"
+// @Success 200 {object} APISuccessRespAllGetCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [get]

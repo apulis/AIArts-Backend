@@ -30,7 +30,7 @@ func NewRouter() *gin.Engine {
 	AddGroupAnnotation(r)
 	AddGroupInference(r)
 	AddGroupFile(r)
-        AddGroupGeneral(r)
+	AddGroupGeneral(r)
 
 	return r
 }
