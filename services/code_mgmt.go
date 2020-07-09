@@ -28,7 +28,7 @@ func GetCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 		Status: "started",
 		Engine: "tf_1.15",
 		CodePath: "/home/bifeng.peng/",
-		CreateTime: "2020-07-01T08:46:42.075952+00:00",
+		CreateTime: time.Now().Unix() * 1000,
 		Desc: "test test test",
 	}
 
