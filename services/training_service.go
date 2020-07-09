@@ -11,11 +11,13 @@ func GetAllTraining(page, size int) ([] *models.Training, int, int, error) {
 	rand.Seed(time.Now().Unix())
 	item := &models.Training{
 		Name: RandStringRunes(16),
-		Status: "started",
 		Engine: "tf_1.15",
 		CodePath: "/home/bifeng.peng/",
-		CreateTime: time.Now().Unix(),
 		Desc: "test test test",
+		DeviceType: "npu",
+		DeviceNum: 1,
+		OutputPath: "/home/bifeng.peng/resetnet50",
+		StartupFile: "/home/bifeng.peng/resetnet50/test.py",
 	}
 
 	codes := make([] *models.Training, 0)
