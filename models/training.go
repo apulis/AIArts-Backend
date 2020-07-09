@@ -2,12 +2,16 @@ package models
 
 
 type Training struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"   binding:"required"`
-	Status      string `json:"status" binding:"required"`
-	Engine      string `json:"engine"  binding:"required"`
-	CodePath 	string `json:"codePath"`
-	CreateTime  int64 `json:"createTime"`
-	Desc		string `json:"desc"`
+	Id              string `json:"id"`
+	Name 			string `json:"name"`
+	Engine          string `json:"engine"`
+	DeviceType		string `json:"deviceType"`
+	DeviceNum 		int `json:"deviceNum"`
+	CodePath		string `json:"codePath"`
+	StartupFile		string `json:"startupFile"`
+	OutputPath		string `json:"outputPath"`
+	DatasetPath		string `json:"datasetPath"`
+	Params 			map[string]string `json:"params"`
+	Desc 			string `json:"desc"`
 }
 

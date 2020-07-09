@@ -24,7 +24,7 @@ func GetAllTraining(page, size int) ([] *models.Training, int, int, error) {
 	return codes, 1, 1, nil
 }
 
-func CreateTraining(name, description string, framework models.AIFrameworkItem) (string, error) {
+func CreateTraining(name, description string, test int) (string, error) {
 	return RandStringRunes(16), nil
 }
 

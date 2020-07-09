@@ -27,16 +27,7 @@ type GetAllTrainingRsp struct {
 }
 
 type CreateTrainingReq struct {
-	Name 			string `json:"name"`
-	Engine          string `json:"engine"`
-	DeviceType		string `json:"deviceType"`
-	DeviceNum 		int `json:"deviceNum"`
-	CodePath		string `json:"codePath"`
-	StartupFile		string `json:"startupFile"`
-	OutputPath		string `json:"outputPath"`
-	DatasetPath		string `json:"datasetPath"`
-	Params 			map[string]string `json:"params"`
-	Desc 			string `json:"desc"`
+	models.Training
 }
 
 type CreateTrainingRsp struct {
@@ -90,8 +81,8 @@ func getAllTraining(c *gin.Context) error {
 }
 
 // @Summary create Training
-// @Produce  json
-// @Param type body CreateTrainingReq true "dataset description"
+// @Produce json
+// @Param param body CreateTrainingReq true "params"
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -106,7 +97,15 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateTraining(req.Name, "", req.FrameworkInfo)
+	training := models.Training{
+
+	}
+
+	training.Engine = req.Engine
+	training.Desc = req.Desc
+	training.CodePath = req.CodePath
+
+	id, err = services.CreateTraining()
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -116,10 +115,7 @@ func createTraining(c *gin.Context) error {
 
 // @Summary get specific training
 // @Produce  json
-// @Param name query string true "dataset name"
-// @Param description query string true "dataset description"
-// @Param creator query string true "dataset creator"
-// @Param path query string true "dataset storage path"
+// @Param param body GetTrainingReq true "params"
 // @Success 200 {object} APISuccessRespGetTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -144,7 +140,7 @@ func getTraining(c *gin.Context) error {
 
 // @Summary delete one training
 // @Produce  json
-// @Param description query string true "dataset description"
+// @Param param body DeleteTrainingReq true "params"
 // @Success 200 {object} APISuccessRespDeleteTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
