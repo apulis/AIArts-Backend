@@ -30,6 +30,7 @@ type GetCodesetRsp struct {
 type CreateCodesetReq struct {
 	Name 			string `json:"name"`
 	Description 	string `json:"description" binding:"required"`
+	CodePath		string `json:"codePath"`
 	FrameworkInfo 	models.AIFrameworkItem `json:"frameworkInfo"`
 }
 
