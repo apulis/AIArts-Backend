@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82c726c5-a7c3-4d30-8b7b-53707b6eab55" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/models/training.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/services/training_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/types.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/code_mgmt.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/code_mgmt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/success_resp.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/success_resp.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/training.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/training.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/code_mgmt.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/code_mgmt.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

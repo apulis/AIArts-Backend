@@ -10,7 +10,7 @@ func AddGroupTraining(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/trainings")
 
 	group.GET("/", wrapper(getAllTraining))
-	//group.GET("/:id", wrapper(getTraining))
+	group.GET("/:id", wrapper(getTraining))
 	group.POST("/", wrapper(createTraining))
 	//group.DELETE("/:id", wrapper(stopTraining))
 }
@@ -99,7 +99,7 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateTraining(req.Name, req.Description, req.FrameworkInfo)
+	id, err = services.CreateTraining(req.Name, "", req.FrameworkInfo)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -116,8 +116,8 @@ func createTraining(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training [post]
-func createTraining(c *gin.Context) error {
+// @Router /ai_arts/api/training/:id [get]
+func getTraining(c *gin.Context) error {
 
 	var req CreateTrainingReq
 	var id string
@@ -127,7 +127,7 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateTraining(req.Name, req.Description, req.FrameworkInfo)
+	id, err = services.CreateTraining(req.Name, "", req.FrameworkInfo)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
