@@ -27,7 +27,7 @@ type GetAllTrainingRsp struct {
 }
 
 type CreateTrainingReq struct {
-	models.Training
+	Training models.Training
 }
 
 type CreateTrainingRsp struct {
@@ -97,15 +97,7 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	training := models.Training{
-
-	}
-
-	training.Engine = req.Engine
-	training.Desc = req.Desc
-	training.CodePath = req.CodePath
-
-	id, err = services.CreateTraining()
+	id, err = services.CreateTraining(req.Training)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

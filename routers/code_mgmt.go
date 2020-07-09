@@ -79,12 +79,7 @@ func getAllCodeset(c *gin.Context) error {
 
 // @Summary create codeset
 // @Produce  json
-// @Param name query string true "code name"
-// @Param engine query string true "engine"
-// @Param deviceType query string true "device type"
-// @Param deviceNum query string true "device number"
-// @Param codePath query string true "code path"
-// @Param desc query string true "code description"
+// @Param param body CreateCodesetReq true "params"
 // @Success 200 {object} APISuccessRespCreateCodeset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"

@@ -26,7 +26,7 @@ func GetAllTraining(page, size int) ([] *models.Training, int, int, error) {
 	return codes, 1, 1, nil
 }
 
-func CreateTraining(name, description string, test int) (string, error) {
+func CreateTraining(training models.Training) (string, error) {
 	return RandStringRunes(16), nil
 }
 
