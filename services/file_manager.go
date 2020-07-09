@@ -28,6 +28,15 @@ func CheckPathExists(path string) error {
 	return err
 }
 
+func CheckDatasetPathValid(path string) error {
+	datasetPathPrefix := configs.Config.File.DatasetDir + "/storage"
+	if strings.HasPrefix(path, datasetPathPrefix) {
+		return nil
+	} else {
+		return errors.New(fmt.Sprint("Dataset path should be in: ", datasetPathPrefix))
+	}
+}
+
 func CheckFileName(filename string) (string, error) {
 	for _, filetype := range FILETYPES_SUPPORTED {
 		if strings.HasSuffix(filename, filetype) {
@@ -75,7 +84,6 @@ func GetDatasetTempPath(filetype string) (string, error) {
 	}
 	datasetTempPath := fmt.Sprintf("%s/%d%s", datasetTempDir, time.Now().UnixNano(), filetype)
 	return datasetTempPath, nil
-
 }
 
 func ExtractFile(fromPath, filetype string) (string, error) {

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -35,11 +36,22 @@ type updateDatasetReq struct {
 	Description string `json:"description" binding:"required"`
 }
 
+type GetDatasetResp struct {
+	Dataset models.Dataset `json:"dataset"`
+}
+
+type GetDatasetsResp struct {
+	Datasets []models.Dataset `json:"datasets"`
+	Total    int              `json:"total"`
+	Page     int              `json:"page"`
+	Count    int              `json:"count"`
+}
+
 // @Summary list datasets
 // @Produce  json
 // @Param page query int true "page number"
 // @Param count query int true "count per page"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [get]
@@ -65,7 +77,7 @@ func lsDatasets(c *gin.Context) error {
 // @Summary get dataset by id
 // @Produce  json
 // @Param id query int true "dataset id"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessRespGetDataset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id [get]
@@ -79,9 +91,7 @@ func getDataset(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := gin.H{
-		"dataset": dataset,
-	}
+	data := GetDatasetResp{Dataset: dataset}
 	return SuccessResp(c, data)
 }
 
@@ -100,6 +110,10 @@ func createDataset(c *gin.Context) error {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
+	}
+	err = services.CheckDatasetPathValid(req.Path)
+	if err != nil {
+		return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
 	}
 	err = services.CheckPathExists(req.Path)
 	if err != nil {

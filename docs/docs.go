@@ -51,7 +51,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespGetDatasets"
                         }
                     },
                     "400": {
@@ -144,7 +144,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespGetDataset"
                         }
                     },
                     "400": {
@@ -493,6 +493,44 @@ var doc = `{
         }
     },
     "definitions": {
+        "models.Dataset": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.APIException": {
             "type": "object",
             "properties": {
@@ -515,6 +553,62 @@ var doc = `{
                 },
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetDataset": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetDatasetResp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetDatasets": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetDatasetsResp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.GetDatasetResp": {
+            "type": "object",
+            "properties": {
+                "dataset": {
+                    "$ref": "#/definitions/models.Dataset"
+                }
+            }
+        },
+        "routers.GetDatasetsResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "datasets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Dataset"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         }

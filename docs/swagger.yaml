@@ -1,4 +1,29 @@
 definitions:
+  models.Dataset:
+    properties:
+      created_at:
+        type: string
+      creator:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+      version:
+        type: string
+    type: object
   routers.APIException:
     properties:
       code:
@@ -14,6 +39,42 @@ definitions:
         type: object
       msg:
         type: string
+    type: object
+  routers.APISuccessRespGetDataset:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetDatasets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetsResp'
+      msg:
+        type: string
+    type: object
+  routers.GetDatasetResp:
+    properties:
+      dataset:
+        $ref: '#/definitions/models.Dataset'
+    type: object
+  routers.GetDatasetsResp:
+    properties:
+      count:
+        type: integer
+      datasets:
+        items:
+          $ref: '#/definitions/models.Dataset'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
     type: object
 info:
   contact: {}
@@ -38,7 +99,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespGetDatasets'
         "400":
           description: error
           schema:
@@ -123,7 +184,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespGetDataset'
         "400":
           description: error
           schema:
