@@ -21,8 +21,8 @@ type modelsetId struct {
 }
 
 type lsModelsetsReq struct {
-	Page  int `form:"page"`
-	Count int `form:"count,default=10"`
+	PageNum  int `form:"pageNum"`
+	PageSize int `form:"pageSize,default=10"`
 }
 
 type createModelsetReq struct {
@@ -41,16 +41,17 @@ type GetModelsetResp struct {
 }
 
 type GetModelsetsResp struct {
-	Models []models.Modelset `json:"models"`
-	Total  int               `json:"total"`
-	Page   int               `json:"page"`
-	Count  int               `json:"count"`
+	Models    []models.Modelset `json:"models"`
+	Total     int               `json:"total"`
+	TotalPage int               `json:"totalPage"`
+	PageNum   int               `json:"pageNum"`
+	PageSize  int               `json:"pageSize"`
 }
 
 // @Summary list models
 // @Produce  json
-// @Param page query int true "page number, from 1"
-// @Param count query int true "count per page"
+// @Param pageNum query int true "page number, from 1"
+// @Param pageSize query int true "count per page"
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -61,15 +62,16 @@ func lsModelsets(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	modelsets, total, err := services.ListModelSets(req.Page, req.Count)
+	modelsets, total, err := services.ListModelSets(req.PageNum, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := GetModelsetsResp{
-		Models: modelsets,
-		Total:  total,
-		Page:   req.Page,
-		Count:  req.Count,
+		Models:    modelsets,
+		Total:     total,
+		PageNum:   req.PageNum,
+		PageSize:  req.PageSize,
+		TotalPage: total/req.PageSize + 1,
 	}
 	return SuccessResp(c, data)
 }

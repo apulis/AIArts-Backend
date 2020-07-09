@@ -35,14 +35,14 @@ var doc = `{
                     {
                         "type": "integer",
                         "description": "page number, from 1",
-                        "name": "page",
+                        "name": "pageNum",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "count per page",
-                        "name": "count",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     }
@@ -328,14 +328,14 @@ var doc = `{
                     {
                         "type": "integer",
                         "description": "page number, from 1",
-                        "name": "page",
+                        "name": "pageNum",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "count per page",
-                        "name": "count",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     }
@@ -686,13 +686,13 @@ var doc = `{
         "models.Dataset": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "creator": {
                     "type": "string"
                 },
-                "deleted_at": {
+                "deletedAt": {
                     "type": "string"
                 },
                 "description": {
@@ -713,7 +713,7 @@ var doc = `{
                 "status": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
                 "version": {
@@ -724,13 +724,13 @@ var doc = `{
         "models.Modelset": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "creator": {
                     "type": "string"
                 },
-                "deleted_at": {
+                "deletedAt": {
                     "type": "string"
                 },
                 "description": {
@@ -739,7 +739,7 @@ var doc = `{
                 "id": {
                     "type": "integer"
                 },
-                "job_id": {
+                "jobId": {
                     "type": "string"
                 },
                 "name": {
@@ -757,7 +757,7 @@ var doc = `{
                 "type": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
                 "version": {
@@ -857,19 +857,22 @@ var doc = `{
         "routers.GetDatasetsResp": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "datasets": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Dataset"
                     }
                 },
-                "page": {
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
                     "type": "integer"
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
                     "type": "integer"
                 }
             }
@@ -885,19 +888,22 @@ var doc = `{
         "routers.GetModelsetsResp": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "models": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Modelset"
                     }
                 },
-                "page": {
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
                     "type": "integer"
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
                     "type": "integer"
                 }
             }

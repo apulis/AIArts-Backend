@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
@@ -10,6 +11,8 @@ import (
 
 var db = database.Db
 var logger = loggers.Log
+
+type UnixTime time.Time
 
 func init() {
 	createTableIfNotExists(Dataset{})
@@ -27,4 +30,9 @@ func createTableIfNotExists(modelType interface{}) {
 	} else {
 		logger.Info(fmt.Sprintf("Table of %s already exists.", modelName))
 	}
+}
+
+func (t UnixTime) MarshalJSON() ([]byte, error) {
+	stamp := fmt.Sprintf("%d", time.Time(t).Unix())
+	return []byte(stamp), nil
 }
