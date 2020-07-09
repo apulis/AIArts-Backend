@@ -38,7 +38,7 @@ func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 	return codes, 1, 1, nil
 }
 
-func CreateCodeset(name, description string, framework models.AIFrameworkItem) (string, error) {
+func CreateCodeset(name, description string, num int) (string, error) {
 	return RandStringRunes(16), nil
 }
 

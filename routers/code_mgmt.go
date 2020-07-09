@@ -98,7 +98,7 @@ func createCodeset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateCodeset(req.Name, req.Description, req.FrameworkInfo)
+	id, err = services.CreateCodeset(req.Name, req.Engine, req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

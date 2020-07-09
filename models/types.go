@@ -6,6 +6,7 @@ type CodesetItem struct {
 	Status      string `json:"status" binding:"required"`
 	Engine      string `json:"engine"  binding:"required"`
 	CodePath 	string `json:"codePath"`
+	CodeUrl 	string `json:"codeUrl"`
 	CreateTime  int64 `json:"createTime"`
 	Desc		string `json:"desc"`
 }
