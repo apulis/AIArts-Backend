@@ -26,11 +26,10 @@ func GetCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 	item := &models.CodesetItem{
 		Name: RandStringRunes(16),
 		Status: "started",
-		Image: "tf_1.15",
-		Creator: "bifeng.peng",
+		Engine: "tf_1.15",
 		CodePath: "/home/bifeng.peng/",
 		CreateTime: "2020-07-01T08:46:42.075952+00:00",
-		Description: "test test test",
+		Desc: "test test test",
 	}
 
 	codes := make([] *models.CodesetItem, 0)
