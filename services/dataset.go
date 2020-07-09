@@ -36,7 +36,7 @@ func CreateDataset(name, description, creator, version, path string) error {
 }
 
 func UpdateDataset(id int, description string) error {
-	dataset, err := models.GetDataSetById(id)
+	dataset, err := models.GetDatasetById(id)
 	if err != nil {
 		return err
 	}
@@ -45,14 +45,21 @@ func UpdateDataset(id int, description string) error {
 }
 
 func GetDataset(id int) (models.Dataset, error) {
-	return models.GetDataSetById(id)
+	return models.GetDatasetById(id)
 }
 
 func DeleteDataset(id int) error {
-	dataset, err := models.GetDataSetById(id)
+	dataset, err := models.GetDatasetById(id)
 	if err != nil {
 		return err
 	}
+
+	dataset.Status = DATASET_STATUS_DELETING
+	err = models.UpdateDataset(&dataset)
+	if err != nil {
+		return err
+	}
+
 	err = os.RemoveAll(dataset.Path)
 	if err != nil {
 		return err

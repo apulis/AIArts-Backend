@@ -13,6 +13,7 @@ var logger = loggers.Log
 
 func init() {
 	createTableIfNotExists(Dataset{})
+	createTableIfNotExists(Modelset{})
 }
 
 func createTableIfNotExists(modelType interface{}) {

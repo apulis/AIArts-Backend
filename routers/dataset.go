@@ -13,7 +13,7 @@ func AddGroupDataset(r *gin.Engine) {
 	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))
 	group.POST("/:id", wrapper(updateDataset))
-	group.DELETE("/:id", wrapper(DeleteDataset))
+	group.DELETE("/:id", wrapper(deleteDataset))
 }
 
 type datasetId struct {
@@ -49,7 +49,7 @@ type GetDatasetsResp struct {
 
 // @Summary list datasets
 // @Produce  json
-// @Param page query int true "page number"
+// @Param page query int true "page number, from 1"
 // @Param count query int true "count per page"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
@@ -65,11 +65,11 @@ func lsDatasets(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := gin.H{
-		"datasets": datasets,
-		"total":    total,
-		"page":     req.Page,
-		"count":    req.Count,
+	data := GetDatasetsResp{
+		Datasets: datasets,
+		Total:    total,
+		Page:     req.Page,
+		Count:    req.Count,
 	}
 	return SuccessResp(c, data)
 }
@@ -160,7 +160,7 @@ func updateDataset(c *gin.Context) error {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id [delete]
-func DeleteDataset(c *gin.Context) error {
+func deleteDataset(c *gin.Context) error {
 	var id datasetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {

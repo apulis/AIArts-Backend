@@ -20,7 +20,7 @@ func AddGroupFile(r *gin.Engine) {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/files/upload/dataset [get]
+// @Router /ai_arts/api/files/upload/dataset [post]
 func uploadDataset(c *gin.Context) error {
 	file, err := c.FormFile("data")
 	if err != nil {
@@ -65,7 +65,7 @@ func uploadDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/files/upload/model [get]
+// @Router /ai_arts/api/files/upload/model [post]
 func uploadModel(c *gin.Context) error {
 	return nil
 }

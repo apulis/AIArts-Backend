@@ -33,7 +33,7 @@ func ListDatasets(offset, limit int) ([]Dataset, int, error) {
 	return datasets, total, nil
 }
 
-func GetDataSetById(id int) (Dataset, error) {
+func GetDatasetById(id int) (Dataset, error) {
 	dataset := Dataset{ID: id}
 	res := db.First(&dataset)
 	if res.Error != nil {
