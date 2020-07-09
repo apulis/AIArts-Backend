@@ -6,120 +6,116 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddGroupDataset(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/datasets")
+func AddGroupModel(r *gin.Engine) {
+	group := r.Group("/ai_arts/api/models")
 
-	group.GET("/", wrapper(lsDatasets))
-	group.GET("/:id", wrapper(getDataset))
-	group.POST("/", wrapper(createDataset))
-	group.POST("/:id", wrapper(updateDataset))
-	group.DELETE("/:id", wrapper(deleteDataset))
+	group.GET("/", wrapper(lsModelsets))
+	group.GET("/:id", wrapper(getModelset))
+	group.POST("/", wrapper(createModelset))
+	group.POST("/:id", wrapper(updateModelset))
+	group.DELETE("/:id", wrapper(deleteModelset))
 }
 
-type datasetId struct {
+type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
 
-type lsDatasetsReq struct {
+type lsModelsetsReq struct {
 	Page  int `form:"page"`
 	Count int `form:"count,default=10"`
 }
 
-type createDatasetReq struct {
+type createModelsetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Creator     string `json:"creator" binding:"required"`
 	Path        string `json:"path" binding:"required"`
 }
 
-type updateDatasetReq struct {
+type updateModelsetReq struct {
 	Description string `json:"description" binding:"required"`
 }
 
-type GetDatasetResp struct {
-	Dataset models.Dataset `json:"dataset"`
+type GetModelsetResp struct {
+	Model models.Modelset `json:"model"`
 }
 
-type GetDatasetsResp struct {
-	Datasets []models.Dataset `json:"datasets"`
-	Total    int              `json:"total"`
-	Page     int              `json:"page"`
-	Count    int              `json:"count"`
+type GetModelsetsResp struct {
+	Models []models.Modelset `json:"models"`
+	Total  int               `json:"total"`
+	Page   int               `json:"page"`
+	Count  int               `json:"count"`
 }
 
-// @Summary list datasets
+// @Summary list models
 // @Produce  json
 // @Param page query int true "page number, from 1"
 // @Param count query int true "count per page"
-// @Success 200 {object} APISuccessRespGetDatasets "success"
+// @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets [get]
-func lsDatasets(c *gin.Context) error {
-	var req lsDatasetsReq
+// @Router /ai_arts/api/models [get]
+func lsModelsets(c *gin.Context) error {
+	var req lsModelsetsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	datasets, total, err := services.ListDatasets(req.Page, req.Count)
+	modelsets, total, err := services.ListModelSets(req.Page, req.Count)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := GetDatasetsResp{
-		Datasets: datasets,
-		Total:    total,
-		Page:     req.Page,
-		Count:    req.Count,
+	data := GetModelsetsResp{
+		Models: modelsets,
+		Total:  total,
+		Page:   req.Page,
+		Count:  req.Count,
 	}
 	return SuccessResp(c, data)
 }
 
-// @Summary get dataset by id
+// @Summary get model by id
 // @Produce  json
 // @Param id path int true "dataset id"
-// @Success 200 {object} APISuccessRespGetDataset "success"
+// @Success 200 {object} APISuccessRespGetModelset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets/:id [get]
-func getDataset(c *gin.Context) error {
-	var id datasetId
+// @Router /ai_arts/api/models/:id [get]
+func getModelset(c *gin.Context) error {
+	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	dataset, err := services.GetDataset(id.ID)
+	modelset, err := services.GetModelset(id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := GetDatasetResp{Dataset: dataset}
+	data := GetModelsetResp{Model: modelset}
 	return SuccessResp(c, data)
 }
 
-// @Summary create dataset
+// @Summary create model
 // @Produce  json
-// @Param name body string true "dataset name"
-// @Param description body string true "dataset description"
-// @Param creator body string true "dataset creator"
-// @Param path body string true "dataset storage path"
+// @Param name body string true "model name"
+// @Param description body string true "model description"
+// @Param creator body string true "model creator"
+// @Param path body string true "model storage path"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets [post]
-func createDataset(c *gin.Context) error {
-	var req createDatasetReq
+// @Router /ai_arts/api/models [post]
+func createModelset(c *gin.Context) error {
+	var req createModelsetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
-	}
-	err = services.CheckDatasetPathValid(req.Path)
-	if err != nil {
-		return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
 	}
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	err = services.CreateDataset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	err = services.CreateModelset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -127,25 +123,25 @@ func createDataset(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
-// @Summary update dataset
+// @Summary update model
 // @Produce  json
-// @Param description path string true "dataset description"
+// @Param description path string true "model description"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets/:id [post]
-func updateDataset(c *gin.Context) error {
-	var id datasetId
+// @Router /ai_arts/api/models/:id [post]
+func updateModelset(c *gin.Context) error {
+	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	var req updateDatasetReq
+	var req updateModelsetReq
 	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.UpdateDataset(id.ID, req.Description)
+	err = services.UpdateModelset(id.ID, req.Description)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -153,20 +149,20 @@ func updateDataset(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
-// @Summary delete dataset by id
+// @Summary delete model by id
 // @Produce  json
-// @Param id path int true "dataset id"
+// @Param id path int true "model id"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets/:id [delete]
-func deleteDataset(c *gin.Context) error {
-	var id datasetId
+// @Router /ai_arts/api/models/:id [delete]
+func deleteModelset(c *gin.Context) error {
+	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.DeleteDataset(id.ID)
+	err = services.DeleteModelset(id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

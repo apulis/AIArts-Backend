@@ -14,6 +14,13 @@ func AddGroupFile(r *gin.Engine) {
 	group.POST("/upload/model", wrapper(uploadModel))
 }
 
+// @Summary upload dataset file
+// @Produce  json
+// @Param data body string true "upload file key 'data'"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/files/upload/dataset [post]
 func uploadDataset(c *gin.Context) error {
 	file, err := c.FormFile("data")
 	if err != nil {
@@ -52,6 +59,13 @@ func uploadDataset(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"path": unzippedPath})
 }
 
+// @Summary upload dataset file
+// @Produce  json
+// @Param data body string true "upload file key 'data'"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/files/upload/model [post]
 func uploadModel(c *gin.Context) error {
 	return nil
 }

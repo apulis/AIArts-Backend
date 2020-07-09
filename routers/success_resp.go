@@ -12,7 +12,31 @@ type APISuccessResp struct {
 	Data interface{} `json:"data"`
 }
 
-func SuccessResp(c *gin.Context, data gin.H) error {
+type APISuccessRespGetDataset struct {
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
+	Data GetDatasetResp `json:"data"`
+}
+
+type APISuccessRespGetDatasets struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data GetDatasetsResp `json:"data"`
+}
+
+type APISuccessRespGetModelset struct {
+	Code int             `json:"code"`
+	Msg  string          `json:"msg"`
+	Data GetModelsetResp `json:"data"`
+}
+
+type APISuccessRespGetModelsets struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetModelsetsResp `json:"data"`
+}
+
+func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{
 		Code: SUCCESS_CODE,
 		Msg:  "success",

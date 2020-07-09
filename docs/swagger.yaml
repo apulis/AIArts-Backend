@@ -1,4 +1,58 @@
 definitions:
+  models.Dataset:
+    properties:
+      created_at:
+        type: string
+      creator:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+      version:
+        type: string
+    type: object
+  models.Modelset:
+    properties:
+      created_at:
+        type: string
+      creator:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      job_id:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+      status:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      version:
+        type: string
+    type: object
   routers.APIException:
     properties:
       code:
@@ -15,61 +69,86 @@ definitions:
       msg:
         type: string
     type: object
+  routers.APISuccessRespGetDataset:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetDatasets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetsResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetModelset:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetModelsetResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetModelsets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetModelsetsResp'
+      msg:
+        type: string
+    type: object
+  routers.GetDatasetResp:
+    properties:
+      dataset:
+        $ref: '#/definitions/models.Dataset'
+    type: object
+  routers.GetDatasetsResp:
+    properties:
+      count:
+        type: integer
+      datasets:
+        items:
+          $ref: '#/definitions/models.Dataset'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  routers.GetModelsetResp:
+    properties:
+      model:
+        $ref: '#/definitions/models.Modelset'
+    type: object
+  routers.GetModelsetsResp:
+    properties:
+      count:
+        type: integer
+      models:
+        items:
+          $ref: '#/definitions/models.Modelset'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
 info:
   contact: {}
   license: {}
 paths:
-  /ai_arts/api/code:
-    get:
-      parameters:
-      - description: page number
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: size per page
-        in: query
-        name: pagesize
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: list codesets
-  /ai_arts/api/common/resource:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: get available resource
   /ai_arts/api/datasets:
     get:
       parameters:
-      - description: page number
+      - description: page number, from 1
         in: query
         name: page
         required: true
@@ -85,7 +164,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespGetDatasets'
         "400":
           description: error
           schema:
@@ -98,25 +177,29 @@ paths:
     post:
       parameters:
       - description: dataset name
-        in: query
+        in: body
         name: name
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset description
-        in: query
+        in: body
         name: description
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset creator
-        in: query
+        in: body
         name: creator
         required: true
-        type: string
+        schema:
+          type: string
       - description: dataset storage path
-        in: query
+        in: body
         name: path
         required: true
-        type: string
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -132,12 +215,12 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: create codeset
+      summary: create dataset
   /ai_arts/api/datasets/:id:
-    get:
+    delete:
       parameters:
       - description: dataset id
-        in: query
+        in: path
         name: id
         required: true
         type: integer
@@ -156,11 +239,34 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
+      summary: delete dataset by id
+    get:
+      parameters:
+      - description: dataset id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetDataset'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
       summary: get dataset by id
     post:
       parameters:
       - description: dataset description
-        in: query
+        in: path
         name: description
         required: true
         type: string
@@ -179,7 +285,198 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: delete codeset
+      summary: update dataset
+  /ai_arts/api/files/upload/dataset:
+    post:
+      parameters:
+      - description: upload file key 'data'
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upload dataset file
+  /ai_arts/api/files/upload/model:
+    post:
+      parameters:
+      - description: upload file key 'data'
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upload dataset file
+  /ai_arts/api/models:
+    get:
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: count per page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelsets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list models
+    post:
+      parameters:
+      - description: model name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: model description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      - description: model creator
+        in: body
+        name: creator
+        required: true
+        schema:
+          type: string
+      - description: model storage path
+        in: body
+        name: path
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create model
+  /ai_arts/api/models/:id:
+    delete:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete model by id
+    get:
+      parameters:
+      - description: dataset id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelset'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get model by id
+    post:
+      parameters:
+      - description: model description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update model
   /api/annotations:
     post:
       parameters:
@@ -229,30 +526,6 @@ paths:
             type: string
       summary: sample
   /api/inferences:
-    post:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: CreatedBy
-        in: query
-        name: created_by
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: sample
-  /api/models:
     post:
       parameters:
       - description: Name
