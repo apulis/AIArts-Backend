@@ -19,4 +19,5 @@ file:
   modeldir: /test_data/model
   sizelimit: 1000000000
 
-backendUrl: https://huawei-proxy01.sigsus.cn
+Anno:
+  backendUrl: https://huawei-proxy01.sigsus.cn
