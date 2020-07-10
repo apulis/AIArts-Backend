@@ -13,6 +13,7 @@ import (
 
 
 
+
 func doRequest(url, method string, headers map[string]string, rawBody interface {}) ([]byte, error) {
 
 	var body io.Reader = nil
@@ -46,7 +47,7 @@ func doRequest(url, method string, headers map[string]string, rawBody interface 
 		}
 	}
 
-        client := http.DefaultClient
+	client := http.DefaultClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -58,7 +59,7 @@ func doRequest(url, method string, headers map[string]string, rawBody interface 
 	responseData := make([]byte, 0)
 	responseData, err = ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 0 {
-		
+
 		Status := resp.Status
 		StatusCode := resp.StatusCode
 
@@ -68,5 +69,19 @@ func doRequest(url, method string, headers map[string]string, rawBody interface 
 	}
 
 	return responseData, err
+}
 
+func DoRequest(url, method string, headers map[string]string, rawBody interface {}, output interface{}) error {
+
+	rspData, err := doRequest(url, method, headers, rawBody)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(rspData, output)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
