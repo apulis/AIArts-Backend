@@ -13,8 +13,7 @@ var BackendUrl string
 func GetProjects() ([]models.Project, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	resp, err := grequests.Get(BackendUrl+"/api/projects", nil)
-	logger.Info(resp)
-	log.Println(resp)
+	logger.Error(resp)
 	var projects []models.Project
 	json.Unmarshal(resp.Bytes(),&projects)
 	return projects,err
