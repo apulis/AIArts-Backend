@@ -21,6 +21,7 @@ func GetProjects() ([]models.Project, error) {
 		logger.Error("response code is ",resp.StatusCode)
 		return nil,errors.New(string(resp.StatusCode))
 	}
+	logger.Info(resp.String())
 	var projects []models.Project
 	json.Unmarshal(resp.Bytes(),&projects)
 	return projects,err
