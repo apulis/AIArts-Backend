@@ -4,11 +4,15 @@ go 1.14
 
 require (
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
 	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/sessions v0.0.3
+	github.com/gin-gonic/contrib v0.0.0-20191209060500-d6e26eeaa607
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gorilla/sessions v1.2.0 // indirect
 	github.com/jinzhu/gorm v1.9.14
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
