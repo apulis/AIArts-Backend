@@ -22,17 +22,7 @@ func RandStringRunes(n int) string {
 }
 
 func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
-
-	rand.Seed(time.Now().Unix())
-	item := &models.CodesetItem{
-		Name: RandStringRunes(16),
-		Status: "started",
-		Engine: "tf_1.15",
-		CodePath: "/home/bifeng.peng/",
-		CreateTime: time.Now().Unix(),
-		Desc: "test test test",
-	}
-
+	
 	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
 							"yunxia.chu", "yunxia.chu", 10, "atlas")
 	jobList := &models.JobList{}
@@ -44,7 +34,7 @@ func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 	}
 
 	codes := make([] *models.CodesetItem, 0)
-	for k, v:= range jobList.RunningJobs {
+	for _, v:= range jobList.RunningJobs {
 		codes = append(codes, &models.CodesetItem{
 			Id:         v.JobId,
 			Name:       v.JobName,
@@ -57,7 +47,7 @@ func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 		})
 	}
 
-	for k, v:= range jobList.FinishedJobs {
+	for _, v:= range jobList.FinishedJobs {
 		codes = append(codes, &models.CodesetItem{
 			Id:         v.JobId,
 			Name:       v.JobName,
