@@ -2,11 +2,11 @@ definitions:
   models.Dataset:
     properties:
       createdAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       creator:
         type: string
       deletedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       description:
         type: string
       id:
@@ -20,18 +20,18 @@ definitions:
       status:
         type: string
       updatedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       version:
         type: string
     type: object
   models.Modelset:
     properties:
       createdAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       creator:
         type: string
       deletedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       description:
         type: string
       id:
@@ -49,8 +49,13 @@ definitions:
       type:
         type: string
       updatedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       version:
+        type: string
+    type: object
+  models.UnixTime:
+    properties:
+      time.Time:
         type: string
     type: object
   routers.APIException:

@@ -17,6 +17,12 @@ func ListModelSets(page, count int) ([]models.Modelset, int, error) {
 	return models.ListModelSets(offset, limit)
 }
 
+func ListModelSetsByName(page, count int, name string) ([]models.Modelset, int, error) {
+	offset := count * (page - 1)
+	limit := count
+	return models.ListModelSetsByName(offset, limit, name)
+}
+
 func CreateModelset(name, description, creator, version, path, jobId string) error {
 	size, err := GetDirSize(path)
 	if err != nil {

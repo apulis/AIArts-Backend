@@ -660,13 +660,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
                     "type": "string"
@@ -687,7 +687,7 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
                     "type": "string"
@@ -698,13 +698,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
                     "type": "string"
@@ -731,9 +731,17 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UnixTime": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
                     "type": "string"
                 }
             }
