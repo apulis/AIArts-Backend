@@ -25,7 +25,8 @@ func GetProjects() ([]models.Project, error) {
 	var projects []models.Project
 	var pro map[string]interface{}
 	json.Unmarshal(resp.Bytes(),&pro)
-	projects,ok := pro["projects"].([]models.Project)
+	projectsMap,ok := pro["projects"].([]map[string]string)
+	logger.Info(projectsMap)
 	if !ok {
 		logger.Error("get response fail",pro["projects"])
 	}
