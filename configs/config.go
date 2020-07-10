@@ -11,6 +11,7 @@ type ProjectConfig struct {
 	Log  LogConfig
 	Db   DbConfig
 	File FileConfig
+	Anno AnnotationConfig
 }
 
 type LogConfig struct {
@@ -36,7 +37,7 @@ type FileConfig struct {
 }
 
 type AnnotationConfig struct {
-	backendUrl string
+	BackendUrl string
 }
 
 var Config ProjectConfig
