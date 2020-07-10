@@ -41,6 +41,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Router /api/annotations [post]
 func GetProjects(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
+	logger.Info("token is ",token)
 	token = strings.Split(token,"Bearer ")[1]
 	configs.Config.Token = token
 	projects,err := services.GetProjects()
