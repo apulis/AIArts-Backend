@@ -5,6 +5,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
+	"fmt"
 	"log"
 )
 
@@ -13,7 +14,7 @@ var BackendUrl string
 func GetProjects() ([]models.Project, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	resp, err := grequests.Get(BackendUrl+"/api/projects", nil)
-	log.Fatal(resp)
+	fmt.Println(resp)
 	var projects []models.Project
 	json.Unmarshal(resp.Bytes(),&projects)
 	return projects,err
