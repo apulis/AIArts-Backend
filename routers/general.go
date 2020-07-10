@@ -17,7 +17,7 @@ type GetResourceReq struct {
 }
 
 type GetResourceRsp struct {
-        AIFrameworkList         []models.AIFrameworkItem `json:"aiFrameworkList"`
+        AIFrameworks            map[string][]string `json:"aiFrameworks"`
         DeviceList              []models.DeviceItem `json:"deviceList"`
 }
 

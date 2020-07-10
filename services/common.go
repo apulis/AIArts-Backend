@@ -15,23 +15,17 @@ var db = database.Db
 var logger = loggers.Log
 
 
-func GetResource() ([]models.AIFrameworkItem, []models.DeviceItem, error) {
+func GetResource() (map[string][]string, []models.DeviceItem, error) {
 
-	fw := make([]models.AIFrameworkItem, 0)
+	fw := make(map[string]string, 0)
 	devices := make([]models.DeviceItem, 0)
 
-	engine := models.AIFrameworkItem{
-		Name:   "tensorflow",
-		Engine: "tf_withtools:1.15",
-	}
-
-	device := models.DeviceItem{
+	fw["tensorflow"] = make([]string, 0)
+		"tf_withtools:1.15"
+	devices = append(devices, models.DeviceItem{
 		DeviceType: "npu",
 		Avail:      1,
-	}
-
-	fw = append(fw, engine)
-	devices = append(devices, device)
+	})
 
 	return fw, devices, nil
 }

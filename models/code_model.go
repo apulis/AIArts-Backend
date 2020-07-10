@@ -11,11 +11,6 @@ type CodesetItem struct {
 	Desc		string `json:"desc"`
 }
 
-type AIFrameworkItem struct {
-	Name 		string `json:"name"`
-	Engine 		string `json:"engine"`
-}
-
 type DeviceItem struct {
 	DeviceType	string 	`json:"deviceType"`
 	Avail		int 	`json:"avail"`
