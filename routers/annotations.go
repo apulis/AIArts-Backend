@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/apulis/AIArtsBackend/models"
+	"strings"
+	"github.com/apulis/AIArtsBackend/configs"
 )
 
 type UpdateProjectParams struct {
@@ -38,6 +40,9 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/annotations [post]
 func GetProjects(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projects,err := services.GetProjects()
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

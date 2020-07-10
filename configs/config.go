@@ -12,6 +12,7 @@ type ProjectConfig struct {
 	Db   DbConfig
 	File FileConfig
 	Anno AnnotationConfig
+	Token string
 }
 
 type LogConfig struct {

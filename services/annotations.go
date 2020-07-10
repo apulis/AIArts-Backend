@@ -13,7 +13,10 @@ var BackendUrl string
 
 func GetProjects() ([]models.Project, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/api/projects", nil)
+	ro := &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
+	}
+	resp, err := grequests.Get(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode!=200 {
 		return nil,errors.New(string(resp.StatusCode))
 	}
