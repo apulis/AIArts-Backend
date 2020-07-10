@@ -35,6 +35,10 @@ type FileConfig struct {
 	SizeLimit  int
 }
 
+type AnnotationConfig struct {
+	backendUrl string
+}
+
 var Config ProjectConfig
 
 func init() {
