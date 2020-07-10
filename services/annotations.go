@@ -18,6 +18,7 @@ func GetProjects() ([]models.Project, error) {
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	var projects []models.Project
