@@ -54,6 +54,7 @@ type GetModelsetsResp struct {
 // @Produce  json
 // @Param pageNum query int true "page number, from 1"
 // @Param pageSize query int true "count per page"
+// @Param name query int true "name of model"
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"

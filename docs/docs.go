@@ -240,6 +240,43 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/files/download/model/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "download model by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "model id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/files/upload/dataset": {
             "post": {
                 "produces": [
@@ -338,6 +375,13 @@ var doc = `{
                         "name": "pageSize",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "name of model",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -404,11 +448,11 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "download model by id",
+                "summary": "get model by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "model id",
+                        "description": "dataset id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -418,7 +462,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespGetModelset"
                         }
                     },
                     "400": {

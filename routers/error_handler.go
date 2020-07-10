@@ -49,6 +49,10 @@ func newAPIException(statusCode, code int, msg string) *APIException {
 	}
 }
 
+func UnAuthorizedError() *APIException {
+	return newAPIException(http.StatusUnauthorized, AUTH_ERROR_CODE, http.StatusText(http.StatusUnauthorized))
+}
+
 func ServerError() *APIException {
 	return newAPIException(http.StatusInternalServerError, SERVER_ERROR_CODE, http.StatusText(http.StatusInternalServerError))
 }

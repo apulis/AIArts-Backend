@@ -18,3 +18,7 @@ file:
   datasetdir: /test_data/dataset
   modeldir: /test_data/model
   sizelimit: 1000000000
+
+auth:
+  url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"
+  key: "Sign key for JWT"

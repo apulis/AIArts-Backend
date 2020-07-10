@@ -344,6 +344,30 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/files/download/model/:id:
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: download model by id
   /ai_arts/api/files/upload/dataset:
     post:
       parameters:
@@ -405,6 +429,11 @@ paths:
       - description: count per page
         in: query
         name: pageSize
+        required: true
+        type: integer
+      - description: name of model
+        in: query
+        name: name
         required: true
         type: integer
       produces:
@@ -473,7 +502,7 @@ paths:
       summary: delete model by id
     get:
       parameters:
-      - description: model id
+      - description: dataset id
         in: path
         name: id
         required: true
@@ -484,7 +513,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespGetModelset'
         "400":
           description: error
           schema:
@@ -493,7 +522,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: download model by id
+      summary: get model by id
     post:
       parameters:
       - description: model description

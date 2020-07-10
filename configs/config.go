@@ -11,6 +11,7 @@ type ProjectConfig struct {
 	Log  LogConfig
 	Db   DbConfig
 	File FileConfig
+	Auth AuthConfig
 }
 
 type LogConfig struct {
@@ -33,6 +34,11 @@ type FileConfig struct {
 	DatasetDir string
 	ModelDir   string
 	SizeLimit  int
+}
+
+type AuthConfig struct {
+	Url string
+	Key string
 }
 
 var Config ProjectConfig
