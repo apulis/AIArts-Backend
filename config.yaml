@@ -7,8 +7,8 @@ log:
 
 db:
   username: root
-  password: root
-  host: 127.0.0.1
+  password: corona@2020@wuhan
+  host: huawei-infra01.sigsus.cn
   port: 3306
   database: ai_arts
   maxopenconns: 10
