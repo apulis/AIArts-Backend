@@ -11,6 +11,7 @@ type ProjectConfig struct {
 	Log  LogConfig
 	Db   DbConfig
 	File FileConfig
+	DltsUrl string
 }
 
 type LogConfig struct {
