@@ -19,6 +19,7 @@ type GetResourceReq struct {
 type GetResourceRsp struct {
         AIFrameworks            map[string][]string `json:"aiFrameworks"`
         DeviceList              []models.DeviceItem `json:"deviceList"`
+        CodePathPrefix 			string `json:"codePathPrefix"`
 }
 
 // @Summary get available resource
@@ -37,6 +38,7 @@ func getResource(c *gin.Context) error {
 	rsp := &GetResourceRsp{
 		framework,
 		devices,
+		"/home/username",
 	}
 	return SuccessResp(c, rsp)
 }
