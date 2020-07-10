@@ -1,14 +1,17 @@
 package services
 
 import (
-	"bufio"
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/apulis/AIArtsBackend/models"
+	"errors"
+	"io"
+	"io/ioutil"
+	"strings"
+	"net/http"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
-	"go/scanner"
-	"net/http"
+	"github.com/apulis/AIArtsBackend/models"
 )
 
 var db = database.Db
@@ -30,32 +33,75 @@ func GetResource() (map[string][]string, []models.DeviceItem, error) {
 	return fw, devices, nil
 }
 
+func doRequest(url, method string, headers map[string]string, rawBody interface {}) ([]byte, error) {
 
-func RequestDLTS(obj interface{}) {
+	var body io.Reader = nil
+	if rawBody != nil {
+		switch t := rawBody.(type) {
+		case string:
+			body = strings.NewReader(t)
 
-	resp, err := http.Get(configs.Config.DltsUrl)
+		case []byte:
+			body = bytes.NewReader(t)
+
+		default:
+			data, err := json.Marshal(rawBody)
+			if err != nil {
+				err = fmt.Errorf("body 序列化失败: %v", err)
+				return nil, err
+			}
+
+			body = bytes.NewReader(data)
+		}
+	}
+
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	if len(headers) != 0 {
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
+	}
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
 	}
 
 	defer resp.Body.Close()
-		fmt.Println("Response status:", resp.Status)
-	Print the first 5 lines of the response body.
 
-		scanner := bufio.NewScanner(resp.Body)
-	for i := 0; scanner.Scan() && i < 5; i++ {
-		fmt.Println(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		panic(err)
-	}
+	// read response
+	responseData := make([]byte, 0)
+	responseData, err = ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 0 {
 
-	this.Request()
-	if this.err == nil && obj != nil {
-		err := jsonUtil.Unmarshal(this.responseData, obj)
-		if err != nil {
-			this.err = fmt.Errorf("json decode error, responseText: %s, err=%v", this.ResponseText(), err)
+		Status := resp.Status
+		StatusCode := resp.StatusCode
+
+		if StatusCode < 200 || StatusCode >= 400 {
+			err = errors.New(Status)
 		}
 	}
-	return this
+
+	return responseData, err
 }
+
+func DoRequest(url, method string, headers map[string]string, rawBody interface {}, output interface{}) error {
+
+	rspData, err := doRequest(url, method, headers, rawBody)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(rspData, output)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+

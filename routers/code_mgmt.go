@@ -14,7 +14,6 @@ func AddGroupCode(r *gin.Engine) {
 	group.DELETE("/:id", wrapper(delCodeset))
 }
 
-
 type GetAllCodesetReq struct {
 	PageNum 	int 	`json:"pageNum"`
 	PageSize 	int 	`json:"pageSize"`
