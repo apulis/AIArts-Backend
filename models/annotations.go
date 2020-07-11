@@ -41,3 +41,21 @@ type UpdateDataSet struct {
 	DataSetBindId string
 	DataSetPath string
 }
+
+type TasksList struct {
+	Successful string
+	Msg string
+	TaskList []interface{}
+}
+
+type NextTask struct {
+	Successful string
+	Msg string
+	Next interface{}
+}
+
+type OneTask struct {
+	Successful string
+	Msg string
+	Annotations interface{}
+}

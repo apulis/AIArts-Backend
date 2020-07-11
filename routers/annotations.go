@@ -194,11 +194,11 @@ func GetNextTask(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
-	taskId,err := services.GetNextTask(projectId,dataSetId,taskId)
+	nextTask,err := services.GetNextTask(projectId,dataSetId,taskId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
-	return SuccessResp(c,gin.H{"next":taskId})
+	return SuccessResp(c,gin.H{"next":nextTask})
 }
 
 func GetOneTask(c *gin.Context) error {
