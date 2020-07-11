@@ -1,12 +1,12 @@
 package models
 
 type PostInference struct {
-	UserName string
-	Image string
-	UserId string
-	JobName string
-	Model_base_path string
-	VcName string
+	userName string
+	image string
+	userId string
+	jobName string
+	model_base_path string
+	vcName string
 	gpuType string
 	framework string
 	device string
