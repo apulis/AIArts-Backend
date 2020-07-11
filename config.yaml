@@ -23,4 +23,4 @@ Anno:
   backendUrl: https://huawei-proxy01.sigsus.cn
 
 Infer:
-  backendUrl: https://huawei-infra01.sigsus.cn
+  backendUrl: http://huawei-infra01.sigsus.cn
