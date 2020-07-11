@@ -102,9 +102,9 @@ func GetDatasetInfo(projectId string,dataSetId string) (models.DataSet,error) {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
-	var dataset models.DataSet
+	var dataset models.DatasetReq
 	json.Unmarshal(resp.Bytes(),&dataset)
-	return dataset,err
+	return dataset.Info,err
 }
 
 func UpdateDataSet(projectId string,dataSetId string,dataset models.DataSet) error {

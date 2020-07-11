@@ -27,3 +27,9 @@ type DatasetsReq struct {
 	Msg string
 	Datasets []DataSet
 }
+
+type DatasetReq struct {
+	Successful string
+	Msg string
+	Info DataSet
+}
