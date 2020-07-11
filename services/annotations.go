@@ -31,7 +31,7 @@ func DeleteProject(projectId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp)
+	logger.Info(resp.StatusCode)
 	return err
 }
 
@@ -42,7 +42,7 @@ func AddProject(project models.Project) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects", ro)
-	logger.Info(resp)
+	logger.Info(resp.StatusCode)
 	return err
 }
 
@@ -53,7 +53,7 @@ func UpdateProject(project models.Project,projectId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp)
+	logger.Info(resp.StatusCode)
 	return err
 }
 
@@ -75,7 +75,7 @@ func AddDataset(projectId string, dataset models.DataSet) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp)
+	logger.Info(resp.StatusCode)
 	return err
 }
 
