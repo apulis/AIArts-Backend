@@ -145,7 +145,7 @@ func UpdateDataSet(c *gin.Context) error {
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	var dataset models.DataSet
+	var dataset models.UpdateDataSet
 	err := c.ShouldBind(&dataset)
 	if err != nil {
 		return ParameterError(err.Error())

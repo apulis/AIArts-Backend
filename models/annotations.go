@@ -33,3 +33,11 @@ type DatasetReq struct {
 	Msg string
 	Info DataSet
 }
+
+type UpdateDataSet struct {
+	Name string
+	Info string
+	Type string
+	DataSetBindId string
+	DataSetPath string
+}

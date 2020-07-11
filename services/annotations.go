@@ -107,7 +107,7 @@ func GetDatasetInfo(projectId string,dataSetId string) (models.DataSet,error) {
 	return dataset.Info,err
 }
 
-func UpdateDataSet(projectId string,dataSetId string,dataset models.DataSet) error {
+func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSet) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		JSON: dataset,
