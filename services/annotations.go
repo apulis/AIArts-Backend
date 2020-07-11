@@ -73,7 +73,7 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,projectId)
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	var datasets models.DatasetsReq
