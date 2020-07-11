@@ -5,7 +5,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
-	"log"
 	"errors"
 )
 
