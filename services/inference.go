@@ -13,7 +13,7 @@ func PostInferenceJob(inference models.PostInference) error {
 	ro := &grequests.RequestOptions{
 		JSON: inference,
 	}
-	resp, err := grequests.Get(BackendUrl+"/apis/PostInferenceJob", ro)
+	resp, err := grequests.Post(BackendUrl+"/apis/PostInferenceJob", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
