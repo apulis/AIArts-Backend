@@ -12,8 +12,8 @@ type DataSet struct {
 	Name string
 	Info string
 	Type string
-	dataSetBindId string
-	dataSetPath string
+	DataSetBindId string
+	DataSetPath string
 }
 
 type ProjectsReq struct {
