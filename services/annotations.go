@@ -31,7 +31,10 @@ func DeleteProject(projectId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp.StatusCode,projectId)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 
@@ -42,7 +45,10 @@ func AddProject(project models.Project) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects", ro)
-	logger.Info(resp.StatusCode)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 
@@ -53,7 +59,10 @@ func UpdateProject(project models.Project,projectId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp.StatusCode)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 
@@ -63,9 +72,13 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId, ro)
-	var datasets []models.DataSet
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var datasets models.DatasetsReq
 	json.Unmarshal(resp.Bytes(),&datasets)
-	return datasets,err
+	return datasets.Datasets,err
 }
 
 func AddDataset(projectId string, dataset models.DataSet) error {
@@ -75,7 +88,10 @@ func AddDataset(projectId string, dataset models.DataSet) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp.StatusCode)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 
@@ -97,7 +113,10 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.DataSet) err
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId, ro)
-	logger.Info(resp)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 
@@ -107,7 +126,10 @@ func RemoveDataSet(projectId string,dataSetId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId, ro)
-	logger.Info(resp)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode)
+		return errors.New(string(resp.StatusCode))
+	}
 	return err
 }
 

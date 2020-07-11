@@ -22,3 +22,9 @@ type ProjectsReq struct {
 	Msg string
 	Projects []Project
 }
+
+type DatasetsReq struct {
+	Successful string
+	Msg string
+	Datasets []DataSet
+}

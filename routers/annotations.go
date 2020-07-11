@@ -88,11 +88,7 @@ func UpdateProject(c *gin.Context) error {
 }
 
 func GetDatasets(c *gin.Context) error {
-	var projectId string
-	err := c.ShouldBind(&projectId)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
+	projectId := c.Param("projectId")
 	datasets,err := services.GetDatasets(projectId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
