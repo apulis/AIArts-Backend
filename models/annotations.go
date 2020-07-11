@@ -8,7 +8,7 @@ type Project struct {
 }
 
 type DataSet struct {
-	dataSetId string
+	DataSetId string
 	Name string
 	Info string
 	Type string
