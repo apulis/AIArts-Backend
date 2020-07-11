@@ -12,7 +12,6 @@ type DataSet struct {
 	Name string
 	Info string
 	Type string
-	Role string
 	dataSetBindId string
 	dataSetPath string
 }
