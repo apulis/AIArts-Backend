@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/coreos/bbolt"
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
 	"errors"
@@ -124,7 +125,7 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSe
 func RemoveDataSet(projectId string,dataSetId string) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
-		JSON: dataSetId,
+		Data: map[string]string {"dataSetId":dataSetId},
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
@@ -186,7 +187,6 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 		JSON: value,
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	logger.Info(value)
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())

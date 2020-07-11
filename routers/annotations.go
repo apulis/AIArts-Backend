@@ -223,7 +223,6 @@ func PostOneTask(c *gin.Context) error {
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
 	value,_ := c.GetRawData()
-	logger.Info(string(value))
 	err := services.PostOneTask(projectId,dataSetId,taskId,string(value))
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
