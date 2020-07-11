@@ -118,6 +118,7 @@ func AddDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	logger.Info(dataset)
 	err = services.AddDataset(projectId,dataset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
