@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"github.com/apulis/AIArtsBackend/models"
-	"github.com/coreos/bbolt"
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
 	"errors"
