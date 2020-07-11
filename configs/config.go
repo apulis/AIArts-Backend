@@ -12,6 +12,7 @@ type ProjectConfig struct {
 	Db   DbConfig
 	File FileConfig
 	Anno AnnotationConfig
+	Infer InferenceConfig
 	Token string
 }
 
@@ -38,6 +39,9 @@ type FileConfig struct {
 }
 
 type AnnotationConfig struct {
+	BackendUrl string
+}
+type InferenceConfig struct {
 	BackendUrl string
 }
 
