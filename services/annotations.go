@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/coreos/bbolt"
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
 	"errors"
@@ -121,7 +122,7 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSe
 	return err
 }
 
-func RemoveDataSet(projectId string,dataSetId string) error {
+func RemoveDataSet(projectId string,dataSetId interface{}) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		JSON: dataSetId,
