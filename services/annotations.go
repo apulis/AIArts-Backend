@@ -72,6 +72,7 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
+	logger.Info(resp.String())
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode)
 		return nil,errors.New(string(resp.StatusCode))
