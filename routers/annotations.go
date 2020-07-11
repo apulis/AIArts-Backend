@@ -52,12 +52,8 @@ func GetProjects(c *gin.Context) error {
 }
 
 func DeleteProject(c *gin.Context) error {
-	var projectId string
-	err := c.ShouldBind(&projectId)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
-	err = services.DeleteProject(projectId)
+	projectId := c.Param("projectId")
+	err := services.DeleteProject(projectId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
