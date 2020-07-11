@@ -9,7 +9,7 @@ import (
 func AddGroupInference(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/inferences")
 
-	group.GET("/PostInferenceJob", wrapper(PostInferenceJob))
+	group.POST("/PostInferenceJob", wrapper(PostInferenceJob))
 	group.GET("/ListInferenceJob", wrapper(ListInferenceJob))
 	group.GET("/GetAllSupportInference", wrapper(GetAllSupportInference))
 }
