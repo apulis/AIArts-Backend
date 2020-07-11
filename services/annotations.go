@@ -17,7 +17,7 @@ func GetProjects() ([]models.Project, error) {
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	var projects models.ProjectsReq
@@ -32,7 +32,7 @@ func DeleteProject(projectId string) error {
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err
@@ -46,7 +46,7 @@ func AddProject(project models.Project) error {
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err
@@ -60,7 +60,7 @@ func UpdateProject(project models.Project,projectId string) error {
 	}
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err
@@ -74,7 +74,7 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	logger.Info(resp.String())
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	var datasets models.DatasetsReq
@@ -90,7 +90,7 @@ func AddDataset(projectId string, dataset models.DataSet) error {
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err
@@ -115,7 +115,7 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSe
 	}
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode,resp.String(),dataset)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err

@@ -162,12 +162,8 @@ func RemoveDataSet(c *gin.Context) error {
 	token = strings.Split(token,"Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
-	var dataSetId string
-	err := c.ShouldBind(&dataSetId)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
-	err = services.RemoveDataSet(projectId,dataSetId)
+	dataSetId := c.Param("dataSetId")
+	err := services.RemoveDataSet(projectId,dataSetId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
