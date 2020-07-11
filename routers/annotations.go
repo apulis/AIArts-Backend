@@ -112,7 +112,7 @@ func AddDataset(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token,"Bearer ")[1]
 	configs.Config.Token = token
-	var dataset models.DataSet
+	var dataset models.UpdateDataSet
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&dataset)
 	if err != nil {

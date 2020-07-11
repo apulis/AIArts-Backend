@@ -82,7 +82,7 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 	return datasets.Datasets,err
 }
 
-func AddDataset(projectId string, dataset models.DataSet) error {
+func AddDataset(projectId string, dataset models.UpdateDataSet) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		JSON: dataset,
@@ -187,7 +187,6 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
-	logger.Info(resp.StatusCode,resp.String())
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
