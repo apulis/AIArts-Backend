@@ -52,6 +52,9 @@ func GetProjects(c *gin.Context) error {
 }
 
 func DeleteProject(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	err := services.DeleteProject(projectId)
 	if err != nil {
@@ -61,6 +64,9 @@ func DeleteProject(c *gin.Context) error {
 }
 
 func AddProject(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	var params models.Project
 	err := c.ShouldBind(&params)
 	if err != nil {
@@ -74,6 +80,9 @@ func AddProject(c *gin.Context) error {
 }
 
 func UpdateProject(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	var project models.Project
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&project)
@@ -88,6 +97,9 @@ func UpdateProject(c *gin.Context) error {
 }
 
 func GetDatasets(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	datasets,err := services.GetDatasets(projectId)
 	if err != nil {
@@ -97,6 +109,9 @@ func GetDatasets(c *gin.Context) error {
 }
 
 func AddDataset(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	var dataset models.DataSet
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&dataset)
@@ -111,6 +126,9 @@ func AddDataset(c *gin.Context) error {
 }
 
 func GetDatasetInfo(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	dataset,err := services.GetDatasetInfo(projectId,dataSetId)
@@ -121,6 +139,9 @@ func GetDatasetInfo(c *gin.Context) error {
 }
 
 func UpdateDataSet(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var dataset models.DataSet
@@ -136,6 +157,9 @@ func UpdateDataSet(c *gin.Context) error {
 }
 
 func RemoveDataSet(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	var dataSetId string
 	err := c.ShouldBind(&dataSetId)
@@ -150,6 +174,9 @@ func RemoveDataSet(c *gin.Context) error {
 }
 
 func GetTasks(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	tasks,err := services.GetTasks(projectId,dataSetId)
@@ -160,6 +187,9 @@ func GetTasks(c *gin.Context) error {
 }
 
 func GetNextTask(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
@@ -171,6 +201,9 @@ func GetNextTask(c *gin.Context) error {
 }
 
 func GetOneTask(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
@@ -182,6 +215,9 @@ func GetOneTask(c *gin.Context) error {
 }
 
 func PostOneTask(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
