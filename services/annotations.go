@@ -187,6 +187,7 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
+	logger.Info(resp.StatusCode,resp.String())
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
