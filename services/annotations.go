@@ -124,9 +124,10 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSe
 func RemoveDataSet(projectId string,dataSetId string) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
+		JSON: dataSetId,
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
+	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode)
 		return errors.New(string(resp.StatusCode))
