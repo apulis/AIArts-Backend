@@ -7,4 +7,8 @@ type PostInference struct {
 	JobName string
 	Model_base_path string
 	VcName string
+	gpuType string
+	framework string
+	device string
+	resourcegpu int
 }
