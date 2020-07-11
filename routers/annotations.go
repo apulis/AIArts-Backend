@@ -23,7 +23,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.POST("/projects/:projectId/datasets", wrapper(AddDataset))
 	group.GET("/projects/:projectId/datasets/:dataSetId", wrapper(GetDatasetInfo))
 	group.PATCH("/projects/:projectId/datasets/:dataSetId", wrapper(UpdateDataSet))
-	group.DELETE("/projects/:projectId/datasets/:dataSetId", wrapper(RemoveDataSet))
+	group.DELETE("/projects/:projectId/datasets", wrapper(RemoveDataSet))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks", wrapper(GetTasks))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId", wrapper(GetNextTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
