@@ -53,7 +53,7 @@ func GetProjects(c *gin.Context) error {
 
 func DeleteProject(c *gin.Context) error {
 	var projectId string
-	err := c.ShouldBindQuery(&projectId)
+	err := c.ShouldBind(&projectId)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -66,7 +66,7 @@ func DeleteProject(c *gin.Context) error {
 
 func AddProject(c *gin.Context) error {
 	var params models.Project
-	err := c.ShouldBindQuery(&params)
+	err := c.ShouldBind(&params)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -80,7 +80,7 @@ func AddProject(c *gin.Context) error {
 func UpdateProject(c *gin.Context) error {
 	var project models.Project
 	projectId := c.Param("projectId")
-	err := c.ShouldBindQuery(&project)
+	err := c.ShouldBind(&project)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -93,7 +93,7 @@ func UpdateProject(c *gin.Context) error {
 
 func GetDatasets(c *gin.Context) error {
 	var projectId string
-	err := c.ShouldBindQuery(&projectId)
+	err := c.ShouldBind(&projectId)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -107,7 +107,7 @@ func GetDatasets(c *gin.Context) error {
 func AddDataset(c *gin.Context) error {
 	var dataset models.DataSet
 	projectId := c.Param("projectId")
-	err := c.ShouldBindQuery(&dataset)
+	err := c.ShouldBind(&dataset)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -132,7 +132,7 @@ func UpdateDataSet(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var dataset models.DataSet
-	err := c.ShouldBindQuery(&dataset)
+	err := c.ShouldBind(&dataset)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -146,7 +146,7 @@ func UpdateDataSet(c *gin.Context) error {
 func RemoveDataSet(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	var dataSetId string
-	err := c.ShouldBindQuery(&dataSetId)
+	err := c.ShouldBind(&dataSetId)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
