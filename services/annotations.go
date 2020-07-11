@@ -22,15 +22,9 @@ func GetProjects() ([]models.Project, error) {
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	logger.Info(resp.String())
-	var projects []models.Project
-	var pro map[string]interface{}
-	json.Unmarshal(resp.Bytes(),&pro)
-	projectsMap,ok := pro["projects"].([]map[string]string)
-	logger.Info(projectsMap)
-	if !ok {
-		logger.Error("get response fail",pro["projects"])
-	}
-	return projects,err
+	var projects models.ProjectsReq
+	json.Unmarshal(resp.Bytes(),&projects)
+	return projects.Projects,err
 }
 
 func DeleteProject(projectId string) error {

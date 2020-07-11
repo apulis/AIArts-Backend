@@ -16,3 +16,9 @@ type DataSet struct {
 	dataSetBindId string
 	dataSetPath string
 }
+
+type ProjectsReq struct {
+	Successful string
+	Msg string
+	Projects []Project
+}
