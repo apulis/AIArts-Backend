@@ -129,7 +129,7 @@ func RemoveDataSet(projectId string,dataSetId string) error {
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode)
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return errors.New(string(resp.StatusCode))
 	}
 	return err
