@@ -31,7 +31,7 @@ func DeleteProject(projectId string) error {
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
-	logger.Info(resp.StatusCode)
+	logger.Info(resp.StatusCode,projectId)
 	return err
 }
 
