@@ -71,9 +71,9 @@ func GetDatasets(projectId string) ([]models.DataSet,error) {
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode,projectId)
+		logger.Error("response code is ",resp.StatusCode)
 		return nil,errors.New(string(resp.StatusCode))
 	}
 	var datasets models.DatasetsReq
@@ -87,7 +87,7 @@ func AddDataset(projectId string, dataset models.DataSet) error {
 		JSON: dataset,
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId, ro)
+	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode)
 		return errors.New(string(resp.StatusCode))
@@ -100,7 +100,7 @@ func GetDatasetInfo(projectId string,dataSetId string) (models.DataSet,error) {
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	var dataset models.DataSet
 	json.Unmarshal(resp.Bytes(),&dataset)
 	return dataset,err
@@ -112,7 +112,7 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.DataSet) err
 		JSON: dataset,
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId, ro)
+	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode)
 		return errors.New(string(resp.StatusCode))
@@ -125,7 +125,7 @@ func RemoveDataSet(projectId string,dataSetId string) error {
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode)
 		return errors.New(string(resp.StatusCode))
@@ -138,7 +138,7 @@ func GetTasks(projectId string,dataSetId string) ([]byte,error) {
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId+"/tasks", ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks", ro)
 	return resp.Bytes(),err
 }
 
@@ -147,7 +147,7 @@ func GetNextTask(projectId string,dataSetId string,taskId string) (string,error)
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId+"/tasks/next/"+taskId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/next/"+taskId, ro)
 	return resp.String(),err
 }
 
@@ -156,7 +156,7 @@ func GetOneTask(projectId string,dataSetId string,taskId string) (string,error) 
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId+"/tasks/annotations/"+taskId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	return resp.String(),err
 }
 
@@ -166,7 +166,7 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 		JSON: value,
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/"+dataSetId+"/tasks/annotations/"+taskId, ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	logger.Info(resp)
 	return err
 }
