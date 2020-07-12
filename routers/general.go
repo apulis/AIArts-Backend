@@ -33,7 +33,7 @@ func getResource(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, err.Error())
+		return AppError(NO_USRNAME, "no username")
 	}
 
 	framework, devices, err := services.GetResource(userName)

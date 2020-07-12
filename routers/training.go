@@ -68,7 +68,7 @@ func getAllTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, err.Error())
+		return AppError(NO_USRNAME, "no username")
 	}
 
 	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize)
@@ -104,7 +104,7 @@ func createTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, err.Error())
+		return AppError(NO_USRNAME, "no username")
 	}
 
 	id, err = services.CreateTraining(userName, req)
