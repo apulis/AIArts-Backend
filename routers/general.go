@@ -5,7 +5,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"os"
 )
 
 func AddGroupGeneral(r *gin.Engine) {
