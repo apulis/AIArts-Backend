@@ -97,7 +97,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 		return "", err
 	}
 
-	return id, nil
+	return id.Id, nil
 }
 
 func DeleteTraining(id string) error {
