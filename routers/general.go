@@ -5,6 +5,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func AddGroupGeneral(r *gin.Engine) {
@@ -44,13 +45,13 @@ func getResource(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
-func getUsername(c *gin.Context) (string, error) {
+func getUsername(c *gin.Context) string {
 
-	data, err := c.Get("userName")
-	if err != nil {
-		return nil, err
+	data, exists := c.Get("userName")
+	if !exists {
+		return ""
 	}
 
 	userName := fmt.Sprintf("%v", data)
-	return userName, nil
+	return userName
 }

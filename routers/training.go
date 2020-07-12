@@ -66,8 +66,8 @@ func getAllTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	userName, err := getUsername(c)
-	if err != nil {
+	userName = getUsername(c)
+	if len(userName) == 0 {
 		return AppError(NO_USRNAME, err.Error())
 	}
 

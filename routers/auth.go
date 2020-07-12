@@ -48,7 +48,7 @@ func Auth() gin.HandlerFunc {
 
 		fmt.Printf("[%+v]", auth)
 		auth = strings.Fields(auth)[1]
-		
+
 		// 校验token
 		claim, err := parseToken(auth)
 		if err != nil {
