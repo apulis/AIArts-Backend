@@ -22,7 +22,7 @@ func RandStringRunes(n int) string {
 }
 
 func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
-	
+
 	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
 							"yunxia.chu", "yunxia.chu", 10, "atlas")
 	jobList := &models.JobList{}
@@ -60,7 +60,7 @@ func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
 		})
 	}
 
-	return codes, 1, 1, nil
+	return codes, len(codes), 1, nil
 }
 
 func CreateCodeset(name, description string, num int) (string, error) {

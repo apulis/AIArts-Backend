@@ -57,7 +57,7 @@ type GetTrainingRsp struct {
 // @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training [get]
+// @Router /ai_arts/api/trainings [get]
 func getAllTraining(c *gin.Context) error {
 
 	var req GetAllTrainingReq
@@ -86,7 +86,7 @@ func getAllTraining(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training [post]
+// @Router /ai_arts/api/trainings [post]
 func createTraining(c *gin.Context) error {
 
 	var req CreateTrainingReq
@@ -111,7 +111,7 @@ func createTraining(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training/:id [get]
+// @Router /ai_arts/api/trainings/:id [get]
 func getTraining(c *gin.Context) error {
 
 	var req GetTrainingReq
@@ -136,7 +136,7 @@ func getTraining(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespDeleteTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/training/:id [delete]
+// @Router /ai_arts/api/trainings/:id [delete]
 func delTraining(c *gin.Context) error {
 
 	var id string

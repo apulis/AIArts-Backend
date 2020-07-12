@@ -1,29 +1,56 @@
 package services
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
-	"math/rand"
-	"time"
 )
 
 func GetAllTraining(page, size int) ([] *models.Training, int, int, error) {
 
-	rand.Seed(time.Now().Unix())
-	item := &models.Training{
-		Name: RandStringRunes(16),
-		Engine: "tf_1.15",
-		CodePath: "/home/bifeng.peng/",
-		Desc: "test test test",
-		DeviceType: "npu",
-		DeviceNum: 1,
-		OutputPath: "/home/bifeng.peng/resetnet50",
-		StartupFile: "/home/bifeng.peng/resetnet50/test.py",
+	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
+		"yunxia.chu", "yunxia.chu", 100, "atlas")
+	jobList := &models.JobList{}
+	err := DoRequest(url, "GET", nil, nil, jobList)
+
+	if err != nil {
+		fmt.Print("request err: %+v", err)
+		return nil, 0, 0, err
 	}
 
-	codes := make([] *models.Training, 0)
-	codes = append(codes, item)
+	trainings := make([] *models.Training, 0)
+	for _, v:= range jobList.RunningJobs {
+		trainings = append(trainings, &models.Training{
+			Id:          v.JobId,
+			Name:        v.JobName,
+			Engine:      v.JobParams.Image,
+			DeviceType:  v.JobParams.GpuType,
+			DeviceNum:   v.JobParams.Resourcegpu,
+			CodePath:    v.JobParams.DataPath,
+			StartupFile: "",
+			OutputPath:  v.JobParams.WorkPath,
+			DatasetPath: v.JobParams.DataPath,
+			Params:      nil,
+			Desc:        "",
+		})
+	}
 
-	return codes, 1, 1, nil
+	for _, v:= range jobList.FinishedJobs {
+		trainings = append(trainings, &models.Training{
+			Id:          v.JobId,
+			Name:        v.JobName,
+			Engine:      v.JobParams.Image,
+			DeviceType:  v.JobParams.GpuType,
+			DeviceNum:   v.JobParams.Resourcegpu,
+			CodePath:    v.JobParams.DataPath,
+			StartupFile: "",
+			OutputPath:  v.JobParams.WorkPath,
+			DatasetPath: v.JobParams.DataPath,
+			Params:      nil,
+			Desc:        "",
+		})
+	}
+
+	return trainings, len(trainings), 1, nil
 }
 
 func CreateTraining(training models.Training) (string, error) {
