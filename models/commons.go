@@ -128,3 +128,8 @@ type JobId struct {
 type UriJobId struct {
 	Id string `uri:"id" binding:"required"`
 }
+
+type JobLog struct {
+	Cursor   string `json:"cursor"`
+	Log 	 string `json:"log"`
+}

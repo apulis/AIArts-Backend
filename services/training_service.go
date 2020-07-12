@@ -169,3 +169,17 @@ func GetTraining(userName, id string) (*models.Training, error) {
 
 	return training, nil
 }
+
+func GetTrainingLog(userName, id string) (*models.JobLog, error) {
+
+	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetJobLog?userName=%s&jobId=%s", userName, id)
+	jobLog := &models.JobLog{}
+
+	err := DoRequest(url, "GET", nil, nil, jobLog)
+	if err != nil {
+		fmt.Printf("create training err[%+v]\n", err)
+		return nil, err
+	}
+
+	return jobLog, nil
+}

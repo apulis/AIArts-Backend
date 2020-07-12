@@ -13,6 +13,7 @@ func AddGroupTraining(r *gin.Engine) {
 	group.GET("/:id", wrapper(getTraining))
 	group.POST("/", wrapper(createTraining))
 	group.DELETE("/:id", wrapper(delTraining))
+	group.GET("/log/:id", wrapper(getLog))
 }
 
 type GetAllTrainingReq struct {
@@ -118,7 +119,7 @@ func createTraining(c *gin.Context) error {
 	if !services.ValidHomePath(userName, req.OutputPath) {
 		return AppError(INVALID_CODE_PATH, "输出路径错误")
 	}
-	
+
 	id, err = services.CreateTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -184,4 +185,34 @@ func delTraining(c *gin.Context) error {
 
 	data := gin.H{}
 	return SuccessResp(c, data)
+}
+
+// @Summary get specific training
+// @Produce  json
+// @Param param body GetTrainingReq true "params"
+// @Success 200 {object} APISuccessRespGetTrainingLog "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/trainings/log/:id [get]
+func getLog(c *gin.Context) error {
+
+	var id models.UriJobId
+	var jobLog *models.JobLog
+
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	jobLog, err = services.GetTrainingLog(userName, id.Id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, jobLog)
 }

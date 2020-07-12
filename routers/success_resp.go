@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -85,6 +86,12 @@ type APISuccessRespGetTraining struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
 	Data GetTrainingRsp `json:"data"`
+}
+
+type APISuccessRespGetTrainingLog struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data models.JobLog	  `json:"data"`
 }
 
 
