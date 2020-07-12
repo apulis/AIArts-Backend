@@ -124,3 +124,7 @@ type VcInfo struct {
 type JobId struct {
 	Id 		string `json:"jobId"`
 }
+
+type UriJobId struct {
+	Id string `uri:"id" binding:"required"`
+}

@@ -124,11 +124,10 @@ func createTraining(c *gin.Context) error {
 // @Router /ai_arts/api/trainings/:id [get]
 func getTraining(c *gin.Context) error {
 
-	var req GetTrainingReq
-	var id string
+	var id models.UriJobId
 	var training *models.Training
 
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindJSON(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -138,7 +137,7 @@ func getTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	training, err = services.GetTraining(userName, id)
+	training, err = services.GetTraining(userName, id.Id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -155,14 +154,8 @@ func getTraining(c *gin.Context) error {
 // @Router /ai_arts/api/trainings/:id [delete]
 func delTraining(c *gin.Context) error {
 
-	var id string
+	var id models.UriJobId
 	err := c.ShouldBindUri(&id)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
-
-	var req DeleteTrainingReq
-	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -172,7 +165,7 @@ func delTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err = services.DeleteTraining(userName, id)
+	err = services.DeleteTraining(userName, id.Id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
