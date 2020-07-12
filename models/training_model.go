@@ -13,5 +13,7 @@ type Training struct {
 	DatasetPath		string `json:"datasetPath"`
 	Params 			map[string]string `json:"params"`
 	Desc 			string `json:"desc"`
+	Status 			string `json:"status"`
+	CreateTime		string `json:"createTime"`
 }
 

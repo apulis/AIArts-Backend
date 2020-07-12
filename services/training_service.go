@@ -31,6 +31,8 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			OutputPath:  v.JobParams.WorkPath,
 			DatasetPath: v.JobParams.DataPath,
 			Params:      nil,
+			Status:      v.JobStatus,
+			CreateTime:  v.JobTime,
 			Desc:        "",
 		})
 	}
@@ -47,6 +49,8 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			OutputPath:  v.JobParams.WorkPath,
 			DatasetPath: v.JobParams.DataPath,
 			Params:      nil,
+			Status:      v.JobStatus,
+			CreateTime:  v.JobTime,
 			Desc:        "",
 		})
 	}
@@ -135,6 +139,8 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Engine = job.JobParams.Image
 	training.DeviceNum = job.JobParams.Resourcegpu
 	training.DeviceType = job.JobParams.GpuType
+	training.Status = job.JobStatus
+	training.CreateTime = job.JobTime
 
 	training.Params = nil
 	training.DatasetPath = ""
