@@ -102,7 +102,7 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	userName = getUsername(c)
+	userName := getUsername(c)
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, err.Error())
 	}
