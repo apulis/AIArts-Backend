@@ -7,15 +7,22 @@ import (
 	"strings"
 )
 
+type Claim struct {
+	jwt.StandardClaims
+	Uid  		int `json:"uid"`
+	UserName 	string `json:"userName"`
+}
 
-func parseToken(token string) (*jwt.StandardClaims, error) {
+var JwtSecret string ="Sign key for JWT"
 
-	jwtToken, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (i interface{}, e error) {
-		return []byte(config.Secret), nil
+func parseToken(token string) (*Claim, error) {
+
+	jwtToken, err := jwt.ParseWithClaims(token, &Claim{}, func(token *jwt.Token) (i interface{}, e error) {
+		return []byte(JwtSecret), nil
 	})
 
 	if err == nil && jwtToken != nil {
-		if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
+		if claim, ok := jwtToken.Claims.(*Claim); ok && jwtToken.Valid {
 			return claim, nil
 		}
 	}
@@ -40,7 +47,7 @@ func Auth() gin.HandlerFunc {
 
 		auth = strings.Fields(auth)[1]
 		// 校验token
-		_, err := parseToken(auth)
+		claim, err := parseToken(auth)
 		if err != nil {
 			context.Abort()
 			result.Msg = "token 过期" + err.Error()
@@ -48,7 +55,7 @@ func Auth() gin.HandlerFunc {
 				"result": result,
 			})
 		} else {
-			println("token 正确")
+			println("token 正确: ", claim)
 		}
 
 		context.Next()
