@@ -12,7 +12,7 @@ func AddGroupTraining(r *gin.Engine) {
 	group.GET("/", wrapper(getAllTraining))
 	group.GET("/:id", wrapper(getTraining))
 	group.POST("/", wrapper(createTraining))
-	//group.DELETE("/:id", wrapper(stopTraining))
+	group.DELETE("/:id", wrapper(delTraining))
 }
 
 type GetAllTrainingReq struct {
