@@ -66,7 +66,8 @@ func getAllTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(req.PageNum, req.PageSize)
+	userName := c.GetHeader("userName")
+	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

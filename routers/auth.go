@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -45,6 +46,7 @@ func Auth() gin.HandlerFunc {
 			})
 		}
 
+		fmt.printf("[%+v]", auth)
 		auth = strings.Fields(auth)[1]
 		// 校验token
 		claim, err := parseToken(auth)
@@ -59,5 +61,6 @@ func Auth() gin.HandlerFunc {
 		}
 
 		context.Next()
+		context.Header("userName", claim.UserName)
 	}
 }

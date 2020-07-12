@@ -5,10 +5,11 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func GetAllTraining(page, size int) ([] *models.Training, int, int, error) {
+func GetAllTraining(userName string, page, size int) ([] *models.Training, int, int, error) {
 
 	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
-		"yunxia.chu", "yunxia.chu", 100, "atlas")
+						userName, userName, 1000, "atlas")
+
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
 
