@@ -27,6 +27,7 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 
 	// todo: must read from config
 	fw["tensorflow"] = append(fw["tensorflow"],"apulistech/ubuntu_tf_test:1.22")
+	fw["tensorflow"] = append(fw["tensorflow"],"ubuntu:18.04")
 	fw["mindspore"] = append(fw["mindspore"],"apulistech/mindspore:0.3.0-withtools")
 
 
