@@ -27,7 +27,7 @@ type GetAllTrainingRsp struct {
 }
 
 type CreateTrainingReq struct {
-	Training models.Training
+	models.Training
 }
 
 type CreateTrainingRsp struct {
@@ -94,7 +94,7 @@ func getAllTraining(c *gin.Context) error {
 // @Router /ai_arts/api/trainings [post]
 func createTraining(c *gin.Context) error {
 
-	var req CreateTrainingReq
+	var req models.Training
 	var id string
 
 	err := c.ShouldBindJSON(&req)
@@ -107,7 +107,7 @@ func createTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, err.Error())
 	}
 
-	id, err = services.CreateTraining(userName, req.Training)
+	id, err = services.CreateTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
