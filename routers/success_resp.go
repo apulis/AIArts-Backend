@@ -40,22 +40,22 @@ type APISuccessRespGetModelsets struct {
 }
 
 // codes
-type APISuccessRespAllGetCodeset struct {
+type APISuccessRespAllGetCodeEnv struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data GetAllCodesetRsp	  `json:"data"`
+	Data GetAllCodeEnvRsp	  `json:"data"`
 }
 
-type APISuccessRespCreateCodeset struct {
+type APISuccessRespCreateCodeEnv struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data CreateCodesetRsp `json:"data"`
+	Data CreateCodeEnvRsp `json:"data"`
 }
 
-type APISuccessRespDeleteCodeset struct {
+type APISuccessRespDeleteCodeEnv struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data DeleteCodesetRsp `json:"data"`
+	Data DeleteCodeEnvRsp `json:"data"`
 }
 
 type APISuccessRespGetResource struct {
