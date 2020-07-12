@@ -47,7 +47,7 @@ type GetTrainingReq struct {
 }
 
 type GetTrainingRsp struct {
-
+	models.Training
 }
 
 // @Summary get all trainings
@@ -126,18 +126,24 @@ func getTraining(c *gin.Context) error {
 
 	var req GetTrainingReq
 	var id string
+	var training *models.Training
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	err = services.GetTraining(id)
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	training, err = services.GetTraining(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	return SuccessResp(c, nil)
+	return SuccessResp(c, training)
 }
 
 // @Summary delete one training
@@ -161,7 +167,12 @@ func delTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	err = services.DeleteTraining(id)
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err = services.DeleteTraining(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

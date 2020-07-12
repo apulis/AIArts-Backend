@@ -100,10 +100,48 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	return id.Id, nil
 }
 
-func DeleteTraining(id string) error {
+func DeleteTraining(userName, id string) error {
+
+	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/KillJob?userName=%s&jobId=%s", userName, id)
+	params := make(map[string] interface{})
+
+	job := &models.Job{}
+	err := DoRequest(url, "GET", nil, params, job)
+
+	if err != nil {
+		fmt.Printf("delete training err[%+v]\n", err)
+		return err
+	}
+
 	return nil
 }
 
-func GetTraining(id string) error {
-	return nil
+func GetTraining(userName, id string) (*models.Training, error) {
+
+	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetJobDetailV2?userName=%s&jobId=%s", userName, id)
+	params := make(map[string] interface{})
+
+	job := &models.Job{}
+	training := &models.Training{}
+
+	err := DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		fmt.Printf("create training err[%+v]\n", err)
+		return nil, err
+	}
+
+	training.Id = job.JobId
+	training.Name = job.JobName
+	training.Engine = job.JobParams.Image
+	training.DeviceNum = job.JobParams.Resourcegpu
+	training.DeviceType = job.JobParams.GpuType
+
+	training.Params = nil
+	training.DatasetPath = ""
+	training.StartupFile = ""
+	training.CodePath = ""
+	training.OutputPath = ""
+	training.Desc = ""
+
+	return training, nil
 }

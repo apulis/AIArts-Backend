@@ -44,8 +44,9 @@ func getResource(c *gin.Context) error {
 	rsp := &GetResourceRsp{
 		framework,
 		devices,
-		"/home/username",
+		"/home/" + userName,
 	}
+
 	return SuccessResp(c, rsp)
 }
 
