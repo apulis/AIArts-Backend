@@ -14,6 +14,7 @@ func NewRouter() *gin.Engine {
 	r := gin.New()
 
 	r.Use(cors.Default())
+	r.Use(Auth())
 
 	r.NoMethod(HandleNotFound)
 	r.NoRoute(HandleNotFound)
