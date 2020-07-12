@@ -120,3 +120,7 @@ type JobList struct {
 type VcInfo struct {
 	DeviceAvail 	map[string]int `json:"gpu_avaliable"`
 }
+
+type JobId struct {
+	Id 		string `json:"id"`
+}
