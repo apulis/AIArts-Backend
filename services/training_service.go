@@ -89,9 +89,9 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["team"] = "atlas"
 
 	var id string
-	err := DoRequest(url, "POST", nil, params, id)
+	err := DoRequest(url, "POST", nil, params, &id)
 	if err != nil {
-		fmt.Print("request err: %+v", err)
+		fmt.Printf("create training err[%+v]\n", err)
 		return "", err
 	}
 
