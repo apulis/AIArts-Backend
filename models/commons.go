@@ -1,8 +1,10 @@
 package models
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/apulis/AIArtsBackend/database"
@@ -12,7 +14,9 @@ import (
 var db = database.Db
 var logger = loggers.Log
 
-type UnixTime time.Time
+type UnixTime struct {
+	time.Time
+}
 
 func init() {
 	createTableIfNotExists(Dataset{})
@@ -33,8 +37,25 @@ func createTableIfNotExists(modelType interface{}) {
 }
 
 func (t UnixTime) MarshalJSON() ([]byte, error) {
-	stamp := fmt.Sprintf("%d", time.Time(t).Unix())
-	return []byte(stamp), nil
+	microSec := t.Unix() * 1000
+	return []byte(strconv.FormatInt(microSec, 10)), nil
+}
+
+func (t UnixTime) Value() (driver.Value, error) {
+	var zeroTime time.Time
+	if t.Time.UnixNano() == zeroTime.UnixNano() {
+		return nil, nil
+	}
+	return t.Time, nil
+}
+
+func (t *UnixTime) Scan(v interface{}) error {
+	value, ok := v.(time.Time)
+	if ok {
+		*t = UnixTime{Time: value}
+		return nil
+	}
+	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
 type JobParams struct {

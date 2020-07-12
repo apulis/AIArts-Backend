@@ -18,6 +18,7 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		err := handler(c)
 		if err != nil {
+			logger.Error(err.Error())
 			var apiException *APIException
 			if h, ok := err.(*APIException); ok {
 				apiException = h

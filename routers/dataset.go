@@ -99,7 +99,7 @@ func getDataset(c *gin.Context) error {
 
 // @Summary create dataset
 // @Produce  json
-// @Param name body string true "dataset name"
+// @Param body body createDatasetReq true "json body"
 // @Param description body string true "dataset description"
 // @Param creator body string true "dataset creator"
 // @Param path body string true "dataset storage path"
