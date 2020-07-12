@@ -4,8 +4,8 @@
     <list default="true" id="82c726c5-a7c3-4d30-8b7b-53707b6eab55" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/general.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/general.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/training.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/training.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/training_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/training_service.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

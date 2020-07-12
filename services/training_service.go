@@ -54,8 +54,48 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 	return trainings, len(trainings), 1, nil
 }
 
-func CreateTraining(training models.Training) (string, error) {
-	return RandStringRunes(16), nil
+func CreateTraining(userName string, training models.Training) (string, error) {
+
+	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/PostJob")
+	params := make(map[string] interface{})
+
+	params["userName"] = userName
+	params["jobName"] = training.Name
+	params["image"] = training.Engine
+	params["gpuType"] = training.DeviceType
+	params["resourcegpu"] = training.DeviceNum
+
+	params["CodePath"] = training.CodePath
+	params["cmd"] = "sleep 30m"  // use StartupFile, params instead
+	params["OutputPath"] = ""  // use OutputPath instead
+	params["dataPath"] = training.DatasetPath
+	params["DeviceNum"] = training.DeviceNum
+	params["Desc"] = training.Desc
+	params["containerUserId"] = 0
+	params["jobtrainingtype"] = "RegularJob"
+	params["preemptionAllowed"] = false
+	params["workPath"] = ""
+
+	params["enableworkpath"] = true
+	params["enabledatapath"] = true
+	params["enablejobpath"] = true
+	params["jobPath"] = "job"
+
+	params["hostNetwork"] = false
+	params["isPrivileged"] = false
+	params["interactivePorts"] = false
+
+	params["vcName"] = "atlas"
+	params["team"] = "atlas"
+
+	var id string
+	err := DoRequest(url, "POST", nil, params, id)
+	if err != nil {
+		fmt.Print("request err: %+v", err)
+		return "", err
+	}
+
+	return id, nil
 }
 
 func DeleteTraining(id string) error {

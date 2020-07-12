@@ -44,22 +44,21 @@ func Auth() gin.HandlerFunc {
 			context.JSON(http.StatusUnauthorized, gin.H{
 				"result": result,
 			})
-		}
-
-		fmt.Printf("[%+v]", auth)
-		auth = strings.Fields(auth)[1]
-
-		// 校验token
-		claim, err := parseToken(auth)
-		if err != nil {
-			context.Abort()
-			result.Msg = "token 过期" + err.Error()
-			context.JSON(http.StatusUnauthorized, gin.H{
-				"result": result,
-			})
 		} else {
-			println("token 正确: ", claim.UserName)
-			context.Set("userName", claim.UserName)
+			auth = strings.Fields(auth)[1]
+
+			// 校验token
+			claim, err := parseToken(auth)
+			if err != nil {
+				context.Abort()
+				result.Msg = "token 过期" + err.Error()
+				context.JSON(http.StatusUnauthorized, gin.H{
+					"result": result,
+				})
+			} else {
+				println("token 正确: ", claim.UserName)
+				context.Set("userName", claim.UserName)
+			}
 		}
 
 		context.Next()

@@ -102,7 +102,12 @@ func createTraining(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateTraining(req.Training)
+	userName = getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, err.Error())
+	}
+
+	id, err = services.CreateTraining(userName, req.Training)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
