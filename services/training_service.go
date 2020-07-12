@@ -14,7 +14,7 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 	err := DoRequest(url, "GET", nil, nil, jobList)
 
 	if err != nil {
-		fmt.Print("request err: %+v", err)
+		fmt.Print("get all training err[%+v]", err)
 		return nil, 0, 0, err
 	}
 
@@ -61,6 +61,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 
 	params["userName"] = userName
 	params["jobName"] = training.Name
+	params["jobType"] = "training"
 	params["image"] = training.Engine
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum

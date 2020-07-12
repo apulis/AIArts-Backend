@@ -31,7 +31,12 @@ type GetResourceRsp struct {
 // @Router /ai_arts/api/common/resource [get]
 func getResource(c *gin.Context) error {
 
-	framework, devices, err := services.GetResource()
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, err.Error())
+	}
+
+	framework, devices, err := services.GetResource(userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

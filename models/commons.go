@@ -13,6 +13,7 @@ import (
 
 var db = database.Db
 var logger = loggers.Log
+var DefaultVcName = "atlas"
 
 type UnixTime struct {
 	time.Time
@@ -113,4 +114,9 @@ type JobList struct {
 	Meta JobMeta `json:"meta"`
 	QueuedJobs []*Job `json:"queuedJobs"`
 	RunningJobs []*Job `json:"runningJobs"`
+}
+
+
+type VcInfo struct {
+	DeviceAvail 	map[string]int `json:"gpu_avaliable"`
 }
