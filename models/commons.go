@@ -122,5 +122,5 @@ type VcInfo struct {
 }
 
 type JobId struct {
-	Id 		string `json:"id"`
+	Id 		string `json:"jobId"`
 }
