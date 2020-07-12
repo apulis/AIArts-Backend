@@ -3,7 +3,19 @@ package services
 import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
+	"strings"
 )
+
+func ValidHomePath(userName, path string) bool {
+	path = strings.TrimSpace(path)
+	usrHome := "/home/"+userName
+
+	if !strings.HasPrefix(path, usrHome) {
+		return false
+	}
+
+	return true
+}
 
 func GetAllTraining(userName string, page, size int) ([] *models.Training, int, int, error) {
 
@@ -69,12 +81,18 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["image"] = training.Engine
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
+	params["DeviceNum"] = training.DeviceNum
 
 	params["CodePath"] = training.CodePath
-	params["cmd"] = "sleep 30m"  // use StartupFile, params instead
+	//params["cmd"] = "sleep 30m"  // use StartupFile, params instead
+
+	params["cmd"] = training.StartupFile
+	for k, v := range training.Params {
+		params["cmd"] = " --" + k + " " + v
+	}
+
 	params["OutputPath"] = ""  // use OutputPath instead
 	params["dataPath"] = training.DatasetPath
-	params["DeviceNum"] = training.DeviceNum
 	params["Desc"] = training.Desc
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"

@@ -23,5 +23,8 @@ const (
 	COMPRESS_PATH_ERROR_CODE    = 30008
 
 	// user auth
-	NO_USRNAME 		 			= 31001
+	NO_USRNAME 		 			= 30101
+
+	// training
+	INVALID_CODE_PATH	    	= 30201
 )

@@ -107,6 +107,18 @@ func createTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
+	if !services.ValidHomePath(userName, req.StartupFile)  {
+		return AppError(INVALID_CODE_PATH, "启动文件路径错误")
+	}
+
+	if !services.ValidHomePath(userName, req.CodePath) {
+		return AppError(INVALID_CODE_PATH, "代码文件路径错误")
+	}
+
+	if !services.ValidHomePath(userName, req.OutputPath) {
+		return AppError(INVALID_CODE_PATH, "输出路径错误")
+	}
+	
 	id, err = services.CreateTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
