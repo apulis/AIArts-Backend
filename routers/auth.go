@@ -55,7 +55,7 @@ func Auth() gin.HandlerFunc {
 				"result": result,
 			})
 		} else {
-			println("token 正确: ", claim)
+			println("token 正确: ", *claim)
 		}
 
 		context.Next()
