@@ -49,7 +49,7 @@ func Auth() gin.HandlerFunc {
 		fmt.Printf("[%+v]", auth)
 		auth = strings.Fields(auth)[1]
 
-		
+
 		// 校验token
 		claim, err := parseToken(auth)
 		if err != nil {
@@ -60,9 +60,9 @@ func Auth() gin.HandlerFunc {
 			})
 		} else {
 			println("token 正确: ", *claim)
+			context.Set("userName", claim.UserName)
 		}
 
 		context.Next()
-		context.Header("userName", claim.UserName)
 	}
 }

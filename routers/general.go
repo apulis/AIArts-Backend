@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -41,4 +42,15 @@ func getResource(c *gin.Context) error {
 		"/home/username",
 	}
 	return SuccessResp(c, rsp)
+}
+
+func getUsername(c *gin.Context) (string, error) {
+
+	data, err := c.Get("userName")
+	if err != nil {
+		return nil, err
+	}
+
+	userName := fmt.Sprintf("%v", data)
+	return userName, nil
 }
