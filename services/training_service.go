@@ -14,7 +14,7 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 	err := DoRequest(url, "GET", nil, nil, jobList)
 
 	if err != nil {
-		fmt.Print("get all training err[%+v]", err)
+		fmt.Printf("get all training err[%+v]", err)
 		return nil, 0, 0, err
 	}
 

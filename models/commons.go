@@ -71,7 +71,7 @@ type JobParams struct {
 	GpuType               string `json:"gpuType"`
 	HostNetwork           bool `json:"hostNetwork"`
 	Image                 string `json:"image"`
-	InteractivePorts      string `json:"interactivePorts"`
+	InteractivePorts      bool `json:"interactivePorts"`
 	IsParent              int `json:"isParent"`
 	IsPrivileged          bool `json:"isPrivileged"`
 	JobId                 string `json:"jobId"`
