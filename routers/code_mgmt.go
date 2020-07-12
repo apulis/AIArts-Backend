@@ -9,40 +9,35 @@ import (
 func AddGroupCode(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/codes")
 
-	group.GET("/", wrapper(getAllCodeset))
-	group.POST("/", wrapper(createCodeset))
-	group.DELETE("/:id", wrapper(delCodeset))
+	group.GET("/", wrapper(getAllCodeEnv))
+	group.POST("/", wrapper(createCodeEnv))
+	group.DELETE("/:id", wrapper(delCodeEnv))
 }
 
-type GetAllCodesetReq struct {
+type GetAllCodeEnvReq struct {
 	PageNum 	int 	`json:"pageNum"`
 	PageSize 	int 	`json:"pageSize"`
 }
 
-type GetAllCodesetRsp struct {
-	Codesets 	[] *models.CodesetItem `json:"codesets"`
+type GetAllCodeEnvRsp struct {
+	CodeEnvs 	[] *models.CodeEnvItem `json:"CodeEnvs"`
 	Total		int   	`json:"total"`
 	totalPage	int 	`json:"totalPage"`
 }
 
-type CreateCodesetReq struct {
-	Name 			string `json:"name"`
-	Engine          string `json:"engine"`
-	DeviceType		string `json:"deviceType"`
-	DeviceNum 		int `json:"deviceNum"`
-	Desc 			string `json:"desc"`
-	CodePath		string `json:"codePath"`
+type CreateCodeEnvReq struct {
+	models.CodeEnvItem
 }
 
-type CreateCodesetRsp struct {
+type CreateCodeEnvRsp struct {
 	Id 				string `json:"id"`
 }
 
-type DeleteCodesetReq struct {
+type DeleteCodeEnvReq struct {
 	Id 				string `json:"id"`
 }
 
-type DeleteCodesetRsp struct {
+type DeleteCodeEnvRsp struct {
 
 }
 
@@ -50,24 +45,29 @@ type DeleteCodesetRsp struct {
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
-// @Success 200 {object} APISuccessRespAllGetCodeset "success"
+// @Success 200 {object} APISuccessRespAllGetCodeEnv "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [get]
-func getAllCodeset(c *gin.Context) error {
+func getAllCodeEnv(c *gin.Context) error {
 
-	var req GetAllCodesetReq
+	var req GetAllCodeEnvReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeset(req.PageNum, req.PageSize)
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	rsp := &GetAllCodesetRsp{
+	rsp := &GetAllCodeEnvRsp{
 		sets,
 		total,
 		totalPage,
@@ -76,16 +76,16 @@ func getAllCodeset(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
-// @Summary create codeset
+// @Summary create CodeEnv
 // @Produce  json
-// @Param param body CreateCodesetReq true "params"
-// @Success 200 {object} APISuccessRespCreateCodeset "success"
+// @Param param body CreateCodeEnvReq true "params"
+// @Success 200 {object} APISuccessRespCreateCodeEnv "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [post]
-func createCodeset(c *gin.Context) error {
+func createCodeEnv(c *gin.Context) error {
 
-	var req CreateCodesetReq
+	var req CreateCodeEnvReq
 	var id string
 
 	err := c.ShouldBindJSON(&req)
@@ -93,7 +93,12 @@ func createCodeset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	id, err = services.CreateCodeset(req.Name, req.Engine, req.DeviceNum)
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	id, err = services.CreateCodeEnv(userName, req.CodeEnvItem)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -101,28 +106,27 @@ func createCodeset(c *gin.Context) error {
 	return SuccessResp(c, id)
 }
 
-// @Summary delete codeset
+// @Summary delete CodeEnv
 // @Produce  json
 // @Param id query string true "code set id"
-// @Success 200 {object} APISuccessRespDeleteCodeset "success"
+// @Success 200 {object} APISuccessRespDeleteCodeEnv "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes/:id [delete]
-func delCodeset(c *gin.Context) error {
+func delCodeEnv(c *gin.Context) error {
 
-	var id string
+	var id DeleteCodeEnvReq
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	var req DeleteCodesetReq
-	err = c.ShouldBindJSON(&req)
-	if err != nil {
-		return ParameterError(err.Error())
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
 	}
 
-	err = services.DeleteCodeset(id)
+	err = services.DeleteCodeEnv(userName, id.Id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

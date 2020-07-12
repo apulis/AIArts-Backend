@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"strings"
 )
@@ -19,8 +20,8 @@ func ValidHomePath(userName, path string) bool {
 
 func GetAllTraining(userName string, page, size int) ([] *models.Training, int, int, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
-						userName, userName, 1000, "atlas")
+	url := fmt.Sprintf("%s/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
+						configs.Config.DltsUrl, userName, userName, 1000, "atlas")
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -72,7 +73,7 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 
 func CreateTraining(userName string, training models.Training) (string, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/PostJob")
+	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string] interface{})
 
 	params["userName"] = userName
@@ -124,7 +125,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 
 func DeleteTraining(userName, id string) error {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/KillJob?userName=%s&jobId=%s", userName, id)
+	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	params := make(map[string] interface{})
 
 	job := &models.Job{}
@@ -140,7 +141,7 @@ func DeleteTraining(userName, id string) error {
 
 func GetTraining(userName, id string) (*models.Training, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetJobDetailV2?userName=%s&jobId=%s", userName, id)
+	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	params := make(map[string] interface{})
 
 	job := &models.Job{}
@@ -172,7 +173,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 
 func GetTrainingLog(userName, id string) (*models.JobLog, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetJobLog?userName=%s&jobId=%s", userName, id)
+	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	jobLog := &models.JobLog{}
 
 	err := DoRequest(url, "GET", nil, nil, jobLog)

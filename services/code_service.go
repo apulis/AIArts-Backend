@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"time"
 	"math/rand"
 	"github.com/apulis/AIArtsBackend/models"
@@ -21,53 +22,109 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeset(page, size int) ([] *models.CodesetItem, int, int, error) {
+func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int, int, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
-							"yunxia.chu", "yunxia.chu", 10, "atlas")
+	url := fmt.Sprintf("%s/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
+		configs.Config.DltsUrl, userName, userName, 1000, "atlas")
+
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
 
 	if err != nil {
-		fmt.Print("request err: %+v", err)
+		fmt.Printf("get all code err[%+v]", err)
 		return nil, 0, 0, err
 	}
 
-	codes := make([] *models.CodesetItem, 0)
+	codes := make([] *models.CodeEnvItem, 0)
 	for _, v:= range jobList.RunningJobs {
-		codes = append(codes, &models.CodesetItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Status:     v.JobStatus,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.JobPath,
-			CodeUrl:    "",
-			CreateTime: time.Now().Unix() * 1000,
-			Desc:       "this is description",
+		codes = append(codes, &models.CodeEnvItem{
+			Id:          v.JobId,
+			Name:        v.JobName,
+			Engine:      v.JobParams.Image,
+			CodePath:    v.JobParams.DataPath,
+			Status:      v.JobStatus,
+			CreateTime:  v.JobTime,
+			JupyterUrl:  "",
+			Desc:        "",
 		})
 	}
 
 	for _, v:= range jobList.FinishedJobs {
-		codes = append(codes, &models.CodesetItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Status:     v.JobStatus,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.JobPath,
-			CodeUrl:    "",
-			CreateTime: time.Now().Unix() * 1000,
-			Desc:       "this is description",
+		codes = append(codes, &models.CodeEnvItem{
+			Id:          v.JobId,
+			Name:        v.JobName,
+			Engine:      v.JobParams.Image,
+			CodePath:    v.JobParams.DataPath,
+			Status:      v.JobStatus,
+			CreateTime:  v.JobTime,
+			JupyterUrl:  "",
+			Desc:        "",
 		})
 	}
 
 	return codes, len(codes), 1, nil
 }
 
-func CreateCodeset(name, description string, num int) (string, error) {
-	return RandStringRunes(16), nil
+func CreateCodeEnv(userName string, codeEnv models.CodeEnvItem) (string, error) {
+
+	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
+	params := make(map[string] interface{})
+
+	params["userName"] = userName
+	params["jobName"] = codeEnv.Name
+	params["jobType"] = "codeEnv"
+	params["image"] = codeEnv.Engine
+	params["gpuType"] = codeEnv.DeviceType
+	params["resourcegpu"] = codeEnv.DeviceNum
+	params["DeviceNum"] = codeEnv.DeviceNum
+
+	params["CodePath"] = codeEnv.CodePath
+	params["cmd"] = "sleep infinity"
+
+	params["OutputPath"] = ""  // use OutputPath instead
+	params["dataPath"] = ""
+	params["Desc"] = codeEnv.Desc
+	params["containerUserId"] = 0
+	params["jobtrainingtype"] = "RegularJob"
+	params["preemptionAllowed"] = false
+	params["workPath"] = ""
+
+	params["enableworkpath"] = true
+	params["enabledatapath"] = true
+	params["enablejobpath"] = true
+	params["jobPath"] = "job"
+
+	params["hostNetwork"] = false
+	params["isPrivileged"] = false
+	params["interactivePorts"] = false
+
+	params["vcName"] = "atlas"
+	params["team"] = "atlas"
+
+	id := &models.JobId{}
+	err := DoRequest(url, "POST", nil, params, id)
+
+	if err != nil {
+		fmt.Printf("create codeEnv err[%+v]\n", err)
+		return "", err
+	}
+
+	return id.Id, nil
 }
 
-func DeleteCodeset(id string) error {
+func DeleteCodeEnv(userName, id string) error {
+
+	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+	params := make(map[string] interface{})
+
+	job := &models.Job{}
+	err := DoRequest(url, "GET", nil, params, job)
+
+	if err != nil {
+		fmt.Printf("delete training err[%+v]\n", err)
+		return err
+	}
+
 	return nil
 }
 
