@@ -127,7 +127,7 @@ func getTraining(c *gin.Context) error {
 	var id models.UriJobId
 	var training *models.Training
 
-	err := c.ShouldBindJSON(&id)
+	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
