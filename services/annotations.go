@@ -6,6 +6,7 @@ import (
 	"github.com/levigross/grequests"
 	"github.com/apulis/AIArtsBackend/configs"
 	"errors"
+	"strconv"
 )
 
 var BackendUrl string
@@ -21,9 +22,9 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	if queryStringParameters.Size>=20 {
 		queryStringParameters.Size = 20
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+string(queryStringParameters.Page)+"&size="+string(queryStringParameters.Size), ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode,resp.String(),string(queryStringParameters.Page),string(queryStringParameters.Size))
+		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,0,errors.New(string(resp.StatusCode))
 	}
 	var projects models.ProjectsReq
@@ -83,7 +84,7 @@ func GetDatasets(projectId string,queryStringParameters models.QueryStringParame
 	if queryStringParameters.Size>=20 {
 		queryStringParameters.Size = 20
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+string(queryStringParameters.Page)+"&size="+string(queryStringParameters.Size), ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
 	logger.Info(resp.String())
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
@@ -158,7 +159,7 @@ func GetTasks(projectId string,dataSetId string,queryStringParameters models.Que
 	if queryStringParameters.Size>=20 {
 		queryStringParameters.Size = 20
 	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+string(queryStringParameters.Page)+"&size="+string(queryStringParameters.Size), ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,0,errors.New(string(resp.StatusCode))
