@@ -1,4 +1,4 @@
-port: 9000
+port: 49000
 
 log:
   writefile: true
@@ -7,8 +7,8 @@ log:
 
 db:
   username: root
-  password: apulis#2019#wednesday
-  host: 192.168.3.2
+  password: corona@2020@wuhan
+  host: huawei-infra01.sigsus.cn
   port: 3306
   database: ai_arts
   maxopenconns: 10
@@ -18,6 +18,12 @@ file:
   datasetdir: /test_data/dataset
   modeldir: /test_data/model
   sizelimit: 1000000000
+
+Anno:
+  backendUrl: https://huawei-proxy01.sigsus.cn
+
+Infer:
+  backendUrl: http://huawei-infra01.sigsus.cn
 
 auth:
   url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"

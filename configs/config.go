@@ -13,6 +13,9 @@ type ProjectConfig struct {
 	File    FileConfig
 	Auth    AuthConfig
 	DltsUrl string
+	Anno    AnnotationConfig
+	Infer   InferenceConfig
+	Token   string
 }
 
 type LogConfig struct {
@@ -35,6 +38,13 @@ type FileConfig struct {
 	DatasetDir string
 	ModelDir   string
 	SizeLimit  int
+}
+
+type AnnotationConfig struct {
+	BackendUrl string
+}
+type InferenceConfig struct {
+	BackendUrl string
 }
 
 type AuthConfig struct {
