@@ -24,7 +24,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode,resp.String())
+		logger.Error("response code is ",resp.StatusCode,resp.String(),strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
 		return nil,0,errors.New(string(resp.StatusCode))
 	}
 	var projects models.ProjectsReq
