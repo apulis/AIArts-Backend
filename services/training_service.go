@@ -32,7 +32,7 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			StartupFile: v.JobParams.StartupFile,
 			OutputPath:  v.JobParams.OutputPath,
 			DatasetPath: v.JobParams.DatasetPath,
-			Params:      "",
+			Params:      nil,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			Desc:        v.JobParams.Desc,
@@ -50,7 +50,7 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			StartupFile: v.JobParams.StartupFile,
 			OutputPath:  v.JobParams.OutputPath,
 			DatasetPath: v.JobParams.DatasetPath,
-			Params:      "",
+			Params:      nil,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			Desc:        v.JobParams.Desc,
@@ -157,7 +157,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
 
-	training.Params = ""
+	training.Params = nil
 	training.CodePath = job.JobParams.DataPath
 	training.StartupFile = job.JobParams.StartupFile
 	training.OutputPath = job.JobParams.OutputPath
