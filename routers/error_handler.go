@@ -18,6 +18,7 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		err := handler(c)
 		if err != nil {
+			logger.Error(err.Error())
 			var apiException *APIException
 			if h, ok := err.(*APIException); ok {
 				apiException = h
@@ -46,6 +47,10 @@ func newAPIException(statusCode, code int, msg string) *APIException {
 		Code:       code,
 		Msg:        msg,
 	}
+}
+
+func UnAuthorizedError(msg string) *APIException {
+	return newAPIException(http.StatusUnauthorized, AUTH_ERROR_CODE, msg)
 }
 
 func ServerError() *APIException {

@@ -7,10 +7,12 @@ import (
 )
 
 type ProjectConfig struct {
-	Port int
-	Log  LogConfig
-	Db   DbConfig
-	File FileConfig
+	Port    int
+	Log     LogConfig
+	Db      DbConfig
+	File    FileConfig
+	Auth    AuthConfig
+	DltsUrl string
 }
 
 type LogConfig struct {
@@ -33,6 +35,11 @@ type FileConfig struct {
 	DatasetDir string
 	ModelDir   string
 	SizeLimit  int
+}
+
+type AuthConfig struct {
+	Url string
+	Key string
 }
 
 var Config ProjectConfig
