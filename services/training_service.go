@@ -29,13 +29,13 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			DeviceType:  v.JobParams.GpuType,
 			DeviceNum:   v.JobParams.Resourcegpu,
 			CodePath:    v.JobParams.DataPath,
-			StartupFile: "",
-			OutputPath:  v.JobParams.WorkPath,
-			DatasetPath: v.JobParams.DataPath,
-			Params:      nil,
+			StartupFile: v.JobParams.StartupFile,
+			OutputPath:  v.JobParams.OutputPath,
+			DatasetPath: v.JobParams.DatasetPath,
+			Params:      "",
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
-			Desc:        "",
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
@@ -47,13 +47,13 @@ func GetAllTraining(userName string, page, size int) ([] *models.Training, int, 
 			DeviceType:  v.JobParams.GpuType,
 			DeviceNum:   v.JobParams.Resourcegpu,
 			CodePath:    v.JobParams.DataPath,
-			StartupFile: "",
-			OutputPath:  v.JobParams.WorkPath,
-			DatasetPath: v.JobParams.DataPath,
-			Params:      nil,
+			StartupFile: v.JobParams.StartupFile,
+			OutputPath:  v.JobParams.OutputPath,
+			DatasetPath: v.JobParams.DatasetPath,
+			Params:      "",
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
-			Desc:        "",
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
@@ -84,7 +84,8 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
 	params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
 
-	params["dataPath"] = training.DatasetPath
+	params["startupFile"] = training.StartupFile
+	params["datasetPath"] = training.DatasetPath
 	params["codePath"] = training.CodePath
 	params["outputPath"] = training.OutputPath
 
@@ -157,7 +158,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.CreateTime = job.JobTime
 
 	training.Params = nil
-	training.DatasetPath = ""
+	training.DatasetPath =
 	training.StartupFile = ""
 	training.CodePath = ""
 	training.OutputPath = ""

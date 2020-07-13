@@ -94,6 +94,12 @@ type JobParams struct {
 	UserName              string `json:"userName"`
 	VcName                string `json:"vcName"`
 	WorkPath              string `json:"workPath"`
+	
+	CodePath			  string `json:"codePath"`
+	StartupFile			  string `json:"startupFile"`
+	OutputPath			  string `json:"outputPath"`
+	DatasetPath			  string `json:"datasetPath"`
+	Desc                  string `json:"desc"`
 }
 
 type Job struct {
