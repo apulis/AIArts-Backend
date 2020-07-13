@@ -44,11 +44,16 @@ func GetProjects(c *gin.Context) error {
 	logger.Info("token is ",token)
 	token = strings.Split(token,"Bearer ")[1]
 	configs.Config.Token = token
-	projects,err := services.GetProjects()
+	var queryStringParameters models.QueryStringParameters
+	err := c.ShouldBindQuery(&queryStringParameters)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	projects,totalCount,err := services.GetProjects(queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"projects":projects})
+	return SuccessResp(c,gin.H{"projects":projects,"totalCount":totalCount})
 }
 
 func DeleteProject(c *gin.Context) error {
@@ -101,11 +106,16 @@ func GetDatasets(c *gin.Context) error {
 	token = strings.Split(token,"Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
-	datasets,err := services.GetDatasets(projectId)
+	var queryStringParameters models.QueryStringParameters
+	err := c.ShouldBindQuery(&queryStringParameters)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	datasets,totalCount,err := services.GetDatasets(projectId,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
-	return SuccessResp(c,gin.H{"datasets":datasets})
+	return SuccessResp(c,gin.H{"datasets":datasets,"totalCount":totalCount})
 }
 
 func AddDataset(c *gin.Context) error {
@@ -180,11 +190,16 @@ func GetTasks(c *gin.Context) error {
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	tasks,err := services.GetTasks(projectId,dataSetId)
+	var queryStringParameters models.QueryStringParameters
+	err := c.ShouldBindQuery(&queryStringParameters)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	tasks,totalCount,err := services.GetTasks(projectId,dataSetId,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
-	return SuccessResp(c,gin.H{"taskList":tasks})
+	return SuccessResp(c,gin.H{"taskList":tasks,"totalCount":totalCount})
 }
 
 func GetNextTask(c *gin.Context) error {

@@ -16,6 +16,7 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/GetJobDetail", wrapper(GetJobDetail))
 	group.GET("/GetJobLog", wrapper(GetJobLog))
 	group.GET("/GetJobStatus", wrapper(GetJobStatus))
+	group.GET("/Infer", wrapper(Infer))
 }
 
 // @Summary sample
@@ -87,6 +88,15 @@ func GetJobLog(c *gin.Context) error {
 }
 
 func GetJobStatus(c *gin.Context) error {
+	jobId := c.Query("jobId")
+	jobs,err := services.GetJobStatus(jobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, jobs)
+}
+
+func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	jobs,err := services.GetJobStatus(jobId)
 	if err != nil {

@@ -20,12 +20,14 @@ type ProjectsReq struct {
 	Successful string
 	Msg string
 	Projects []Project
+	TotalCount int `json:"totalCount"`
 }
 
 type DatasetsReq struct {
 	Successful string
 	Msg string
 	Datasets []DataSet
+	TotalCount int `json:"totalCount"`
 }
 
 type DatasetReq struct {
@@ -46,6 +48,7 @@ type TasksList struct {
 	Successful string
 	Msg string
 	TaskList []interface{}
+	TotalCount int `json:"totalCount"`
 }
 
 type NextTask struct {
@@ -58,4 +61,9 @@ type OneTask struct {
 	Successful string
 	Msg string
 	Annotations interface{}
+}
+
+type QueryStringParameters struct {
+	Page int
+	Size int
 }
