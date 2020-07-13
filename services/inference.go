@@ -2,10 +2,10 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
-	"errors"
 	"strconv"
 )
 
@@ -32,7 +32,7 @@ func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models
 	if queryStringParameters.PageSize==0 {
 		queryStringParameters.PageSize = 5
 	}
-	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJob?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
+	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJobV2?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
 		strconv.Itoa(queryStringParameters.PageNum)+"&size="+strconv.Itoa(queryStringParameters.PageSize), nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
@@ -103,9 +103,13 @@ func GetJobStatus(jobId string) (interface{},error) {
 	return jobLog,err
 }
 
-func Infer(jobId string,image interface{}) (interface{},error) {
+func Infer(jobId string) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/apis/Infer?&jobId="+jobId,nil)
+	fd, err := grequests.FileUploadFromDisk("./"+jobId)
+	ro := &grequests.RequestOptions{
+		Files: fd,
+	}
+	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))

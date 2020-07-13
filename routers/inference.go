@@ -4,6 +4,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
+
 )
 
 func AddGroupInference(r *gin.Engine) {
@@ -16,7 +17,7 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/GetJobDetail", wrapper(GetJobDetail))
 	group.GET("/GetJobLog", wrapper(GetJobLog))
 	group.GET("/GetJobStatus", wrapper(GetJobStatus))
-	group.GET("/Infer", wrapper(Infer))
+	group.POST("/Infer", wrapper(Infer))
 }
 
 // @Summary sample
@@ -29,9 +30,15 @@ func AddGroupInference(r *gin.Engine) {
 func PostInferenceJob(c *gin.Context) error {
 	var params models.PostInference
 	err := c.ShouldBind(&params)
+	params.UserName = getUsername(c)
+	params.UserId = getUserId(c)
+	if params.VcName=="" {
+		params.VcName = "platform"
+	}
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	jobId,err := services.PostInferenceJob(params)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -41,6 +48,9 @@ func PostInferenceJob(c *gin.Context) error {
 
 func ListInferenceJob(c *gin.Context) error {
 	vcName := c.Query("vcName")
+	if vcName=="" {
+		vcName = "platform"
+	}
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
@@ -49,7 +59,7 @@ func ListInferenceJob(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, gin.H{"inferences":jobs})
+	return SuccessResp(c, jobs)
 }
 
 func GetAllSupportInference(c *gin.Context) error {
@@ -100,8 +110,12 @@ func GetJobStatus(c *gin.Context) error {
 
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	image, err := c.FormFile("image")
-	resp,err := services.Infer(jobId,image)
+	file, err := c.FormFile("image")
+	err = c.SaveUploadedFile(file, "./"+jobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	resp,err := services.Infer(jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

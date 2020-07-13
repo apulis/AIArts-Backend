@@ -53,6 +53,7 @@ func Auth() gin.HandlerFunc {
 				}
 				c.Set("uid", claim.Uid)
 				c.Set("userName", claim.UserName)
+				c.Set("userId", claim.Uid)
 			}
 		}
 

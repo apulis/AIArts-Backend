@@ -59,3 +59,14 @@ func getUsername(c *gin.Context) string {
 	userName := fmt.Sprintf("%v", data)
 	return userName
 }
+
+func getUserId(c *gin.Context) string {
+
+	data, exists := c.Get("userId")
+	if !exists {
+		return ""
+	}
+
+	userId := fmt.Sprintf("%v", data)
+	return userId
+}
