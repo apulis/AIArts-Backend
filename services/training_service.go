@@ -74,7 +74,6 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum
 
-	params["codePath"] = training.CodePath
 	//params["cmd"] = "sleep 30m"  // use StartupFile, params instead
 
 	params["cmd"] = training.StartupFile
@@ -86,6 +85,9 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
 
 	params["dataPath"] = training.DatasetPath
+	params["codePath"] = training.CodePath
+	params["outputPath"] = training.OutputPath
+
 	params["desc"] = training.Desc
 
 	params["containerUserId"] = 0
