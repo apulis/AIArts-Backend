@@ -18,3 +18,11 @@ type DeviceItem struct {
 	Avail		int 	`json:"avail"`
 }
 
+type CreateCodeEnv struct {
+	Name        string `json:"name"   binding:"required"`
+	Engine      string `json:"engine"  binding:"required"`
+	CodePath 	string `json:"codePath"`
+	DeviceType	string `json:"deviceType"`
+	DeviceNum 	int `json:"deviceNum"`
+	Desc		string `json:"desc"`
+}

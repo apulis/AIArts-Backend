@@ -65,7 +65,7 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 	return codes, len(codes), 1, nil
 }
 
-func CreateCodeEnv(userName string, codeEnv models.CodeEnvItem) (string, error) {
+func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string] interface{})

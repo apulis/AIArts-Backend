@@ -26,12 +26,7 @@ type GetAllCodeEnvRsp struct {
 }
 
 type CreateCodeEnvReq struct {
-	Name        string `json:"name"   binding:"required"`
-	Engine      string `json:"engine"  binding:"required"`
-	CodePath 	string `json:"codePath"`
-	DeviceType	string `json:"deviceType"`
-	DeviceNum 	int `json:"deviceNum"`
-	Desc		string `json:"desc"`
+	models.CreateCodeEnv
 }
 
 type CreateCodeEnvRsp struct {
@@ -103,7 +98,7 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	id, err = services.CreateCodeEnv(userName, req.CodeEnvItem)
+	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
