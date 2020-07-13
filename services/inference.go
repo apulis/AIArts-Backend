@@ -32,7 +32,7 @@ func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models
 	if queryStringParameters.PageSize==0 {
 		queryStringParameters.PageSize = 5
 	}
-	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJob?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
+	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJobV2?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
 		strconv.Itoa(queryStringParameters.PageNum)+"&size="+strconv.Itoa(queryStringParameters.PageSize), nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())

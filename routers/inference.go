@@ -55,7 +55,7 @@ func ListInferenceJob(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, gin.H{"inferences":jobs})
+	return SuccessResp(c, jobs)
 }
 
 func GetAllSupportInference(c *gin.Context) error {
