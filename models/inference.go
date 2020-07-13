@@ -11,6 +11,7 @@ type PostInference struct {
 	Framework string	`json:"framework"`
 	Device string	`json:"device"`
 	Resourcegpu int	`json:"resourcegpu"`
+	DESC string `json:"desc"`
 }
 
 type InferenceJobResp struct {

@@ -47,6 +47,7 @@ func Auth() gin.HandlerFunc {
 				c.JSON(http.StatusUnauthorized, UnAuthorizedError("Token expired"))
 			} else {
 				c.Set("userName", claim.UserName)
+				c.Set("userId", claim.Uid)
 			}
 		}
 
