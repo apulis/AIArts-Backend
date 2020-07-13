@@ -67,7 +67,8 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 
 	params["userName"] = userName
 	params["jobName"] = training.Name
-	params["jobType"] = "training"
+	params["jobType"] = models.JobTypeArtsTraining
+
 	params["image"] = training.Engine
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum

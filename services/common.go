@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/models"
@@ -13,9 +14,9 @@ var logger = loggers.Log
 
 func GetResource(userName string) (map[string][]string, []models.DeviceItem, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetVC?userName=%s&vcName=%s", userName, models.DefaultVcName)
-
+	url := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
 	vcInfo := &models.VcInfo{}
+
 	err := DoRequest(url, "GET", nil, nil, vcInfo)
 	if err != nil {
 		fmt.Printf("get resource err[%+v]\n", err)

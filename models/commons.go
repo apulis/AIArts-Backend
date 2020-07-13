@@ -59,6 +59,12 @@ func (t *UnixTime) Scan(v interface{}) error {
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
+const (
+	JobTypeTraining 		string = "training"			// 老DLTS默认采用的jobType
+	JobTypeArtsTraining 	string = "artsTraining"		// 供电局项目：模型训练
+	JobTypeCodeEnv	 		string = "codeEnv"			// 供电局项目：代码环境
+)
+
 type JobParams struct {
 	Cmd                   string `json:"cmd"`
 	ContainerUserId       int 	`json:"containerUserId"`

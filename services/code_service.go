@@ -72,7 +72,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 
 	params["userName"] = userName
 	params["jobName"] = codeEnv.Name
-	params["jobType"] = "codeEnv"
+	params["jobType"] = models.JobTypeCodeEnv
 	params["image"] = codeEnv.Engine
 
 	params["gpuType"] = codeEnv.DeviceType
