@@ -88,7 +88,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["datasetPath"] = training.DatasetPath
 	params["codePath"] = training.CodePath
 	params["outputPath"] = training.OutputPath
-
+	params["scriptParams"] = training.Params
 	params["desc"] = training.Desc
 
 	params["containerUserId"] = 0
@@ -158,7 +158,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.CreateTime = job.JobTime
 
 	training.Params = nil
-	training.CodePath = job.JobParams.DataPath
+	training.CodePath = job.JobParams.CodePath
 	training.StartupFile = job.JobParams.StartupFile
 	training.OutputPath = job.JobParams.OutputPath
 	training.DatasetPath = job.JobParams.DatasetPath

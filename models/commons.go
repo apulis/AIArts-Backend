@@ -13,7 +13,7 @@ import (
 
 var db = database.Db
 var logger = loggers.Log
-var DefaultVcName = "atlas"
+var DefaultVcName = "platform"
 
 type UnixTime struct {
 	time.Time
