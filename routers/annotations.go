@@ -46,9 +46,6 @@ func GetProjects(c *gin.Context) error {
 	configs.Config.Token = token
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
 	projects,totalCount,err := services.GetProjects(queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -108,9 +105,6 @@ func GetDatasets(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
 	datasets,totalCount,err := services.GetDatasets(projectId,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
@@ -192,9 +186,6 @@ func GetTasks(c *gin.Context) error {
 	dataSetId := c.Param("dataSetId")
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
 	tasks,totalCount,err := services.GetTasks(projectId,dataSetId,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
