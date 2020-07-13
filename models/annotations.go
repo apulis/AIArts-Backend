@@ -64,6 +64,6 @@ type OneTask struct {
 }
 
 type QueryStringParameters struct {
-	Page int
-	Size int
+	Page int `schema:"page"`
+	Size int `schema:"size"`
 }
