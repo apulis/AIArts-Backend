@@ -32,11 +32,11 @@ func PostInferenceJob(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.PostInferenceJob(params)
+	jobId,err := services.PostInferenceJob(params)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, gin.H{})
+	return SuccessResp(c, gin.H{"jobId":jobId})
 }
 
 func ListInferenceJob(c *gin.Context) error {

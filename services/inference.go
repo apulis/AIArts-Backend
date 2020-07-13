@@ -8,7 +8,7 @@ import (
 	"errors"
 )
 
-func PostInferenceJob(inference models.PostInference) error {
+func PostInferenceJob(inference models.PostInference) (string,error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
 	ro := &grequests.RequestOptions{
 		JSON: inference,
@@ -16,9 +16,11 @@ func PostInferenceJob(inference models.PostInference) error {
 	resp, err := grequests.Post(BackendUrl+"/apis/PostInferenceJob", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return "",errors.New(string(resp.StatusCode))
 	}
-	return err
+	var jobRes models.InferenceJobResp
+	json.Unmarshal(resp.Bytes(),&jobRes)
+	return jobRes.JobId,err
 }
 
 func ListInferenceJob(jobOwner string,vcName string,num string) (interface{},error){
