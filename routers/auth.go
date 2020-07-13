@@ -3,6 +3,7 @@ package routers
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -44,8 +45,13 @@ func Auth() gin.HandlerFunc {
 			claim, err := parseToken(auth)
 			if err != nil {
 				c.Abort()
-				c.JSON(http.StatusUnauthorized, UnAuthorizedError("Token expired"))
+				c.JSON(http.StatusUnauthorized, UnAuthorizedError(err.Error()))
 			} else {
+				if time.Now().Unix() > claim.ExpiresAt {
+					c.Abort()
+					c.JSON(http.StatusUnauthorized, UnAuthorizedError("Token expired"))
+				}
+				c.Set("uid", claim.Uid)
 				c.Set("userName", claim.UserName)
 			}
 		}
