@@ -40,17 +40,16 @@ func PostInferenceJob(c *gin.Context) error {
 }
 
 func ListInferenceJob(c *gin.Context) error {
-	num := c.Query("num")
 	vcName := c.Query("vcName")
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
-	jobs,err := services.ListInferenceJob(jobOwner,vcName,num,queryStringParameters)
+	jobs,err := services.ListInferenceJob(jobOwner,vcName,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, jobs)
+	return SuccessResp(c, gin.H{"inferences":jobs})
 }
 
 func GetAllSupportInference(c *gin.Context) error {
