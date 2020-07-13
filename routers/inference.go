@@ -98,9 +98,10 @@ func GetJobStatus(c *gin.Context) error {
 
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	jobs,err := services.GetJobStatus(jobId)
+	image, err := c.FormFile("image")
+	resp,err := services.Infer(jobId,image)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, jobs)
+	return SuccessResp(c, resp)
 }

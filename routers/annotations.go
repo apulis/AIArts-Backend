@@ -28,6 +28,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId", wrapper(GetNextTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
+	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 }
 
 
@@ -122,7 +123,6 @@ func AddDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	logger.Info(dataset)
 	err = services.AddDataset(projectId,dataset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE,err.Error())
@@ -234,4 +234,17 @@ func PostOneTask(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE,err.Error())
 	}
 	return SuccessResp(c,gin.H{})
+}
+
+func GetDataSetLabels(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	token = strings.Split(token,"Bearer ")[1]
+	configs.Config.Token = token
+	projectId := c.Param("projectId")
+	dataSetId := c.Param("dataSetId")
+	labels,err := services.GetDataSetLabels(projectId,dataSetId)
+	if err != nil {
+	return AppError(APP_ERROR_CODE,err.Error())
+	}
+	return SuccessResp(c,gin.H{"annotations":labels})
 }

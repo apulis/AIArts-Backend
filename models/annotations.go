@@ -42,6 +42,20 @@ type UpdateDataSet struct {
 	Type string
 	DataSetBindId string
 	DataSetPath string
+	Label []Label
+}
+
+type Label struct {
+	Id int				`json: id`
+	Name string			`json: name`
+	Type string 		`json: type`
+	Supercategory string	`json: supercategory`
+}
+
+type LabelReq struct {
+	Successful string
+	Msg string
+	Annotations interface{}	`json: annotations`
 }
 
 type TasksList struct {

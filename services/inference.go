@@ -92,3 +92,15 @@ func GetJobStatus(jobId string) (interface{},error) {
 	json.Unmarshal(resp.Bytes(),&jobLog)
 	return jobLog,err
 }
+
+func Infer(jobId string,image interface{}) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/Infer?&jobId="+jobId,nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var respImage interface{}
+	json.Unmarshal(resp.Bytes(),&respImage)
+	return respImage,err
+}

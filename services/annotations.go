@@ -213,3 +213,18 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 	}
 	return err
 }
+
+func GetDataSetLabels(projectId string,dataSetId string) (interface{},error) {
+	BackendUrl = configs.Config.Anno.BackendUrl
+	ro := &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
+	}
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/labels", ro)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var labels models.LabelReq
+	json.Unmarshal(resp.Bytes(),&labels)
+	return labels.Annotations,err
+}
