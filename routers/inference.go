@@ -13,6 +13,9 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/ListInferenceJob", wrapper(ListInferenceJob))
 	group.GET("/GetAllSupportInference", wrapper(GetAllSupportInference))
 	group.GET("/GetAllDevice", wrapper(GetAllDevice))
+	group.GET("/GetJobDetail", wrapper(GetJobDetail))
+	group.GET("/GetJobLog", wrapper(GetJobLog))
+	group.GET("/GetJobStatus", wrapper(GetJobStatus))
 }
 
 // @Summary sample
@@ -57,6 +60,35 @@ func GetAllSupportInference(c *gin.Context) error {
 func GetAllDevice(c *gin.Context) error {
 	userName := c.Query("userName")
 	jobs,err := services.GetAllDevice(userName)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, jobs)
+}
+
+func GetJobDetail(c *gin.Context) error {
+	userName := c.Query("userName")
+	jobId := c.Query("jobId")
+	jobs,err := services.GetJobDetail(userName,jobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, jobs)
+}
+
+func GetJobLog(c *gin.Context) error {
+	userName := c.Query("userName")
+	jobId := c.Query("jobId")
+	jobs,err := services.GetJobLog(userName,jobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, jobs)
+}
+
+func GetJobStatus(c *gin.Context) error {
+	jobId := c.Query("jobId")
+	jobs,err := services.GetJobStatus(jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

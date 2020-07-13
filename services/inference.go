@@ -52,7 +52,43 @@ func GetAllDevice(userName string) (interface{},error) {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
 	}
-	var inferences interface{}
-	json.Unmarshal(resp.Bytes(),&inferences)
-	return inferences,err
+	var devices interface{}
+	json.Unmarshal(resp.Bytes(),&devices)
+	return devices,err
+}
+
+func GetJobDetail(userName string,jobId string) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/GetJobDetailV2?userName="+userName+"&jobId="+jobId,nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var jobDetail interface{}
+	json.Unmarshal(resp.Bytes(),&jobDetail)
+	return jobDetail,err
+}
+
+func GetJobLog(userName string,jobId string) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/GetJobLog?userName="+userName+"&jobId="+jobId,nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var jobLog interface{}
+	json.Unmarshal(resp.Bytes(),&jobLog)
+	return jobLog,err
+}
+
+func GetJobStatus(jobId string) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/GetJobStatus?&jobId="+jobId,nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var jobLog interface{}
+	json.Unmarshal(resp.Bytes(),&jobLog)
+	return jobLog,err
 }
