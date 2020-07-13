@@ -26,7 +26,12 @@ type GetAllCodeEnvRsp struct {
 }
 
 type CreateCodeEnvReq struct {
-	models.CodeEnvItem
+	Name        string `json:"name"   binding:"required"`
+	Engine      string `json:"engine"  binding:"required"`
+	CodePath 	string `json:"codePath"`
+	DeviceType	string `json:"deviceType"`
+	DeviceNum 	int `json:"deviceNum"`
+	Desc		string `json:"desc"`
 }
 
 type CreateCodeEnvRsp struct {
