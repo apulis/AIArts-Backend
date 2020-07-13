@@ -1,13 +1,10 @@
 package routers
 
 import (
-	"bytes"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
-	"image"
-	"image/jpeg"
-	"io"
+
 )
 
 func AddGroupInference(r *gin.Engine) {
