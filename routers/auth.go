@@ -32,35 +32,24 @@ func parseToken(token string) (*Claim, error) {
 }
 
 func Auth() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		result := APIException{
-			StatusCode: http.StatusUnauthorized,
-			Msg:        "无法认证，重新登录",
-		}
-
-		auth := context.Request.Header.Get("Authorization")
+	return func(c *gin.Context) {
+		auth := c.Request.Header.Get("Authorization")
 		if len(auth) == 0 {
-			context.Abort()
-			context.JSON(http.StatusUnauthorized, gin.H{
-				"result": result,
-			})
+			c.Abort()
+			c.JSON(http.StatusUnauthorized, UnAuthorizedError("Cannot authorize"))
 		} else {
 			auth = strings.Fields(auth)[1]
 
-			// 校验token
+			// Check token
 			claim, err := parseToken(auth)
 			if err != nil {
-				context.Abort()
-				result.Msg = "token 过期" + err.Error()
-				context.JSON(http.StatusUnauthorized, gin.H{
-					"result": result,
-				})
+				c.Abort()
+				c.JSON(http.StatusUnauthorized, UnAuthorizedError("Token expired"))
 			} else {
-				println("token 正确: ", claim.UserName)
-				context.Set("userName", claim.UserName)
+				c.Set("userName", claim.UserName)
 			}
 		}
 
-		context.Next()
+		c.Next()
 	}
 }

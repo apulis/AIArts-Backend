@@ -1,20 +1,17 @@
 definitions:
-  models.AIFrameworkItem:
+  models.CodeEnvItem:
     properties:
-      engine:
+      JupyterUrl:
         type: string
-      name:
-        type: string
-    type: object
-  models.CodesetItem:
-    properties:
       codePath:
         type: string
-      codeUrl:
-        type: string
       createTime:
-        type: integer
+        type: string
       desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
         type: string
       engine:
         type: string
@@ -32,11 +29,11 @@ definitions:
   models.Dataset:
     properties:
       createdAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       creator:
         type: string
       deletedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       description:
         type: string
       id:
@@ -50,7 +47,7 @@ definitions:
       status:
         type: string
       updatedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       version:
         type: string
     type: object
@@ -61,14 +58,21 @@ definitions:
       deviceType:
         type: string
     type: object
+  models.JobLog:
+    properties:
+      cursor:
+        type: string
+      log:
+        type: string
+    type: object
   models.Modelset:
     properties:
       createdAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       creator:
         type: string
       deletedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       description:
         type: string
       id:
@@ -86,13 +90,15 @@ definitions:
       type:
         type: string
       updatedAt:
-        type: string
+        $ref: '#/definitions/models.UnixTime'
       version:
         type: string
     type: object
   models.Training:
     properties:
       codePath:
+        type: string
+      createTime:
         type: string
       datasetPath:
         type: string
@@ -116,6 +122,13 @@ definitions:
         type: object
       startupFile:
         type: string
+      status:
+        type: string
+    type: object
+  models.UnixTime:
+    properties:
+      time.Time:
+        type: string
     type: object
   routers.APIException:
     properties:
@@ -133,21 +146,21 @@ definitions:
       msg:
         type: string
     type: object
-  routers.APISuccessRespAllGetCodeset:
+  routers.APISuccessRespAllGetCodeEnv:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/routers.GetAllCodesetRsp'
+        $ref: '#/definitions/routers.GetAllCodeEnvRsp'
       msg:
         type: string
     type: object
-  routers.APISuccessRespCreateCodeset:
+  routers.APISuccessRespCreateCodeEnv:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/routers.CreateCodesetRsp'
+        $ref: '#/definitions/routers.CreateCodeEnvRsp'
       msg:
         type: string
     type: object
@@ -160,12 +173,12 @@ definitions:
       msg:
         type: string
     type: object
-  routers.APISuccessRespDeleteCodeset:
+  routers.APISuccessRespDeleteCodeEnv:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/routers.DeleteCodesetRsp'
+        $ref: '#/definitions/routers.DeleteCodeEnvRsp'
       msg:
         type: string
     type: object
@@ -241,9 +254,22 @@ definitions:
       msg:
         type: string
     type: object
-  routers.CreateCodesetReq:
+  routers.APISuccessRespGetTrainingLog:
     properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.JobLog'
+      msg:
+        type: string
+    type: object
+  routers.CreateCodeEnvReq:
+    properties:
+      JupyterUrl:
+        type: string
       codePath:
+        type: string
+      createTime:
         type: string
       desc:
         type: string
@@ -253,25 +279,59 @@ definitions:
         type: string
       engine:
         type: string
+      id:
+        type: string
       name:
         type: string
+      status:
+        type: string
+    required:
+    - engine
+    - name
+    - status
     type: object
-  routers.CreateCodesetRsp:
+  routers.CreateCodeEnvRsp:
     properties:
       id:
         type: string
     type: object
   routers.CreateTrainingReq:
     properties:
-      training:
-        $ref: '#/definitions/models.Training'
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
     type: object
   routers.CreateTrainingRsp:
     properties:
       id:
         type: string
     type: object
-  routers.DeleteCodesetRsp:
+  routers.DeleteCodeEnvRsp:
     type: object
   routers.DeleteTrainingReq:
     properties:
@@ -280,11 +340,11 @@ definitions:
     type: object
   routers.DeleteTrainingRsp:
     type: object
-  routers.GetAllCodesetRsp:
+  routers.GetAllCodeEnvRsp:
     properties:
-      codesets:
+      CodeEnvs:
         items:
-          $ref: '#/definitions/models.CodesetItem'
+          $ref: '#/definitions/models.CodeEnvItem'
         type: array
       total:
         type: integer
@@ -340,10 +400,14 @@ definitions:
     type: object
   routers.GetResourceRsp:
     properties:
-      aiFrameworkList:
-        items:
-          $ref: '#/definitions/models.AIFrameworkItem'
-        type: array
+      aiFrameworks:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      codePathPrefix:
+        type: string
       deviceList:
         items:
           $ref: '#/definitions/models.DeviceItem'
@@ -355,6 +419,75 @@ definitions:
         type: string
     type: object
   routers.GetTrainingRsp:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
+    type: object
+  routers.UploadFileResp:
+    properties:
+      path:
+        type: string
+    type: object
+  routers.createDatasetReq:
+    properties:
+      creator:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+    required:
+    - creator
+    - description
+    - name
+    - path
+    type: object
+  routers.createModelsetReq:
+    properties:
+      creator:
+        type: string
+      description:
+        type: string
+      jobId:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+    required:
+    - creator
+    - description
+    - jobId
+    - name
+    - path
     type: object
 info:
   contact: {}
@@ -379,7 +512,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespAllGetCodeset'
+            $ref: '#/definitions/routers.APISuccessRespAllGetCodeEnv'
         "400":
           description: error
           schema:
@@ -396,14 +529,14 @@ paths:
         name: param
         required: true
         schema:
-          $ref: '#/definitions/routers.CreateCodesetReq'
+          $ref: '#/definitions/routers.CreateCodeEnvReq'
       produces:
       - application/json
       responses:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespCreateCodeset'
+            $ref: '#/definitions/routers.APISuccessRespCreateCodeEnv'
         "400":
           description: error
           schema:
@@ -412,7 +545,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: create codeset
+      summary: create CodeEnv
   /ai_arts/api/codes/:id:
     delete:
       parameters:
@@ -427,7 +560,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespDeleteCodeset'
+            $ref: '#/definitions/routers.APISuccessRespDeleteCodeEnv'
         "400":
           description: error
           schema:
@@ -436,7 +569,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: delete codeset
+      summary: delete CodeEnv
   /ai_arts/api/common/resource:
     get:
       produces:
@@ -486,12 +619,12 @@ paths:
       summary: list datasets
     post:
       parameters:
-      - description: dataset name
+      - description: json body
         in: body
-        name: name
+        name: body
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/routers.createDatasetReq'
       - description: dataset description
         in: body
         name: description
@@ -635,7 +768,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.UploadFileResp'
         "400":
           description: error
           schema:
@@ -669,7 +802,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: upload dataset file
+      summary: upload model file, not implemented yet
   /ai_arts/api/models:
     get:
       parameters:
@@ -706,30 +839,12 @@ paths:
       summary: list models
     post:
       parameters:
-      - description: model name
+      - description: json body
         in: body
-        name: name
+        name: body
         required: true
         schema:
-          type: string
-      - description: model description
-        in: body
-        name: description
-        required: true
-        schema:
-          type: string
-      - description: model creator
-        in: body
-        name: creator
-        required: true
-        schema:
-          type: string
-      - description: model storage path
-        in: body
-        name: path
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/routers.createModelsetReq'
       produces:
       - application/json
       responses:
@@ -816,7 +931,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
-  /ai_arts/api/training:
+  /ai_arts/api/trainings:
     get:
       parameters:
       - description: page number
@@ -869,7 +984,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: create Training
-  /ai_arts/api/training/:id:
+  /ai_arts/api/trainings/:id:
     delete:
       parameters:
       - description: params
@@ -909,6 +1024,31 @@ paths:
           description: success
           schema:
             $ref: '#/definitions/routers.APISuccessRespGetTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get specific training
+  /ai_arts/api/trainings/log/:id:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetTrainingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetTrainingLog'
         "400":
           description: error
           schema:

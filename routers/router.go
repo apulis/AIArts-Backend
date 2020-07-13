@@ -15,11 +15,12 @@ var logger = loggers.Log
 func NewRouter() *gin.Engine {
 	r := gin.New()
 
+	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
+
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.Use(cors.Default())
-	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
 	r.Use(Auth())
 
 	r.NoMethod(HandleNotFound)
