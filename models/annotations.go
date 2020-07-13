@@ -12,7 +12,7 @@ type DataSet struct {
 	Name string
 	Info string
 	Type string
-	Label []Label
+	Labels []Label
 	DataSetBindId string
 	DataSetPath string
 }
@@ -43,7 +43,7 @@ type UpdateDataSet struct {
 	Type string
 	DataSetBindId string
 	DataSetPath string
-	Label []Label
+	Labels []Label
 }
 
 type Label struct {
