@@ -23,7 +23,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+string(queryStringParameters.Page)+"&size="+string(queryStringParameters.Size), ro)
 	if resp.StatusCode!=200 {
-		logger.Error("response code is ",resp.StatusCode,resp.String())
+		logger.Error("response code is ",resp.StatusCode,resp.String(),queryStringParameters.Page,queryStringParameters.Size)
 		return nil,0,errors.New(string(resp.StatusCode))
 	}
 	var projects models.ProjectsReq
