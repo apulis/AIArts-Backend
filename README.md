@@ -8,6 +8,7 @@ Backend for AIArts.
 ### 配置
 * 配置文件为config.yaml，在项目根目录
 * 配置结构体定义在`configs/config.go`，使用`viper`库读取配置
+* `config.yaml`已放入.gitignore，格式按照`config.template.yaml`编写
 
 
 ### 数据库

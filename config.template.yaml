@@ -7,8 +7,8 @@ log:
 
 db:
   username: root
-  password: root
-  host: 127.0.0.1
+  password: apulis#2019#wednesday
+  host: 192.168.3.2
   port: 3306
   database: ai_arts
   maxopenconns: 10
@@ -22,3 +22,5 @@ file:
 auth:
   url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"
   key: "Sign key for JWT"
+
+dlts_platform_url: http://atlas02.sigsus.cn/apis

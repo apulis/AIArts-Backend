@@ -21,4 +21,10 @@ const (
 	FILE_OVERSIZE_CODE          = 30006
 	FILEPATH_NOT_VALID_CODE     = 30007
 	COMPRESS_PATH_ERROR_CODE    = 30008
+
+	// user auth
+	NO_USRNAME 		 			= 30101
+
+	// training
+	INVALID_CODE_PATH	    	= 30201
 )

@@ -7,11 +7,12 @@ import (
 )
 
 type ProjectConfig struct {
-	Port int
-	Log  LogConfig
-	Db   DbConfig
-	File FileConfig
-	Auth AuthConfig
+	Port    int
+	Log     LogConfig
+	Db      DbConfig
+	File    FileConfig
+	Auth    AuthConfig
+	DltsUrl string
 }
 
 type LogConfig struct {
