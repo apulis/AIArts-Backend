@@ -44,3 +44,15 @@ func GetAllSupportInference() (interface{},error) {
 	json.Unmarshal(resp.Bytes(),&inferences)
 	return inferences,err
 }
+
+func GetAllDevice(userName string) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/GetAllDevice?userName="+userName, nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var inferences interface{}
+	json.Unmarshal(resp.Bytes(),&inferences)
+	return inferences,err
+}

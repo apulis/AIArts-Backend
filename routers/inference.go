@@ -12,6 +12,7 @@ func AddGroupInference(r *gin.Engine) {
 	group.POST("/PostInferenceJob", wrapper(PostInferenceJob))
 	group.GET("/ListInferenceJob", wrapper(ListInferenceJob))
 	group.GET("/GetAllSupportInference", wrapper(GetAllSupportInference))
+	group.GET("/GetAllDevice", wrapper(GetAllDevice))
 }
 
 // @Summary sample
@@ -51,4 +52,13 @@ func GetAllSupportInference(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, inferences)
+}
+
+func GetAllDevice(c *gin.Context) error {
+	userName := c.Query("userName")
+	jobs,err := services.GetAllDevice(userName)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, jobs)
 }
