@@ -4,24 +4,20 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
-	"strings"
 )
 
-func ValidHomePath(userName, path string) bool {
-	path = strings.TrimSpace(path)
-	usrHome := "/home/" + userName
 
-	if !strings.HasPrefix(path, usrHome) {
-		return false
+func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.Training, int, int, error) {
+
+	var url string
+
+	if jobStatus != models.JobStatusRunning {
+		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=all",
+			configs.Config.DltsUrl, userName, userName, 1000, "atlas", models.JobTypeArtsTraining)
+	} else {
+		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=running",
+			configs.Config.DltsUrl, userName, userName, 1000, "atlas", models.JobTypeArtsTraining)
 	}
-
-	return true
-}
-
-func GetAllTraining(userName string, page, size int) ([]*models.Training, int, int, error) {
-
-	url := fmt.Sprintf("%s/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
-		configs.Config.DltsUrl, userName, userName, 1000, "atlas")
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -31,8 +27,8 @@ func GetAllTraining(userName string, page, size int) ([]*models.Training, int, i
 		return nil, 0, 0, err
 	}
 
-	trainings := make([]*models.Training, 0)
-	for _, v := range jobList.RunningJobs {
+	trainings := make([] *models.Training, 0)
+	for _, v:= range jobList.RunningJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -40,17 +36,17 @@ func GetAllTraining(userName string, page, size int) ([]*models.Training, int, i
 			DeviceType:  v.JobParams.GpuType,
 			DeviceNum:   v.JobParams.Resourcegpu,
 			CodePath:    v.JobParams.DataPath,
-			StartupFile: "",
-			OutputPath:  v.JobParams.WorkPath,
-			DatasetPath: v.JobParams.DataPath,
+			StartupFile: v.JobParams.StartupFile,
+			OutputPath:  v.JobParams.OutputPath,
+			DatasetPath: v.JobParams.DatasetPath,
 			Params:      nil,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
-			Desc:        "",
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
-	for _, v := range jobList.FinishedJobs {
+	for _, v:= range jobList.FinishedJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -58,13 +54,13 @@ func GetAllTraining(userName string, page, size int) ([]*models.Training, int, i
 			DeviceType:  v.JobParams.GpuType,
 			DeviceNum:   v.JobParams.Resourcegpu,
 			CodePath:    v.JobParams.DataPath,
-			StartupFile: "",
-			OutputPath:  v.JobParams.WorkPath,
-			DatasetPath: v.JobParams.DataPath,
+			StartupFile: v.JobParams.StartupFile,
+			OutputPath:  v.JobParams.OutputPath,
+			DatasetPath: v.JobParams.DatasetPath,
 			Params:      nil,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
-			Desc:        "",
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
@@ -74,27 +70,34 @@ func GetAllTraining(userName string, page, size int) ([]*models.Training, int, i
 func CreateTraining(userName string, training models.Training) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	params := make(map[string]interface{})
+	params := make(map[string] interface{})
 
 	params["userName"] = userName
 	params["jobName"] = training.Name
-	params["jobType"] = "training"
+	params["jobType"] = models.JobTypeArtsTraining
+
 	params["image"] = training.Engine
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum
 
-	params["CodePath"] = training.CodePath
 	//params["cmd"] = "sleep 30m"  // use StartupFile, params instead
 
 	params["cmd"] = training.StartupFile
 	for k, v := range training.Params {
-		params["cmd"] = " --" + k + " " + v
+		params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 	}
 
-	params["OutputPath"] = "" // use OutputPath instead
-	params["dataPath"] = training.DatasetPath
-	params["Desc"] = training.Desc
+	params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
+	params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
+
+	params["startupFile"] = training.StartupFile
+	params["datasetPath"] = training.DatasetPath
+	params["codePath"] = training.CodePath
+	params["outputPath"] = training.OutputPath
+	params["scriptParams"] = training.Params
+	params["desc"] = training.Desc
+
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
@@ -126,7 +129,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 func DeleteTraining(userName, id string) error {
 
 	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-	params := make(map[string]interface{})
+	params := make(map[string] interface{})
 
 	job := &models.Job{}
 	err := DoRequest(url, "GET", nil, params, job)
@@ -142,7 +145,7 @@ func DeleteTraining(userName, id string) error {
 func GetTraining(userName, id string) (*models.Training, error) {
 
 	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-	params := make(map[string]interface{})
+	params := make(map[string] interface{})
 
 	job := &models.Job{}
 	training := &models.Training{}
@@ -162,11 +165,12 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.CreateTime = job.JobTime
 
 	training.Params = nil
-	training.DatasetPath = ""
-	training.StartupFile = ""
-	training.CodePath = ""
-	training.OutputPath = ""
-	training.Desc = ""
+	training.CodePath = job.JobParams.CodePath
+	training.StartupFile = job.JobParams.StartupFile
+	training.OutputPath = job.JobParams.OutputPath
+	training.DatasetPath = job.JobParams.DatasetPath
+	training.Status = job.JobStatus
+	training.Desc = job.JobParams.Desc
 
 	return training, nil
 }
