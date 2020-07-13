@@ -29,6 +29,9 @@ func AddGroupInference(r *gin.Engine) {
 func PostInferenceJob(c *gin.Context) error {
 	var params models.PostInference
 	err := c.ShouldBind(&params)
+	if params.VcName=="" {
+		params.VcName = "platform"
+	}
 	if err != nil {
 		return ParameterError(err.Error())
 	}
