@@ -110,6 +110,7 @@ func GetJobStatus(c *gin.Context) error {
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	image, err := c.FormFile("image")
+	logger.Info(image)
 	resp,err := services.Infer(jobId,image)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

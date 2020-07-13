@@ -105,7 +105,7 @@ func GetJobStatus(jobId string) (interface{},error) {
 
 func Infer(jobId string,image interface{}) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/apis/Infer?&jobId="+jobId,nil)
+	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
