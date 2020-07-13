@@ -1,49 +1,49 @@
 package models
 
 type Project struct {
-	ProjectId string
-	Name string
-	Info string
-	Role string
+	ProjectId string	`json: projectId`
+	Name string	`json: name`
+	Info string	`json: info`
+	Role string	`json: role`
 }
 
 type DataSet struct {
-	DataSetId string
-	Name string
-	Info string
-	Type string
-	Labels []Label
-	DataSetBindId string
-	DataSetPath string
+	DataSetId string	`json: dataSetId`
+	Name string	`json: name`
+	Info string	`json: info`
+	Type string	`json: type`
+	Labels []Label `json: labels`
+	DataSetBindId string `json: dataSetBindId`
+	DataSetPath string `json: dataSetPath`
 }
 
 type ProjectsReq struct {
 	Successful string
 	Msg string
-	Projects []Project
+	Projects []Project `json: projects`
 	TotalCount int `json:"totalCount"`
 }
 
 type DatasetsReq struct {
 	Successful string
 	Msg string
-	Datasets []DataSet
+	Datasets []DataSet `json: datasets`
 	TotalCount int `json:"totalCount"`
 }
 
 type DatasetReq struct {
 	Successful string
 	Msg string
-	Info DataSet
+	Info DataSet `json: info`
 }
 
 type UpdateDataSet struct {
-	Name string
-	Info string
-	Type string
-	DataSetBindId string
-	DataSetPath string
-	Labels []Label
+	Name string	`json: name`
+	Info string `json: info`
+	Type string	`json: type`
+	DataSetBindId string `json: dataSetBindId`
+	DataSetPath string `json: dataSetPath`
+	Labels []Label `json: labels`
 }
 
 type Label struct {
@@ -62,20 +62,20 @@ type LabelReq struct {
 type TasksList struct {
 	Successful string
 	Msg string
-	TaskList []interface{}
+	TaskList []interface{} `json:"taskList"`
 	TotalCount int `json:"totalCount"`
 }
 
 type NextTask struct {
 	Successful string
 	Msg string
-	Next interface{}
+	Next interface{} `json:next`
 }
 
 type OneTask struct {
 	Successful string
 	Msg string
-	Annotations interface{}
+	Annotations interface{} `json:annotations`
 }
 
 type QueryStringParameters struct {
