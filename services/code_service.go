@@ -45,7 +45,6 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			JupyterUrl:  "",
-			CodePath:    v.JobParams.DataPath,
 			Desc:        v.JobParams.Desc,
 		})
 	}
@@ -59,7 +58,6 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			JupyterUrl:  "",
-			CodePath:    v.JobParams.DataPath,
 			Desc:        v.JobParams.Desc,
 		})
 	}
@@ -112,7 +110,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 
 	// create endpoints
 	url = fmt.Sprintf("%s/endpoints?userName=%s", configs.Config.DltsUrl, userName)
-	endpoints := &models.EndpointReq{}
+	endpoints := &models.EndpointsReq{}
 	ret := &models.EndpointsRet{}
 
 	endpoints.Endpoints = append(endpoints.Endpoints, "ipython")
