@@ -16,7 +16,7 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/GetJobDetail", wrapper(GetJobDetail))
 	group.GET("/GetJobLog", wrapper(GetJobLog))
 	group.GET("/GetJobStatus", wrapper(GetJobStatus))
-	group.GET("/Infer", wrapper(Infer))
+	group.POST("/Infer", wrapper(Infer))
 }
 
 // @Summary sample
