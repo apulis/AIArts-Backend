@@ -28,7 +28,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId", wrapper(GetNextTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
-	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
+	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 }
 
 
