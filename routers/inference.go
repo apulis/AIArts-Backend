@@ -111,7 +111,10 @@ func GetJobStatus(c *gin.Context) error {
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	file, err := c.FormFile("f1")
-	c.SaveUploadedFile(file, jobId)
+	err = c.SaveUploadedFile(file, "./"+jobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
 	resp,err := services.Infer(jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
