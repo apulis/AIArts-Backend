@@ -64,6 +64,6 @@ type OneTask struct {
 }
 
 type QueryStringParameters struct {
-	Page int 	`json:"page"`
-	Size int	 `json:"size"`
+	Page int `form:"page"`
+	Size int `form:"size"`
 }
