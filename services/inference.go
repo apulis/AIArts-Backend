@@ -106,7 +106,6 @@ func GetJobStatus(jobId string) (interface{},error) {
 func Infer(jobId string) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
 	fd, err := grequests.FileUploadFromDisk("./"+jobId)
-	logger.Info(fd)
 	ro := &grequests.RequestOptions{
 		Files: fd,
 	}
