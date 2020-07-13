@@ -2,11 +2,10 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
-	"errors"
-	"io"
 	"strconv"
 )
 
@@ -104,10 +103,11 @@ func GetJobStatus(jobId string) (interface{},error) {
 	return jobLog,err
 }
 
-func Infer(jobId string,image io.ReadCloser) (interface{},error) {
+func Infer(jobId string) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
+	fd, err := grequests.FileUploadFromDisk("jobid")
 	ro := &grequests.RequestOptions{
-		Files: []grequests.FileUpload{{FileContents: image}},
+		Files: fd,
 	}
 	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,ro)
 	if resp.StatusCode!=200 {

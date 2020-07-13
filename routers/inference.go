@@ -1,11 +1,13 @@
 package routers
 
 import (
+	"bytes"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
 	"image"
 	"image/jpeg"
+	"io"
 )
 
 func AddGroupInference(r *gin.Engine) {
@@ -111,10 +113,9 @@ func GetJobStatus(c *gin.Context) error {
 
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	file,_,err := c.Request.FormFile("image")
-	x, _, err := image.Decode(file)
-	logger.Info(x)
-	resp,err := services.Infer(jobId,x)
+	file, err := c.FormFile("f1")
+	c.SaveUploadedFile(file, jobId)
+	resp,err := services.Infer(jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
