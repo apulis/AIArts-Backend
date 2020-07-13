@@ -161,6 +161,10 @@ type EndpointsRet struct {
 type Endpoint struct {
 	Name			string `json:"name"`
 	Status			string `json:"status"`
+	AccessPoint		string `json:"accessPoint"`
+	Domain			string `json:"domain"`
+	NodeName		string `json:"nodeName"`
+	Port			string `json:"port"`
 }
 
 // 查询endpoints信息，返回
