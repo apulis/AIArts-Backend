@@ -11,7 +11,11 @@ type ProjectConfig struct {
 	Log  LogConfig
 	Db   DbConfig
 	File FileConfig
+<<<<<<< HEAD
 	Auth AuthConfig
+=======
+	DltsUrl string
+>>>>>>> 4d357c1d0358af2890ab724dbd475f142614556a
 }
 
 type LogConfig struct {

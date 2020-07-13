@@ -14,6 +14,8 @@ func NewRouter() *gin.Engine {
 	r := gin.New()
 
 	r.Use(cors.Default())
+	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
+	r.Use(Auth())
 
 	r.NoMethod(HandleNotFound)
 	r.NoRoute(HandleNotFound)
@@ -21,7 +23,6 @@ func NewRouter() *gin.Engine {
 	r.Use(loggers.GinLogger(logger))
 	r.Use(gin.Recovery())
 
-	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
 	AddGroupCode(r)
 	AddGroupModel(r)
 	AddGroupTraining(r)
@@ -29,6 +30,7 @@ func NewRouter() *gin.Engine {
 	AddGroupAnnotation(r)
 	AddGroupInference(r)
 	AddGroupFile(r)
+	AddGroupGeneral(r)
 
 	return r
 }

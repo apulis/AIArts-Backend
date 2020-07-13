@@ -24,7 +24,7 @@ type UploadFileResp struct {
 // @Summary upload dataset file
 // @Produce  json
 // @Param data body string true "upload file key 'data'"
-// @Success 200 {object} APISuccessRespUploadFile "success"
+// @Success 200 {object} UploadFileResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/upload/dataset [post]
