@@ -29,7 +29,6 @@ type lsModelsetsReq struct {
 type createModelsetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
-	Creator     string `json:"creator" binding:"required"`
 	Path        string `json:"path" binding:"required"`
 	JobId       string `json:"jobId" binding:"required"`
 }
@@ -123,7 +122,11 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	err = services.CreateModelset(req.Name, req.Description, req.Creator, "0.0.1", req.Path, req.JobId)
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.Path, req.JobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

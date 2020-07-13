@@ -219,15 +219,6 @@
                         }
                     },
                     {
-                        "description": "dataset creator",
-                        "name": "creator",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "description": "dataset storage path",
                         "name": "path",
                         "in": "body",
@@ -1650,15 +1641,11 @@
         "routers.createDatasetReq": {
             "type": "object",
             "required": [
-                "creator",
                 "description",
                 "name",
                 "path"
             ],
             "properties": {
-                "creator": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -1673,16 +1660,12 @@
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
-                "creator",
                 "description",
                 "jobId",
                 "name",
                 "path"
             ],
             "properties": {
-                "creator": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },

@@ -456,8 +456,6 @@ definitions:
     type: object
   routers.createDatasetReq:
     properties:
-      creator:
-        type: string
       description:
         type: string
       name:
@@ -465,15 +463,12 @@ definitions:
       path:
         type: string
     required:
-    - creator
     - description
     - name
     - path
     type: object
   routers.createModelsetReq:
     properties:
-      creator:
-        type: string
       description:
         type: string
       jobId:
@@ -483,7 +478,6 @@ definitions:
       path:
         type: string
     required:
-    - creator
     - description
     - jobId
     - name
@@ -628,12 +622,6 @@ paths:
       - description: dataset description
         in: body
         name: description
-        required: true
-        schema:
-          type: string
-      - description: dataset creator
-        in: body
-        name: creator
         required: true
         schema:
           type: string
