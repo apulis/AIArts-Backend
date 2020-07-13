@@ -56,6 +56,7 @@ type GetTrainingRsp struct {
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
+// @Param JobStatus query int true "job status, 4=running"
 // @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
