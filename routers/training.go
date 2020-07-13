@@ -19,6 +19,7 @@ func AddGroupTraining(r *gin.Engine) {
 type GetAllTrainingReq struct {
 	PageNum 	int 	`json:"pageNum"`
 	PageSize 	int 	`json:"pageSize"`
+	JobStatus   int     `json:"jobStatus"`
 }
 
 type GetAllTrainingRsp struct {
@@ -72,7 +73,7 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize)
+	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize, req.JobStatus)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

@@ -66,6 +66,11 @@ const (
 	JobTypeCodeEnv	 		string = "codeEnv"			// 供电局项目：代码环境
 )
 
+const (
+	JobStatusUndefine 		int	   = 0
+	JobStatusRunning		int	   = 4					//
+)
+
 type JobParams struct {
 	Cmd                   string `json:"cmd"`
 	ContainerUserId       int 	`json:"containerUserId"`
@@ -171,3 +176,4 @@ type Endpoint struct {
 type EndpointsDetail struct {
 	Endpoints 	[]Endpoint `json:"endpoints"`
 }
+
