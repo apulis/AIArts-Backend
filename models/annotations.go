@@ -12,6 +12,7 @@ type DataSet struct {
 	Name string
 	Info string
 	Type string
+	Label []Label
 	DataSetBindId string
 	DataSetPath string
 }
