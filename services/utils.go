@@ -2,19 +2,16 @@ package services
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"strings"
-	"encoding/json"
 	"net/http"
+	"strings"
 )
 
-
-
-
-func doRequest(url, method string, headers map[string]string, rawBody interface {}) ([]byte, error) {
+func doRequest(url, method string, headers map[string]string, rawBody interface{}) ([]byte, error) {
 
 	var body io.Reader = nil
 	if rawBody != nil {
@@ -71,7 +68,7 @@ func doRequest(url, method string, headers map[string]string, rawBody interface 
 	return responseData, err
 }
 
-func DoRequest(url, method string, headers map[string]string, rawBody interface {}, output interface{}) error {
+func DoRequest(url, method string, headers map[string]string, rawBody interface{}, output interface{}) error {
 
 	rspData, err := doRequest(url, method, headers, rawBody)
 	if err != nil {

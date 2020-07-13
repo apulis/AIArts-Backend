@@ -43,7 +43,7 @@ type APISuccessRespGetModelsets struct {
 type APISuccessRespAllGetCodeEnv struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data GetAllCodeEnvRsp	  `json:"data"`
+	Data GetAllCodeEnvRsp `json:"data"`
 }
 
 type APISuccessRespCreateCodeEnv struct {
@@ -59,41 +59,40 @@ type APISuccessRespDeleteCodeEnv struct {
 }
 
 type APISuccessRespGetResource struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
 	Data GetResourceRsp `json:"data"`
 }
 
 type APISuccessRespGetAllTraining struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
-	Data GetAllTrainingRsp	  `json:"data"`
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data GetAllTrainingRsp `json:"data"`
 }
 
 type APISuccessRespCreateTraining struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
 	Data CreateTrainingRsp `json:"data"`
 }
 
 type APISuccessRespDeleteTraining struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
 	Data DeleteTrainingRsp `json:"data"`
 }
 
 type APISuccessRespGetTraining struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
 	Data GetTrainingRsp `json:"data"`
 }
 
 type APISuccessRespGetTrainingLog struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
-	Data models.JobLog	  `json:"data"`
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	Data models.JobLog `json:"data"`
 }
-
 
 func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{

@@ -15,14 +15,14 @@ func AddGroupCode(r *gin.Engine) {
 }
 
 type GetAllCodeEnvReq struct {
-	PageNum 	int 	`json:"pageNum"`
-	PageSize 	int 	`json:"pageSize"`
+	PageNum  int `json:"pageNum"`
+	PageSize int `json:"pageSize"`
 }
 
 type GetAllCodeEnvRsp struct {
-	CodeEnvs 	[] *models.CodeEnvItem `json:"CodeEnvs"`
-	Total		int   	`json:"total"`
-	totalPage	int 	`json:"totalPage"`
+	CodeEnvs  []*models.CodeEnvItem `json:"CodeEnvs"`
+	Total     int                   `json:"total"`
+	totalPage int                   `json:"totalPage"`
 }
 
 type CreateCodeEnvReq struct {
@@ -30,15 +30,14 @@ type CreateCodeEnvReq struct {
 }
 
 type CreateCodeEnvRsp struct {
-	Id 				string `json:"id"`
+	Id string `json:"id"`
 }
 
 type DeleteCodeEnvReq struct {
-	Id 				string `json:"id"`
+	Id string `json:"id"`
 }
 
 type DeleteCodeEnvRsp struct {
-
 }
 
 // @Summary get all codes

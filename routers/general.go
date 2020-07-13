@@ -14,13 +14,12 @@ func AddGroupGeneral(r *gin.Engine) {
 }
 
 type GetResourceReq struct {
-
 }
 
 type GetResourceRsp struct {
-        AIFrameworks            map[string][]string `json:"aiFrameworks"`
-        DeviceList              []models.DeviceItem `json:"deviceList"`
-        CodePathPrefix 			string `json:"codePathPrefix"`
+	AIFrameworks   map[string][]string `json:"aiFrameworks"`
+	DeviceList     []models.DeviceItem `json:"deviceList"`
+	CodePathPrefix string              `json:"codePathPrefix"`
 }
 
 // @Summary get available resource
