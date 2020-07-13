@@ -6,6 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
 	"errors"
+	"io"
 	"strconv"
 )
 
@@ -103,9 +104,12 @@ func GetJobStatus(jobId string) (interface{},error) {
 	return jobLog,err
 }
 
-func Infer(jobId string,image interface{}) (interface{},error) {
+func Infer(jobId string,image io.ReadCloser) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,nil)
+	ro := &grequests.RequestOptions{
+		Files: []grequests.FileUpload{{FileContents: image}},
+	}
+	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))

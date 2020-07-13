@@ -4,6 +4,8 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
+	"image"
+	"image/jpeg"
 )
 
 func AddGroupInference(r *gin.Engine) {
@@ -109,9 +111,10 @@ func GetJobStatus(c *gin.Context) error {
 
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	image, err := c.FormFile("image")
-	logger.Info(image)
-	resp,err := services.Infer(jobId,image)
+	file,_,err := c.Request.FormFile("image")
+	x, _, err := image.Decode(file)
+	logger.Info(x)
+	resp,err := services.Infer(jobId,x)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
