@@ -42,8 +42,11 @@ func PostInferenceJob(c *gin.Context) error {
 func ListInferenceJob(c *gin.Context) error {
 	num := c.Query("num")
 	vcName := c.Query("vcName")
-	jobOwner := c.Query("jobOwner")
-	jobs,err := services.ListInferenceJob(jobOwner,vcName,num)
+	//jobOwner := c.Query("jobOwner")
+	jobOwner := getUsername(c)
+	var queryStringParameters models.QueryStringParametersV2
+	err := c.ShouldBindQuery(&queryStringParameters)
+	jobs,err := services.ListInferenceJob(jobOwner,vcName,num,queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -59,7 +62,7 @@ func GetAllSupportInference(c *gin.Context) error {
 }
 
 func GetAllDevice(c *gin.Context) error {
-	userName := c.Query("userName")
+	userName := getUsername(c)
 	jobs,err := services.GetAllDevice(userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -68,7 +71,7 @@ func GetAllDevice(c *gin.Context) error {
 }
 
 func GetJobDetail(c *gin.Context) error {
-	userName := c.Query("userName")
+	userName := getUsername(c)
 	jobId := c.Query("jobId")
 	jobs,err := services.GetJobDetail(userName,jobId)
 	if err != nil {
@@ -78,7 +81,7 @@ func GetJobDetail(c *gin.Context) error {
 }
 
 func GetJobLog(c *gin.Context) error {
-	userName := c.Query("userName")
+	userName := getUsername(c)
 	jobId := c.Query("jobId")
 	jobs,err := services.GetJobLog(userName,jobId)
 	if err != nil {

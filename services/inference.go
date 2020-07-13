@@ -6,6 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
 	"errors"
+	"strconv"
 )
 
 func PostInferenceJob(inference models.PostInference) (string,error) {
@@ -23,9 +24,16 @@ func PostInferenceJob(inference models.PostInference) (string,error) {
 	return jobRes.JobId,err
 }
 
-func ListInferenceJob(jobOwner string,vcName string,num string) (interface{},error){
+func ListInferenceJob(jobOwner string,vcName string,num string,queryStringParameters models.QueryStringParametersV2) (interface{},error){
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJob?jobOwner="+jobOwner+"&vcName="+vcName+"&num"+num, nil)
+	if queryStringParameters.PageNum==0 {
+		queryStringParameters.PageNum = 1
+	}
+	if queryStringParameters.PageSize==0 {
+		queryStringParameters.PageSize = 5
+	}
+	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJob?jobOwner="+jobOwner+"&vcName="+vcName+"&num"+num+"&page="+
+		strconv.Itoa(queryStringParameters.PageNum)+"&size="+strconv.Itoa(queryStringParameters.PageSize), nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
@@ -61,7 +69,7 @@ func GetAllDevice(userName string) (interface{},error) {
 
 func GetJobDetail(userName string,jobId string) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/apis/GetJobDetailV2?userName="+userName+"&jobId="+jobId,nil)
+	resp, err := grequests.Get(BackendUrl+"/apis/GetInferenceJobDetail?userName="+userName+"&jobId="+jobId,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))

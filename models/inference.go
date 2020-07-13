@@ -16,3 +16,8 @@ type PostInference struct {
 type InferenceJobResp struct {
 	JobId string `json:"jobId"`
 }
+
+type QueryStringParametersV2 struct {
+	PageNum int `form:"pageNum"`
+	PageSize int `form:"pageSize"`
+}
