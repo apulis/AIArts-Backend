@@ -45,7 +45,8 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			JupyterUrl:  "",
-			Desc:        "",
+			CodePath:    v.JobParams.DataPath,
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
@@ -58,7 +59,8 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			JupyterUrl:  "",
-			Desc:        "",
+			CodePath:    v.JobParams.DataPath,
+			Desc:        v.JobParams.Desc,
 		})
 	}
 
@@ -108,6 +110,20 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 		return "", err
 	}
 
+	// create endpoints
+	url = fmt.Sprintf("%s/endpoints?userName=%s", configs.Config.DltsUrl, userName)
+	endpoints := &models.EndpointReq{}
+	ret := &models.EndpointsRet{}
+
+	endpoints.Endpoints = append(endpoints.Endpoints, "ipython")
+	endpoints.JobId = id.Id
+
+	err = DoRequest(url, "POST", nil, params, ret)
+	if err != nil {
+		fmt.Printf("create endpoints err[%+v]\n", err)
+		return "", err
+	}
+
 	return id.Id, nil
 }
 
@@ -127,3 +143,21 @@ func DeleteCodeEnv(userName, id string) error {
 	return nil
 }
 
+func GetJupyterPath(userName, id string) (error, *models.EndpointsDetail) {
+
+	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+
+	req := &models.EndpointsReq{}
+	endpointDetail := &models.EndpointsDetail{}
+
+	req.Endpoints = append(req.Endpoints, "ipython")
+	req.JobId = id
+
+	err := DoRequest(url, "GET", nil, req, endpointDetail)
+	if err != nil {
+		fmt.Printf("get jupyter path err[%+v]\n", err)
+		return err, nil
+	}
+
+	return nil, endpointDetail
+}

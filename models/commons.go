@@ -59,6 +59,7 @@ func (t *UnixTime) Scan(v interface{}) error {
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
+// 以下结构体用于和DLTS平台交互
 const (
 	JobTypeTraining 		string = "training"			// 老DLTS默认采用的jobType
 	JobTypeArtsTraining 	string = "artsTraining"		// 供电局项目：模型训练
@@ -144,4 +145,25 @@ type UriJobId struct {
 type JobLog struct {
 	Cursor   string `json:"cursor"`
 	Log 	 string `json:"log"`
+}
+
+// 创建endpoint
+type EndpointsReq struct {
+	Endpoints 		[]string `json:"endpoints"`
+	JobId 			string `json:"jobId"`
+}
+
+// 返回值
+type EndpointsRet struct {
+
+}
+
+type Endpoint struct {
+	Name			string `json:"name"`
+	Status			string `json:"status"`
+}
+
+// 查询endpoints信息，返回
+type EndpointsDetail struct {
+	Endpoints 	[]Endpoint `json:"endpoints"`
 }

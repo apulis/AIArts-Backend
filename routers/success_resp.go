@@ -58,12 +58,13 @@ type APISuccessRespDeleteCodeEnv struct {
 	Data DeleteCodeEnvRsp `json:"data"`
 }
 
-type APISuccessRespGetResource struct {
-	Code int            `json:"code"`
-	Msg  string         `json:"msg"`
-	Data GetResourceRsp `json:"data"`
+type APISuccessRespGetCodeEnvJupyter struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data DeleteCodeEnvRsp `json:"data"`
 }
 
+// training
 type APISuccessRespGetAllTraining struct {
 	Code int               `json:"code"`
 	Msg  string            `json:"msg"`
@@ -92,6 +93,13 @@ type APISuccessRespGetTrainingLog struct {
 	Code int           `json:"code"`
 	Msg  string        `json:"msg"`
 	Data models.JobLog `json:"data"`
+}
+
+// common
+type APISuccessRespGetResource struct {
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
+	Data GetResourceRsp `json:"data"`
 }
 
 func SuccessResp(c *gin.Context, data interface{}) error {
