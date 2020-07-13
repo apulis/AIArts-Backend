@@ -157,12 +157,13 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
 
-	training.Params = nil
-	training.DatasetPath =
-	training.StartupFile = ""
-	training.CodePath = ""
-	training.OutputPath = ""
-	training.Desc = ""
+	training.Params = ""
+	training.CodePath = job.JobParams.DataPath
+	training.StartupFile = job.JobParams.StartupFile
+	training.OutputPath = job.JobParams.OutputPath
+	training.DatasetPath = job.JobParams.DatasetPath
+	training.Status = job.JobStatus
+	training.Desc = job.JobParams.Desc
 
 	return training, nil
 }
