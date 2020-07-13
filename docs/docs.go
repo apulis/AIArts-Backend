@@ -25,6 +25,152 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ai_arts/api/codes": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get all codes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "pageNum",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size per page",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespAllGetCodeEnv"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create CodeEnv",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.CreateCodeEnvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespCreateCodeEnv"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/codes/:id": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete CodeEnv",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code set id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespDeleteCodeEnv"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/common/resource": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get available resource",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetResource"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/datasets": {
             "get": {
                 "produces": [
@@ -75,26 +221,17 @@ var doc = `{
                 "summary": "create dataset",
                 "parameters": [
                     {
-                        "description": "dataset name",
-                        "name": "name",
+                        "description": "json body",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.createDatasetReq"
                         }
                     },
                     {
                         "description": "dataset description",
                         "name": "description",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "dataset creator",
-                        "name": "creator",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -240,21 +377,19 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/files/upload/dataset": {
-            "post": {
+        "/ai_arts/api/files/download/model/:id": {
+            "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "upload dataset file",
+                "summary": "download model by id",
                 "parameters": [
                     {
-                        "description": "upload file key 'data'",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "type": "integer",
+                        "description": "model id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -279,12 +414,51 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/files/upload/model": {
+        "/ai_arts/api/files/upload/dataset": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
                 "summary": "upload dataset file",
+                "parameters": [
+                    {
+                        "description": "upload file key 'data'",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.UploadFileResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/files/upload/model": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upload model file, not implemented yet",
                 "parameters": [
                     {
                         "description": "upload file key 'data'",
@@ -338,6 +512,13 @@ var doc = `{
                         "name": "pageSize",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "name of model",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -368,39 +549,12 @@ var doc = `{
                 "summary": "create model",
                 "parameters": [
                     {
-                        "description": "model name",
-                        "name": "name",
+                        "description": "json body",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model description",
-                        "name": "description",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model creator",
-                        "name": "creator",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "model storage path",
-                        "name": "path",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.createModelsetReq"
                         }
                     }
                 ],
@@ -533,44 +687,203 @@ var doc = `{
                 }
             }
         },
-        "/api/annotations": {
-            "post": {
+        "/ai_arts/api/trainings": {
+            "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "sample",
+                "summary": "get all trainings",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "pageNum",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
+                        "description": "size per page",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
+                        "description": "success",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.APISuccessRespGetAllTraining"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create Training",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.CreateTrainingReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespCreateTraining"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
                         }
                     }
                 }
             }
         },
-        "/api/codes": {
+        "/ai_arts/api/trainings/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get specific training",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetTrainingReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetTraining"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete one training",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.DeleteTrainingReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespDeleteTraining"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/trainings/log/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get specific training",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetTrainingReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetTrainingLog"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/annotations": {
             "post": {
                 "produces": [
                     "application/json"
@@ -643,57 +956,60 @@ var doc = `{
                     }
                 }
             }
-        },
-        "/api/trainings": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "sample",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
+        "models.CodeEnvItem": {
+            "type": "object",
+            "required": [
+                "engine",
+                "name",
+                "status"
+            ],
+            "properties": {
+                "JupyterUrl": {
+                    "type": "string"
+                },
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Dataset": {
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
                     "type": "string"
@@ -714,9 +1030,31 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DeviceItem": {
+            "type": "object",
+            "properties": {
+                "avail": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JobLog": {
+            "type": "object",
+            "properties": {
+                "cursor": {
+                    "type": "string"
+                },
+                "log": {
                     "type": "string"
                 }
             }
@@ -725,13 +1063,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
                     "type": "string"
@@ -758,9 +1096,64 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Training": {
+            "type": "object",
+            "properties": {
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "startupFile": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UnixTime": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
                     "type": "string"
                 }
             }
@@ -784,6 +1177,90 @@ var doc = `{
                 },
                 "data": {
                     "type": "object"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespAllGetCodeEnv": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespCreateCodeEnv": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.CreateCodeEnvRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespCreateTraining": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.CreateTrainingRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespDeleteCodeEnv": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespDeleteTraining": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.DeleteTrainingRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetAllTraining": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
                     "type": "string"
@@ -846,6 +1323,193 @@ var doc = `{
                 }
             }
         },
+        "routers.APISuccessRespGetResource": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetResourceRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetTraining": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetTrainingRsp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetTrainingLog": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/models.JobLog"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.CreateCodeEnvReq": {
+            "type": "object",
+            "required": [
+                "engine",
+                "name",
+                "status"
+            ],
+            "properties": {
+                "JupyterUrl": {
+                    "type": "string"
+                },
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.CreateCodeEnvRsp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.CreateTrainingReq": {
+            "type": "object",
+            "properties": {
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "startupFile": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.CreateTrainingRsp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.DeleteCodeEnvRsp": {
+            "type": "object"
+        },
+        "routers.DeleteTrainingReq": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.DeleteTrainingRsp": {
+            "type": "object"
+        },
+        "routers.GetAllCodeEnvRsp": {
+            "type": "object",
+            "properties": {
+                "CodeEnvs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CodeEnvItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "routers.GetAllTrainingRsp": {
+            "type": "object",
+            "properties": {
+                "Trainings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Training"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "routers.GetDatasetResp": {
             "type": "object",
             "properties": {
@@ -905,6 +1569,134 @@ var doc = `{
                 },
                 "totalPage": {
                     "type": "integer"
+                }
+            }
+        },
+        "routers.GetResourceRsp": {
+            "type": "object",
+            "properties": {
+                "aiFrameworks": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "codePathPrefix": {
+                    "type": "string"
+                },
+                "deviceList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DeviceItem"
+                    }
+                }
+            }
+        },
+        "routers.GetTrainingReq": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.GetTrainingRsp": {
+            "type": "object",
+            "properties": {
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "startupFile": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.UploadFileResp": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.createDatasetReq": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "path"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.createModelsetReq": {
+            "type": "object",
+            "required": [
+                "description",
+                "jobId",
+                "name",
+                "path"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
                 }
             }
         }

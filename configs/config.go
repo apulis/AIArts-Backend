@@ -7,13 +7,15 @@ import (
 )
 
 type ProjectConfig struct {
-	Port int
-	Log  LogConfig
-	Db   DbConfig
-	File FileConfig
-	Anno AnnotationConfig
-	Infer InferenceConfig
-	Token string
+	Port    int
+	Log     LogConfig
+	Db      DbConfig
+	File    FileConfig
+	Auth    AuthConfig
+	DltsUrl string
+	Anno    AnnotationConfig
+	Infer   InferenceConfig
+	Token   string
 }
 
 type LogConfig struct {
@@ -43,6 +45,11 @@ type AnnotationConfig struct {
 }
 type InferenceConfig struct {
 	BackendUrl string
+}
+
+type AuthConfig struct {
+	Url string
+	Key string
 }
 
 var Config ProjectConfig

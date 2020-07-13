@@ -21,15 +21,16 @@ type modelsetId struct {
 }
 
 type lsModelsetsReq struct {
-	PageNum  int `form:"pageNum"`
-	PageSize int `form:"pageSize,default=10"`
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize,default=10"`
+	Name     string `form:"name"`
 }
 
 type createModelsetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
-	Creator     string `json:"creator" binding:"required"`
 	Path        string `json:"path" binding:"required"`
+	JobId       string `json:"jobId" binding:"required"`
 }
 
 type updateModelsetReq struct {
@@ -52,6 +53,7 @@ type GetModelsetsResp struct {
 // @Produce  json
 // @Param pageNum query int true "page number, from 1"
 // @Param pageSize query int true "count per page"
+// @Param name query int true "name of model"
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -62,7 +64,13 @@ func lsModelsets(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	modelsets, total, err := services.ListModelSets(req.PageNum, req.PageSize)
+	var modelsets []models.Modelset
+	var total int
+	if req.Name == "" {
+		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize)
+	} else {
+		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name)
+	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -99,10 +107,7 @@ func getModelset(c *gin.Context) error {
 
 // @Summary create model
 // @Produce  json
-// @Param name body string true "model name"
-// @Param description body string true "model description"
-// @Param creator body string true "model creator"
-// @Param path body string true "model storage path"
+// @Param body body createModelsetReq true "json body"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -117,7 +122,11 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	err = services.CreateModelset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.Path, req.JobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

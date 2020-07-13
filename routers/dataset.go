@@ -28,7 +28,6 @@ type lsDatasetsReq struct {
 type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
-	Creator     string `json:"creator" binding:"required"`
 	Path        string `json:"path" binding:"required"`
 }
 
@@ -99,9 +98,8 @@ func getDataset(c *gin.Context) error {
 
 // @Summary create dataset
 // @Produce  json
-// @Param name body string true "dataset name"
+// @Param body body createDatasetReq true "json body"
 // @Param description body string true "dataset description"
-// @Param creator body string true "dataset creator"
 // @Param path body string true "dataset storage path"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
@@ -121,7 +119,11 @@ func createDataset(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	err = services.CreateDataset(req.Name, req.Description, req.Creator, "0.0.1", req.Path)
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

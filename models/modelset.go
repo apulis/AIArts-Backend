@@ -31,6 +31,19 @@ func ListModelSets(offset, limit int) ([]Modelset, int, error) {
 	return modelsets, total, nil
 }
 
+func ListModelSetsByName(offset, limit int, name string) ([]Modelset, int, error) {
+	var modelsets []Modelset
+
+	total := 0
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Name: name}).Find(&modelsets)
+	if res.Error != nil {
+		return modelsets, total, res.Error
+	}
+
+	db.Model(&Modelset{}).Where(&Modelset{Name: name}).Count(&total)
+	return modelsets, total, nil
+}
+
 func GetModelsetById(id int) (Modelset, error) {
 	modelset := Modelset{ID: id}
 	res := db.First(&modelset)

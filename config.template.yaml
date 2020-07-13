@@ -24,3 +24,9 @@ Anno:
 
 Infer:
   backendUrl: http://huawei-infra01.sigsus.cn
+
+auth:
+  url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"
+  key: "Sign key for JWT"
+
+dlts_platform_url: http://atlas02.sigsus.cn/apis
