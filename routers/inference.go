@@ -110,8 +110,8 @@ func GetJobStatus(c *gin.Context) error {
 
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	file, err := c.FormFile("f1")
-	err = c.SaveUploadedFile(file, "./"+file.Filename)
+	file, err := c.FormFile("image")
+	err = c.SaveUploadedFile(file, "./"+jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
