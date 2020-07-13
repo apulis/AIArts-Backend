@@ -25,7 +25,7 @@ func RandStringRunes(n int) string {
 func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int, int, error) {
 
 	url := fmt.Sprintf("%s/ListJobsV2?userName=%s&jobOwner=%s&num=%d&vcName=%s",
-		configs.Config.DltsUrl, userName, userName, 1000, "atlas")
+						configs.Config.DltsUrl, userName, userName, 1000, "atlas")
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -74,16 +74,15 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = "codeEnv"
 	params["image"] = codeEnv.Engine
+
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum
-	params["DeviceNum"] = codeEnv.DeviceNum
 
-	params["CodePath"] = codeEnv.CodePath
+	params["codePath"] = codeEnv.CodePath
+	params["desc"] = codeEnv.Desc
+
 	params["cmd"] = "sleep infinity"
 
-	params["OutputPath"] = ""  // use OutputPath instead
-	params["dataPath"] = ""
-	params["Desc"] = codeEnv.Desc
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
