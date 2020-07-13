@@ -83,7 +83,7 @@ func uploadModelset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/models/:id [get]
+// @Router /ai_arts/api/files/download/model/:id [get]
 func downloadModelset(c *gin.Context) error {
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
