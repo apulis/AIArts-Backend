@@ -9,7 +9,7 @@ import (
 
 func GetAllTraining(userName string, page, size int) ([] *models.Training, int, int, error) {
 
-	url := fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s",
+	url := fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=all",
 						configs.Config.DltsUrl, userName, userName, 1000, "atlas", models.JobTypeArtsTraining)
 
 	jobList := &models.JobList{}
