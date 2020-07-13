@@ -44,6 +44,9 @@ func PostInferenceJob(c *gin.Context) error {
 
 func ListInferenceJob(c *gin.Context) error {
 	vcName := c.Query("vcName")
+	if vcName=="" {
+		vcName = "platform"
+	}
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
