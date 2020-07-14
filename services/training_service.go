@@ -46,6 +46,24 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 		})
 	}
 
+	for _, v:= range jobList.QueuedJobs {
+		trainings = append(trainings, &models.Training{
+			Id:          v.JobId,
+			Name:        v.JobName,
+			Engine:      v.JobParams.Image,
+			DeviceType:  v.JobParams.GpuType,
+			DeviceNum:   v.JobParams.Resourcegpu,
+			CodePath:    v.JobParams.DataPath,
+			StartupFile: v.JobParams.StartupFile,
+			OutputPath:  v.JobParams.OutputPath,
+			DatasetPath: v.JobParams.DatasetPath,
+			Params:      nil,
+			Status:      v.JobStatus,
+			CreateTime:  v.JobTime,
+			Desc:        v.JobParams.Desc,
+		})
+	}
+
 	for _, v:= range jobList.FinishedJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,

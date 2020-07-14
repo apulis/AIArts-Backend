@@ -29,16 +29,13 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 	fw["tensorflow"] = append(fw["tensorflow"], "apulistech/mmdetection:v2.0")
 	fw["tensorflow"] = append(fw["tensorflow"], "tensorflow/tensorflow:2.2.0-gpu")
 	fw["tensorflow"] = append(fw["tensorflow"], "ubuntu:18.04")
-	fw["mindspore"] = append(fw["mindspore"], "apulistech/mindspore:0.3.0-withtools")
 
 	devices := make([]models.DeviceItem, 0)
 	for k, v := range vcInfo.DeviceAvail {
-		if v > 0 {
-			devices = append(devices, models.DeviceItem{
-				DeviceType: k,
-				Avail:      v,
-			})
-		}
+		devices = append(devices, models.DeviceItem{
+			DeviceType: k,
+			Avail:      v,
+		})
 	}
 
 	return fw, devices, nil
