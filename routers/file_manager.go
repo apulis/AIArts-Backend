@@ -13,6 +13,7 @@ func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
 
 	group.POST("/upload/dataset", wrapper(uploadDataset))
+	group.GET("/download/dataset/:id", wrapper(downloadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
 	group.GET("/download/model/:id", wrapper(downloadModelset))
 }
@@ -64,6 +65,41 @@ func uploadDataset(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, UploadFileResp{Path: unzippedPath})
+}
+
+// @Summary download dataset by id
+// @Produce  json
+// @Param id path int true "model id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/files/download/dataset/:id [get]
+func downloadDataset(c *gin.Context) error {
+	var id modelsetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	dataset, err := services.GetDataset(id.ID)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	err = services.CheckPathExists(dataset.Path)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	targetPath, err := services.CompressFile(dataset.Path)
+	if err != nil {
+		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
+	}
+	fi, _ := os.Stat(targetPath)
+
+	c.Writer.WriteHeader(http.StatusOK)
+	c.Header("Content-Disposition", fmt.Sprint("attachment; filename=", fi.Name()))
+	c.Writer.Header().Add("Content-Type", "application/octet-stream")
+	c.File(targetPath)
+
+	return nil
 }
 
 // @Summary upload model file, not implemented yet
