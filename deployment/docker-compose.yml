@@ -1,0 +1,9 @@
+# Please install docker compose on the target machine by:
+# https://docs.docker.com/compose/install/
+
+version: "3"
+services:
+    aiart:
+        image: apulistech/aiarts:1.0
+        ports:
+            - "9000:9000"
