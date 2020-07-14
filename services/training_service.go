@@ -101,7 +101,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 
 	//params["cmd"] = "sleep 30m"  // use StartupFile, params instead
 
-	params["cmd"] = training.StartupFile
+	params["cmd"] = "python " + training.StartupFile
 	for k, v := range training.Params {
 		params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 	}
