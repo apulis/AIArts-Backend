@@ -21,7 +21,7 @@ func NewRouter() *gin.Engine {
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.Use(cors.Default())
-	r.Use(Auth())
+	//r.Use(Auth())
 
 	r.NoMethod(HandleNotFound)
 	r.NoRoute(HandleNotFound)
