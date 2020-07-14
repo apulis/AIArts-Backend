@@ -61,7 +61,7 @@ type APISuccessRespDeleteCodeEnv struct {
 type APISuccessRespGetCodeEnvJupyter struct {
 	Code int              `json:"code"`
 	Msg  string           `json:"msg"`
-	Data DeleteCodeEnvRsp `json:"data"`
+	Data models.EndpointsDetail `json:"data"`
 }
 
 // training
