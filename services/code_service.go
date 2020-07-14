@@ -110,7 +110,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	}
 
 	// create endpoints
-	url = fmt.Sprintf("%s/endpoints?userName=%s", configs.Config.DltsUrl, userName)
+	url = fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id.Id)
 	endpoints := &models.EndpointsReq{}
 	ret := &models.EndpointsRet{}
 
