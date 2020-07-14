@@ -7,3 +7,5 @@ services:
         image: apulistech/aiarts:1.0
         ports:
             - "9000:9000"
+        volumes:
+            - /root/AIArtsBackend/config.yaml:/root/config.yaml
