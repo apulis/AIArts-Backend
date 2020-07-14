@@ -106,9 +106,9 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 		params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 	}
 
-	params["cmd"] = "sleep 3000m"  // use StartupFile, params instead
 	params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
 	params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
+	params["cmd"] = "sleep 3000m"  // use StartupFile, params instead
 
 	params["startupFile"] = training.StartupFile
 	params["datasetPath"] = training.DatasetPath
