@@ -145,7 +145,7 @@ func delCodeEnv(c *gin.Context) error {
 func getJupyterPath(c *gin.Context) error {
 
 	var id CodeEnvId
-	var rspData *models.EndpointsDetail
+	var rspData *models.EndpointWrapper
 
 	err := c.ShouldBindUri(&id)
 	if err != nil {
