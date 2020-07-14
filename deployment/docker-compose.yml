@@ -10,3 +10,4 @@ services:
     volumes:
       - /root/AIArtsBackend/config.yaml:/root/config.yaml
       - /dlwsdata/storage/:/data/
+      - /dlwsdata/work/:/home/
