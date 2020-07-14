@@ -118,3 +118,16 @@ func Infer(jobId string) (interface{},error) {
 	json.Unmarshal(resp.Bytes(),&respImage)
 	return respImage,err
 }
+
+
+func KillJob(jobId string,userName string) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/KillJob?&jobId="+jobId+"&userName="+userName,nil)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var jobLog interface{}
+	json.Unmarshal(resp.Bytes(),&jobLog)
+	return jobLog,err
+}
