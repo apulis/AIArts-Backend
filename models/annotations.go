@@ -13,7 +13,7 @@ type DataSet struct {
 	Info string	`json:"info"`
 	Type string	`json:"type"`
 	Labels []Label `json:"labels"`
-	DataSetBindId string `json:"dataSetBindId"`
+	DataSetBindId int `json:"dataSetBindId"`
 	DataSetPath string `json:"dataSetPath"`
 }
 
@@ -41,7 +41,7 @@ type UpdateDataSet struct {
 	Name string	`json:"name"`
 	Info string `json:"info"`
 	Type string	`json:"type"`
-	DataSetBindId string `json:"dataSetBindId"`
+	DataSetBindId int `json:"dataSetBindId"`
 	DataSetPath string `json:"dataSetPath"`
 	Labels []Label `json:"labels"`
 }

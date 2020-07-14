@@ -143,7 +143,7 @@ func delCodeEnv(c *gin.Context) error {
 func getJupyterPath(c *gin.Context) error {
 
 	var err error
-	var id string 
+	var id string
 	var rspData *models.EndpointWrapper
 
 	id = c.Param("id")
