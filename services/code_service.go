@@ -158,7 +158,10 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointsDetail) {
 	}
 
 	for _, v := range endpointDetail.Endpoints {
-		v.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+		if strings.ToLower(v.Name) == "ipython" {
+			v.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+			break
+		}
 	}
 
 	return nil, endpointDetail
