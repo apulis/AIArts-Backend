@@ -142,6 +142,7 @@ func delCodeEnv(c *gin.Context) error {
 // @Router /ai_arts/api/codes/:id/jupyter [get]
 func getJupyterPath(c *gin.Context) error {
 
+	var err error
 	var id string 
 	var rspData *models.EndpointWrapper
 
