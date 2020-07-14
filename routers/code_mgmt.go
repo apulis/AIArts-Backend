@@ -154,7 +154,7 @@ func getJupyterPath(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-        id = c.Param("id") 
+	id = c.Param("id")
 	fmt.Println(id)
 
 	userName := getUsername(c)

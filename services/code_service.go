@@ -160,8 +160,8 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
         fmt.Println(url)
 
-	rspData := &models.GetEndpointsRsp{}
-	err := DoRequest(url, "GET", nil, nil, rspData)
+	rspData := make([]models.Endpoint, 0)
+	err := DoRequest(url, "GET", nil, nil, &rspData)
 
 	if err != nil {
 		fmt.Printf("get jupyter path err[%+v]\n", err)
