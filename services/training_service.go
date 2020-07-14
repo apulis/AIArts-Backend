@@ -13,10 +13,10 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 
 	if jobStatus != models.JobStatusRunning {
 		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=all",
-			configs.Config.DltsUrl, userName, userName, 1000, "atlas", models.JobTypeArtsTraining)
+			configs.Config.DltsUrl, userName, userName, 1000, models.DefaultVcName, models.JobTypeArtsTraining)
 	} else {
 		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=running",
-			configs.Config.DltsUrl, userName, userName, 1000, "atlas", models.JobTypeArtsTraining)
+			configs.Config.DltsUrl, userName, userName, 1000, models.DefaultVcName, models.JobTypeArtsTraining)
 	}
 
 	jobList := &models.JobList{}
@@ -112,8 +112,8 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
-	params["vcName"] = "atlas"
-	params["team"] = "atlas"
+	params["vcName"] = models.DefaultVcName
+	params["team"] = models.DefaultVcName
 
 	id := &models.JobId{}
 	err := DoRequest(url, "POST", nil, params, id)
