@@ -750,6 +750,30 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/files/download/dataset/:id:
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: download dataset by id
   /ai_arts/api/files/download/model/:id:
     get:
       parameters:

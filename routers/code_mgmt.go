@@ -116,18 +116,15 @@ func createCodeEnv(c *gin.Context) error {
 // @Router /ai_arts/api/codes/:id [delete]
 func delCodeEnv(c *gin.Context) error {
 
-	var id CodeEnvId
-	err := c.ShouldBindUri(&id)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
+	id := c.Param("id")
+	fmt.Println(id)
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err = services.DeleteCodeEnv(userName, id.Id)
+	err := services.DeleteCodeEnv(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -145,16 +142,11 @@ func delCodeEnv(c *gin.Context) error {
 // @Router /ai_arts/api/codes/:id/jupyter [get]
 func getJupyterPath(c *gin.Context) error {
 
-	var id string 
+	var err error
+	var id string
 	var rspData *models.EndpointWrapper
 
-
-	err := c.ShouldBindUri(&id)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
-
-        id = c.Param("id") 
+	id = c.Param("id")
 	fmt.Println(id)
 
 	userName := getUsername(c)

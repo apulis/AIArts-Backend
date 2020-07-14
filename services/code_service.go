@@ -2,11 +2,11 @@ package services
 
 import (
 	"fmt"
-	"strings"
 	"github.com/apulis/AIArtsBackend/configs"
-	"time"
-	"math/rand"
 	"github.com/apulis/AIArtsBackend/models"
+	"math/rand"
+	"strings"
+	"time"
 )
 
 func init() {
@@ -23,10 +23,10 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int, int, error) {
+func GetAllCodeEnv(userName string, page, size int) ([]*models.CodeEnvItem, int, int, error) {
 
 	url := fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=all",
-						configs.Config.DltsUrl, userName, userName, 1000, models.DefaultVcName, models.JobTypeCodeEnv)
+		configs.Config.DltsUrl, userName, userName, 1000, models.DefaultVcName, models.JobTypeCodeEnv)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -36,43 +36,43 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 		return nil, 0, 0, err
 	}
 
-	codes := make([] *models.CodeEnvItem, 0)
-	for _, v:= range jobList.RunningJobs {
+	codes := make([]*models.CodeEnvItem, 0)
+	for _, v := range jobList.RunningJobs {
 		codes = append(codes, &models.CodeEnvItem{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			CodePath:    v.JobParams.DataPath,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			JupyterUrl:  "",
-			Desc:        v.JobParams.Desc,
+			Id:         v.JobId,
+			Name:       v.JobName,
+			Engine:     v.JobParams.Image,
+			CodePath:   v.JobParams.DataPath,
+			Status:     v.JobStatus,
+			CreateTime: v.JobTime,
+			JupyterUrl: "",
+			Desc:       v.JobParams.Desc,
 		})
 	}
 
-	for _, v:= range jobList.QueuedJobs {
+	for _, v := range jobList.QueuedJobs {
 		codes = append(codes, &models.CodeEnvItem{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			CodePath:    v.JobParams.DataPath,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			JupyterUrl:  "",
-			Desc:        v.JobParams.Desc,
+			Id:         v.JobId,
+			Name:       v.JobName,
+			Engine:     v.JobParams.Image,
+			CodePath:   v.JobParams.DataPath,
+			Status:     v.JobStatus,
+			CreateTime: v.JobTime,
+			JupyterUrl: "",
+			Desc:       v.JobParams.Desc,
 		})
 	}
 
-	for _, v:= range jobList.FinishedJobs {
+	for _, v := range jobList.FinishedJobs {
 		codes = append(codes, &models.CodeEnvItem{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			CodePath:    v.JobParams.DataPath,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			JupyterUrl:  "",
-			Desc:        v.JobParams.Desc,
+			Id:         v.JobId,
+			Name:       v.JobName,
+			Engine:     v.JobParams.Image,
+			CodePath:   v.JobParams.DataPath,
+			Status:     v.JobStatus,
+			CreateTime: v.JobTime,
+			JupyterUrl: "",
+			Desc:       v.JobParams.Desc,
 		})
 	}
 
@@ -82,7 +82,7 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	params := make(map[string] interface{})
+	params := make(map[string]interface{})
 
 	params["userName"] = userName
 	params["jobName"] = codeEnv.Name
@@ -142,7 +142,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 func DeleteCodeEnv(userName, id string) error {
 
 	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-	params := make(map[string] interface{})
+	params := make(map[string]interface{})
 
 	job := &models.Job{}
 	err := DoRequest(url, "GET", nil, params, job)
@@ -158,10 +158,10 @@ func DeleteCodeEnv(userName, id string) error {
 func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-        fmt.Println(url)
+	fmt.Println(url)
 
-	rspData := &models.GetEndpointsRsp{}
-	err := DoRequest(url, "GET", nil, nil, rspData)
+	rspData := make([]models.Endpoint, 0)
+	err := DoRequest(url, "GET", nil, nil, &rspData)
 
 	if err != nil {
 		fmt.Printf("get jupyter path err[%+v]\n", err)
@@ -169,7 +169,7 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	appRspData := &models.EndpointWrapper{}
-	for _, v := range rspData.Endpoints {
+	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "ipython" {
 			appRspData.Name = v.Name
 			appRspData.Status = v.Status
