@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,7 @@ func AddGroupCode(r *gin.Engine) {
 	group.GET("/", wrapper(getAllCodeEnv))
 	group.POST("/", wrapper(createCodeEnv))
 	group.DELETE("/:id", wrapper(delCodeEnv))
+	group.GET("/:id/jupyter", wrapper(getJupyterPath))
 }
 
 type GetAllCodeEnvReq struct {
@@ -26,18 +28,18 @@ type GetAllCodeEnvRsp struct {
 }
 
 type CreateCodeEnvReq struct {
-	models.CodeEnvItem
+	models.CreateCodeEnv
 }
 
 type CreateCodeEnvRsp struct {
 	Id string `json:"id"`
 }
 
-type DeleteCodeEnvReq struct {
-	Id string `json:"id"`
+type DeleteCodeEnvRsp struct {
 }
 
-type DeleteCodeEnvRsp struct {
+type CodeEnvId struct {
+	Id string `json:"id"`
 }
 
 // @Summary get all codes
@@ -97,7 +99,7 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	id, err = services.CreateCodeEnv(userName, req.CodeEnvItem)
+	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -107,14 +109,14 @@ func createCodeEnv(c *gin.Context) error {
 
 // @Summary delete CodeEnv
 // @Produce  json
-// @Param id query string true "code set id"
+// @Param id query string true "codeEnv id"
 // @Success 200 {object} APISuccessRespDeleteCodeEnv "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes/:id [delete]
 func delCodeEnv(c *gin.Context) error {
 
-	var id DeleteCodeEnvReq
+	var id CodeEnvId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
@@ -132,4 +134,38 @@ func delCodeEnv(c *gin.Context) error {
 
 	data := gin.H{}
 	return SuccessResp(c, data)
+}
+
+// @Summary get CodeEnv jupyter path
+// @Produce  json
+// @Param id query string true "code id"
+// @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/:id/jupyter [get]
+func getJupyterPath(c *gin.Context) error {
+
+	var id string 
+	var rspData *models.EndpointWrapper
+
+
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+        id = c.Param("id") 
+	fmt.Println(id)
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err, rspData = services.GetJupyterPath(userName, id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, rspData)
 }

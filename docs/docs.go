@@ -115,7 +115,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "code set id",
+                        "description": "codeEnv id",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -126,6 +126,43 @@ var doc = `{
                         "description": "success",
                         "schema": {
                             "$ref": "#/definitions/routers.APISuccessRespDeleteCodeEnv"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/codes/:id/jupyter": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get CodeEnv jupyter path",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetCodeEnvJupyter"
                         }
                     },
                     "400": {
@@ -707,6 +744,13 @@ var doc = `{
                         "name": "pageSize",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "job status, 4=running",
+                        "name": "JobStatus",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1048,6 +1092,20 @@ var doc = `{
                 }
             }
         },
+        "models.EndpointWrapper": {
+            "type": "object",
+            "properties": {
+                "accessPoint": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "models.JobLog": {
             "type": "object",
             "properties": {
@@ -1267,6 +1325,20 @@ var doc = `{
                 }
             }
         },
+        "routers.APISuccessRespGetCodeEnvJupyter": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/models.EndpointWrapper"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.APISuccessRespGetDataset": {
             "type": "object",
             "properties": {
@@ -1369,17 +1441,10 @@ var doc = `{
             "type": "object",
             "required": [
                 "engine",
-                "name",
-                "status"
+                "name"
             ],
             "properties": {
-                "JupyterUrl": {
-                    "type": "string"
-                },
                 "codePath": {
-                    "type": "string"
-                },
-                "createTime": {
                     "type": "string"
                 },
                 "desc": {
@@ -1394,13 +1459,7 @@ var doc = `{
                 "engine": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "name": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 }
             }

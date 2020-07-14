@@ -13,7 +13,7 @@ import (
 
 var db = database.Db
 var logger = loggers.Log
-var DefaultVcName = "atlas"
+var DefaultVcName = "platform"
 
 type UnixTime struct {
 	time.Time
@@ -59,69 +59,88 @@ func (t *UnixTime) Scan(v interface{}) error {
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
+// 以下结构体用于和DLTS平台交互
+const (
+	JobTypeTraining 		string = "training"			// 老DLTS默认采用的jobType
+	JobTypeArtsTraining 	string = "artsTraining"		// 供电局项目：模型训练
+	JobTypeCodeEnv	 		string = "codeEnv"			// 供电局项目：代码环境
+)
+
+const (
+	JobStatusUndefine 		int	   = 0
+	JobStatusRunning		int	   = 4					//
+)
+
 type JobParams struct {
-	Cmd               string   `json:"cmd"`
-	ContainerUserId   int      `json:"containerUserId"`
-	DataPath          string   `json:"dataPath"`
-	Enabledatapath    bool     `json:"enabledatapath"`
-	Enablejobpath     bool     `json:"enablejobpath"`
-	Enableworkpath    bool     `json:"enableworkpath"`
-	Env               []string `json:"env"`
-	FamilyToken       string   `json:"familyToken"`
-	GpuType           string   `json:"gpuType"`
-	HostNetwork       bool     `json:"hostNetwork"`
-	Image             string   `json:"image"`
-	InteractivePorts  bool     `json:"interactivePorts"`
-	IsParent          int      `json:"isParent"`
-	IsPrivileged      bool     `json:"isPrivileged"`
-	JobId             string   `json:"jobId"`
-	JobName           string   `json:"jobName"`
-	JobPath           string   `json:"jobPath"`
-	JobType           string   `json:"jobType"`
-	Jobtrainingtype   string   `json:"jobtrainingtype"`
-	Numps             int      `json:"numps"`
-	Numpsworker       int      `json:"numpsworker"`
-	PreemptionAllowed bool     `json:"preemptionAllowed"`
-	Resourcegpu       int      `json:"resourcegpu"`
-	Team              string   `json:"team"`
-	UserId            int      `json:"userId"`
-	UserName          string   `json:"userName"`
-	VcName            string   `json:"vcName"`
-	WorkPath          string   `json:"workPath"`
+	Cmd                   string `json:"cmd"`
+	ContainerUserId       int 	`json:"containerUserId"`
+	DataPath              string `json:"dataPath"`
+	Enabledatapath        bool `json:"enabledatapath"`
+	Enablejobpath         bool `json:"enablejobpath"`
+	Enableworkpath        bool `json:"enableworkpath"`
+	Env                   []string `json:"env"`
+	FamilyToken           string `json:"familyToken"`
+	GpuType               string `json:"gpuType"`
+	HostNetwork           bool `json:"hostNetwork"`
+	Image                 string `json:"image"`
+	InteractivePorts      bool `json:"interactivePorts"`
+	IsParent              int `json:"isParent"`
+	IsPrivileged          bool `json:"isPrivileged"`
+	JobId                 string `json:"jobId"`
+	JobName               string `json:"jobName"`
+	JobPath               string `json:"jobPath"`
+	JobType               string `json:"jobType"`
+	Jobtrainingtype       string `json:"jobtrainingtype"`
+	Numps                 int `json:"numps"`
+	Numpsworker			  int `json:"numpsworker"`
+	PreemptionAllowed     bool `json:"preemptionAllowed"`
+	Resourcegpu           int `json:"resourcegpu"`
+	Team                  string `json:"team"`
+	UserId                int `json:"userId"`
+	UserName              string `json:"userName"`
+	VcName                string `json:"vcName"`
+	WorkPath              string `json:"workPath"`
+	
+	CodePath			  string `json:"codePath"`
+	StartupFile			  string `json:"startupFile"`
+	OutputPath			  string `json:"outputPath"`
+	DatasetPath			  string `json:"datasetPath"`
+	Desc                  string `json:"desc"`
 }
 
 type Job struct {
-	JobId     string    `json:"jobId"`
-	JobName   string    `json:"jobName"`
-	JobParams JobParams `json:"jobParams"`
-	JobStatus string    `json:"jobStatus"`
-	JobTime   string    `json:"jobTime"`
-	JobType   string    `json:"jobType"`
-	Priority  int       `json:"priority"`
-	UserName  string    `json:"userName"`
-	VcName    string    `json:"vcName"`
+	JobId 		string `json:"jobId"`
+	JobName		string `json:"jobName"`
+	JobParams   JobParams `json:"jobParams"`
+	JobStatus   string `json:"jobStatus"`
+	JobTime		string `json:"jobTime"`
+	JobType     string `json:"jobType"`
+	Priority    int `json:"priority"`
+	UserName	string `json:"userName"`
+	VcName		string `json:"vcName"`
 }
 
 type JobMeta struct {
-	FinishedJobs      int `json:"finishedJobs"`
-	QueuedJobs        int `json:"queuedJobs"`
-	RunningJobs       int `json:"runningJobs"`
+	FinishedJobs int `json:"finishedJobs"`
+	QueuedJobs   int `json:"queuedJobs"`
+	RunningJobs  int `json:"runningJobs"`
 	VisualizationJobs int `json:"visualizationJobs"`
 }
 
 type JobList struct {
-	FinishedJobs []*Job  `json:"finishedJobs"`
-	Meta         JobMeta `json:"meta"`
-	QueuedJobs   []*Job  `json:"queuedJobs"`
-	RunningJobs  []*Job  `json:"runningJobs"`
+	FinishedJobs []*Job `json:"finishedJobs"`
+	Meta JobMeta `json:"meta"`
+	QueuedJobs []*Job `json:"queuedJobs"`
+	RunningJobs []*Job `json:"runningJobs"`
 }
 
+
 type VcInfo struct {
-	DeviceAvail map[string]int `json:"gpu_avaliable"`
+	DeviceAvail 	map[string]int `json:"gpu_avaliable"`
 }
 
 type JobId struct {
-	Id string `json:"jobId"`
+	Id 		string `json:"jobId"`
 }
 
 type UriJobId struct {
@@ -129,6 +148,36 @@ type UriJobId struct {
 }
 
 type JobLog struct {
-	Cursor string `json:"cursor"`
-	Log    string `json:"log"`
+	Cursor   string `json:"cursor"`
+	Log 	 string `json:"log"`
+}
+
+// 创建endpoint
+type CreateEndpointsReq struct {
+	Endpoints 		[]string `json:"endpoints"`
+	JobId 			string `json:"jobId"`
+}
+
+// 返回值
+type CreateEndpointsRsp struct {
+
+}
+
+type Endpoint struct {
+	Name			string `json:"name"`
+	Status			string `json:"status"`
+	Domain			string `json:"domain"`
+	NodeName		string `json:"nodeName,omitempty"`
+	Port			string `json:"port"`
+}
+
+// 查询endpoints信息，返回
+type GetEndpointsRsp struct {
+	Endpoints 	[]Endpoint `json:"endpoints"`
+}
+
+type EndpointWrapper struct {
+	Name			string `json:"name"`
+	Status			string `json:"status"`
+	AccessPoint		string `json:"accessPoint"`
 }

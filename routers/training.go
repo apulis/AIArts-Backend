@@ -17,14 +17,15 @@ func AddGroupTraining(r *gin.Engine) {
 }
 
 type GetAllTrainingReq struct {
-	PageNum  int `json:"pageNum"`
-	PageSize int `json:"pageSize"`
+	PageNum 	int 	`json:"pageNum"`
+	PageSize 	int 	`json:"pageSize"`
+	JobStatus   int     `json:"jobStatus"`
 }
 
 type GetAllTrainingRsp struct {
-	Trainings []*models.Training `json:"Trainings"`
-	Total     int                `json:"total"`
-	totalPage int                `json:"totalPage"`
+	Trainings 	[] *models.Training `json:"Trainings"`
+	Total		int   	`json:"total"`
+	totalPage	int 	`json:"totalPage"`
 }
 
 type CreateTrainingReq struct {
@@ -32,18 +33,19 @@ type CreateTrainingReq struct {
 }
 
 type CreateTrainingRsp struct {
-	Id string `json:"id"`
+	Id 				string `json:"id"`
 }
 
 type DeleteTrainingReq struct {
-	Id string `json:"id"`
+	Id 				string `json:"id"`
 }
 
 type DeleteTrainingRsp struct {
+
 }
 
 type GetTrainingReq struct {
-	Id string `json:"id"`
+	Id 				string `json:"id"`
 }
 
 type GetTrainingRsp struct {
@@ -54,6 +56,7 @@ type GetTrainingRsp struct {
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
+// @Param JobStatus query int true "job status, 4=running"
 // @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -71,12 +74,12 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize)
+	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize, req.JobStatus)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	rsp := &GetAllTrainingRsp{
+	rsp := &GetAllTrainingRsp {
 		sets,
 		total,
 		totalPage,
@@ -107,16 +110,8 @@ func createTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	if !services.ValidHomePath(userName, req.StartupFile) {
-		return AppError(INVALID_CODE_PATH, "启动文件路径错误")
-	}
-
-	if !services.ValidHomePath(userName, req.CodePath) {
-		return AppError(INVALID_CODE_PATH, "代码文件路径错误")
-	}
-
-	if !services.ValidHomePath(userName, req.OutputPath) {
-		return AppError(INVALID_CODE_PATH, "输出路径错误")
+	if valid, msg := req.ValidatePathByUser(userName); !valid {
+		return AppError(INVALID_CODE_PATH, msg)
 	}
 
 	id, err = services.CreateTraining(userName, req)

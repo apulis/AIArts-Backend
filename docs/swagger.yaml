@@ -58,6 +58,15 @@ definitions:
       deviceType:
         type: string
     type: object
+  models.EndpointWrapper:
+    properties:
+      accessPoint:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    type: object
   models.JobLog:
     properties:
       cursor:
@@ -200,6 +209,15 @@ definitions:
       msg:
         type: string
     type: object
+  routers.APISuccessRespGetCodeEnvJupyter:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.EndpointWrapper'
+      msg:
+        type: string
+    type: object
   routers.APISuccessRespGetDataset:
     properties:
       code:
@@ -265,11 +283,7 @@ definitions:
     type: object
   routers.CreateCodeEnvReq:
     properties:
-      JupyterUrl:
-        type: string
       codePath:
-        type: string
-      createTime:
         type: string
       desc:
         type: string
@@ -279,16 +293,11 @@ definitions:
         type: string
       engine:
         type: string
-      id:
-        type: string
       name:
-        type: string
-      status:
         type: string
     required:
     - engine
     - name
-    - status
     type: object
   routers.CreateCodeEnvRsp:
     properties:
@@ -543,7 +552,7 @@ paths:
   /ai_arts/api/codes/:id:
     delete:
       parameters:
-      - description: code set id
+      - description: codeEnv id
         in: query
         name: id
         required: true
@@ -564,6 +573,30 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: delete CodeEnv
+  /ai_arts/api/codes/:id/jupyter:
+    get:
+      parameters:
+      - description: code id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetCodeEnvJupyter'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get CodeEnv jupyter path
   /ai_arts/api/common/resource:
     get:
       produces:
@@ -930,6 +963,11 @@ paths:
       - description: size per page
         in: query
         name: pageSize
+        required: true
+        type: integer
+      - description: job status, 4=running
+        in: query
+        name: JobStatus
         required: true
         type: integer
       produces:

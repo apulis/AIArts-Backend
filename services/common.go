@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/models"
@@ -10,11 +11,12 @@ import (
 var db = database.Db
 var logger = loggers.Log
 
+
 func GetResource(userName string) (map[string][]string, []models.DeviceItem, error) {
 
-	url := fmt.Sprintf("http://atlas02.sigsus.cn/apis/GetVC?userName=%s&vcName=%s", userName, models.DefaultVcName)
-
+	url := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
 	vcInfo := &models.VcInfo{}
+
 	err := DoRequest(url, "GET", nil, nil, vcInfo)
 	if err != nil {
 		fmt.Printf("get resource err[%+v]\n", err)
@@ -25,9 +27,9 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 	fw["tensorflow"], fw["mindspore"] = make([]string, 0), make([]string, 0)
 
 	// todo: must read from config
-	fw["tensorflow"] = append(fw["tensorflow"], "apulistech/ubuntu_tf_test:1.22")
-	fw["tensorflow"] = append(fw["tensorflow"], "ubuntu:18.04")
-	fw["mindspore"] = append(fw["mindspore"], "apulistech/mindspore:0.3.0-withtools")
+	fw["tensorflow"] = append(fw["tensorflow"],"apulistech/ubuntu_tf_test:1.22")
+	fw["tensorflow"] = append(fw["tensorflow"],"ubuntu:18.04")
+	fw["mindspore"] = append(fw["mindspore"],"apulistech/mindspore:0.3.0-withtools")
 
 	devices := make([]models.DeviceItem, 0)
 	for k, v := range vcInfo.DeviceAvail {
@@ -41,3 +43,5 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 
 	return fw, devices, nil
 }
+
+
