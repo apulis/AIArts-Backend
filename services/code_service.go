@@ -42,7 +42,7 @@ func GetAllCodeEnv(userName string, page, size int) ([] *models.CodeEnvItem, int
 			Id:          v.JobId,
 			Name:        v.JobName,
 			Engine:      v.JobParams.Image,
-			CodePath:    v.JobParams.DataPath,
+			CodePath:    v.JobParams.CodePath,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			JupyterUrl:  "",
