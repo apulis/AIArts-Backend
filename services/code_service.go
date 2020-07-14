@@ -117,7 +117,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	endpoints.Endpoints = append(endpoints.Endpoints, "ipython")
 	endpoints.JobId = id.Id
 
-	err = DoRequest(url, "POST", nil, params, ret)
+	err = DoRequest(url, "POST", nil, endpoints, ret)
 	if err != nil {
 		fmt.Printf("create endpoints err[%+v]\n", err)
 		return "", err
