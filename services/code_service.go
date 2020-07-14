@@ -111,13 +111,13 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 
 	// create endpoints
 	url = fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id.Id)
-	endpoints := &models.EndpointsReq{}
+	req := &models.CreateEndpointsReq{}
 	ret := &models.EndpointsRet{}
 
-	endpoints.Endpoints = append(endpoints.Endpoints, "ipython")
-	endpoints.JobId = id.Id
+	req.Endpoints = append(req.Endpoints, "ipython")
+	req.JobId = id.Id
 
-	err = DoRequest(url, "POST", nil, endpoints, ret)
+	err = DoRequest(url, "POST", nil, req, ret)
 	if err != nil {
 		fmt.Printf("create endpoints err[%+v]\n", err)
 		return "", err
@@ -142,28 +142,27 @@ func DeleteCodeEnv(userName, id string) error {
 	return nil
 }
 
-func GetJupyterPath(userName, id string) (error, *models.EndpointsDetail) {
+func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 
-	req := &models.EndpointsReq{}
-	endpointDetail := &models.EndpointsDetail{}
+	rspData := &models.GetEndpointsRsp{}
+	err := DoRequest(url, "GET", nil, nil, rspData)
 
-	req.Endpoints = append(req.Endpoints, "ipython")
-	req.JobId = id
-
-	err := DoRequest(url, "GET", nil, req, endpointDetail)
 	if err != nil {
 		fmt.Printf("get jupyter path err[%+v]\n", err)
 		return err, nil
 	}
 
-	for _, v := range endpointDetail.Endpoints {
+	appRspData := &models.EndpointWrapper{}
+	for _, v := range rspData.Endpoints {
 		if strings.ToLower(v.Name) == "ipython" {
-			v.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+			appRspData.Name = v.Name
+			appRspData.Status = v.Status
+			appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
 			break
 		}
 	}
 
-	return nil, endpointDetail
+	return nil, appRspData
 }

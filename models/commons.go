@@ -153,27 +153,31 @@ type JobLog struct {
 }
 
 // 创建endpoint
-type EndpointsReq struct {
+type CreateEndpointsReq struct {
 	Endpoints 		[]string `json:"endpoints"`
 	JobId 			string `json:"jobId"`
 }
 
 // 返回值
-type EndpointsRet struct {
+type CreateEndpointsRsp struct {
 
 }
 
 type Endpoint struct {
 	Name			string `json:"name"`
 	Status			string `json:"status"`
-	AccessPoint		string `json:"accessPoint"`
 	Domain			string `json:"domain"`
 	NodeName		string `json:"nodeName"`
 	Port			string `json:"port"`
 }
 
 // 查询endpoints信息，返回
-type EndpointsDetail struct {
+type GetEndpointsRsp struct {
 	Endpoints 	[]Endpoint `json:"endpoints"`
 }
 
+type EndpointWrapper struct {
+	Name			string `json:"name"`
+	Status			string `json:"status"`
+	AccessPoint		string `json:"accessPoint"`
+}
