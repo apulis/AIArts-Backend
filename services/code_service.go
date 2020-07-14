@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strings"
 	"github.com/apulis/AIArtsBackend/configs"
 	"time"
 	"math/rand"
