@@ -932,7 +932,7 @@ paths:
       summary: delete model by id
     get:
       parameters:
-      - description: dataset id
+      - description: model id
         in: path
         name: id
         required: true
