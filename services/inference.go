@@ -103,13 +103,16 @@ func GetJobStatus(jobId string) (interface{},error) {
 	return jobLog,err
 }
 
-func Infer(jobId string) (interface{},error) {
+func Infer(jobId string,signature_name string) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
 	fd, err := grequests.FileUploadFromDisk("./"+jobId)
 	ro := &grequests.RequestOptions{
 		Files: fd,
 	}
-	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId,ro)
+	if signature_name == ""{
+		signature_name = "predict"
+	}
+	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId+"&signature_name="+signature_name,ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(string(resp.StatusCode))
