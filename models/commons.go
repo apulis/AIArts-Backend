@@ -74,7 +74,7 @@ const (
 type JobParams struct {
 	Cmd                   string `json:"cmd"`
 	ContainerUserId       int 	`json:"containerUserId"`
-	DataPath              string `json:"dataPath"`
+
 	Enabledatapath        bool `json:"enabledatapath"`
 	Enablejobpath         bool `json:"enablejobpath"`
 	Enableworkpath        bool `json:"enableworkpath"`
