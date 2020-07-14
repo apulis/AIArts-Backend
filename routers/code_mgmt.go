@@ -124,7 +124,7 @@ func delCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err = services.DeleteCodeEnv(userName, id)
+	err := services.DeleteCodeEnv(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
