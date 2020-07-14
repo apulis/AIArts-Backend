@@ -16,6 +16,7 @@ type ProjectConfig struct {
 	Anno    AnnotationConfig
 	Infer   InferenceConfig
 	Token   string
+	Image   map[string][]string
 }
 
 type LogConfig struct {

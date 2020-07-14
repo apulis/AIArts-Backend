@@ -29,4 +29,4 @@ auth:
   url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"
   key: "Sign key for JWT"
 
-dlts_platform_url: http://atlas02.sigsus.cn/apis
+DltsUrl: http://219.133.167.42:52009/apis

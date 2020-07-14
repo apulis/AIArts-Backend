@@ -23,12 +23,13 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 	}
 
 	fw := make(map[string][]string)
-	fw["tensorflow"], fw["mindspore"] = make([]string, 0), make([]string, 0)
+	for k, v := range configs.Config.Image {
 
-	// todo: must read from config
-	fw["tensorflow"] = append(fw["tensorflow"], "apulistech/mmdetection:v2.0")
-	fw["tensorflow"] = append(fw["tensorflow"], "tensorflow/tensorflow:2.2.0-gpu")
-	fw["tensorflow"] = append(fw["tensorflow"], "ubuntu:18.04")
+		fw[k] = make([]string, 0)
+		for _, item := range v {
+			fw[k] = append(fw[k], item)
+		}
+	}
 
 	devices := make([]models.DeviceItem, 0)
 	for k, v := range vcInfo.DeviceAvail {
