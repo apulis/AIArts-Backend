@@ -169,7 +169,7 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	appRspData := &models.EndpointWrapper{}
-	for _, v := range rspData.Endpoints {
+	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "ipython" {
 			appRspData.Name = v.Name
 			appRspData.Status = v.Status
