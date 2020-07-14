@@ -2,13 +2,14 @@ package routers
 
 import (
 	"github.com/apulis/AIArtsBackend/models"
-	"github.com/gin-gonic/gin"
 	"github.com/apulis/AIArtsBackend/services"
-
+	"github.com/gin-gonic/gin"
 )
 
 func AddGroupInference(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/inferences")
+
+	group.Use(Auth())
 
 	group.POST("/PostInferenceJob", wrapper(PostInferenceJob))
 	group.GET("/ListInferenceJob", wrapper(ListInferenceJob))
@@ -33,30 +34,30 @@ func PostInferenceJob(c *gin.Context) error {
 	err := c.ShouldBind(&params)
 	params.UserName = getUsername(c)
 	params.UserId = getUserId(c)
-	if params.VcName=="" {
+	if params.VcName == "" {
 		params.VcName = "platform"
 	}
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	jobId,err := services.PostInferenceJob(params)
+	jobId, err := services.PostInferenceJob(params)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c, gin.H{"jobId":jobId})
+	return SuccessResp(c, gin.H{"jobId": jobId})
 }
 
 func ListInferenceJob(c *gin.Context) error {
 	vcName := c.Query("vcName")
-	if vcName=="" {
+	if vcName == "" {
 		vcName = "platform"
 	}
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
-	jobs,err := services.ListInferenceJob(jobOwner,vcName,queryStringParameters)
+	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -64,7 +65,7 @@ func ListInferenceJob(c *gin.Context) error {
 }
 
 func GetAllSupportInference(c *gin.Context) error {
-	inferences,err := services.GetAllSupportInference()
+	inferences, err := services.GetAllSupportInference()
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -73,7 +74,7 @@ func GetAllSupportInference(c *gin.Context) error {
 
 func GetAllDevice(c *gin.Context) error {
 	userName := getUsername(c)
-	jobs,err := services.GetAllDevice(userName)
+	jobs, err := services.GetAllDevice(userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -83,7 +84,7 @@ func GetAllDevice(c *gin.Context) error {
 func GetJobDetail(c *gin.Context) error {
 	userName := getUsername(c)
 	jobId := c.Query("jobId")
-	jobs,err := services.GetJobDetail(userName,jobId)
+	jobs, err := services.GetJobDetail(userName, jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -93,7 +94,7 @@ func GetJobDetail(c *gin.Context) error {
 func GetJobLog(c *gin.Context) error {
 	userName := getUsername(c)
 	jobId := c.Query("jobId")
-	jobs,err := services.GetJobLog(userName,jobId)
+	jobs, err := services.GetJobLog(userName, jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -102,7 +103,7 @@ func GetJobLog(c *gin.Context) error {
 
 func GetJobStatus(c *gin.Context) error {
 	jobId := c.Query("jobId")
-	jobs,err := services.GetJobStatus(jobId)
+	jobs, err := services.GetJobStatus(jobId)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -117,7 +118,7 @@ func Infer(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	resp,err := services.Infer(jobId,signature_name)
+	resp, err := services.Infer(jobId, signature_name)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -127,7 +128,7 @@ func Infer(c *gin.Context) error {
 func KillJob(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	userName := getUsername(c)
-	resp,err := services.KillJob(jobId,userName)
+	resp, err := services.KillJob(jobId, userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

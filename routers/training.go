@@ -9,6 +9,8 @@ import (
 func AddGroupTraining(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/trainings")
 
+	group.Use(Auth())
+
 	group.GET("/", wrapper(getAllTraining))
 	group.GET("/:id", wrapper(getTraining))
 	group.POST("/", wrapper(createTraining))
@@ -17,15 +19,15 @@ func AddGroupTraining(r *gin.Engine) {
 }
 
 type GetAllTrainingReq struct {
-	PageNum 	int 	`json:"pageNum"`
-	PageSize 	int 	`json:"pageSize"`
-	JobStatus   int     `json:"jobStatus"`
+	PageNum   int `json:"pageNum"`
+	PageSize  int `json:"pageSize"`
+	JobStatus int `json:"jobStatus"`
 }
 
 type GetAllTrainingRsp struct {
-	Trainings 	[] *models.Training `json:"Trainings"`
-	Total		int   	`json:"total"`
-	totalPage	int 	`json:"totalPage"`
+	Trainings []*models.Training `json:"Trainings"`
+	Total     int                `json:"total"`
+	totalPage int                `json:"totalPage"`
 }
 
 type CreateTrainingReq struct {
@@ -33,19 +35,18 @@ type CreateTrainingReq struct {
 }
 
 type CreateTrainingRsp struct {
-	Id 				string `json:"id"`
+	Id string `json:"id"`
 }
 
 type DeleteTrainingReq struct {
-	Id 				string `json:"id"`
+	Id string `json:"id"`
 }
 
 type DeleteTrainingRsp struct {
-
 }
 
 type GetTrainingReq struct {
-	Id 				string `json:"id"`
+	Id string `json:"id"`
 }
 
 type GetTrainingRsp struct {
@@ -79,7 +80,7 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	rsp := &GetAllTrainingRsp {
+	rsp := &GetAllTrainingRsp{
 		sets,
 		total,
 		totalPage,

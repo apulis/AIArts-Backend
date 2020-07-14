@@ -1,19 +1,21 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/apulis/AIArtsBackend/services"
-	"github.com/apulis/AIArtsBackend/models"
 	"strings"
+
 	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/models"
+	"github.com/apulis/AIArtsBackend/services"
+	"github.com/gin-gonic/gin"
 )
 
 type UpdateProjectParams struct {
-
 }
 
 func AddGroupAnnotation(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/annotations")
+
+	group.Use(Auth())
 
 	group.GET("/projects", wrapper(GetProjects))
 	group.DELETE("/projects/:projectId", wrapper(DeleteProject))
@@ -31,8 +33,6 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 }
 
-
-
 // @Summary sample
 // @Produce  json
 // @Param name query string true "Name"
@@ -42,33 +42,33 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Router /api/annotations [post]
 func GetProjects(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	logger.Info("token is ",token)
-	token = strings.Split(token,"Bearer ")[1]
+	logger.Info("token is ", token)
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	projects,totalCount,err := services.GetProjects(queryStringParameters)
+	projects, totalCount, err := services.GetProjects(queryStringParameters)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"projects":projects,"totalCount":totalCount})
+	return SuccessResp(c, gin.H{"projects": projects, "totalCount": totalCount})
 }
 
 func DeleteProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	err := services.DeleteProject(projectId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func AddProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	var params models.Project
 	err := c.ShouldBind(&params)
@@ -77,14 +77,14 @@ func AddProject(c *gin.Context) error {
 	}
 	err = services.AddProject(params)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func UpdateProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	var project models.Project
 	projectId := c.Param("projectId")
@@ -92,30 +92,30 @@ func UpdateProject(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.UpdateProject(project,projectId)
+	err = services.UpdateProject(project, projectId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func GetDatasets(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	datasets,totalCount,err := services.GetDatasets(projectId,queryStringParameters)
+	datasets, totalCount, err := services.GetDatasets(projectId, queryStringParameters)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"datasets":datasets,"totalCount":totalCount})
+	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }
 
 func AddDataset(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	var dataset models.UpdateDataSet
 	projectId := c.Param("projectId")
@@ -123,29 +123,29 @@ func AddDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.AddDataset(projectId,dataset)
+	err = services.AddDataset(projectId, dataset)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func GetDatasetInfo(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	dataset,err := services.GetDatasetInfo(projectId,dataSetId)
+	dataset, err := services.GetDatasetInfo(projectId, dataSetId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"info":dataset})
+	return SuccessResp(c, gin.H{"info": dataset})
 }
 
 func UpdateDataSet(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
@@ -154,16 +154,16 @@ func UpdateDataSet(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.UpdateDataSet(projectId,dataSetId,dataset)
+	err = services.UpdateDataSet(projectId, dataSetId, dataset)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func RemoveDataSet(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	var dataSetId string
@@ -171,80 +171,80 @@ func RemoveDataSet(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.RemoveDataSet(projectId,dataSetId)
+	err = services.RemoveDataSet(projectId, dataSetId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func GetTasks(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
-	tasks,totalCount,err := services.GetTasks(projectId,dataSetId,queryStringParameters)
+	tasks, totalCount, err := services.GetTasks(projectId, dataSetId, queryStringParameters)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"taskList":tasks,"totalCount":totalCount})
+	return SuccessResp(c, gin.H{"taskList": tasks, "totalCount": totalCount})
 }
 
 func GetNextTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
-	nextTask,err := services.GetNextTask(projectId,dataSetId,taskId)
+	nextTask, err := services.GetNextTask(projectId, dataSetId, taskId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"next":nextTask})
+	return SuccessResp(c, gin.H{"next": nextTask})
 }
 
 func GetOneTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
-	taskObj,err := services.GetOneTask(projectId,dataSetId,taskId)
+	taskObj, err := services.GetOneTask(projectId, dataSetId, taskId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"annotations":taskObj})
+	return SuccessResp(c, gin.H{"annotations": taskObj})
 }
 
 func PostOneTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
-	value,_ := c.GetRawData()
-	err := services.PostOneTask(projectId,dataSetId,taskId,string(value))
+	value, _ := c.GetRawData()
+	err := services.PostOneTask(projectId, dataSetId, taskId, string(value))
 	if err != nil {
-		return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{})
+	return SuccessResp(c, gin.H{})
 }
 
 func GetDataSetLabels(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
-	token = strings.Split(token,"Bearer ")[1]
+	token = strings.Split(token, "Bearer ")[1]
 	configs.Config.Token = token
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	labels,err := services.GetDataSetLabels(projectId,dataSetId)
+	labels, err := services.GetDataSetLabels(projectId, dataSetId)
 	if err != nil {
-	return AppError(APP_ERROR_CODE,err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	return SuccessResp(c,gin.H{"annotations":labels})
+	return SuccessResp(c, gin.H{"annotations": labels})
 }
