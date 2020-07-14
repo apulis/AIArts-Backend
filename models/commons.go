@@ -167,7 +167,7 @@ type Endpoint struct {
 	Name			string `json:"name"`
 	Status			string `json:"status"`
 	Domain			string `json:"domain"`
-	NodeName		string `json:"nodeName"`
+	NodeName		string `json:"nodeName,omitempty"`
 	Port			string `json:"port"`
 }
 

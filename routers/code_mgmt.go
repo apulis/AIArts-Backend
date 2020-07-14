@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -144,20 +145,24 @@ func delCodeEnv(c *gin.Context) error {
 // @Router /ai_arts/api/codes/:id/jupyter [get]
 func getJupyterPath(c *gin.Context) error {
 
-	var id CodeEnvId
+	var id string 
 	var rspData *models.EndpointWrapper
+
 
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
+        id = c.Param("id") 
+	fmt.Println(id)
+
 	userName := getUsername(c)
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err, rspData = services.GetJupyterPath(userName, id.Id)
+	err, rspData = services.GetJupyterPath(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
