@@ -9,6 +9,8 @@ import (
 func AddGroupModel(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/models")
 
+	group.Use(Auth())
+
 	group.GET("/", wrapper(lsModelsets))
 	group.GET("/:id", wrapper(getModelset))
 	group.POST("/", wrapper(createModelset))
@@ -86,7 +88,7 @@ func lsModelsets(c *gin.Context) error {
 
 // @Summary get model by id
 // @Produce  json
-// @Param id path int true "dataset id"
+// @Param id path int true "model id"
 // @Success 200 {object} APISuccessRespGetModelset "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"

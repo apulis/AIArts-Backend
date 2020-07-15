@@ -1,8 +1,6 @@
 package services
 
 import (
-	"os"
-
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -60,9 +58,9 @@ func DeleteDataset(id int) error {
 		return err
 	}
 
-	err = os.RemoveAll(dataset.Path)
-	if err != nil {
-		return err
-	}
+	//err = os.RemoveAll(dataset.Path)
+	//if err != nil {
+	//	return err
+	//}
 	return models.DeleteDataset(&dataset)
 }

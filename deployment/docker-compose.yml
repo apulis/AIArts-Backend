@@ -3,9 +3,11 @@
 
 version: "3"
 services:
-    aiart:
-        image: apulistech/aiarts:1.0
-        ports:
-            - "9000:9000"
-        volumes:
-            - /root/AIArtsBackend/config.yaml:/root/config.yaml
+  aiart:
+    image: apulistech/aiarts:1.0
+    ports:
+      - "9000:9000"
+    volumes:
+      - /root/AIArtsBackend/config.yaml:/root/config.yaml
+      - /dlwsdata/storage/:/data/
+      - /dlwsdata/work/:/home/

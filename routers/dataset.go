@@ -9,6 +9,8 @@ import (
 func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/datasets")
 
+	group.Use(Auth())
+
 	group.GET("/", wrapper(lsDatasets))
 	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))

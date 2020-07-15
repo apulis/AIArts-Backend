@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 
 func AddGroupGeneral(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/common")
+
+	group.Use(Auth())
 
 	group.GET("/resource", wrapper(getResource))
 }
@@ -43,7 +46,7 @@ func getResource(c *gin.Context) error {
 	rsp := &GetResourceRsp{
 		framework,
 		devices,
-		"/home/" + userName,
+		"/home/" + userName + "/",
 	}
 
 	return SuccessResp(c, rsp)

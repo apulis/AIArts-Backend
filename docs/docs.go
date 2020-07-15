@@ -663,7 +663,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "dataset id",
+                        "description": "model id",
                         "name": "id",
                         "in": "path",
                         "required": true

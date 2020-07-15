@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 
 func AddGroupCode(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/codes")
+
+	group.Use(Auth())
 
 	group.GET("/", wrapper(getAllCodeEnv))
 	group.POST("/", wrapper(createCodeEnv))
