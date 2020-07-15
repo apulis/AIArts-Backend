@@ -6,8 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-
-func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.Training, int, int, error) {
+func GetAllTraining(userName string, page, size int, jobStatus int) ([]*models.Training, int, int, error) {
 
 	var url string
 
@@ -27,8 +26,8 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 		return nil, 0, 0, err
 	}
 
-	trainings := make([] *models.Training, 0)
-	for _, v:= range jobList.RunningJobs {
+	trainings := make([]*models.Training, 0)
+	for _, v := range jobList.RunningJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -46,7 +45,7 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 		})
 	}
 
-	for _, v:= range jobList.QueuedJobs {
+	for _, v := range jobList.QueuedJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -64,7 +63,7 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 		})
 	}
 
-	for _, v:= range jobList.FinishedJobs {
+	for _, v := range jobList.FinishedJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -88,7 +87,7 @@ func GetAllTraining(userName string, page, size int, jobStatus int) ([] *models.
 func CreateTraining(userName string, training models.Training) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	params := make(map[string] interface{})
+	params := make(map[string]interface{})
 
 	params["userName"] = userName
 	params["jobName"] = training.Name
@@ -98,16 +97,27 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum
-	params["cmd"] = ""  // use StartupFile, params instead
+	params["cmd"] = "" // use StartupFile, params instead
 
-	//params["cmd"] = "python " + training.StartupFile
-	for k, v := range training.Params {
-		params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
+	if configs.Config.InteractiveModeJob {
+		params["cmd"] = "sleep infinity" // use StartupFile, params instead
+	} else {
+
+		params["cmd"] = "python " + training.StartupFile
+		for k, v := range training.Params {
+			if len(k) > 0 && len(v) > 0 {
+				params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
+			}
+		}
+
+		if len(training.DatasetPath) > 0 {
+			params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
+		}
+
+		if len(training.OutputPath) > 0 {
+			params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
+		}
 	}
-
-	//params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
-	//params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
-	params["cmd"] = "sleep 3000m"  // use StartupFile, params instead
 
 	params["startupFile"] = training.StartupFile
 	params["datasetPath"] = training.DatasetPath
@@ -147,7 +157,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 func DeleteTraining(userName, id string) error {
 
 	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-	params := make(map[string] interface{})
+	params := make(map[string]interface{})
 
 	job := &models.Job{}
 	err := DoRequest(url, "GET", nil, params, job)
@@ -163,7 +173,7 @@ func DeleteTraining(userName, id string) error {
 func GetTraining(userName, id string) (*models.Training, error) {
 
 	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
-	params := make(map[string] interface{})
+	params := make(map[string]interface{})
 
 	job := &models.Job{}
 	training := &models.Training{}
