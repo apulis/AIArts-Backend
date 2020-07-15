@@ -32,6 +32,20 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "list projects",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number, from 1",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count per page",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "success",
@@ -121,6 +135,18 @@ var doc = `{
                         "name": "projectId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page number, from 1",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count per page",
+                        "name": "pageSize",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -275,6 +301,20 @@ var doc = `{
                         "name": "dataSetId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataset type,like image",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "convert to specific format",
+                        "name": "target",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -308,6 +348,18 @@ var doc = `{
                         "name": "dataSetId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page number, from 1",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count per page",
+                        "name": "pageSize",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1197,6 +1249,18 @@ var doc = `{
                         "type": "string",
                         "description": "which virtual cluster",
                         "name": "vcName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page number, from 1",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count per page",
+                        "name": "pageSize",
                         "in": "query"
                     }
                 ],

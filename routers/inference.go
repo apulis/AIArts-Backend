@@ -51,6 +51,8 @@ func PostInferenceJob(c *gin.Context) error {
 // @Description list inference jobs
 // @Produce  json
 // @Param vcName query string false "which virtual cluster"
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/inferences/ListInferenceJob [get]
 func ListInferenceJob(c *gin.Context) error {

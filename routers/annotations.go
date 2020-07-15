@@ -37,6 +37,8 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Summary list projects
 // @Description get projects of data-platform
 // @Produce  json
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
@@ -119,6 +121,8 @@ func UpdateProject(c *gin.Context) error {
 // @Description list datasets of data-platform project
 // @Produce  json
 // @Param projectId path string true "project id"
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets [get]
 func GetDatasets(c *gin.Context) error {
@@ -232,6 +236,8 @@ func RemoveDataSet(c *gin.Context) error {
 // @Produce  json
 // @Param projectId path string true "project id"
 // @Param dataSetId path string true "dataSet id"
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks [get]
 func GetTasks(c *gin.Context) error {
@@ -341,6 +347,8 @@ func GetDataSetLabels(c *gin.Context) error {
 // @Produce  json
 // @Param projectId path string true "project id"
 // @Param dataSetId path string true "dataSet id"
+// @Param type query string true "dataset type,like image"
+// @Param target query string true "convert to specific format"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat [post]
 func ConvertDataFormat(c *gin.Context) error {

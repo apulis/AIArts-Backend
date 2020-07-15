@@ -524,6 +524,15 @@ paths:
   /ai_arts/api/annotations/projects:
     get:
       description: get projects of data-platform
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
@@ -606,6 +615,14 @@ paths:
         name: projectId
         required: true
         type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
@@ -687,6 +704,16 @@ paths:
         name: dataSetId
         required: true
         type: string
+      - description: dataset type,like image
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: convert to specific format
+        in: query
+        name: target
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -709,6 +736,14 @@ paths:
         name: dataSetId
         required: true
         type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
@@ -1292,6 +1327,14 @@ paths:
         in: query
         name: vcName
         type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
