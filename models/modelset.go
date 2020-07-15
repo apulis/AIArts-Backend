@@ -6,7 +6,7 @@ type Modelset struct {
 	UpdatedAt UnixTime  `json:"updatedAt"`
 	DeletedAt *UnixTime `json:"deletedAt"`
 
-	Name        string `gorm:"unique_index;not null" json:"name"`
+	Name        string `gorm:"not null" json:"name"`
 	Description string `gorm:"type:text" json:"description"`
 	Creator     string `gorm:"not null" json:"creator"`
 	Version     string `gorm:"not null" json:"version"`
