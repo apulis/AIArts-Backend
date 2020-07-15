@@ -17,7 +17,7 @@ func PostInferenceJob(inference models.PostInference) (string,error) {
 	resp, err := grequests.Post(BackendUrl+"/apis/PostInferenceJob", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return "",errors.New(string(resp.StatusCode))
+		return "",errors.New(resp.String())
 	}
 	var jobRes models.InferenceJobResp
 	json.Unmarshal(resp.Bytes(),&jobRes)
@@ -36,7 +36,7 @@ func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models
 		strconv.Itoa(queryStringParameters.PageNum)+"&size="+strconv.Itoa(queryStringParameters.PageSize), nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var jobs interface{}
 	json.Unmarshal(resp.Bytes(),&jobs)
@@ -48,7 +48,7 @@ func GetAllSupportInference() (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetAllSupportInference", nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var inferences interface{}
 	json.Unmarshal(resp.Bytes(),&inferences)
@@ -60,7 +60,7 @@ func GetAllDevice(userName string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetAllDevice?userName="+userName, nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var devices interface{}
 	json.Unmarshal(resp.Bytes(),&devices)
@@ -72,7 +72,7 @@ func GetJobDetail(userName string,jobId string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetInferenceJobDetail?userName="+userName+"&jobId="+jobId,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var jobDetail interface{}
 	json.Unmarshal(resp.Bytes(),&jobDetail)
@@ -84,7 +84,7 @@ func GetJobLog(userName string,jobId string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetJobLog?userName="+userName+"&jobId="+jobId,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var jobLog interface{}
 	json.Unmarshal(resp.Bytes(),&jobLog)
@@ -96,7 +96,7 @@ func GetJobStatus(jobId string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetJobStatus?&jobId="+jobId,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var jobLog interface{}
 	json.Unmarshal(resp.Bytes(),&jobLog)
@@ -115,7 +115,7 @@ func Infer(jobId string,signature_name string) (interface{},error) {
 	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId+"&signature_name="+signature_name,ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var respImage interface{}
 	json.Unmarshal(resp.Bytes(),&respImage)
@@ -128,7 +128,7 @@ func KillJob(jobId string,userName string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/KillJob?&jobId="+jobId+"&userName="+userName,nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var jobLog interface{}
 	json.Unmarshal(resp.Bytes(),&jobLog)

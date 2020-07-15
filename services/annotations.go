@@ -26,7 +26,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	logger.Info(strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,0,errors.New(string(resp.StatusCode))
+		return nil,0,errors.New(resp.String())
 	}
 	var projects models.ProjectsReq
 	json.Unmarshal(resp.Bytes(),&projects)
@@ -41,7 +41,7 @@ func DeleteProject(projectId string) error {
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -55,7 +55,7 @@ func AddProject(project models.Project) error {
 	resp, err := grequests.Post(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -69,7 +69,7 @@ func UpdateProject(project models.Project,projectId string) error {
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -88,7 +88,7 @@ func GetDatasets(projectId string,queryStringParameters models.QueryStringParame
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,0,errors.New(string(resp.StatusCode))
+		return nil,0,errors.New(resp.String())
 	}
 	var datasets models.DatasetsReq
 	json.Unmarshal(resp.Bytes(),&datasets)
@@ -104,7 +104,7 @@ func AddDataset(projectId string, dataset models.UpdateDataSet) error {
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -129,7 +129,7 @@ func UpdateDataSet(projectId string,dataSetId string,dataset models.UpdateDataSe
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -143,7 +143,7 @@ func RemoveDataSet(projectId string,dataSetId string) error {
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -163,7 +163,7 @@ func GetTasks(projectId string,dataSetId string,queryStringParameters models.Que
 	logger.Info(strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,0,errors.New(string(resp.StatusCode))
+		return nil,0,errors.New(resp.String())
 	}
 	var taskList models.TasksList
 	json.Unmarshal(resp.Bytes(),&taskList)
@@ -178,7 +178,7 @@ func GetNextTask(projectId string,dataSetId string,taskId string) (interface{},e
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/next/"+taskId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return "",errors.New(string(resp.StatusCode))
+		return "",errors.New(resp.String())
 	}
 	var nextTask models.NextTask
 	json.Unmarshal(resp.Bytes(),&nextTask)
@@ -193,7 +193,7 @@ func GetOneTask(projectId string,dataSetId string,taskId string) (interface{},er
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return "",errors.New(string(resp.StatusCode))
+		return "",errors.New(resp.String())
 	}
 	var oneTask models.OneTask
 	json.Unmarshal(resp.Bytes(),&oneTask)
@@ -209,7 +209,7 @@ func PostOneTask(projectId string,dataSetId string,taskId string,value string) e
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return errors.New(string(resp.StatusCode))
+		return errors.New(resp.String())
 	}
 	return err
 }
@@ -222,7 +222,7 @@ func GetDataSetLabels(projectId string,dataSetId string) (interface{},error) {
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/labels", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var labels models.LabelReq
 	json.Unmarshal(resp.Bytes(),&labels)
@@ -237,7 +237,7 @@ func ConvertDataFormat(convert models.ConvertDataFormat) (interface{},error) {
 	resp, err := grequests.Post(BackendUrl+"/apis/ConvertDataFormat", ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
-		return nil,errors.New(string(resp.StatusCode))
+		return nil,errors.New(resp.String())
 	}
 	var ret interface{}
 	json.Unmarshal(resp.Bytes(),&ret)

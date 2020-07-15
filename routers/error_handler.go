@@ -73,6 +73,10 @@ func AppError(errorCode int, msg string) *APIException {
 	return newAPIException(http.StatusBadRequest, errorCode, msg)
 }
 
+func ServeError(errorCode int, msg string) *APIException {
+	return newAPIException(http.StatusInternalServerError, errorCode, msg)
+}
+
 func HandleNotFound(c *gin.Context) {
 	handleErr := NotFound()
 	c.JSON(handleErr.StatusCode, handleErr)

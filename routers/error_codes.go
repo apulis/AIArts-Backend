@@ -27,4 +27,6 @@ const (
 
 	// training
 	INVALID_CODE_PATH = 30201
+
+	REMOTE_SERVE_ERROR_CODE = 40000
 )
