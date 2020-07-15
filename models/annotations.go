@@ -15,8 +15,8 @@ type DataSet struct {
 	Labels []Label `json:"labels"`
 	DataSetBindId int `json:"dataSetBindId"`
 	DataSetPath string `json:"dataSetPath"`
-	ConvertStatus string `json:"convert_status"`
-	ConvertOutPath string `json:"convert_out_path"`
+	ConvertStatus string `json:"convertStatus"`
+	ConvertOutPath string `json:"convertOutPath"`
 }
 
 type ProjectsReq struct {
