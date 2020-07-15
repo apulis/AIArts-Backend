@@ -38,7 +38,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Description get projects of data-platform
 // @Produce  json
 // @Success 200 {object} APISuccessResp "success"
-// @Router /api/annotations/projects [get]
+// @Router /ai_arts/api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	logger.Info("token is ", token)
@@ -53,6 +53,12 @@ func GetProjects(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"projects": projects, "totalCount": totalCount})
 }
 
+// @Summary delete project
+// @Description delete project of data-platform
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId [delete]
 func DeleteProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -65,6 +71,11 @@ func DeleteProject(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary add project
+// @Description add project of data-platform
+// @Produce  json
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects [post]
 func AddProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -81,6 +92,12 @@ func AddProject(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary update projects
+// @Description update project of data-platform
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId [patch]
 func UpdateProject(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -98,6 +115,12 @@ func UpdateProject(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary list datasets
+// @Description list datasets of data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets [get]
 func GetDatasets(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -112,6 +135,12 @@ func GetDatasets(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }
 
+// @Summary add dataset
+// @Description add dataset for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets [post]
 func AddDataset(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -129,6 +158,13 @@ func AddDataset(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary get dataset info
+// @Description get dataset info for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId [get]
 func GetDatasetInfo(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -142,6 +178,13 @@ func GetDatasetInfo(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"info": dataset})
 }
 
+// @Summary update dataset info
+// @Description update dataset info for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId [patch]
 func UpdateDataSet(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -160,6 +203,13 @@ func UpdateDataSet(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary delete dataset
+// @Description delete dataset info for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId body string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets [delete]
 func RemoveDataSet(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -177,6 +227,13 @@ func RemoveDataSet(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary get dataset tasks
+// @Description get dataset tasks for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks [get]
 func GetTasks(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -192,6 +249,14 @@ func GetTasks(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"taskList": tasks, "totalCount": totalCount})
 }
 
+// @Summary get dataset next task id
+// @Description get dataset next task id for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param taskId path string true "current task id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId [get]
 func GetNextTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -206,6 +271,14 @@ func GetNextTask(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"next": nextTask})
 }
 
+// @Summary get dataset one task detail
+// @Description get dataset one task detail for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param taskId path string true "current task id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId [get]
 func GetOneTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -220,6 +293,14 @@ func GetOneTask(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"annotations": taskObj})
 }
 
+// @Summary commit label data to one task
+// @Description commit label data to one task
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param taskId path string true "current task id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId [post]
 func PostOneTask(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -235,6 +316,13 @@ func PostOneTask(c *gin.Context) error {
 	return SuccessResp(c, gin.H{})
 }
 
+// @Summary get dataset all labels
+// @Description get dataset all labels
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/labels [get]
 func GetDataSetLabels(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	token = strings.Split(token, "Bearer ")[1]
@@ -248,6 +336,13 @@ func GetDataSetLabels(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"annotations": labels})
 }
 
+// @Summary convert a dataset to specific format
+// @Description convert a dataset to specific format
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat [post]
 func ConvertDataFormat(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")

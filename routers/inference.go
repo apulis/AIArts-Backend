@@ -22,13 +22,12 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/KillJob", wrapper(KillJob))
 }
 
-// @Summary sample
+// @Summary submit a inference job
+// @Description submit a inference job
 // @Produce  json
-// @Param name query string true "Name"
-// @Param state query int false "State"
-// @Param created_by query int false "CreatedBy"
-// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
-// @Router /api/inferences [post]
+// @Param body body models.PostInference true "json body"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/PostInferenceJob [post]
 func PostInferenceJob(c *gin.Context) error {
 	var params models.PostInference
 	err := c.ShouldBind(&params)
@@ -48,6 +47,12 @@ func PostInferenceJob(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"jobId": jobId})
 }
 
+// @Summary list inference jobs
+// @Description list inference jobs
+// @Produce  json
+// @Param vcName query string false "which virtual cluster"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/ListInferenceJob [get]
 func ListInferenceJob(c *gin.Context) error {
 	vcName := c.Query("vcName")
 	if vcName == "" {
@@ -64,6 +69,11 @@ func ListInferenceJob(c *gin.Context) error {
 	return SuccessResp(c, jobs)
 }
 
+// @Summary get all support inference framework\device
+// @Description list inference jobs
+// @Produce  json
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/GetAllSupportInference [get]
 func GetAllSupportInference(c *gin.Context) error {
 	inferences, err := services.GetAllSupportInference()
 	if err != nil {
@@ -72,6 +82,11 @@ func GetAllSupportInference(c *gin.Context) error {
 	return SuccessResp(c, inferences)
 }
 
+// @Summary get all device type detail
+// @Description get all device type detail
+// @Produce  json
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/GetAllDevice [get]
 func GetAllDevice(c *gin.Context) error {
 	userName := getUsername(c)
 	jobs, err := services.GetAllDevice(userName)
@@ -81,6 +96,12 @@ func GetAllDevice(c *gin.Context) error {
 	return SuccessResp(c, jobs)
 }
 
+// @Summary get inference job detail
+// @Description get inference job detail
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/GetJobDetail [get]
 func GetJobDetail(c *gin.Context) error {
 	userName := getUsername(c)
 	jobId := c.Query("jobId")
@@ -91,6 +112,12 @@ func GetJobDetail(c *gin.Context) error {
 	return SuccessResp(c, jobs)
 }
 
+// @Summary get inference job log
+// @Description get inference job log
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/GetJobLog [get]
 func GetJobLog(c *gin.Context) error {
 	userName := getUsername(c)
 	jobId := c.Query("jobId")
@@ -101,6 +128,12 @@ func GetJobLog(c *gin.Context) error {
 	return SuccessResp(c, jobs)
 }
 
+// @Summary get inference job status
+// @Description get inference job status
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/GetJobStatus [get]
 func GetJobStatus(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	jobs, err := services.GetJobStatus(jobId)
@@ -110,6 +143,13 @@ func GetJobStatus(c *gin.Context) error {
 	return SuccessResp(c, jobs)
 }
 
+// @Summary Infer a picture using a running inference job
+// @Description Infer a picture using a running inference job
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Param image file file true "picture upload to infer"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/Infer [post]
 func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	signature_name := c.Query("signature_name")
@@ -125,6 +165,12 @@ func Infer(c *gin.Context) error {
 	return SuccessResp(c, resp)
 }
 
+// @Summary kill a running inference job
+// @Description kill a running inference job
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/KillJob [get]
 func KillJob(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	userName := getUsername(c)
