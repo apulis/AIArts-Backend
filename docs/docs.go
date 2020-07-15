@@ -25,6 +25,452 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ai_arts/api/annotations/projects": {
+            "get": {
+                "description": "get projects of data-platform",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list projects",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "add project of data-platform",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "add project",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId": {
+            "delete": {
+                "description": "delete project of data-platform",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "update project of data-platform",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update projects",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets": {
+            "get": {
+                "description": "list datasets of data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list datasets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "add dataset for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "add dataset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete dataset info for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete dataset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId": {
+            "get": {
+                "description": "get dataset info for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "update dataset info for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update dataset info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat": {
+            "post": {
+                "description": "convert a dataset to specific format",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "convert a dataset to specific format",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks": {
+            "get": {
+                "description": "get dataset tasks for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset tasks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId": {
+            "get": {
+                "description": "get dataset one task detail for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset one task detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "current task id",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "commit label data to one task",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "commit label data to one task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "current task id",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/labels": {
+            "get": {
+                "description": "get dataset all labels",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset all labels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId": {
+            "get": {
+                "description": "get dataset next task id for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset next task id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "current task id",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/codes": {
             "get": {
                 "produces": [
@@ -566,6 +1012,232 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/inferences/GetAllDevice": {
+            "get": {
+                "description": "get all device type detail",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get all device type detail",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/GetAllSupportInference": {
+            "get": {
+                "description": "list inference jobs",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get all support inference framework\\device",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/GetJobDetail": {
+            "get": {
+                "description": "get inference job detail",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get inference job detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inference job Id ",
+                        "name": "jobId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/GetJobLog": {
+            "get": {
+                "description": "get inference job log",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get inference job log",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inference job Id ",
+                        "name": "jobId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/GetJobStatus": {
+            "get": {
+                "description": "get inference job status",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get inference job status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inference job Id ",
+                        "name": "jobId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/Infer": {
+            "post": {
+                "description": "Infer a picture using a running inference job",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Infer a picture using a running inference job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inference job Id ",
+                        "name": "jobId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "picture upload to infer",
+                        "name": "image",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/KillJob": {
+            "get": {
+                "description": "kill a running inference job",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "kill a running inference job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inference job Id ",
+                        "name": "jobId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/ListInferenceJob": {
+            "get": {
+                "description": "list inference jobs",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list inference jobs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "which virtual cluster",
+                        "name": "vcName",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/inferences/PostInferenceJob": {
+            "post": {
+                "description": "submit a inference job",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "submit a inference job",
+                "parameters": [
+                    {
+                        "description": "json body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PostInference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/models": {
             "get": {
                 "produces": [
@@ -963,60 +1635,6 @@ var doc = `{
                     }
                 }
             }
-        },
-        "/api/annotations/projects": {
-            "get": {
-                "description": "get projects of data-platform",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "list projects",
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/inferences": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "sample",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -1174,6 +1792,44 @@ var doc = `{
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PostInference": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "device": {
+                    "type": "string"
+                },
+                "framework": {
+                    "type": "string"
+                },
+                "gpuType": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "model_base_path": {
+                    "type": "string"
+                },
+                "resourcegpu": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "vcName": {
                     "type": "string"
                 }
             }

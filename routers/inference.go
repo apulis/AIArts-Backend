@@ -147,7 +147,7 @@ func GetJobStatus(c *gin.Context) error {
 // @Description Infer a picture using a running inference job
 // @Produce  json
 // @Param jobId query string true "inference job Id "
-// @Param image file file true "picture upload to infer"
+// @Param image body byte true "picture upload to infer"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/inferences/Infer [post]
 func Infer(c *gin.Context) error {
