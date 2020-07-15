@@ -15,6 +15,8 @@ type DataSet struct {
 	Labels []Label `json:"labels"`
 	DataSetBindId int `json:"dataSetBindId"`
 	DataSetPath string `json:"dataSetPath"`
+	ConvertStatus string `json:"convert_status"`
+	ConvertOutPath string `json:"convert_out_path"`
 }
 
 type ProjectsReq struct {
@@ -81,4 +83,11 @@ type OneTask struct {
 type QueryStringParameters struct {
 	Page int `form:"page"`
 	Size int `form:"size"`
+}
+
+type ConvertDataFormat struct {
+	ProjectId string `json:"projectId"`
+	DatasetId string `json:"datasetId"`
+	DatasetType string `json:"type"`
+	ConvertTarget string `json:"target"`
 }

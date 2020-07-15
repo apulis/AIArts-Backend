@@ -31,6 +31,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
+	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
 }
 
 // @Summary sample
@@ -247,4 +248,21 @@ func GetDataSetLabels(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"annotations": labels})
+}
+
+func ConvertDataFormat(c *gin.Context) error {
+	projectId := c.Param("projectId")
+	dataSetId := c.Param("dataSetId")
+	var convert models.ConvertDataFormat
+	err := c.ShouldBind(&convert)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	convert.DatasetId = dataSetId
+	convert.ProjectId = projectId
+	ret, err := services.ConvertDataFormat(convert)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, ret)
 }

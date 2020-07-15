@@ -228,3 +228,18 @@ func GetDataSetLabels(projectId string,dataSetId string) (interface{},error) {
 	json.Unmarshal(resp.Bytes(),&labels)
 	return labels.Annotations,err
 }
+
+func ConvertDataFormat(convert models.ConvertDataFormat) (interface{},error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	ro := &grequests.RequestOptions{
+		JSON: convert,
+	}
+	resp, err := grequests.Post(BackendUrl+"/apis/ConvertDataFormat", ro)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,errors.New(string(resp.StatusCode))
+	}
+	var ret interface{}
+	json.Unmarshal(resp.Bytes(),&ret)
+	return ret,err
+}
