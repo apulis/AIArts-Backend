@@ -964,38 +964,18 @@ var doc = `{
                 }
             }
         },
-        "/api/annotations": {
-            "post": {
+        "/api/annotations/projects": {
+            "get": {
+                "description": "get projects of data-platform",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "sample",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
+                "summary": "list projects",
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
+                        "description": "success",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routers.APISuccessResp"
                         }
                     }
                 }

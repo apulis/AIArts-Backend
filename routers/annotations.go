@@ -34,13 +34,11 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
 }
 
-// @Summary sample
+// @Summary list projects
+// @Description get projects of data-platform
 // @Produce  json
-// @Param name query string true "Name"
-// @Param state query int false "State"
-// @Param created_by query int false "CreatedBy"
-// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
-// @Router /api/annotations [post]
+// @Success 200 {object} APISuccessResp "success"
+// @Router /api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
 	token := c.GetHeader("Authorization")
 	logger.Info("token is ", token)

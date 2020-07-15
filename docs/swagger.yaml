@@ -1108,30 +1108,17 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get specific training
-  /api/annotations:
-    post:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: CreatedBy
-        in: query
-        name: created_by
-        type: integer
+  /api/annotations/projects:
+    get:
+      description: get projects of data-platform
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
+          description: success
           schema:
-            type: string
-      summary: sample
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list projects
   /api/inferences:
     post:
       parameters:
