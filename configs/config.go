@@ -7,16 +7,17 @@ import (
 )
 
 type ProjectConfig struct {
-	Port    int
-	Log     LogConfig
-	Db      DbConfig
-	File    FileConfig
-	Auth    AuthConfig
-	DltsUrl string
-	Anno    AnnotationConfig
-	Infer   InferenceConfig
-	Token   string
-	Image   map[string][]string
+	Port               int
+	Log                LogConfig
+	Db                 DbConfig
+	File               FileConfig
+	Auth               AuthConfig
+	DltsUrl            string
+	Anno               AnnotationConfig
+	Infer              InferenceConfig
+	Token              string
+	Image              map[string][]string
+	InteractiveModeJob bool
 }
 
 type LogConfig struct {
