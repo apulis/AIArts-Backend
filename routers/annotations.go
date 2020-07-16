@@ -43,7 +43,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Router /ai_arts/api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
-	var queryStringParameters models.QueryStringParamInterface = models.QueryStringParameters{}
+	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
 	logger.Info(queryStringParameters)
 	projects, totalCount, err := services.GetProjects(queryStringParameters)
