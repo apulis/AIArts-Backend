@@ -45,6 +45,7 @@ func GetProjects(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
 	var queryStringParameters models.QueryStringParamInterface = models.QueryStringParameters{}
 	err := c.ShouldBindQuery(&queryStringParameters)
+	logger.Info(queryStringParameters)
 	projects, totalCount, err := services.GetProjects(queryStringParameters)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
