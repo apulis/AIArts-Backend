@@ -1,11 +1,9 @@
 package routers
 
 import (
-	"bytes"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"io"
 )
 
 func AddGroupInference(r *gin.Engine) {
@@ -160,10 +158,9 @@ func Infer(c *gin.Context) error {
 	file, err := c.FormFile("image")
 	a,_:= file.Open()
 	defer a.Close()
-	var b = make([]byte,1024*1024*10)
-	buf := bytes.NewBuffer(nil)
-	io.Copy(buf, a)
-	logger.Info(buf.Bytes())
+	var b = make([]byte,1024*100)
+	//buf := bytes.NewBuffer(nil)
+	//io.Copy(buf, a)
 	d,err := a.Read(b)
 	//err = c.SaveUploadedFile(file, "./"+jobId)
 	//if err != nil {
