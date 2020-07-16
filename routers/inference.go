@@ -159,12 +159,12 @@ func Infer(c *gin.Context) error {
 	a,_:= file.Open()
 	defer a.Close()
 	var b []byte
-	_,err = a.Read(b)
+	d,err := a.Read(b)
 	//err = c.SaveUploadedFile(file, "./"+jobId)
 	//if err != nil {
 	//	return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	//}
-	logger.Info(b)
+	logger.Info(d,b)
 	resp, err := services.Infer(jobId, signature_name,b)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
