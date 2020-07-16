@@ -1,9 +1,11 @@
 package routers
 
 import (
+	"bytes"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"io"
 )
 
 func AddGroupInference(r *gin.Engine) {
@@ -156,18 +158,11 @@ func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	signature_name := c.Query("signature_name")
 	file, err := c.FormFile("image")
-	a,_:= file.Open()
-	defer a.Close()
-	var b = make([]byte,1024*100)
-	//buf := bytes.NewBuffer(nil)
-	//io.Copy(buf, a)
-	d,err := a.Read(b)
-	//err = c.SaveUploadedFile(file, "./"+jobId)
-	//if err != nil {
-	//	return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
-	//}
-	logger.Info(d,b[:d])
-	resp, err := services.Infer(jobId, signature_name,b[:d])
+	content,_:= file.Open()
+	defer content.Close()
+	buf := bytes.NewBuffer(nil)
+	io.Copy(buf, content)
+	resp, err := services.Infer(jobId, signature_name,buf.Bytes())
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
