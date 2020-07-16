@@ -24,7 +24,7 @@ type QueryStringParametersV2 struct {
 }
 
 func (queryStringParameters QueryStringParametersV2) GetPageNum() int {
-	if queryStringParameters.PageNum<0 {
+	if queryStringParameters.PageNum<=0 {
 		return 1
 	}
 	return queryStringParameters.PageNum
