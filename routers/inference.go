@@ -169,7 +169,7 @@ func Infer(c *gin.Context) error {
 	//if err != nil {
 	//	return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	//}
-	logger.Info(d,b)
+	logger.Info(d,b[:d])
 	resp, err := services.Infer(jobId, signature_name,b[:d])
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
