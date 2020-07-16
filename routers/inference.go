@@ -160,7 +160,7 @@ func Infer(c *gin.Context) error {
 	file, err := c.FormFile("image")
 	a,_:= file.Open()
 	defer a.Close()
-	var b []byte
+	var b = make([]byte,1024*1024*10)
 	buf := bytes.NewBuffer(nil)
 	io.Copy(buf, a)
 	logger.Info(buf.Bytes())
@@ -170,7 +170,7 @@ func Infer(c *gin.Context) error {
 	//	return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	//}
 	logger.Info(d,b)
-	resp, err := services.Infer(jobId, signature_name,buf.Bytes())
+	resp, err := services.Infer(jobId, signature_name,b)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
