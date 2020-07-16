@@ -67,7 +67,7 @@ func UpdateProject(project models.Project,projectId string) error {
 	return err
 }
 
-func GetDatasets(projectId string,queryStringParameters models.QueryStringParameters) ([]models.DataSet,int,error) {
+func GetDatasets(projectId string,queryStringParameters models.QueryStringParamInterface) ([]models.DataSet,int,error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
@@ -135,13 +135,12 @@ func RemoveDataSet(projectId string,dataSetId string) error {
 	return err
 }
 
-func GetTasks(projectId string,dataSetId string,queryStringParameters models.QueryStringParameters) ([]interface{},int,error) {
+func GetTasks(projectId string,dataSetId string,queryStringParameters models.QueryStringParamInterface) ([]interface{},int,error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
-	logger.Info(strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,0,errors.New(resp.String())

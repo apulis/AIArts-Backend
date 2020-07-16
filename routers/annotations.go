@@ -119,7 +119,7 @@ func UpdateProject(c *gin.Context) error {
 func GetDatasets(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
-	var queryStringParameters models.QueryStringParameters
+	var queryStringParameters models.QueryStringParamInterface = models.QueryStringParameters{}
 	err := c.ShouldBindQuery(&queryStringParameters)
 	datasets, totalCount, err := services.GetDatasets(projectId, queryStringParameters)
 	if err != nil {
@@ -225,7 +225,7 @@ func GetTasks(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	var queryStringParameters models.QueryStringParameters
+	var queryStringParameters models.QueryStringParamInterface = models.QueryStringParameters{}
 	err := c.ShouldBindQuery(&queryStringParameters)
 	tasks, totalCount, err := services.GetTasks(projectId, dataSetId, queryStringParameters)
 	if err != nil {

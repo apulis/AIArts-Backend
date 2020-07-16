@@ -62,7 +62,7 @@ func ListInferenceJob(c *gin.Context) error {
 	}
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
-	var queryStringParameters models.QueryStringParametersV2
+	var queryStringParameters models.QueryStringParamInterface = models.QueryStringParameters{}
 	err := c.ShouldBindQuery(&queryStringParameters)
 	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {

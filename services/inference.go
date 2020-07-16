@@ -26,16 +26,10 @@ func PostInferenceJob(inference models.PostInference) (string,error) {
 	return jobRes.JobId,err
 }
 
-func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models.QueryStringParametersV2) (interface{},error){
+func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models.QueryStringParamInterface) (interface{},error){
 	BackendUrl = configs.Config.Infer.BackendUrl
-	if queryStringParameters.PageNum==0 {
-		queryStringParameters.PageNum = 1
-	}
-	if queryStringParameters.PageSize==0 {
-		queryStringParameters.PageSize = 5
-	}
 	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJobV2?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
-		strconv.Itoa(queryStringParameters.PageNum)+"&size="+strconv.Itoa(queryStringParameters.PageSize), nil)
+		strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,errors.New(resp.String())

@@ -22,3 +22,20 @@ type QueryStringParametersV2 struct {
 	PageNum int `form:"pageNum"`
 	PageSize int `form:"pageSize"`
 }
+
+func (queryStringParameters QueryStringParametersV2) GetPageNum() int {
+	if queryStringParameters.PageNum<0 {
+		return 1
+	}
+	return queryStringParameters.PageNum
+}
+
+func (queryStringParameters QueryStringParametersV2) GetPageSize() int {
+	if queryStringParameters.PageSize<=0 {
+		return 5
+	}
+	if queryStringParameters.PageSize>=100 {
+		return 100
+	}
+	return queryStringParameters.PageSize
+}
