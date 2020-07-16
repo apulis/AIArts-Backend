@@ -1,11 +1,13 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -103,13 +105,13 @@ func GetJobStatus(jobId string) (interface{},error) {
 	return jobLog,err
 }
 
-func Infer(jobId string,signature_name string) (interface{},error) {
+func Infer(jobId string,signature_name string,image []byte) (interface{},error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	fd, err := grequests.FileUploadFromDisk("./"+jobId)
+	//fd, err := grequests.FileUploadFromDisk("./"+jobId))
 	ro := &grequests.RequestOptions{
-		Files: fd,
+		Files: []grequests.FileUpload{{FileName: "file",FileContents: ioutil.NopCloser(bytes.NewReader(image))}},
 	}
-	if signature_name == ""{
+	if signature_name == "" {
 		signature_name = "predict"
 	}
 	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId+"&signature_name="+signature_name,ro)

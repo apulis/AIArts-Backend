@@ -1,9 +1,6 @@
 package routers
 
 import (
-	"strings"
-
-	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -34,6 +31,9 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
 }
 
+
+
+
 // @Summary list projects
 // @Description get projects of data-platform
 // @Produce  json
@@ -42,11 +42,8 @@ func AddGroupAnnotation(r *gin.Engine) {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	logger.Info("token is ", token)
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
-	var queryStringParameters models.QueryStringParameters
+	models.GinContext{Context: c}.SaveToken()
+	var queryStringParameters models.QueryStringParamInterface
 	err := c.ShouldBindQuery(&queryStringParameters)
 	projects, totalCount, err := services.GetProjects(queryStringParameters)
 	if err != nil {
@@ -62,9 +59,7 @@ func GetProjects(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId [delete]
 func DeleteProject(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	err := services.DeleteProject(projectId)
 	if err != nil {
@@ -79,9 +74,7 @@ func DeleteProject(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects [post]
 func AddProject(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	var params models.Project
 	err := c.ShouldBind(&params)
 	if err != nil {
@@ -101,9 +94,7 @@ func AddProject(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId [patch]
 func UpdateProject(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	var project models.Project
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&project)
@@ -126,9 +117,7 @@ func UpdateProject(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets [get]
 func GetDatasets(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	var queryStringParameters models.QueryStringParameters
 	err := c.ShouldBindQuery(&queryStringParameters)
@@ -146,9 +135,7 @@ func GetDatasets(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets [post]
 func AddDataset(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	var dataset models.UpdateDataSet
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&dataset)
@@ -170,9 +157,7 @@ func AddDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId [get]
 func GetDatasetInfo(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	dataset, err := services.GetDatasetInfo(projectId, dataSetId)
@@ -190,9 +175,7 @@ func GetDatasetInfo(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId [patch]
 func UpdateDataSet(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var dataset models.UpdateDataSet
@@ -215,9 +198,7 @@ func UpdateDataSet(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets [delete]
 func RemoveDataSet(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	var dataSetId string
 	err := c.ShouldBind(&dataSetId)
@@ -241,9 +222,7 @@ func RemoveDataSet(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks [get]
 func GetTasks(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var queryStringParameters models.QueryStringParameters
@@ -264,9 +243,7 @@ func GetTasks(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId [get]
 func GetNextTask(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
@@ -286,9 +263,7 @@ func GetNextTask(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId [get]
 func GetOneTask(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
@@ -308,9 +283,7 @@ func GetOneTask(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId [post]
 func PostOneTask(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	taskId := c.Param("taskId")
@@ -330,9 +303,7 @@ func PostOneTask(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/labels [get]
 func GetDataSetLabels(c *gin.Context) error {
-	token := c.GetHeader("Authorization")
-	token = strings.Split(token, "Bearer ")[1]
-	configs.Config.Token = token
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	labels, err := services.GetDataSetLabels(projectId, dataSetId)

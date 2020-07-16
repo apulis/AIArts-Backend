@@ -1,5 +1,11 @@
 package models
 
+import (
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/gin-gonic/gin"
+	"strings"
+)
+
 type Project struct {
 	ProjectId string	`json:"projectId"`
 	Name string	`json:"name"`
@@ -83,6 +89,37 @@ type OneTask struct {
 type QueryStringParameters struct {
 	Page int `form:"page"`
 	Size int `form:"size"`
+}
+
+func (queryStringParameters QueryStringParameters) GetPageNum() int {
+	if queryStringParameters.Page<0 {
+		return 1
+	}
+	return queryStringParameters.Page
+}
+
+func (queryStringParameters QueryStringParameters) GetPageSize() int {
+	if queryStringParameters.Size<=0 {
+		return 5
+	}
+	if queryStringParameters.Size>=100 {
+		return 100
+	}
+	return queryStringParameters.Size
+}
+
+type QueryStringParamInterface interface {
+	GetPageNum () int
+	GetPageSize () int
+}
+
+type GinContext struct {
+	Context *gin.Context
+}
+func (ct GinContext) SaveToken()  {
+	token := ct.Context.GetHeader("Authorization")
+	token = strings.Split(token, "Bearer ")[1]
+	configs.Config.Token = token
 }
 
 type ConvertDataFormat struct {

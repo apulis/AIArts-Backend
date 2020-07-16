@@ -11,19 +11,12 @@ import (
 
 var BackendUrl string
 
-func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.Project,int, error) {
+func GetProjects(queryStringParameters models.QueryStringParamInterface) ([]models.Project,int, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	if queryStringParameters.Size<=0 {
-		queryStringParameters.Size = 5
-	}
-	if queryStringParameters.Size>=20 {
-		queryStringParameters.Size = 20
-	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
-	logger.Info(strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
+	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,0,errors.New(resp.String())
@@ -79,13 +72,7 @@ func GetDatasets(projectId string,queryStringParameters models.QueryStringParame
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	if queryStringParameters.Size<=0 {
-		queryStringParameters.Size = 5
-	}
-	if queryStringParameters.Size>=20 {
-		queryStringParameters.Size = 20
-	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
 		return nil,0,errors.New(resp.String())
@@ -153,13 +140,7 @@ func GetTasks(projectId string,dataSetId string,queryStringParameters models.Que
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
 	}
-	if queryStringParameters.Size<=0 {
-		queryStringParameters.Size = 5
-	}
-	if queryStringParameters.Size>=20 {
-		queryStringParameters.Size = 20
-	}
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+strconv.Itoa(queryStringParameters.Page)+"&size="+strconv.Itoa(queryStringParameters.Size), ro)
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
 	logger.Info(strconv.Itoa(queryStringParameters.Page),strconv.Itoa(queryStringParameters.Size))
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
