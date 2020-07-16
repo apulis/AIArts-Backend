@@ -319,8 +319,8 @@ func GetDataSetLabels(c *gin.Context) error {
 // @Produce  json
 // @Param projectId path string true "project id"
 // @Param dataSetId path string true "dataSet id"
-// @Param type query string true "dataset type,like image"
-// @Param target query string true "convert to specific format"
+// @Param type body string true "dataset type,like image"
+// @Param target body string true "convert to specific format"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat [post]
 func ConvertDataFormat(c *gin.Context) error {
