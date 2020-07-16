@@ -705,15 +705,17 @@ paths:
         required: true
         type: string
       - description: dataset type,like image
-        in: query
+        in: body
         name: type
         required: true
-        type: string
+        schema:
+          type: string
       - description: convert to specific format
-        in: query
+        in: body
         name: target
         required: true
-        type: string
+        schema:
+          type: string
       produces:
       - application/json
       responses:

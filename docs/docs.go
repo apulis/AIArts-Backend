@@ -303,18 +303,22 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "type": "string",
                         "description": "dataset type,like image",
                         "name": "type",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
-                        "type": "string",
                         "description": "convert to specific format",
                         "name": "target",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
