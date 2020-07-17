@@ -29,6 +29,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
+	group.GET("/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat", wrapper(ConvertSupportFormat))
 }
 
 
@@ -334,6 +335,23 @@ func ConvertDataFormat(c *gin.Context) error {
 	convert.DatasetId = dataSetId
 	convert.ProjectId = projectId
 	ret, err := services.ConvertDataFormat(convert)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, ret)
+}
+
+// @Summary current support convert's specific format
+// @Description current support convert's specific format
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat [get]
+func ConvertSupportFormat(c *gin.Context) error {
+	projectId := c.Param("projectId")
+	dataSetId := c.Param("dataSetId")
+	ret, err := services.ConvertSupportFormat(projectId,dataSetId)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}

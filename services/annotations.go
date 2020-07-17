@@ -223,3 +223,8 @@ func ConvertDataFormat(convert models.ConvertDataFormat) (interface{},error) {
 	json.Unmarshal(resp.Bytes(),&ret)
 	return ret,err
 }
+
+func ConvertSupportFormat(projectId string,dataSetId string) (interface{},error) {
+	ret := [] string{"coco"}
+	return ret,nil
+}
