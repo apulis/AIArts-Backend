@@ -44,7 +44,7 @@ func doRequest(url, method string, headers map[string]string, rawBody interface{
 		}
 	}
 
-	req.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	//req.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.DefaultClient
 
 	resp, err := client.Do(req)
