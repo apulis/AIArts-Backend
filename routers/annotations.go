@@ -387,7 +387,7 @@ func ConvertSupportFormat(c *gin.Context) error {
 // @Router /ai_arts/api/annotations/datasets [post]
 func ListAllDatasets(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
-	var queryStringParameters models.QueryStringParameters
+	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
 	datasets, totalCount, err := services.ListAllDatasets(queryStringParameters)
 	if err != nil {
