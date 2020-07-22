@@ -26,7 +26,7 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/ai_arts/api/annotations/datasets": {
-            "post": {
+            "get": {
                 "description": "list all datasets for user",
                 "produces": [
                     "application/json"

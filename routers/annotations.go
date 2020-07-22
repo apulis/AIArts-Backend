@@ -386,7 +386,7 @@ func ConvertSupportFormat(c *gin.Context) error {
 // @Param pageNum query int false "page number, from 1"
 // @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
-// @Router /ai_arts/api/annotations/datasets [post]
+// @Router /ai_arts/api/annotations/datasets [get]
 func ListAllDatasets(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
 	var queryStringParameters models.QueryStringParametersV2

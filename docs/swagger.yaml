@@ -522,7 +522,7 @@ info:
   license: {}
 paths:
   /ai_arts/api/annotations/datasets:
-    post:
+    get:
       description: list all datasets for user
       parameters:
       - description: page number, from 1
