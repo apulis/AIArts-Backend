@@ -1696,4 +1696,22 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get specific training
+  /version-info:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetDatasets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: acquire version infomation, including the current version and dated ones
 swagger: "2.0"

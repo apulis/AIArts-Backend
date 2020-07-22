@@ -1,6 +1,7 @@
 package routers
 
 import (
+	_ "github.com/apulis/AIArtsBackend/docs"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
