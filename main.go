@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/fvbock/endless"
-
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/routers"
@@ -21,5 +18,7 @@ func main() {
 	router := routers.NewRouter()
 
 	logger.Info("AIArtsBackend started, listening and serving HTTP on: ", port)
-	endless.ListenAndServe(fmt.Sprintf(":%d", port), router)
+	//endless.ListenAndServe(fmt.Sprintf(":%d", port), router)
+	router.Run(fmt.Sprintf(":%d", port))
+
 }

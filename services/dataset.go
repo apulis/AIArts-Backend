@@ -64,3 +64,17 @@ func DeleteDataset(id int) error {
 	//}
 	return models.DeleteDataset(&dataset)
 }
+func BindDataset(id int, platform, pid string) error {
+	err := models.BindDatasetById(id, platform,pid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UnbindDataset(id int, platform, pid string) error {
+	err := models.UnbindDatasetById(id, platform,pid)
+	if err != nil {
+		return err
+	}
+	return nil
+}

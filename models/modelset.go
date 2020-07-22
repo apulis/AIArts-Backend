@@ -17,12 +17,11 @@ type Modelset struct {
 	JobId       string `json:"jobId"`
 }
 
-func ListModelSets(offset, limit int) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int,username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	db.Find(&modelsets)
-
 	total := 0
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Find(&modelsets)
+	res := db.Where(&Modelset{Creator: username}).Offset(offset).Limit(limit).Order("created_at desc").Find(&modelsets)
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}

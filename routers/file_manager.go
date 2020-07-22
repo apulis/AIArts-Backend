@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
 func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
-
 	group.POST("/upload/dataset", wrapper(uploadDataset))
 	group.GET("/download/dataset/:id", wrapper(downloadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
@@ -30,6 +28,7 @@ type UploadFileResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/upload/dataset [post]
 func uploadDataset(c *gin.Context) error {
+	//多文件list
 	file, err := c.FormFile("data")
 	if err != nil {
 		return ParameterError(err.Error())
