@@ -80,6 +80,12 @@ type NextTask struct {
 	Next interface{} `json:"next"`
 }
 
+type PreviousTask struct {
+	Successful string
+	Msg string
+	Previous interface{} `json:"previous"`
+}
+
 type OneTask struct {
 	Successful string
 	Msg string

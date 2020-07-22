@@ -25,6 +25,37 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ai_arts/api/annotations/datasets": {
+            "get": {
+                "description": "list all datasets for user",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list all datasets for user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number, from 1",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count per page",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/annotations/projects": {
             "get": {
                 "description": "get projects of data-platform",
@@ -331,6 +362,39 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat": {
+            "get": {
+                "description": "current support convert's specific format",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "current support convert's specific format",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks": {
             "get": {
                 "description": "get dataset tasks for data-platform project",
@@ -494,6 +558,46 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "get dataset next task id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "project id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataSet id",
+                        "name": "dataSetId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "current task id",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId": {
+            "get": {
+                "description": "get dataset previous task id for data-platform project",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get dataset previous task id",
                 "parameters": [
                     {
                         "type": "string",

@@ -25,11 +25,13 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.DELETE("/projects/:projectId/datasets", wrapper(RemoveDataSet))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks", wrapper(GetTasks))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId", wrapper(GetNextTask))
+	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId", wrapper(GetPreviousTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
 	group.GET("/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat", wrapper(ConvertSupportFormat))
+	group.GET("/datasets", wrapper(ListAllDatasets))
 }
 
 
@@ -256,6 +258,26 @@ func GetNextTask(c *gin.Context) error {
 	return SuccessResp(c, gin.H{"next": nextTask})
 }
 
+// @Summary get dataset previous task id
+// @Description get dataset previous task id for data-platform project
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param taskId path string true "current task id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId [get]
+func GetPreviousTask(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
+	projectId := c.Param("projectId")
+	dataSetId := c.Param("dataSetId")
+	taskId := c.Param("taskId")
+	nextTask, err := services.GetPreviousTask(projectId, dataSetId, taskId)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, gin.H{"previous": nextTask})
+}
+
 // @Summary get dataset one task detail
 // @Description get dataset one task detail for data-platform project
 // @Produce  json
@@ -356,4 +378,22 @@ func ConvertSupportFormat(c *gin.Context) error {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, ret)
+}
+
+// @Summary list all datasets for user
+// @Description list all datasets for user
+// @Produce  json
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/datasets [get]
+func ListAllDatasets(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
+	var queryStringParameters models.QueryStringParametersV2
+	err := c.ShouldBindQuery(&queryStringParameters)
+	datasets, totalCount, err := services.ListAllDatasets(queryStringParameters)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }
