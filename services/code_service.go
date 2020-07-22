@@ -25,8 +25,8 @@ func RandStringRunes(n int) string {
 
 func GetAllCodeEnv(userName string, page, size int) ([]*models.CodeEnvItem, int, int, error) {
 
-	url := fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&num=%d&vcName=%s&jobType=%s&jobStatus=all",
-		configs.Config.DltsUrl, userName, userName, 1000, models.DefaultVcName, models.JobTypeCodeEnv)
+	url := fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=all",
+		configs.Config.DltsUrl, userName, userName, models.DefaultVcName, models.JobTypeCodeEnv, page, size)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
