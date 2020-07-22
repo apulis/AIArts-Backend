@@ -1370,6 +1370,12 @@ var doc = `{
                         "description": "count per page",
                         "name": "pageSize",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search name",
+                        "name": "name",
+                        "in": "query"
                     }
                 ],
                 "responses": {

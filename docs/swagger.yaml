@@ -1406,6 +1406,10 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: search name
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
