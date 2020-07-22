@@ -228,3 +228,18 @@ func ConvertSupportFormat(projectId string,dataSetId string) (interface{},error)
 	ret := [] string{"coco"}
 	return ret,nil
 }
+
+func ListAllDatasets(queryStringParameters models.QueryStringParamInterface) ([]models.DataSet,int,error) {
+	BackendUrl = configs.Config.Anno.BackendUrl
+	ro := &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization":"Bearer "+configs.Config.Token},
+	}
+	resp, err := grequests.Get(BackendUrl+"/api/listDatasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
+	if resp.StatusCode!=200 {
+		logger.Error("response code is ",resp.StatusCode,resp.String())
+		return nil,0,errors.New(resp.String())
+	}
+	var datasets models.DatasetsReq
+	json.Unmarshal(resp.Bytes(),&datasets)
+	return datasets.Datasets,datasets.TotalCount,err
+}

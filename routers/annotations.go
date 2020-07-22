@@ -30,6 +30,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/labels", wrapper(GetDataSetLabels))
 	group.POST("/projects/:projectId/datasets/:dataSetId/ConvertDataFormat", wrapper(ConvertDataFormat))
 	group.GET("/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat", wrapper(ConvertSupportFormat))
+	group.GET("/datasets", wrapper(ListAllDatasets))
 }
 
 
@@ -356,4 +357,24 @@ func ConvertSupportFormat(c *gin.Context) error {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, ret)
+}
+
+// @Summary convert a dataset to specific format
+// @Description convert a dataset to specific format
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param type body string true "dataset type,like image"
+// @Param target body string true "convert to specific format"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat [post]
+func ListAllDatasets(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
+	var queryStringParameters models.QueryStringParameters
+	err := c.ShouldBindQuery(&queryStringParameters)
+	datasets, totalCount, err := services.ListAllDatasets(queryStringParameters)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }
