@@ -19,10 +19,10 @@ ENV GO111MODULE on
 RUN apk --no-cache add git pkgconfig build-base
 RUN mkdir -p /go/src/apulis/AIArtsBackend
 ADD . /go/src/apulis/AIArtsBackend
-RUN cd /go/src/apulis/AIArtsBackend/; GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend; cd /go
+RUN go get -u github.com/swaggo/swag/cmd/swag
+RUN cd /go/src/apulis/AIArtsBackend/; swag init; GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend; cd /go
 
 FROM alpine:3.11
-MAINTAINER Andrew Su <andrew.su@apulis.com>
 RUN apk --no-cache add ca-certificates libdrm
 WORKDIR /root/
 COPY --from=0 /go/bin/AIArtsBackend .
