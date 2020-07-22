@@ -4,6 +4,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func AddGroupTraining(r *gin.Engine) {
@@ -64,9 +65,18 @@ type GetTrainingRsp struct {
 // @Router /ai_arts/api/trainings [get]
 func getAllTraining(c *gin.Context) error {
 
-	var req GetAllTrainingReq
-	err := c.ShouldBindQuery(&req)
-	if err != nil {
+	var pageNum, pageSize, jobStatus int
+	var err error
+
+	if pageNum, err = strconv.Atoi(c.DefaultQuery("pageNum", "0")); err != nil {
+		return ParameterError(err.Error())
+	}
+
+	if pageSize, err = strconv.Atoi(c.DefaultQuery("pageSize", "10")); err != nil {
+		return ParameterError(err.Error())
+	}
+
+	if jobStatus, err = strconv.Atoi(c.DefaultQuery("jobStatus", "0")); err != nil {
 		return ParameterError(err.Error())
 	}
 
@@ -75,7 +85,7 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize, req.JobStatus)
+	sets, total, totalPage, err := services.GetAllTraining(userName, pageNum, pageSize, jobStatus)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

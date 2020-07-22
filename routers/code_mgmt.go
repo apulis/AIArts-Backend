@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
@@ -55,9 +56,14 @@ type CodeEnvId struct {
 // @Router /ai_arts/api/codes [get]
 func getAllCodeEnv(c *gin.Context) error {
 
-	var req GetAllCodeEnvReq
-	err := c.ShouldBindQuery(&req)
-	if err != nil {
+	var pageNum, pageSize int
+	var err error
+
+	if pageNum, err = strconv.Atoi(c.DefaultQuery("pageNum", "0")); err != nil {
+		return ParameterError(err.Error())
+	}
+
+	if pageSize, err = strconv.Atoi(c.DefaultQuery("pageSize", "10")); err != nil {
 		return ParameterError(err.Error())
 	}
 
@@ -66,7 +72,7 @@ func getAllCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize)
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, pageNum, pageSize)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
