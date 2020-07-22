@@ -21,6 +21,7 @@ type InferenceJobResp struct {
 type QueryStringParametersV2 struct {
 	PageNum int `form:"pageNum"`
 	PageSize int `form:"pageSize"`
+	Name string `form:"name"`
 }
 
 func (queryStringParameters QueryStringParametersV2) GetPageNum() int {
@@ -38,4 +39,8 @@ func (queryStringParameters QueryStringParametersV2) GetPageSize() int {
 		return 100
 	}
 	return queryStringParameters.PageSize
+}
+
+func (queryStringParameters QueryStringParametersV2) GetName() string {
+	return queryStringParameters.Name
 }

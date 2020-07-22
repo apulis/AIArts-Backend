@@ -95,6 +95,7 @@ type OneTask struct {
 type QueryStringParameters struct {
 	Page int `form:"page"`
 	Size int `form:"size"`
+	Name string `form:"name"`
 }
 
 func (queryStringParameters QueryStringParameters) GetPageNum() int {
@@ -114,9 +115,14 @@ func (queryStringParameters QueryStringParameters) GetPageSize() int {
 	return queryStringParameters.Size
 }
 
+func (queryStringParameters QueryStringParameters) GetName() string {
+	return queryStringParameters.Name
+}
+
 type QueryStringParamInterface interface {
 	GetPageNum () int
 	GetPageSize () int
+	GetName () string
 }
 
 type GinContext struct {
