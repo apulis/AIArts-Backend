@@ -1,27 +1,61 @@
 package routers
 
 import (
-	"github.com/apulis/AIArtsBackend/models"
-	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
-func AddGroupUpdatePlatform(r *gin.Engine){
+func AddGroupUpdatePlatform(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/updatePlatform")
 
 	group.Use(Auth())
 
-	group.Get("/latest", wrapper(updateToLatest))
+	group.GET("/version-info", wrapper(getVersionInfo))
+	group.GET("/version-detail/:id", wrapper(getVersionDetailByID))
+	group.GET("/online-upgrade-progress", wrapper(getOnlineUpgradeProgress))
+	group.GET("/local-upgrade-progress", wrapper(getLocalUpgradeProgress))
+	group.GET("/local-upgrade-env-check", wrapper(checkLocalEnv))
+	group.POST("/online-upgrade", wrapper(upgradeOnline))
+	group.POST("/local-upgrade", wrapper(upgradeLocal))
 }
 
-// @Summary list datasets
+// @Summary acquire version infomation, including the current version and dated ones
 // @Produce  json
-// @Param pageNum query int true "page number, from 1"
-// @Param pageSize query int true "count per page"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/datasets [get]
-func updateToLatest(c *gin.Context) error{
-	return 111
+// @Router /version-info [get]
+func getVersionInfo(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+
+}
+
+func getVersionDetailByID(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+}
+
+func getOnlineUpgradeProgress(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+}
+
+func getLocalUpgradeProgress(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+}
+
+func checkLocalEnv(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+}
+
+func upgradeOnline(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
+}
+
+func upgradeLocal(c *gin.Context) error {
+	data := "test"
+	return SuccessResp(c, data)
 }
