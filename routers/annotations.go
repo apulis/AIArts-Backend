@@ -383,6 +383,8 @@ func ConvertSupportFormat(c *gin.Context) error {
 // @Summary list all datasets for user
 // @Description list all datasets for user
 // @Produce  json
+// @Param pageNum query int false "page number, from 1"
+// @Param pageSize query int false "count per page"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/datasets [post]
 func ListAllDatasets(c *gin.Context) error {
