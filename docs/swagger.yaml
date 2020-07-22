@@ -521,6 +521,26 @@ info:
   contact: {}
   license: {}
 paths:
+  /ai_arts/api/annotations/datasets:
+    post:
+      description: list all datasets for user
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list all datasets for user
   /ai_arts/api/annotations/projects:
     get:
       description: get projects of data-platform
@@ -724,6 +744,28 @@ paths:
           schema:
             $ref: '#/definitions/routers.APISuccessResp'
       summary: convert a dataset to specific format
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat:
+    get:
+      description: current support convert's specific format
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: current support convert's specific format
   /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks:
     get:
       description: get dataset tasks for data-platform project
@@ -856,6 +898,33 @@ paths:
           schema:
             $ref: '#/definitions/routers.APISuccessResp'
       summary: get dataset next task id
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId:
+    get:
+      description: get dataset previous task id for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: current task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset previous task id
   /ai_arts/api/codes:
     get:
       parameters:
