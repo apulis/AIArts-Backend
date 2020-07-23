@@ -32,7 +32,7 @@ func uploadDataset(c *gin.Context) error {
 	logger.Info("starting upload file")
 	file, err := c.FormFile("data")
 	if err != nil {
-		return ParameterError(err.Error())
+		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
 	}
 	//取消大小限制
 	//if services.CheckFileOversize(file.Size) {

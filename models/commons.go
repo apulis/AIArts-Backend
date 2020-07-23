@@ -22,6 +22,8 @@ type UnixTime struct {
 func init() {
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
+	//添加打印sql语句
+	db.LogMode(true)
 }
 
 func createTableIfNotExists(modelType interface{}) {
@@ -64,11 +66,8 @@ const (
 	JobTypeTraining     string = "training"     // 老DLTS默认采用的jobType
 	JobTypeArtsTraining string = "artsTraining" // 供电局项目：模型训练
 	JobTypeCodeEnv      string = "codeEnv"      // 供电局项目：代码环境
-)
 
-const (
-	JobStatusUndefine int = 0
-	JobStatusRunning  int = 4 //
+	JobStatusAll string = "all"
 )
 
 type JobParams struct {

@@ -4,7 +4,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func AddGroupTraining(r *gin.Engine) {
@@ -20,9 +19,17 @@ func AddGroupTraining(r *gin.Engine) {
 }
 
 type GetAllTrainingReq struct {
-	PageNum   int `json:"pageNum"`
-	PageSize  int `json:"pageSize"`
-	JobStatus int `json:"jobStatus"`
+	PageNum    int    `json:"pageNum"`
+	PageSize   int    `json:"pageSize"`
+	JobStatus  string `json:"status"`
+	SearchWord string `json:"searchWord"`
+}
+
+type GetAllJobsReq struct {
+	PageNum    int    `json:"pageNum"`
+	PageSize   int    `json:"pageSize"`
+	JobStatus  string `json:"status"`
+	SearchWord string `json:"searchWord"`
 }
 
 type GetAllTrainingRsp struct {
@@ -58,25 +65,18 @@ type GetTrainingRsp struct {
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
-// @Param JobStatus query int true "job status, 4=running"
+// @Param status query string true "job status. get all jobs if it is all"
+// @Param searchWord query string true "the keyword of search"
 // @Success 200 {object} APISuccessRespGetAllTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/trainings [get]
 func getAllTraining(c *gin.Context) error {
 
-	var pageNum, pageSize, jobStatus int
+	var req GetAllJobsReq
 	var err error
 
-	if pageNum, err = strconv.Atoi(c.DefaultQuery("pageNum", "0")); err != nil {
-		return ParameterError(err.Error())
-	}
-
-	if pageSize, err = strconv.Atoi(c.DefaultQuery("pageSize", "10")); err != nil {
-		return ParameterError(err.Error())
-	}
-
-	if jobStatus, err = strconv.Atoi(c.DefaultQuery("jobStatus", "0")); err != nil {
+	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
@@ -85,7 +85,7 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, pageNum, pageSize, jobStatus)
+	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize, req.JobStatus, req.SearchWord)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

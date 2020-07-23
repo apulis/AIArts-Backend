@@ -59,8 +59,8 @@ type APISuccessRespDeleteCodeEnv struct {
 }
 
 type APISuccessRespGetCodeEnvJupyter struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int                    `json:"code"`
+	Msg  string                 `json:"msg"`
 	Data models.EndpointWrapper `json:"data"`
 }
 
@@ -93,6 +93,31 @@ type APISuccessRespGetTrainingLog struct {
 	Code int           `json:"code"`
 	Msg  string        `json:"msg"`
 	Data models.JobLog `json:"data"`
+}
+
+// template
+type APISuccessRespGetAllTemplate struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data GetAllTemplateRsp `json:"data"`
+}
+
+type APISuccessRespCreateTemplate struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data CreateTemplateRsp `json:"data"`
+}
+
+type APISuccessRespDeleteTemplate struct {
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
+	Data DeleteTemplateRsp `json:"data"`
+}
+
+type APISuccessRespGetTemplate struct {
+	Code int            `json:"code"`
+	Msg  string         `json:"msg"`
+	Data GetTemplateRsp `json:"data"`
 }
 
 // common
