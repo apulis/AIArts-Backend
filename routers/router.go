@@ -39,6 +39,7 @@ func NewRouter() *gin.Engine {
 	AddGroupFile(r)
 	AddGroupGeneral(r)
 	AddGroupUpdatePlatform(r)
+	AddGroupTemplate(r)
 
 	return r
 }
