@@ -8,16 +8,14 @@ import (
 
 func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/datasets")
-
 	group.Use(Auth())
-
 	group.GET("/", wrapper(lsDatasets))
 	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))
 	group.POST("/:id", wrapper(updateDataset))
 	group.DELETE("/:id", wrapper(deleteDataset))
-	group.PUT("/:id/bind", wrapper(bindDataset))
-	group.PUT("/:id/unbind", wrapper(unbindDataset))
+	group.POST("/:id/bind", wrapper(bindDataset))
+	group.POST("/:id/unbind", wrapper(unbindDataset))
 
 }
 
@@ -26,14 +24,16 @@ type datasetId struct {
 }
 
 type lsDatasetsReq struct {
-	PageNum  int `form:"pageNum"`
-	PageSize int `form:"pageSize,default=10"`
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize,default=10"`
+	Name     string `form:"name"`
 }
 
 type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Path        string `json:"path" binding:"required"`
+	IsPrivate   bool   `json:"isPrivate"`
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -70,7 +70,17 @@ func lsDatasets(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	datasets, total, err := services.ListDatasets(req.PageNum, req.PageSize)
+	var datasets []models.Dataset
+	var total int
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+	if req.Name == "" {
+		datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, username)
+	} else {
+		datasets, total, err = services.ListDatasetsByName(req.PageNum, req.PageSize, req.Name, username)
+	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -132,7 +142,7 @@ func createDataset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path)
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -192,7 +202,7 @@ func deleteDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"  "code": 30000, "already bind"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/:id/bind  [put]
+// @Router /ai_arts/api/datasets/:id/bind  [post]
 func bindDataset(c *gin.Context) error {
 	var id datasetId
 	err := c.ShouldBindUri(&id)
@@ -218,7 +228,7 @@ func bindDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"  "code": 30000, "no bind"
-// @Router /ai_arts/api/:id/unbind  [put]
+// @Router /ai_arts/api/datasets/:id/unbind  [post]
 func unbindDataset(c *gin.Context) error {
 	var id datasetId
 	err := c.ShouldBindUri(&id)
