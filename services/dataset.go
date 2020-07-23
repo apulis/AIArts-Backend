@@ -11,17 +11,17 @@ const (
 	DATASET_STATUS_DELETING = "deleting"
 )
 
-func ListDatasets(page, count int, username string) ([]models.Dataset, int, error) {
+func ListDatasets(page, count int, name, status, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListDatasets(offset, limit, username)
+	return models.ListDatasets(offset, limit, name, status, username)
 }
 func ListDatasetsByName(page, count int, name, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
 	return models.ListDataSetsByName(offset, limit, name, username)
 }
-func CreateDataset(name, description, creator, version, path string,isPrivate bool) error {
+func CreateDataset(name, description, creator, version, path string, isPrivate bool) error {
 	size, err := GetDirSize(path)
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func CreateDataset(name, description, creator, version, path string,isPrivate bo
 		Version:     version,
 		Path:        path,
 		Size:        size,
-		IsPrivate: isPrivate,
+		IsPrivate:   isPrivate,
 		Status:      DATASET_STATUS_NORMAL,
 	}
 	return models.CreateDataset(dataset)

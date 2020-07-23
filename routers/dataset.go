@@ -27,6 +27,7 @@ type lsDatasetsReq struct {
 	PageNum  int    `form:"pageNum"`
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
+	Status   string `form:"status"`
 }
 
 type createDatasetReq struct {
@@ -76,11 +77,7 @@ func lsDatasets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	if req.Name == "" {
-		datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, username)
-	} else {
-		datasets, total, err = services.ListDatasetsByName(req.PageNum, req.PageSize, req.Name, username)
-	}
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

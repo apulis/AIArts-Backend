@@ -148,9 +148,14 @@ func CompressFile(path string) (string, error) {
 	return targetPath, nil
 }
 
-func ExtractFile(fromPath, filetype string) (string, error) {
-	fileConf := configs.Config.File
-	datasetStorageDir := fileConf.DatasetDir + "/storage"
+func ExtractFile(fromPath, filetype, isPrivate, username string) (string, error) {
+	var datasetStorageDir string
+	if isPrivate == "false" {
+		fileConf := configs.Config.File
+		datasetStorageDir = fileConf.DatasetDir + "/storage"
+	} else {
+		datasetStorageDir = fmt.Sprintf("/home/%s/storage", username)
+	}
 	datasetStoragePath := fmt.Sprintf("%s/%d", datasetStorageDir, time.Now().UnixNano())
 	_, err := os.Stat(datasetStoragePath)
 	if err != nil {
