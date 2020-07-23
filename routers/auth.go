@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,7 @@ type Claim struct {
 	UserName string `json:"userName"`
 }
 
-var JwtSecret string = "Sign key for JWT"
+var JwtSecret = configs.Config.Auth.Key
 
 func parseToken(token string) (*Claim, error) {
 
