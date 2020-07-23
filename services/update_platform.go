@@ -36,7 +36,7 @@ func acquireLog() (string, error) {
 	if !isFileExists(models.UPGRADE_FILE_PATH + "/" + "/upgrade.log") {
 		return "prepare environment", nil
 	}
-	cmd := exec.Command("/bin/bash", "-c", "tail -n 1 "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+	cmd := exec.Command("/bin/bash", "-c", "tail -n 2500 "+models.UPGRADE_FILE_PATH+"/upgrade.log")
 	log, err := cmd.Output()
 	if err != nil {
 		err = errors.New("get log file fail")
