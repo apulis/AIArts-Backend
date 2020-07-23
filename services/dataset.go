@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -51,16 +52,34 @@ func DeleteDataset(id int) error {
 	if err != nil {
 		return err
 	}
-
 	dataset.Status = DATASET_STATUS_DELETING
-	err = models.UpdateDataset(&dataset)
-	if err != nil {
-		return err
-	}
+	if dataset.Binds==""{
+		err = models.DeleteDataset(&dataset)
+		if err != nil {
+			return err
+		}
+	} else{
+		return fmt.Errorf("still using")
 
+	}
 	//err = os.RemoveAll(dataset.Path)
 	//if err != nil {
 	//	return err
 	//}
-	return models.DeleteDataset(&dataset)
+	return nil
+
+}
+func BindDataset(id int, platform, pid string) error {
+	err := models.BindDatasetById(id, platform,pid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UnbindDataset(id int, platform, pid string) error {
+	err := models.UnbindDatasetById(id, platform,pid)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -5,6 +5,62 @@
         "license": {}
     },
     "paths": {
+        "/ai_arts/api/:id/bind": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "bind dataset",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error\"  \"code\": 30000, \"already bind",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/:id/unbind": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "unbind dataset",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found\"  \"code\": 30000, \"no bind",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/annotations/datasets": {
             "get": {
                 "description": "list all datasets for user",
@@ -1867,13 +1923,19 @@
         "models.Dataset": {
             "type": "object",
             "properties": {
+                "binds": {
+                    "description": "存储绑定信息\nplantform_id,plantform_id",
+                    "type": "string"
+                },
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -1895,6 +1957,7 @@
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -1942,12 +2005,14 @@
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -1975,6 +2040,7 @@
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2068,12 +2134,7 @@
             }
         },
         "models.UnixTime": {
-            "type": "object",
-            "properties": {
-                "time.Time": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "routers.APIException": {
             "type": "object",
@@ -2107,6 +2168,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -2121,6 +2183,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -2135,6 +2198,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -2149,6 +2213,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -2163,6 +2228,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -2177,6 +2243,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -2191,6 +2258,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -2205,6 +2273,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -2219,6 +2288,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -2233,6 +2303,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetResp"
                 },
                 "msg": {
@@ -2247,6 +2318,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -2261,6 +2333,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -2275,6 +2348,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -2289,6 +2363,7 @@
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -2432,6 +2507,7 @@
             "type": "object",
             "properties": {
                 "dataset": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -2463,6 +2539,7 @@
             "type": "object",
             "properties": {
                 "model": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
@@ -2598,7 +2675,6 @@
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
-                "description",
                 "jobId",
                 "name",
                 "path"

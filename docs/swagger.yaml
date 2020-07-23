@@ -28,12 +28,19 @@ definitions:
     type: object
   models.Dataset:
     properties:
+      binds:
+        description: |-
+          存储绑定信息
+          plantform_id,plantform_id
+        type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
@@ -48,6 +55,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -78,10 +86,12 @@ definitions:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
@@ -100,6 +110,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -160,9 +171,6 @@ definitions:
         type: string
     type: object
   models.UnixTime:
-    properties:
-      time.Time:
-        type: string
     type: object
   routers.APIException:
     properties:
@@ -186,6 +194,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -195,6 +204,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -204,6 +214,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -213,6 +224,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -222,6 +234,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -231,6 +244,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -240,6 +254,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.EndpointWrapper'
+        type: object
       msg:
         type: string
     type: object
@@ -249,6 +264,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetResp'
+        type: object
       msg:
         type: string
     type: object
@@ -258,6 +274,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetsResp'
+        type: object
       msg:
         type: string
     type: object
@@ -267,6 +284,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetModelsetResp'
+        type: object
       msg:
         type: string
     type: object
@@ -276,6 +294,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetModelsetsResp'
+        type: object
       msg:
         type: string
     type: object
@@ -285,6 +304,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetResourceRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -294,6 +314,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -303,6 +324,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.JobLog'
+        type: object
       msg:
         type: string
     type: object
@@ -396,6 +418,7 @@ definitions:
     properties:
       dataset:
         $ref: '#/definitions/models.Dataset'
+        type: object
     type: object
   routers.GetDatasetsResp:
     properties:
@@ -416,6 +439,7 @@ definitions:
     properties:
       model:
         $ref: '#/definitions/models.Modelset'
+        type: object
     type: object
   routers.GetModelsetsResp:
     properties:
@@ -512,7 +536,6 @@ definitions:
       path:
         type: string
     required:
-    - description
     - jobId
     - name
     - path
@@ -521,6 +544,42 @@ info:
   contact: {}
   license: {}
 paths:
+  /ai_arts/api/:id/bind:
+    put:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: 'error"  "code": 30000, "already bind'
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: bind dataset
+  /ai_arts/api/:id/unbind:
+    put:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: 'not found"  "code": 30000, "no bind'
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: unbind dataset
   /ai_arts/api/annotations/datasets:
     get:
       description: list all datasets for user

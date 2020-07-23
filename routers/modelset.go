@@ -30,7 +30,7 @@ type lsModelsetsReq struct {
 
 type createModelsetReq struct {
 	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
+	Description string `json:"description" `
 	Path        string `json:"path" binding:"required"`
 	JobId       string `json:"jobId" binding:"required"`
 }
@@ -68,8 +68,13 @@ func lsModelsets(c *gin.Context) error {
 	}
 	var modelsets []models.Modelset
 	var total int
+	//获取当前用户创建的模型
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
 	if req.Name == "" {
-		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize)
+		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,username)
 	} else {
 		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name)
 	}
@@ -120,6 +125,7 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	req.Path="D:/work/AIArtsBackend/configs/a"
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())

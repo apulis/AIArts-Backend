@@ -16,6 +16,9 @@ func AddGroupDataset(r *gin.Engine) {
 	group.POST("/", wrapper(createDataset))
 	group.POST("/:id", wrapper(updateDataset))
 	group.DELETE("/:id", wrapper(deleteDataset))
+	group.PUT("/:id/bind", wrapper(bindDataset))
+	group.PUT("/:id/unbind", wrapper(unbindDataset))
+
 }
 
 type datasetId struct {
@@ -31,6 +34,10 @@ type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Path        string `json:"path" binding:"required"`
+}
+type bindDatasetReq struct {
+	Platform string `json:"platform" binding:"required"`
+	Id       string `json:"id" binding:"required"`
 }
 
 type updateDatasetReq struct {
@@ -173,6 +180,57 @@ func deleteDataset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	err = services.DeleteDataset(id.ID)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary bind dataset
+// @Produce  json
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"  "code": 30000, "already bind"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/:id/bind  [put]
+func bindDataset(c *gin.Context) error {
+	var id datasetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	var req bindDatasetReq
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+	err = services.BindDataset(id.ID, req.Platform, req.Id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary unbind dataset
+// @Produce  json
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"  "code": 30000, "no bind"
+// @Router /ai_arts/api/:id/unbind  [put]
+func unbindDataset(c *gin.Context) error {
+	var id datasetId
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	var req bindDatasetReq
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	err = services.UnbindDataset(id.ID, req.Platform, req.Id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

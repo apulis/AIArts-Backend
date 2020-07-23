@@ -2,16 +2,14 @@ package routers
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"os"
 )
 
 func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
-
 	group.POST("/upload/dataset", wrapper(uploadDataset))
 	group.GET("/download/dataset/:id", wrapper(downloadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
@@ -30,35 +28,35 @@ type UploadFileResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/upload/dataset [post]
 func uploadDataset(c *gin.Context) error {
+	//多文件list
+	logger.Info("starting upload file")
 	file, err := c.FormFile("data")
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-
-	if services.CheckFileOversize(file.Size) {
-		return AppError(FILE_OVERSIZE_CODE, "File over size limit")
-	}
-
+	//取消大小限制
+	//if services.CheckFileOversize(file.Size) {
+	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
+	//}
 	filetype, err := services.CheckFileName(file.Filename)
 	if err != nil {
 		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
-
 	filePath, err := services.GetDatasetTempPath(filetype)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
-
+	logger.Info("starting saving file")
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
-
+	logger.Info("starting extract file")
 	unzippedPath, err := services.ExtractFile(filePath, filetype)
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
-
+	logger.Info("starting remove file")
 	err = os.Remove(filePath)
 	if err != nil {
 		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())

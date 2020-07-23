@@ -7,13 +7,15 @@ import (
 	"compress/gzip"
 	"errors"
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/apulis/AIArtsBackend/configs"
 )
 
 const (
@@ -23,6 +25,14 @@ const (
 )
 
 var FILETYPES_SUPPORTED = []string{FILETYPE_TAR_GZ, FILETYPE_TAR, FILETYPE_ZIP}
+
+//解析zip包中的中文名称，utf8编码转为gb解决中文乱码
+func transformEncode(fileName string) string {
+	tempFile := bytes.NewReader([]byte(fileName))
+	decoder := transform.NewReader(tempFile, simplifiedchinese.GB18030.NewDecoder())
+	content, _ := ioutil.ReadAll(decoder)
+	return string(content)
+}
 
 func CheckPathExists(path string) error {
 	_, err := os.Stat(path)
@@ -157,7 +167,7 @@ func ExtractFile(fromPath, filetype string) (string, error) {
 	case FILETYPE_TAR_GZ:
 		err = extractTarGz(fromPath, datasetStoragePath)
 	case FILETYPE_TAR:
-		err = extractTarGz(fromPath, datasetStoragePath)
+		err = extractTar(fromPath, datasetStoragePath)
 	default:
 		err = errors.New("Unknown file type")
 	}
@@ -172,12 +182,15 @@ func ExtractFile(fromPath, filetype string) (string, error) {
 
 func extractZip(fromPath, toPath string) error {
 	reader, err := zip.OpenReader(fromPath)
+	//关闭reader便于之后删除tmp文件
+	defer reader.Close()
+
 	if err != nil {
 		return err
 	}
 
 	for _, file := range reader.File {
-		path := filepath.Join(toPath, file.Name)
+		path := filepath.Join(toPath, transformEncode(file.Name))
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
 			continue
@@ -197,6 +210,46 @@ func extractZip(fromPath, toPath string) error {
 
 		if _, err := io.Copy(targetFile, fileReader); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+func extractTar(fromPath, toPath string) error {
+	fileReader, err := os.Open(fromPath)
+	if err != nil {
+		return err
+	}
+	defer fileReader.Close()
+	tarReader := tar.NewReader(fileReader)
+	for {
+		head, err := tarReader.Next()
+		if head == nil || err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		path := filepath.Join(toPath, head.Name)
+		fileInfo := head.FileInfo()
+		switch head.Typeflag {
+
+		case tar.TypeDir:
+			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
+			if err != nil {
+				return err
+			}
+			defer targetFile.Close()
+
+			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				return err
+			}
+		default:
+			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}
 	}
 
