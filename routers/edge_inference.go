@@ -12,6 +12,7 @@ func AddGroupEdgeInference(r *gin.Engine) {
 	group.GET("/conversion_types", wrapper(getConversionTypes))
 	group.GET("/fdinfo", wrapper(getFDInfo))
 	group.POST("/fdinfo", wrapper(setFDInfo))
+	group.POST("/push/:id", wrapper(pushToFD))
 }
 
 type createEdgeInferenceReq struct {
@@ -83,6 +84,18 @@ func getFDInfo(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/edge_inferences/fdinfo [post]
 func setFDInfo(c *gin.Context) error {
+	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary update dataset
+// @Produce  json
+// @Param id path string true "job id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/edge_inferences/push/:id [post]
+func pushToFD(c *gin.Context) error {
 	data := gin.H{}
 	return SuccessResp(c, data)
 }
