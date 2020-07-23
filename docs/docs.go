@@ -1432,6 +1432,12 @@ var doc = `{
                         "description": "search name",
                         "name": "name",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search status",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1948,14 +1954,12 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -1977,7 +1981,6 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2025,14 +2028,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2060,7 +2061,6 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2154,7 +2154,12 @@ var doc = `{
             }
         },
         "models.UnixTime": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
         },
         "routers.APIException": {
             "type": "object",
@@ -2188,7 +2193,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -2203,7 +2207,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -2218,7 +2221,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -2233,7 +2235,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -2248,7 +2249,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -2263,7 +2263,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -2278,7 +2277,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -2293,7 +2291,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -2308,7 +2305,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -2323,7 +2319,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetResp"
                 },
                 "msg": {
@@ -2338,7 +2333,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -2353,7 +2347,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -2368,7 +2361,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -2383,7 +2375,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -2527,7 +2518,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "dataset": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -2559,7 +2549,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "model": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
