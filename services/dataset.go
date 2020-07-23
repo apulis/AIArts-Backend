@@ -11,13 +11,17 @@ const (
 	DATASET_STATUS_DELETING = "deleting"
 )
 
-func ListDatasets(page, count int) ([]models.Dataset, int, error) {
+func ListDatasets(page, count int, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListDatasets(offset, limit)
+	return models.ListDatasets(offset, limit, username)
 }
-
-func CreateDataset(name, description, creator, version, path string) error {
+func ListDatasetsByName(page, count int, name, username string) ([]models.Dataset, int, error) {
+	offset := count * (page - 1)
+	limit := count
+	return models.ListDataSetsByName(offset, limit, name, username)
+}
+func CreateDataset(name, description, creator, version, path string,isPrivate bool) error {
 	size, err := GetDirSize(path)
 	if err != nil {
 		return err
@@ -29,6 +33,7 @@ func CreateDataset(name, description, creator, version, path string) error {
 		Version:     version,
 		Path:        path,
 		Size:        size,
+		IsPrivate: isPrivate,
 		Status:      DATASET_STATUS_NORMAL,
 	}
 	return models.CreateDataset(dataset)
@@ -53,12 +58,12 @@ func DeleteDataset(id int) error {
 		return err
 	}
 	dataset.Status = DATASET_STATUS_DELETING
-	if dataset.Binds==""{
+	if dataset.Binds == "" {
 		err = models.DeleteDataset(&dataset)
 		if err != nil {
 			return err
 		}
-	} else{
+	} else {
 		return fmt.Errorf("still using")
 
 	}
@@ -70,14 +75,14 @@ func DeleteDataset(id int) error {
 
 }
 func BindDataset(id int, platform, pid string) error {
-	err := models.BindDatasetById(id, platform,pid)
+	err := models.BindDatasetById(id, platform, pid)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 func UnbindDataset(id int, platform, pid string) error {
-	err := models.UnbindDatasetById(id, platform,pid)
+	err := models.UnbindDatasetById(id, platform, pid)
 	if err != nil {
 		return err
 	}

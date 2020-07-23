@@ -22,6 +22,8 @@ type UnixTime struct {
 func init() {
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
+	//添加打印sql语句
+	db.LogMode(true)
 }
 
 func createTableIfNotExists(modelType interface{}) {

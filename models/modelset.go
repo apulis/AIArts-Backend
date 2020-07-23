@@ -26,7 +26,7 @@ func ListModelSets(offset, limit int,username string) ([]Modelset, int, error) {
 		return modelsets, total, res.Error
 	}
 
-	db.Model(&Modelset{}).Count(&total)
+	db.Model(&Modelset{}).Where(&Modelset{Creator: username}).Count(&total)
 	return modelsets, total, nil
 }
 
@@ -39,7 +39,7 @@ func ListModelSetsByName(offset, limit int, name ,username string) ([]Modelset, 
 		return modelsets, total, res.Error
 	}
 
-	db.Model(&Modelset{}).Where(&Modelset{Name: name}).Count(&total)
+	db.Model(&Modelset{}).Where(&Modelset{Name: name,Creator: username}).Count(&total)
 	return modelsets, total, nil
 }
 

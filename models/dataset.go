@@ -18,22 +18,24 @@ type Dataset struct {
 	Path        string `gorm:"type:text" json:"path"`
 	Status      string `json:"status"`
 	//存储绑定信息
-	//plantform_id,plantform_id
+	//plantform#id*plantform_id
 	Binds string `json:"binds"`
-	Size  int    `json:"size"`
+	//是否是公开数据集
+	IsPrivate bool `json:"isPrivate"`
+	Size      int  `json:"size"`
 }
 
-func ListDatasets(offset, limit int) ([]Dataset, int, error) {
+func ListDatasets(offset, limit int, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
 	db.Find(&datasets)
-
 	total := 0
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Find(&datasets)
+	//展示该用户的以及公开数据集
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where("creator=?", username).
+		Or("is_private=?", false).Find(&datasets)
 	if res.Error != nil {
 		return datasets, total, res.Error
 	}
-
-	db.Model(&Dataset{}).Count(&total)
+	db.Model(&Dataset{}).Where("creator=?", username).Or("is_private=?", false).Count(&total)
 	return datasets, total, nil
 }
 
@@ -45,7 +47,19 @@ func GetDatasetById(id int) (Dataset, error) {
 	}
 	return dataset, nil
 }
+func ListDataSetsByName(offset, limit int, name, username string) ([]Dataset, int, error) {
+	var datasets []Dataset
+	total := 0
+	//展示指定用户的
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").
+		Where("name=? and is_private=?", name, false).Or("name=? and creator=?", name, username).Find(&datasets)
+	if res.Error != nil {
+		return datasets, total, res.Error
+	}
+	db.Model(&Dataset{}).Where("name=? and is_private=?", name, false).Or("name=? and is_private=?", name, false).Count(&total)
 
+	return datasets, total, nil
+}
 func CreateDataset(dataset Dataset) error {
 	return db.Create(&dataset).Error
 }
