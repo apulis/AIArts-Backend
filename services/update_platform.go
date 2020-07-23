@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
@@ -122,12 +121,6 @@ func GetLocalUpgradeEnv() (bool, bool, error) {
 	if !isFileExists(upgradeFilePath) {
 		canUpgrade = false
 	}
-	packageVersion, err := ioutil.ReadFile(models.UPGRADE_FILE_PATH + "/" + models.UPGRADE_CONFIG_FILE)
-	if err != nil {
-		return false, false, err
-	}
-	fmt.Printf("local package version :%s", packageVersion)
-
 	return canUpgrade, false, nil
 }
 
