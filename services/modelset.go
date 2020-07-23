@@ -16,10 +16,10 @@ func ListModelSets(page, count int,username string) ([]models.Modelset, int, err
 	return models.ListModelSets(offset, limit,username)
 }
 
-func ListModelSetsByName(page, count int, name string) ([]models.Modelset, int, error) {
+func ListModelSetsByName(page, count int, name,username string) ([]models.Modelset, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListModelSetsByName(offset, limit, name)
+	return models.ListModelSetsByName(offset, limit, name,username)
 }
 
 func CreateModelset(name, description, creator, version, path, jobId string) error {

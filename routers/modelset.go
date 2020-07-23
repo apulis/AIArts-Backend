@@ -76,7 +76,7 @@ func lsModelsets(c *gin.Context) error {
 	if req.Name == "" {
 		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,username)
 	} else {
-		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name)
+		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name,username)
 	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -125,7 +125,6 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	req.Path="D:/work/AIArtsBackend/configs/a"
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
