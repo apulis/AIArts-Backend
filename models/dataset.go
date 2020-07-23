@@ -58,8 +58,7 @@ func UpdateDataset(dataset *Dataset) error {
 	return nil
 }
 
-func DeleteDataset(id int) error {
-	dataset := Dataset{ID: id}
+func DeleteDataset(dataset *Dataset) error {
 	res := db.Delete(&dataset)
 	if res.Error != nil {
 		return res.Error
