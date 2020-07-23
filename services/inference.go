@@ -29,7 +29,7 @@ func PostInferenceJob(inference models.PostInference) (string,error) {
 func ListInferenceJob(jobOwner string,vcName string,queryStringParameters models.QueryStringParametersV2) (interface{},error){
 	BackendUrl = configs.Config.Infer.BackendUrl
 	resp, err := grequests.Get(BackendUrl+"/apis/ListInferenceJobV2?jobOwner="+jobOwner+"&vcName="+vcName+"&page="+
-		strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&search="+queryStringParameters.GetName() +
+		strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+queryStringParameters.GetName() +
 		"&status="+queryStringParameters.Status, nil)
 	if resp.StatusCode!=200 {
 		logger.Error("response code is ",resp.StatusCode,resp.String())
