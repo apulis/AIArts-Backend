@@ -1,14 +1,51 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"os"
 	"os/exec"
 
 	"github.com/apulis/AIArtsBackend/models"
 )
+
+func GetUpgradeLog() (string, string, error) {
+	var status string
+	var Log string
+	var err error
+	progress := models.Upgrade_Progress
+	switch progress {
+	case -1:
+		status = "not ready"
+	case 100:
+		status = "success"
+		models.Upgrade_Progress = -1
+	default:
+		status = "upgrading"
+		Log, err = acquireLog()
+		if err != nil {
+			return "error", Log, err
+		}
+		fmt.Println(string(Log))
+	}
+	return status, Log, nil
+}
+
+func acquireLog() (string, error) {
+	if !isFileExists(models.UPGRADE_FILE_PATH + "/" + "/upgrade.log") {
+		return "prepare environment", nil
+	}
+	cmd := exec.Command("/bin/bash", "-c", "tail -n 1 "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+	log, err := cmd.Output()
+	if err != nil {
+		err = errors.New("get log file fail")
+		fmt.Println("Execute Command failed:" + err.Error())
+		fmt.Println("Log: %s", log)
+		return "", err
+	}
+	return string(log), nil
+}
 
 func GetUpgradeProgress() (string, int) {
 	var status string
@@ -46,23 +83,33 @@ func UpgradePlatformdLocally() error {
 		return err
 	}
 	upgradeScript := upgradeConfig.UpgradeScript
-	models.Upgrade_Progress = 10 + rand.Intn(10)
-	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript)
-	models.Upgrade_Progress = 20 + rand.Intn(10)
+	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript+" > "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log")
 	err = cmd.Run()
 
-	models.Upgrade_Progress = 80 + rand.Intn(10)
 	if err != nil {
 		fmt.Println("Execute Command failed:" + err.Error())
 		return err
 	}
 	fmt.Println(upgradeConfig.Version)
-	models.Upgrade_Progress = 90 + rand.Intn(10)
 	newVersion := upgradeConfig.Version
 	description := upgradeConfig.Description
 	versionInfoSet := models.VersionInfoSet{
 		Description: description,
 		Version:     newVersion,
+	}
+	cmd = exec.Command("/bin/bash", "-c", "mkdir -p /var/log")
+	err = cmd.Run()
+	if err != nil {
+		err = errors.New("mkdir fail")
+		fmt.Println("Execute Command failed:" + err.Error())
+		return err
+	}
+	cmd = exec.Command("/bin/bash", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /var/log/upgrade.log")
+	err = cmd.Run()
+	if err != nil {
+		err = errors.New("move log fail")
+		fmt.Println("Execute Command failed:" + err.Error())
+		return err
 	}
 	models.Upgrade_Progress = 100
 	return models.UploadVersionInfoSet(versionInfoSet)

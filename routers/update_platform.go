@@ -14,6 +14,7 @@ func AddGroupUpdatePlatform(r *gin.Engine) {
 	group.GET("/info", wrapper(getVersionInfo))
 	group.GET("/detail/:id", wrapper(getVersionDetailByID))
 	group.GET("/upgradeProgress", wrapper(getLocalUpgradeProgress))
+	group.GET("/upgradeLog", wrapper(getLocalUpgradeLog))
 	group.GET("/env/local", wrapper(checkLocalEnv))
 	group.POST("/upgrade/online", wrapper(upgradeOnline))
 	group.POST("/upgrade/local", wrapper(upgradeLocal))
@@ -36,6 +37,10 @@ type getLocalEnvResp struct {
 type getLocalUpgradeProgressResp struct {
 	Status  string `json:"status"`
 	Percent int    `json:"percent"`
+}
+type getLocalUpgradeLogResp struct {
+	Status    string `json:"status"`
+	LogString string `json:"logString"`
 }
 
 // @Summary get version infomation
@@ -66,9 +71,6 @@ func getVersionDetailByID(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
-var progress int
-var status string
-
 // @Summary get local upgrade process
 // @Produce  json
 // @Success 200 {object} getLocalUpgradeProgressResp
@@ -80,6 +82,24 @@ func getLocalUpgradeProgress(c *gin.Context) error {
 	data := getLocalUpgradeProgressResp{
 		Status:  status,
 		Percent: progress,
+	}
+	return SuccessResp(c, data)
+}
+
+// @Summary get local upgrade log
+// @Produce  json
+// @Success 200 {object} getLocalUpgradeLogResp
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/version/upgradeLog [get]
+func getLocalUpgradeLog(c *gin.Context) error {
+	status, Log, err := services.GetUpgradeLog()
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := getLocalUpgradeLogResp{
+		Status:    status,
+		LogString: Log,
 	}
 	return SuccessResp(c, data)
 }
