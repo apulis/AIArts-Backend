@@ -25,7 +25,7 @@ func GetCurrentVersion() (VersionInfoSet, error) {
 
 func GetVersionLogs() ([]VersionInfoSet, error) {
 	var versionLog []VersionInfoSet
-	res := db.Limit(10).Find(&versionLog)
+	res := db.Order("created_at desc").Find(&versionLog)
 	if res.Error != nil {
 		return versionLog, res.Error
 	}

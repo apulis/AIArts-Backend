@@ -180,3 +180,6 @@ type EndpointWrapper struct {
 	Status      string `json:"status"`
 	AccessPoint string `json:"accessPoint"`
 }
+
+// 升级平台版本需要的信息
+var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"

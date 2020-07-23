@@ -28,5 +28,9 @@ const (
 	// training
 	INVALID_CODE_PATH = 30201
 
+	// upgrade platform
+	UPGRADE_FILE_PATH_DO_NOT_EXIST = 30501
+	FILE_READ_ERROR                = 30502
+
 	REMOTE_SERVE_ERROR_CODE = 40000
 )
