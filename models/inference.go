@@ -22,6 +22,7 @@ type QueryStringParametersV2 struct {
 	PageNum int `form:"pageNum"`
 	PageSize int `form:"pageSize"`
 	Name string `form:"name"`
+	Status string `form:"status"`
 }
 
 func (queryStringParameters QueryStringParametersV2) GetPageNum() int {
