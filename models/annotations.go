@@ -11,6 +11,7 @@ type Project struct {
 	Name string	`json:"name"`
 	Info string	`json:"info"`
 	Role string	`json:"role"`
+	Creator string	`json:"creator"`
 }
 
 type DataSet struct {

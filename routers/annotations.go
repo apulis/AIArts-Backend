@@ -84,6 +84,7 @@ func AddProject(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	params.Creator = getUsername(c)
 	err = services.AddProject(params)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
