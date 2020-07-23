@@ -7,17 +7,16 @@ import (
 )
 
 func AddGroupUpdatePlatform(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/updatePlatform")
+	group := r.Group("/ai_arts/api/version")
 
 	// group.Use(Auth())
 
-	group.GET("/version-info", wrapper(getVersionInfo))
-	group.GET("/version-detail/:id", wrapper(getVersionDetailByID))
-	group.GET("/online-upgrade-progress", wrapper(getOnlineUpgradeProgress))
-	group.GET("/local-upgrade-progress", wrapper(getLocalUpgradeProgress))
-	group.GET("/local-upgrade-env-check", wrapper(checkLocalEnv))
-	group.POST("/online-upgrade", wrapper(upgradeOnline))
-	group.POST("/local-upgrade", wrapper(upgradeLocal))
+	group.GET("/info", wrapper(getVersionInfo))
+	group.GET("/detail/:id", wrapper(getVersionDetailByID))
+	group.GET("/upgrade-progress", wrapper(getLocalUpgradeProgress))
+	group.GET("/env/local", wrapper(checkLocalEnv))
+	group.POST("/upgrade/online", wrapper(upgradeOnline))
+	group.POST("/upgrade/local", wrapper(upgradeLocal))
 }
 
 type getVersionInfoResp struct {
@@ -40,10 +39,10 @@ type getLocalUpgradeProgressResp struct {
 
 // @Summary get version infomation
 // @Produce  json
-// @Success 200 {object} APISuccessRespGetDatasets "success"
+// @Success 200 {object} getVersionInfoResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/updatePlatform/version-info [get]
+// @Router /ai_arts/api/version/info [get]
 func getVersionInfo(c *gin.Context) error {
 
 	versionlogs, err := services.GetVersionLogs()
@@ -62,20 +61,15 @@ func getVersionDetailByID(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
-func getOnlineUpgradeProgress(c *gin.Context) error {
-	data := "test"
-	return SuccessResp(c, data)
-}
-
 var progress int
 var status string
 
 // @Summary get local upgrade process
 // @Produce  json
-// @Success 200 {object} APISuccessRespGetDatasets "success"
+// @Success 200 {object} getLocalUpgradeProgressResp
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/updatePlatform/local-upgrade-progress [get]
+// @Router /ai_arts/api/version/upgrade-progress [get]
 func getLocalUpgradeProgress(c *gin.Context) error {
 	if status == "" {
 		status = "upgrading"
@@ -97,10 +91,10 @@ func getLocalUpgradeProgress(c *gin.Context) error {
 
 // @Summary get local upgrade environment info
 // @Produce  json
-// @Success 200 {object} APISuccessRespGetDataset "success"
+// @Success 200 {object} getLocalEnvResp
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/updatePlatform/local-upgrade-env-check [get]
+// @Router /ai_arts/api/version/env/local [get]
 func checkLocalEnv(c *gin.Context) error {
 	canUpgrade, isLower, err := services.GetLocalUpgradeEnv()
 	if err != nil {
@@ -120,10 +114,10 @@ func upgradeOnline(c *gin.Context) error {
 
 // @Summary upgrade through local package
 // @Produce  json
-// @Success 200 {object} APISuccessRespGetDataset "success"
+// @Success 200 {object} APISuccessRespGetDataset
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/updatePlatform/local-upgrade [post]
+// @Router /ai_arts/api/version/upgrade/local [post]
 func upgradeLocal(c *gin.Context) error {
 	err := services.UploadUpgradeInfo()
 	if err != nil {
