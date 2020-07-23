@@ -2,8 +2,6 @@ package routers
 
 import (
 	"fmt"
-	"strconv"
-
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -50,20 +48,18 @@ type CodeEnvId struct {
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
+// @Param status query string true "job status. get all jobs if it is all"
+// @Param searchWord query string true "the keyword of search"
 // @Success 200 {object} APISuccessRespAllGetCodeEnv "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [get]
 func getAllCodeEnv(c *gin.Context) error {
 
-	var pageNum, pageSize int
+	var req GetAllJobsReq
 	var err error
 
-	if pageNum, err = strconv.Atoi(c.DefaultQuery("pageNum", "0")); err != nil {
-		return ParameterError(err.Error())
-	}
-
-	if pageSize, err = strconv.Atoi(c.DefaultQuery("pageSize", "10")); err != nil {
+	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
@@ -72,7 +68,7 @@ func getAllCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeEnv(userName, pageNum, pageSize)
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize, req.JobStatus, req.SearchWord)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

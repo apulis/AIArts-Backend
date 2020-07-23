@@ -6,17 +6,13 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func GetAllTraining(userName string, page, size int, jobStatus int) ([]*models.Training, int, int, error) {
+func GetAllTraining(userName string, page, size int, jobStatus, searchWord string) ([]*models.Training, int, int, error) {
 
-	var url string
-
-	if jobStatus != models.JobStatusRunning {
-		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=all",
-			configs.Config.DltsUrl, userName, userName, models.DefaultVcName, models.JobTypeArtsTraining)
-	} else {
-		url = fmt.Sprintf("%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=running",
-			configs.Config.DltsUrl, userName, userName, models.DefaultVcName, models.JobTypeArtsTraining, page, size)
-	}
+	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s
+				&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s`,
+		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
+		models.JobTypeArtsTraining,
+		page, size, jobStatus, searchWord)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
