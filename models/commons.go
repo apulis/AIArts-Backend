@@ -22,8 +22,7 @@ type UnixTime struct {
 func init() {
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
-	//添加打印sql语句
-	db.LogMode(true)
+	createTableIfNotExists(VersionInfoSet{})
 }
 
 func createTableIfNotExists(modelType interface{}) {
@@ -178,3 +177,8 @@ type EndpointWrapper struct {
 	Status      string `json:"status"`
 	AccessPoint string `json:"accessPoint"`
 }
+
+// 升级平台版本需要的信息
+var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
+var UPGRADE_CONFIG_FILE = "version.yaml"
+var Upgrade_Progress = -1
