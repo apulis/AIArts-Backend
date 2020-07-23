@@ -23,6 +23,7 @@ type DataSet struct {
 	DataSetPath string `json:"dataSetPath"`
 	ConvertStatus string `json:"convertStatus"`
 	ConvertOutPath string `json:"convertOutPath"`
+	IsPrivate bool `json:"isPrivate"`
 }
 
 type ProjectsReq struct {
@@ -52,6 +53,7 @@ type UpdateDataSet struct {
 	DataSetBindId int `json:"dataSetBindId"`
 	DataSetPath string `json:"dataSetPath"`
 	Labels []Label `json:"labels"`
+	IsPrivate bool `json:"isPrivate"`
 }
 
 type Label struct {
