@@ -13,14 +13,15 @@ func AddGroupUpdatePlatform(r *gin.Engine) {
 
 	group.GET("/info", wrapper(getVersionInfo))
 	group.GET("/detail/:id", wrapper(getVersionDetailByID))
-	group.GET("/upgrade-progress", wrapper(getLocalUpgradeProgress))
+	group.GET("/upgradeProgress", wrapper(getLocalUpgradeProgress))
 	group.GET("/env/local", wrapper(checkLocalEnv))
 	group.POST("/upgrade/online", wrapper(upgradeOnline))
 	group.POST("/upgrade/local", wrapper(upgradeLocal))
 }
 
 type getVersionInfoResp struct {
-	VersionInfo []models.VersionInfoSet `json:"versionInfoLogs"`
+	CurrentVersion models.VersionInfoSet   `json:"versionInfo"`
+	VersionInfo    []models.VersionInfoSet `json:"versionLogs"`
 }
 
 type getVersionInfoReq struct {
@@ -44,13 +45,17 @@ type getLocalUpgradeProgressResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/version/info [get]
 func getVersionInfo(c *gin.Context) error {
-
+	currentversion, err := services.GetCurrentVersion()
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
 	versionlogs, err := services.GetVersionLogs()
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := getVersionInfoResp{
-		VersionInfo: versionlogs,
+		CurrentVersion: currentversion,
+		VersionInfo:    versionlogs,
 	}
 	return SuccessResp(c, data)
 
@@ -69,7 +74,7 @@ var status string
 // @Success 200 {object} getLocalUpgradeProgressResp
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/version/upgrade-progress [get]
+// @Router /ai_arts/api/version/upgradeProgress [get]
 func getLocalUpgradeProgress(c *gin.Context) error {
 	if status == "" {
 		status = "upgrading"
@@ -119,7 +124,7 @@ func upgradeOnline(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/version/upgrade/local [post]
 func upgradeLocal(c *gin.Context) error {
-	err := services.UploadUpgradeInfo()
+	err := services.UpgradePlatformByLocal()
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

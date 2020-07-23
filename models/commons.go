@@ -183,3 +183,4 @@ type EndpointWrapper struct {
 
 // 升级平台版本需要的信息
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
+var UPGRADE_CONFIG_FILE = "version.yaml"

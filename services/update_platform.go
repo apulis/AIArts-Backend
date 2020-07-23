@@ -4,21 +4,39 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func UploadUpgradeInfo() error {
-	versionInfoSet := models.VersionInfoSet{
-		Description: "this is a wonderful version",
-		Version:     "v0.0.3",
-	}
-	upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
+var Progress int
+
+func UpgradePlatformByLocal() error {
+	// upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
+	// if err != nil {
+	// 	return err
+	// }
+	// for _, file := range upgradeFiles {
+	// 	fmt.Println(file.Name())
+	// }
+	upgradeConfig, err := models.GetUpgradeConfig()
 	if err != nil {
 		return err
 	}
-	for _, file := range upgradeFiles {
-		fmt.Println(file.Name())
+	upgradeScript := upgradeConfig.UpgradeScript
+	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript)
+
+	err = cmd.Run()
+	if err != nil {
+		fmt.Println("Execute Command failed:" + err.Error())
+		return err
+	}
+	fmt.Println(upgradeConfig.Version)
+	newVersion := upgradeConfig.Version
+	description := upgradeConfig.Description
+	versionInfoSet := models.VersionInfoSet{
+		Description: description,
+		Version:     newVersion,
 	}
 	return models.UploadVersionInfoSet(versionInfoSet)
 }
@@ -30,7 +48,7 @@ func GetLocalUpgradeEnv() (bool, bool, error) {
 	if !isFileExists(upgradeFilePath) {
 		canUpgrade = false
 	}
-	packageVersion, err := ioutil.ReadFile(models.UPGRADE_FILE_PATH + "/version")
+	packageVersion, err := ioutil.ReadFile(models.UPGRADE_FILE_PATH + "/" + models.UPGRADE_CONFIG_FILE)
 	if err != nil {
 		return false, false, err
 	}

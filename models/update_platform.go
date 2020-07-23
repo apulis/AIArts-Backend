@@ -1,5 +1,12 @@
 package models
 
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/viper"
+)
+
 type VersionInfoSet struct {
 	ID        int       `gorm:"primary_key" json:"id"`
 	CreatedAt UnixTime  `json:"createdAt"`
@@ -8,6 +15,12 @@ type VersionInfoSet struct {
 
 	Description string `gorm:"type:text" json:"description"`
 	Version     string `gorm:"not null" json:"version"`
+}
+
+type UpgradeYaml struct {
+	Version       string
+	UpgradeScript string
+	Description   string
 }
 
 func UploadVersionInfoSet(versionInfo VersionInfoSet) error {
@@ -30,4 +43,18 @@ func GetVersionLogs() ([]VersionInfoSet, error) {
 		return versionLog, res.Error
 	}
 	return versionLog, nil
+}
+
+func GetUpgradeConfig() (UpgradeYaml, error) {
+	var config UpgradeYaml
+	viper.SetConfigName(strings.Replace(UPGRADE_CONFIG_FILE, ".yaml", "", -1))
+	viper.AddConfigPath(UPGRADE_FILE_PATH)
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("Fatal error read upgrade config file: %s \n", err))
+		return config, err
+	}
+
+	viper.Unmarshal(&config)
+	return config, err
 }
