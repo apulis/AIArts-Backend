@@ -3,15 +3,37 @@ package services
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-var Progress int
+func GetUpgradeProgress() (string, int) {
+	var status string
+	var progress int
+	progress = models.Upgrade_Progress
+	switch progress {
+	case -1:
+		status = "not ready"
+		progress = 0
+	case 100:
+		status = "success"
+		models.Upgrade_Progress = -1
+	default:
+		status = "upgrading"
+	}
+	return status, progress
+}
 
 func UpgradePlatformByLocal() error {
+	go UpgradePlatformdLocally()
+	return nil
+}
+
+func UpgradePlatformdLocally() error {
+	models.Upgrade_Progress = 0
 	// upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
 	// if err != nil {
 	// 	return err
@@ -24,20 +46,25 @@ func UpgradePlatformByLocal() error {
 		return err
 	}
 	upgradeScript := upgradeConfig.UpgradeScript
+	models.Upgrade_Progress = 10 + rand.Intn(10)
 	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript)
-
+	models.Upgrade_Progress = 20 + rand.Intn(10)
 	err = cmd.Run()
+
+	models.Upgrade_Progress = 80 + rand.Intn(10)
 	if err != nil {
 		fmt.Println("Execute Command failed:" + err.Error())
 		return err
 	}
 	fmt.Println(upgradeConfig.Version)
+	models.Upgrade_Progress = 90 + rand.Intn(10)
 	newVersion := upgradeConfig.Version
 	description := upgradeConfig.Description
 	versionInfoSet := models.VersionInfoSet{
 		Description: description,
 		Version:     newVersion,
 	}
+	models.Upgrade_Progress = 100
 	return models.UploadVersionInfoSet(versionInfoSet)
 }
 

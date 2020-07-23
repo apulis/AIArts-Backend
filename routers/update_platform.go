@@ -76,20 +76,10 @@ var status string
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/version/upgradeProgress [get]
 func getLocalUpgradeProgress(c *gin.Context) error {
-	if status == "" {
-		status = "upgrading"
-	}
+	status, progress := services.GetUpgradeProgress()
 	data := getLocalUpgradeProgressResp{
 		Status:  status,
 		Percent: progress,
-	}
-	progress += 10
-	if progress > 100 {
-		progress = 0
-		status = "upgrading"
-	}
-	if progress == 100 {
-		status = "finish"
 	}
 	return SuccessResp(c, data)
 }
