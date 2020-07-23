@@ -33,7 +33,7 @@ type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Path        string `json:"path" binding:"required"`
-	IsPrivate   bool   `json:"isPrivate"`
+	IsPrivate   bool   `json:"isPrivate" binding:"required"`
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
