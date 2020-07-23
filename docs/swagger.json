@@ -1412,6 +1412,12 @@
                         "description": "search name",
                         "name": "name",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search status",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1928,14 +1934,12 @@
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -1957,7 +1961,6 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2005,14 +2008,12 @@
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2040,7 +2041,6 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2134,7 +2134,12 @@
             }
         },
         "models.UnixTime": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
         },
         "routers.APIException": {
             "type": "object",
@@ -2168,7 +2173,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -2183,7 +2187,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -2198,7 +2201,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -2213,7 +2215,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -2228,7 +2229,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -2243,7 +2243,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -2258,7 +2257,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -2273,7 +2271,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -2288,7 +2285,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -2303,7 +2299,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetResp"
                 },
                 "msg": {
@@ -2318,7 +2313,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -2333,7 +2327,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -2348,7 +2341,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -2363,7 +2355,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -2507,7 +2498,6 @@
             "type": "object",
             "properties": {
                 "dataset": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -2539,7 +2529,6 @@
             "type": "object",
             "properties": {
                 "model": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }

@@ -56,6 +56,7 @@ func PostInferenceJob(c *gin.Context) error {
 // @Param pageNum query int false "page number, from 1"
 // @Param pageSize query int false "count per page"
 // @Param name query string false "search name"
+// @Param status query string false "search status"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/inferences/ListInferenceJob [get]
 func ListInferenceJob(c *gin.Context) error {
