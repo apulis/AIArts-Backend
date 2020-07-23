@@ -21,7 +21,7 @@ func ListModelSets(offset, limit int,username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	db.Find(&modelsets)
 	total := 0
-	res := db.Where(&Modelset{Creator: username}).Offset(offset).Limit(limit).Order("created_at desc").Find(&modelsets)
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Creator: username}).Find(&modelsets)
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
@@ -30,11 +30,11 @@ func ListModelSets(offset, limit int,username string) ([]Modelset, int, error) {
 	return modelsets, total, nil
 }
 
-func ListModelSetsByName(offset, limit int, name string) ([]Modelset, int, error) {
+func ListModelSetsByName(offset, limit int, name ,username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 
 	total := 0
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Name: name}).Find(&modelsets)
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Name: name,Creator: username}).Find(&modelsets)
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
