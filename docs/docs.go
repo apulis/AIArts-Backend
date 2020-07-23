@@ -1869,6 +1869,34 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/version-info": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "acquire version infomation, including the current version and dated ones",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetDatasets"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
