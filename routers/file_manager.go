@@ -31,9 +31,13 @@ func uploadDataset(c *gin.Context) error {
 	//多文件list
 	logger.Info("starting upload file")
 	file, err := c.FormFile("data")
+	isPrivate := c.PostForm("isPrivate")
 	if err != nil {
 		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
 	}
+
+	username:=getUsername(c)
+
 	//取消大小限制
 	//if services.CheckFileOversize(file.Size) {
 	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
@@ -52,7 +56,7 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting extract file")
-	unzippedPath, err := services.ExtractFile(filePath, filetype)
+	unzippedPath, err := services.ExtractFile(filePath, filetype,isPrivate,username)
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}

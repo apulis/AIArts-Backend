@@ -25,17 +25,27 @@ type Dataset struct {
 	Size      int  `json:"size"`
 }
 
-func ListDatasets(offset, limit int, username string) ([]Dataset, int, error) {
+func ListDatasets(offset, limit int, name, status, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
-	db.Find(&datasets)
 	total := 0
 	//展示该用户的以及公开数据集
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where("creator=?", username).
-		Or("is_private=?", false).Find(&datasets)
+	whereQueryStr := "creator='" + username + "' "
+	orQueryStr := "is_private=0 "
+
+	if name != "" {
+		whereQueryStr += "and name='" + name + "' "
+		orQueryStr += "and name='" + name + "' "
+	}
+	if status != "" && status != "all" {
+		whereQueryStr += "and status='" + status + "' "
+		orQueryStr += "and status='" + status + "' "
+	}
+	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).
+		Or(orQueryStr).Find(&datasets)
 	if res.Error != nil {
 		return datasets, total, res.Error
 	}
-	db.Model(&Dataset{}).Where("creator=?", username).Or("is_private=?", false).Count(&total)
+	db.Model(&Dataset{}).Where(whereQueryStr).Or(orQueryStr).Find(&datasets).Count(&total)
 	return datasets, total, nil
 }
 
