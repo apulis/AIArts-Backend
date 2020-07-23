@@ -196,8 +196,10 @@ func deleteDataset(c *gin.Context) error {
 
 // @Summary bind dataset
 // @Produce  json
+// @Param platform body string true "bind platform's name"
+// @Param id body string true "bind platform's id"
 // @Success 200 {object} APISuccessResp "success"
-// @Failure 400 {object} APIException "error"  "code": 30000, "already bind"
+// @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id/bind  [post]
 func bindDataset(c *gin.Context) error {
@@ -222,9 +224,12 @@ func bindDataset(c *gin.Context) error {
 
 // @Summary unbind dataset
 // @Produce  json
+// @Param platform body string true "bind platform's name"
+// @Param id body string true "bind platform's id"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
-// @Failure 404 {object} APIException "not found"  "code": 30000, "no bind"
+// @Failure 404 {object} APIException "not found"
+
 // @Router /ai_arts/api/datasets/:id/unbind  [post]
 func unbindDataset(c *gin.Context) error {
 	var id datasetId

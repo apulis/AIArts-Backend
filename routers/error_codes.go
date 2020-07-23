@@ -22,6 +22,7 @@ const (
 	FILEPATH_NOT_VALID_CODE     = 30007
 	COMPRESS_PATH_ERROR_CODE    = 30008
 
+	// dataset
 	//上传大文件template目录满
 	UPLOAD_TEMPDIR_FULL_COD = 30009
 	// user auth
