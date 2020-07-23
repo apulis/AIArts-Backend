@@ -1,8 +1,6 @@
 package routers
 
 import (
-	"github.com/apulis/AIArtsBackend/models"
-	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +9,7 @@ func AddGroupUpdatePlatform(r *gin.Engine){
 
 	group.Use(Auth())
 
-	group.Get("/latest", wrapper(updateToLatest))
+	//group.GET("/latest", wrapper(updateToLatest))
 }
 
 // @Summary list datasets
@@ -22,6 +20,6 @@ func AddGroupUpdatePlatform(r *gin.Engine){
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [get]
-func updateToLatest(c *gin.Context) error{
-	return 111
-}
+//func updateToLatest(c *gin.Context) error{
+//	return 1;
+//}

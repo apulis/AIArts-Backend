@@ -53,7 +53,7 @@ func DeleteDataset(id int) error {
 	}
 
 	dataset.Status = DATASET_STATUS_DELETING
-	err = models.UpdateDataset(&dataset)
+	err = models.DeleteDataset(&dataset)
 	if err != nil {
 		return err
 	}

@@ -71,6 +71,7 @@
 
 #### 4.2 `GET /ai_arts/api/datasets/:id` 获取数据集详情
 
+
 #### 4.3 `POST /ai_arts/api/datasets` 创建数据集
 
 #### 4.4 `POST /ai_arts/api/datasets/upload` 上传数据集
@@ -80,6 +81,10 @@
 #### 4.6 `GET /ai_arts/api/datasets/:id/download` 下载数据集
 
 #### 4.7 `DELETE /ai_arts/api/datasets/:id` 删除数据集
+
+#### 4.8 `PUT /ai_arts/api/datasets/:id/bind` 绑定数据集
+
+#### 4.9 `PUT /ai_arts/api/datasets/:id/unbind` 解绑数据集
 
 ### 5. 数据标注 `/ai_arts/api/annotations`
 此处跳转到其他项目
