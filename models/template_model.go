@@ -2,11 +2,13 @@ package models
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
@@ -52,11 +54,11 @@ type TemplateItem struct {
 type Templates struct {
 	ID int `gorm:"primary_key" json:"id"`
 
-	Name    string `gorm:"not null" json:"name"`
-	Scope   int    `gorm:"not null" json:"scope"`
-	Data    string `gorm:"not null" json:"data"` // TemplateParams转换为json的结果
-	JobType string `gorm:"not null" json:"jobType"`
-	Creator string `json:"creator"`
+	Name    string         `gorm:"not null" json:"name"`
+	Scope   int            `gorm:"not null" json:"scope"`
+	Data    TemplateParams `gorm:"type:text;not null" json:"data"` // TemplateParams转换为json的结果
+	JobType string         `gorm:"not null" json:"jobType"`
+	Creator string         `json:"creator"`
 
 	CreatedAt UnixTime  `json:"createdAt"`
 	UpdatedAt UnixTime  `json:"updatedAt"`
@@ -67,68 +69,18 @@ var (
 	escapedScopePattern = regexp.MustCompile("^\\s*[-_\\w\\d\\.`]+\\s*$")
 )
 
-func (this *Templates) Load(scope int, creator, jobType string, item *TemplateParams) {
+var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
-	this.Scope = scope
-	this.JobType = jobType
-
-	this.Name = item.Name
-	this.Creator = creator
-
-	binData, err := json.Marshal(item)
-	if err != nil {
-
-	}
-
-	this.Data = string(binData)
-	this.CreatedAt = UnixTime{
-		Time: time.Now(),
-	}
-
-	this.UpdatedAt = this.CreatedAt
-}
-
-func (this *Templates) ToMap() map[string]interface{} {
-
-	data := make(map[string]interface{})
-	data["name"] = this.Name
-	data["scope"] = this.Scope
-	data["data"] = this.Data
-	data["jobType"] = this.JobType
-	data["creator"] = this.Creator
-
-	data["createdAt"] = this.CreatedAt
-	data["updatedAt"] = this.UpdatedAt
-	data["deletedAt"] = this.DeletedAt
-
-	return data
-}
-
-func (this *Templates) ToTemplateItem() *TemplateItem {
-
-	item := &TemplateItem{
-		MetaData: TemplateMeta{
-			Name:      this.Name,
-			Scope:     this.Scope,
-			JobType:   this.JobType,
-			Creator:   this.Creator,
-			CreatedAt: this.CreatedAt,
-			UpdatedAt: this.UpdatedAt,
-		},
-
-		Params: TemplateParams{},
-	}
-
-	err := json.Unmarshal([]byte(this.Data), &item.Params)
-	if err != nil {
-		fmt.Printf("unmarshall err: %+v", err)
-	}
-
-	return item
+func ToSnakeCase(str string) string {
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
 }
 
 // MySql INSERT ******
 func Insert(db *sql.DB, table string, data map[string]interface{}) (lastInsertId int64, err error) {
+
 	if len(data) == 0 {
 		return 0, errors.New("empty data")
 	}
@@ -139,20 +91,23 @@ func Insert(db *sql.DB, table string, data map[string]interface{}) (lastInsertId
 
 	idx, size := 0, len(data)
 	columns, placeholder, args := make([]string, size), make([]string, size), make([]interface{}, size)
+
 	for key, val := range data {
 		if !escapedScopePattern.MatchString(key) {
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
-		columns[idx] = quote(key)
+		columns[idx] = quote(ToSnakeCase(key))
 		placeholder[idx] = "?"
 		args[idx] = val
 		idx++
 	}
+
 	query := fmt.Sprintf("INSERT INTO %s(%s) values(%s)", quote(table), strings.Join(columns, ","), strings.Join(placeholder, ","))
 	result, err := db.Exec(query, args...)
 	if err != nil {
 		return 0, err
 	}
+
 	return result.LastInsertId()
 }
 
@@ -250,4 +205,94 @@ func quote(value string) string {
 	}
 
 	return "`" + strings.Replace(value, ".", "`.`", -1) + "`"
+}
+
+func (this *Templates) Load(scope int, creator, jobType string, item *TemplateParams) {
+
+	this.Scope = scope
+	this.JobType = jobType
+
+	this.Name = item.Name
+	this.Creator = creator
+
+	//binData, err := json.Marshal(item)
+	//if err != nil {
+
+	//}
+
+	//this.Data = string(binData)
+	this.CreatedAt = UnixTime{
+		Time: time.Now(),
+	}
+
+	this.UpdatedAt = this.CreatedAt
+}
+
+func (this *Templates) ToMap() map[string]interface{} {
+
+	data := make(map[string]interface{})
+	data["name"] = this.Name
+	data["scope"] = this.Scope
+	data["data"] = this.Data
+	data["jobType"] = this.JobType
+	data["creator"] = this.Creator
+
+	data["createdAt"] = this.CreatedAt
+	data["updatedAt"] = this.UpdatedAt
+	data["deletedAt"] = this.DeletedAt
+
+	return data
+}
+
+func (this *Templates) ToTemplateItem() *TemplateItem {
+
+	item := &TemplateItem{
+		MetaData: TemplateMeta{
+			Name:      this.Name,
+			Scope:     this.Scope,
+			JobType:   this.JobType,
+			Creator:   this.Creator,
+			CreatedAt: this.CreatedAt,
+			UpdatedAt: this.UpdatedAt,
+		},
+
+		Params: this.Data,
+	}
+
+	return item
+}
+
+func (this *TemplateParams) Value() (driver.Value, error) {
+
+	binData, err := json.Marshal(this)
+	if err != nil {
+		return nil, err
+	}
+
+	return string(binData), nil
+}
+
+func (this *TemplateParams) Scan(v interface{}) error {
+
+	switch t := v.(type) {
+	case string:
+		if t != "" {
+			err := json.Unmarshal([]byte(t), this)
+			if err != nil {
+				return err
+			}
+		}
+
+	case []byte:
+		if len(t) != 0 {
+			err := json.Unmarshal(t, this)
+			if err != nil {
+				return err
+			}
+		}
+	default:
+		return fmt.Errorf("无法将[%v] 反序列化为TemplateParams类型", reflect.TypeOf(v).Name())
+	}
+
+	return nil
 }

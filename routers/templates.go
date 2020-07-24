@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"encoding/json"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -20,16 +19,16 @@ func AddGroupTemplate(r *gin.Engine) {
 }
 
 type GetAllTemplateReq struct {
-	PageNum  int    `json:"pageNum"`
-	PageSize int    `json:"pageSize"`
-	Scope    int    `json:"scope"`
-	JobType  string `json:"jobType"`
+	PageNum  int    `form:"pageNum"  json:"pageNum"`
+	PageSize int    `form:"pageSize" json:"pageSize"`
+	Scope    int    `form:"scope"   json:"scope"`
+	JobType  string `form:"jobType" json:"jobType"`
 }
 
 type GetAllTemplateRsp struct {
 	Templates []*models.TemplateItem `json:"Templates"`
 	Total     int                    `json:"total"`
-	totalPage int                    `json:"totalPage"`
+	TotalPage int                    `json:"totalPage"`
 }
 
 type CreateTemplateReq struct {
@@ -134,7 +133,7 @@ func createTemplate(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [post]
+// @Router /ai_arts/api/Templates [update]
 func updateTemplate(c *gin.Context) error {
 
 	var req UpdateTemplateReq
@@ -193,13 +192,13 @@ func getTemplate(c *gin.Context) error {
 			CreatedAt: dbRecord.CreatedAt,
 			UpdatedAt: dbRecord.UpdatedAt,
 		},
-		Params: models.TemplateParams{},
+		Params: dbRecord.Data,
 	}
 
-	err = json.Unmarshal([]byte(dbRecord.Data), rspData)
-	if err != nil {
-		return AppError(TEMPLATE_INVALID_PARAMS, err.Error())
-	}
+	//err = json.Unmarshal([]byte(dbRecord.Data), rspData)
+	//if err != nil {
+	//	return AppError(TEMPLATE_INVALID_PARAMS, err.Error())
+	//}
 
 	return SuccessResp(c, rspData)
 }

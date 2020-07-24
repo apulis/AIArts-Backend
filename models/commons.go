@@ -63,8 +63,9 @@ func (t *UnixTime) Scan(v interface{}) error {
 
 // 模板类别
 const (
-	TemplatePublic  int = 1
-	TemplatePrivate int = 2
+	TemplatePublic     int = 1
+	TemplatePrivate    int = 2
+	TemplateUserPublic int = 3
 )
 
 // 以下结构体用于和DLTS平台交互
