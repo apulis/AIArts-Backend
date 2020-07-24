@@ -130,8 +130,8 @@ func createTemplate(c *gin.Context) error {
 
 // @Summary update template
 // @Produce json
-// @Param param body CreateTemplateReq true "params"
-// @Success 200 {object} APISuccessRespCreateTemplate "success"
+// @Param param body UpdateTemplateReq true "params"
+// @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/Templates [post]
