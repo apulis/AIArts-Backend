@@ -52,7 +52,7 @@ type GetTemplateRsp struct {
 	models.Template
 }
 
-// @Summary get all Templates
+// @Summary get all templates
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
@@ -90,7 +90,7 @@ func getAllTemplates(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
-// @Summary create Template
+// @Summary create template
 // @Produce json
 // @Param param body CreateTemplateReq true "params"
 // @Success 200 {object} APISuccessRespCreateTemplate "success"
@@ -120,7 +120,7 @@ func createTemplate(c *gin.Context) error {
 	return SuccessResp(c, id)
 }
 
-// @Summary get specific Template
+// @Summary get specific template
 // @Produce  json
 // @Param param body GetTemplateReq true "params"
 // @Success 200 {object} APISuccessRespGetTemplate "success"
@@ -150,7 +150,7 @@ func getTemplate(c *gin.Context) error {
 	return SuccessResp(c, Template)
 }
 
-// @Summary delete one Template
+// @Summary delete one template
 // @Produce  json
 // @Param param body DeleteTemplateReq true "params"
 // @Success 200 {object} APISuccessRespDeleteTemplate "success"

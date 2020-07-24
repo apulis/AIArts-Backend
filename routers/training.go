@@ -26,10 +26,10 @@ type GetAllTrainingReq struct {
 }
 
 type GetAllJobsReq struct {
-	PageNum    int    `json:"pageNum"`
-	PageSize   int    `json:"pageSize"`
-	JobStatus  string `json:"status"`
-	SearchWord string `json:"searchWord"`
+	PageNum    int    `form:"pageNum" json:"pageNum"`
+	PageSize   int    `form:"pageSize" json:"pageSize"`
+	JobStatus  string `form:"status" json:"status"`
+	SearchWord string `form:"searchWord" json:"searchWord"`
 }
 
 type GetAllTrainingRsp struct {

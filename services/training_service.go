@@ -8,8 +8,7 @@ import (
 
 func GetAllTraining(userName string, page, size int, jobStatus, searchWord string) ([]*models.Training, int, int, error) {
 
-	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s
-				&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s`,
+	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsTraining,
 		page, size, jobStatus, searchWord)
