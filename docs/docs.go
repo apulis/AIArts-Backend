@@ -25,68 +25,12 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ai_arts/api/:id/bind": {
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "bind dataset",
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    },
-                    "400": {
-                        "description": "error\"  \"code\": 30000, \"already bind",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            }
-        },
-        "/ai_arts/api/:id/unbind": {
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "unbind dataset",
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found\"  \"code\": 30000, \"no bind",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            }
-        },
         "/ai_arts/api/Templates": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "get all Templates",
+                "summary": "get all templates",
                 "parameters": [
                     {
                         "type": "integer",
@@ -142,7 +86,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "create Template",
+                "summary": "create template",
                 "parameters": [
                     {
                         "description": "params",
@@ -181,7 +125,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "get specific Template",
+                "summary": "get specific template",
                 "parameters": [
                     {
                         "description": "params",
@@ -218,7 +162,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "delete one Template",
+                "summary": "delete one template",
                 "parameters": [
                     {
                         "description": "params",
@@ -1261,6 +1205,57 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/datasets/:id/bind": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "bind dataset",
+                "parameters": [
+                    {
+                        "description": "bind platform's name",
+                        "name": "platform",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "bind platform's id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/datasets/:id/unbind": {
+            "post": {}
+        },
         "/ai_arts/api/edge_inferences": {
             "get": {
                 "produces": [
@@ -1350,7 +1345,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespGetConvTypes"
                         }
                     },
                     "400": {
@@ -1378,17 +1373,17 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
+                            "$ref": "#/definitions/routers.APISuccessRespGetFDInfo"
                         }
                     },
                     "404": {
                         "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
                         "schema": {
                             "$ref": "#/definitions/routers.APIException"
                         }
@@ -1527,45 +1522,6 @@ var doc = `{
                         "description": "success",
                         "schema": {
                             "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            }
-        },
-        "/ai_arts/api/files/upload/dataset": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "upload dataset file",
-                "parameters": [
-                    {
-                        "description": "upload file key 'data'",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.UploadFileResp"
                         }
                     },
                     "400": {
@@ -2277,17 +2233,129 @@ var doc = `{
                 }
             }
         },
-        "/version-info": {
+        "/ai_arts/api/version/env/local": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "acquire version infomation, including the current version and dated ones",
+                "summary": "get local upgrade environment info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/routers.getLocalEnvResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/version/info": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get version infomation",
                 "responses": {
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetDatasets"
+                            "$ref": "#/definitions/routers.getVersionInfoResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/version/upgrade/local": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upgrade through local package",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetDataset"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/version/upgradeLog": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get local upgrade log",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/routers.getLocalUpgradeLogResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/version/upgradeProgress": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get local upgrade process",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/routers.getLocalUpgradeProgressResp"
                         }
                     },
                     "400": {
@@ -2347,11 +2415,22 @@ var doc = `{
                 }
             }
         },
+        "models.ConvertionTypes": {
+            "type": "object",
+            "properties": {
+                "conversionTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.Dataset": {
             "type": "object",
             "properties": {
                 "binds": {
-                    "description": "存储绑定信息\nplantform_id,plantform_id",
+                    "description": "存储绑定信息\nplantform#id*plantform_id",
                     "type": "string"
                 },
                 "createdAt": {
@@ -2368,6 +2447,10 @@ var doc = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isPrivate": {
+                    "description": "是否是公开数据集",
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -2410,6 +2493,20 @@ var doc = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FDInfo": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -2603,6 +2700,29 @@ var doc = `{
                 }
             }
         },
+        "models.VersionInfoSet": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.APIException": {
             "type": "object",
             "properties": {
@@ -2768,6 +2888,20 @@ var doc = `{
                 }
             }
         },
+        "routers.APISuccessRespGetConvTypes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/models.ConvertionTypes"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.APISuccessRespGetDataset": {
             "type": "object",
             "properties": {
@@ -2790,6 +2924,20 @@ var doc = `{
                 },
                 "data": {
                     "$ref": "#/definitions/routers.GetDatasetsResp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespGetFDInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.GetFDInfoResp"
                 },
                 "msg": {
                     "type": "string"
@@ -3117,6 +3265,14 @@ var doc = `{
                 }
             }
         },
+        "routers.GetFDInfoResp": {
+            "type": "object",
+            "properties": {
+                "fdinfo": {
+                    "$ref": "#/definitions/models.FDInfo"
+                }
+            }
+        },
         "routers.GetModelsetResp": {
             "type": "object",
             "properties": {
@@ -3275,24 +3431,20 @@ var doc = `{
                 }
             }
         },
-        "routers.UploadFileResp": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string"
-                }
-            }
-        },
         "routers.createDatasetReq": {
             "type": "object",
             "required": [
                 "description",
+                "isPrivate",
                 "name",
                 "path"
             ],
             "properties": {
                 "description": {
                     "type": "string"
+                },
+                "isPrivate": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -3348,6 +3500,53 @@ var doc = `{
                 },
                 "path": {
                     "type": "string"
+                }
+            }
+        },
+        "routers.getLocalEnvResp": {
+            "type": "object",
+            "properties": {
+                "canUpgrade": {
+                    "type": "boolean"
+                },
+                "isLower": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "routers.getLocalUpgradeLogResp": {
+            "type": "object",
+            "properties": {
+                "logString": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.getLocalUpgradeProgressResp": {
+            "type": "object",
+            "properties": {
+                "percent": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.getVersionInfoResp": {
+            "type": "object",
+            "properties": {
+                "versionInfo": {
+                    "$ref": "#/definitions/models.VersionInfoSet"
+                },
+                "versionLogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.VersionInfoSet"
+                    }
                 }
             }
         },

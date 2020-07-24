@@ -26,12 +26,19 @@ definitions:
     - name
     - status
     type: object
+  models.ConvertionTypes:
+    properties:
+      conversionTypes:
+        items:
+          type: string
+        type: array
+    type: object
   models.Dataset:
     properties:
       binds:
         description: |-
           存储绑定信息
-          plantform_id,plantform_id
+          plantform#id*plantform_id
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
@@ -43,6 +50,9 @@ definitions:
         type: string
       id:
         type: integer
+      isPrivate:
+        description: 是否是公开数据集
+        type: boolean
       name:
         type: string
       path:
@@ -70,6 +80,15 @@ definitions:
       name:
         type: string
       status:
+        type: string
+    type: object
+  models.FDInfo:
+    properties:
+      password:
+        type: string
+      url:
+        type: string
+      username:
         type: string
     type: object
   models.JobLog:
@@ -196,6 +215,21 @@ definitions:
       time.Time:
         type: string
     type: object
+  models.VersionInfoSet:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
+        type: string
+    type: object
   routers.APIException:
     properties:
       code:
@@ -302,6 +336,15 @@ definitions:
       msg:
         type: string
     type: object
+  routers.APISuccessRespGetConvTypes:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.ConvertionTypes'
+      msg:
+        type: string
+    type: object
   routers.APISuccessRespGetDataset:
     properties:
       code:
@@ -317,6 +360,15 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetsResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetFDInfo:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetFDInfoResp'
       msg:
         type: string
     type: object
@@ -528,6 +580,11 @@ definitions:
       totalPage:
         type: integer
     type: object
+  routers.GetFDInfoResp:
+    properties:
+      fdinfo:
+        $ref: '#/definitions/models.FDInfo'
+    type: object
   routers.GetModelsetResp:
     properties:
       model:
@@ -631,21 +688,19 @@ definitions:
       status:
         type: string
     type: object
-  routers.UploadFileResp:
-    properties:
-      path:
-        type: string
-    type: object
   routers.createDatasetReq:
     properties:
       description:
         type: string
+      isPrivate:
+        type: boolean
       name:
         type: string
       path:
         type: string
     required:
     - description
+    - isPrivate
     - name
     - path
     type: object
@@ -683,6 +738,36 @@ definitions:
     - name
     - path
     type: object
+  routers.getLocalEnvResp:
+    properties:
+      canUpgrade:
+        type: boolean
+      isLower:
+        type: boolean
+    type: object
+  routers.getLocalUpgradeLogResp:
+    properties:
+      logString:
+        type: string
+      status:
+        type: string
+    type: object
+  routers.getLocalUpgradeProgressResp:
+    properties:
+      percent:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.getVersionInfoResp:
+    properties:
+      versionInfo:
+        $ref: '#/definitions/models.VersionInfoSet'
+      versionLogs:
+        items:
+          $ref: '#/definitions/models.VersionInfoSet'
+        type: array
+    type: object
   routers.setFDInfoReq:
     properties:
       password:
@@ -699,42 +784,6 @@ info:
   contact: {}
   license: {}
 paths:
-  /ai_arts/api/:id/bind:
-    put:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: 'error"  "code": 30000, "already bind'
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: bind dataset
-  /ai_arts/api/:id/unbind:
-    put:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: 'not found"  "code": 30000, "no bind'
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: unbind dataset
   /ai_arts/api/Templates:
     get:
       parameters:
@@ -773,7 +822,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: get all Templates
+      summary: get all templates
     post:
       parameters:
       - description: params
@@ -797,7 +846,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: create Template
+      summary: create template
   /ai_arts/api/Templates/:id:
     delete:
       parameters:
@@ -822,7 +871,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: delete one Template
+      summary: delete one template
     get:
       parameters:
       - description: params
@@ -846,7 +895,7 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: get specific Template
+      summary: get specific template
   /ai_arts/api/annotations/datasets:
     get:
       description: list all datasets for user
@@ -1515,6 +1564,39 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/datasets/:id/bind:
+    post:
+      parameters:
+      - description: bind platform's name
+        in: body
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: bind platform's id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: bind dataset
+  /ai_arts/api/datasets/:id/unbind:
+    post: {}
   /ai_arts/api/edge_inferences:
     get:
       parameters:
@@ -1574,7 +1656,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespGetConvTypes'
         "400":
           description: error
           schema:
@@ -1592,13 +1674,13 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
+            $ref: '#/definitions/routers.APISuccessRespGetFDInfo'
         "404":
           description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "500":
+          description: error
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get dataset by id
@@ -1698,31 +1780,6 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: download model by id
-  /ai_arts/api/files/upload/dataset:
-    post:
-      parameters:
-      - description: upload file key 'data'
-        in: body
-        name: data
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.UploadFileResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: upload dataset file
   /ai_arts/api/files/upload/model:
     post:
       parameters:
@@ -2176,15 +2233,15 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get specific training
-  /version-info:
+  /ai_arts/api/version/env/local:
     get:
       produces:
       - application/json
       responses:
         "200":
-          description: success
+          description: OK
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetDatasets'
+            $ref: '#/definitions/routers.getLocalEnvResp'
         "400":
           description: error
           schema:
@@ -2193,5 +2250,77 @@ paths:
           description: not found
           schema:
             $ref: '#/definitions/routers.APIException'
-      summary: acquire version infomation, including the current version and dated ones
+      summary: get local upgrade environment info
+  /ai_arts/api/version/info:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getVersionInfoResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get version infomation
+  /ai_arts/api/version/upgrade/local:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetDataset'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upgrade through local package
+  /ai_arts/api/version/upgradeLog:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.getLocalUpgradeLogResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get local upgrade log
+  /ai_arts/api/version/upgradeProgress:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.getLocalUpgradeProgressResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get local upgrade process
 swagger: "2.0"
