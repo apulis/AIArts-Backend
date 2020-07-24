@@ -26,6 +26,7 @@ type lsModelsetsReq struct {
 	PageNum  int    `form:"pageNum"`
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
+	Status string `form:"status"`
 }
 
 type createModelsetReq struct {
@@ -73,11 +74,8 @@ func lsModelsets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	if req.Name == "" {
-		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,username)
-	} else {
-		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name,username)
-	}
+	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,req.Name,req.Status,username)
+
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

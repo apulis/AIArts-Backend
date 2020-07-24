@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type Modelset struct {
 	ID        int       `gorm:"primary_key" json:"id"`
 	CreatedAt UnixTime  `json:"createdAt"`
@@ -17,29 +19,23 @@ type Modelset struct {
 	JobId       string `json:"jobId"`
 }
 
-func ListModelSets(offset, limit int,username string) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	db.Find(&modelsets)
 	total := 0
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Creator: username}).Find(&modelsets)
+	whereQueryStr := fmt.Sprintf("creator='%s' ", username)
+	if name != "" {
+		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
+	}
+	if status != "" {
+		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
+	}
+	res := db.Debug().Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).Find(&modelsets)
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
 
-	db.Model(&Modelset{}).Where(&Modelset{Creator: username}).Count(&total)
-	return modelsets, total, nil
-}
-
-func ListModelSetsByName(offset, limit int, name ,username string) ([]Modelset, int, error) {
-	var modelsets []Modelset
-
-	total := 0
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(&Modelset{Name: name,Creator: username}).Find(&modelsets)
-	if res.Error != nil {
-		return modelsets, total, res.Error
-	}
-
-	db.Model(&Modelset{}).Where(&Modelset{Name: name,Creator: username}).Count(&total)
+	db.Model(&Modelset{}).Where(whereQueryStr).Count(&total)
 	return modelsets, total, nil
 }
 

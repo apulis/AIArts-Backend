@@ -9,18 +9,13 @@ const (
 	MODELSET_STATUS_DELETING = "deleting"
 )
 
-func ListModelSets(page, count int,username string) ([]models.Modelset, int, error) {
+func ListModelSets(page, count int,name,status,username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
 	limit := count
-	return models.ListModelSets(offset, limit,username)
+	return models.ListModelSets(offset, limit,name,status,username)
 }
 
-func ListModelSetsByName(page, count int, name,username string) ([]models.Modelset, int, error) {
-	offset := count * (page - 1)
-	limit := count
-	return models.ListModelSetsByName(offset, limit, name,username)
-}
 
 func CreateModelset(name, description, creator, version, path, jobId string) error {
 	size, err := GetDirSize(path)

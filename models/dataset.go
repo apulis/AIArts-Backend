@@ -28,17 +28,18 @@ type Dataset struct {
 func ListDatasets(offset, limit int, name, status, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
 	total := 0
-	//展示该用户的以及公开数据集
-	whereQueryStr := "creator='" + username + "' "
-	orQueryStr := "is_private=0 "
+	//先查询该用户的所有数据中，再擦汗寻以及公开数据集
+	whereQueryStr :=  fmt.Sprintf("creator='%s' ",username)
+	orQueryStr :=  fmt.Sprintf("is_private=0 ")
 
 	if name != "" {
-		whereQueryStr += "and name='" + name + "' "
-		orQueryStr += "and name='" + name + "' "
+		whereQueryStr += fmt.Sprintf("and name='%s' ",name)
+		orQueryStr += fmt.Sprintf("and name='%s' ",name)
 	}
+
 	if status != "" && status != "all" {
-		whereQueryStr += "and status='" + status + "' "
-		orQueryStr += "and status='" + status + "' "
+		whereQueryStr +=  fmt.Sprintf("and status='%s' ",status)
+		orQueryStr +=  fmt.Sprintf("and status='%s' ",status)
 	}
 	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).
 		Or(orQueryStr).Find(&datasets)
