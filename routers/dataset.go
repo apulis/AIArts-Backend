@@ -61,6 +61,8 @@ type GetDatasetsResp struct {
 // @Produce  json
 // @Param pageNum query int true "page number, from 1"
 // @Param pageSize query int true "count per page"
+// @Param name query string false "dataset name"
+// @Param status query string false "dataset status"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -117,6 +119,8 @@ func getDataset(c *gin.Context) error {
 // @Param body body createDatasetReq true "json body"
 // @Param description body string true "dataset description"
 // @Param path body string true "dataset storage path"
+// @Param name query string false "dataset name"
+// @Param IsPrivate query bool false "dataset auth"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -229,7 +233,6 @@ func bindDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-
 // @Router /ai_arts/api/datasets/:id/unbind  [post]
 func unbindDataset(c *gin.Context) error {
 	var id datasetId

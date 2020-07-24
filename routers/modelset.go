@@ -4,6 +4,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 func AddGroupModel(r *gin.Engine) {
@@ -26,14 +27,22 @@ type lsModelsetsReq struct {
 	PageNum  int    `form:"pageNum"`
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
-	Status string `form:"status"`
+	Status   string `form:"status"`
+	IsAdvance bool `form:"isAdvance"`
 }
 
 type createModelsetReq struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" `
-	Path        string `json:"path" binding:"required"`
-	JobId       string `json:"jobId" binding:"required"`
+	Name        string            `json:"name" binding:"required"`
+	Description string            `json:"description" `
+	Path        string            `json:"path" binding:"required"`
+	JobId       string            `json:"jobId" binding:"required"`
+	Use         string            `json:"use"`
+	DataFormat  string            `json:"dataFormat"`
+	Arguments   map[string]string `json:"arguments"`
+	EngineType  string            `json:"engineType"`
+	Precision   string            `json:"precision"`
+	IsAdvance bool `json:"isAdvance"`
+
 }
 
 type updateModelsetReq struct {
@@ -43,24 +52,47 @@ type updateModelsetReq struct {
 type GetModelsetResp struct {
 	Model models.Modelset `json:"model"`
 }
+type UnixTime struct {
+	time.Time
+}
+type JsonModel struct {
+	ID        int       `gorm:"primary_key" json:"id"`
+	CreatedAt UnixTime  `json:"createdAt"`
+	UpdatedAt UnixTime  `json:"updatedAt"`
+	DeletedAt *UnixTime `json:"deletedAt"`
 
+	IsAdvance  bool              `json:"isAdvance"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Creator     string `json:"creator"`
+	Version     string `json:"version"`
+	Path        string `json:"path"`
+	Status      string `json:"status"`
+	Size        int    `json:"size"`
+	//模型类型 计算机视觉
+	Use        string            `json:"use"`
+	JobId      string            `json:"jobId"`
+	DataFormat string            `json:"dataFormat"`
+	Arguments  map[string]string `json:"arguments,omitempty"`
+	EngineType string            `json:"engineType"`
+	Precision  string            `json:"precision"`
+}
 type GetModelsetsResp struct {
-	Models    []models.Modelset `json:"models"`
-	Total     int               `json:"total"`
-	TotalPage int               `json:"totalPage"`
-	PageNum   int               `json:"pageNum"`
-	PageSize  int               `json:"pageSize"`
+	JsonModels []models.Modelset `json:"models"`
+	Total      int               `json:"total"`
+	TotalPage  int               `json:"totalPage"`
+	PageNum    int               `json:"pageNum"`
+	PageSize   int               `json:"pageSize"`
 }
 
 // @Summary list models
 // @Produce  json
-// @Param pageNum query int true "page number, from 1"
-// @Param pageSize query int true "count per page"
-// @Param name query int true "name of model"
+// @Param body url lsModelsetsReq true "url form"
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [get]
+
 func lsModelsets(c *gin.Context) error {
 	var req lsModelsetsReq
 	err := c.ShouldBindQuery(&req)
@@ -74,17 +106,17 @@ func lsModelsets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,req.Name,req.Status,username)
-
+	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,req.IsAdvance, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	data := GetModelsetsResp{
-		Models:    modelsets,
-		Total:     total,
-		PageNum:   req.PageNum,
-		PageSize:  req.PageSize,
-		TotalPage: total/req.PageSize + 1,
+		JsonModels: modelsets,
+		Total:      total,
+		PageNum:    req.PageNum,
+		PageSize:   req.PageSize,
+		TotalPage:  total/req.PageSize + 1,
 	}
 	return SuccessResp(c, data)
 }
@@ -131,7 +163,7 @@ func createModelset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.Path, req.JobId)
+	err = services.CreateModelset(req.IsAdvance,req.Name, req.Description, username, "0.0.1", req.Path, req.Use, req.JobId, req.DataFormat, req.Arguments, req.EngineType, req.Precision)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
