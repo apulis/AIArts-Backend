@@ -25,11 +25,13 @@ const (
 	// dataset
 	//上传大文件template目录满
 	UPLOAD_TEMPDIR_FULL_COD = 30009
+
 	// user auth
 	NO_USRNAME = 30101
 
 	// training
-	INVALID_CODE_PATH = 30201
+	INVALID_CODE_PATH       = 30201
+	TEMPLATE_INVALID_PARAMS = 30202
 
 	// upgrade platform
 	UPGRADE_FILE_PATH_DO_NOT_EXIST = 30501

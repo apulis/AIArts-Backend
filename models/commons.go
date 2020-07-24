@@ -23,6 +23,7 @@ func init() {
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
+	createTableIfNotExists(Templates{})
 }
 
 func createTableIfNotExists(modelType interface{}) {
@@ -59,6 +60,12 @@ func (t *UnixTime) Scan(v interface{}) error {
 	}
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
+
+// 模板类别
+const (
+	TemplatePublic  int = 1
+	TemplatePrivate int = 2
+)
 
 // 以下结构体用于和DLTS平台交互
 const (
@@ -123,6 +130,7 @@ type JobMeta struct {
 	QueuedJobs        int `json:"queuedJobs"`
 	RunningJobs       int `json:"runningJobs"`
 	VisualizationJobs int `json:"visualizationJobs"`
+	TotalJobs         int `json:"totalJobs"`
 }
 
 type JobList struct {

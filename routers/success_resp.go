@@ -115,9 +115,9 @@ type APISuccessRespDeleteTemplate struct {
 }
 
 type APISuccessRespGetTemplate struct {
-	Code int            `json:"code"`
-	Msg  string         `json:"msg"`
-	Data GetTemplateRsp `json:"data"`
+	Code int                 `json:"code"`
+	Msg  string              `json:"msg"`
+	Data models.TemplateItem `json:"data"`
 }
 
 // common
