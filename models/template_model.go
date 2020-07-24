@@ -9,7 +9,7 @@ const (
 
 // 以下结构体工程通用
 type Template struct {
-	Id          int               `json:"id"`
+	Id          int               `json:"id,omitempty"`
 	Name        string            `json:"name"`
 	Engine      string            `json:"engine"`
 	DeviceType  string            `json:"deviceType"`
@@ -18,7 +18,7 @@ type Template struct {
 	StartupFile string            `json:"startupFile"`
 	OutputPath  string            `json:"outputPath"`
 	DatasetPath string            `json:"datasetPath"`
-	Params      map[string]string `json:"params"`
+	Params      map[string]string `json:"params,omitempty"`
 	CreateTime  string            `json:"createTime"`
 }
 
