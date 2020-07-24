@@ -197,6 +197,7 @@ func (this *TemplateProvider) FindById(id int64) (*Templates, error) {
 	}
 }
 
+// 字符转换
 func quote(value string) string {
 
 	value = strings.TrimSpace(value)
@@ -207,6 +208,7 @@ func quote(value string) string {
 	return "`" + strings.Replace(value, ".", "`.`", -1) + "`"
 }
 
+// 数据库记录
 func (this *Templates) Load(scope int, creator, jobType string, item *TemplateParams) {
 
 	this.Scope = scope
@@ -214,13 +216,7 @@ func (this *Templates) Load(scope int, creator, jobType string, item *TemplatePa
 
 	this.Name = item.Name
 	this.Creator = creator
-
-	//binData, err := json.Marshal(item)
-	//if err != nil {
-
-	//}
-
-	//this.Data = string(binData)
+	this.Data = *item
 	this.CreatedAt = UnixTime{
 		Time: time.Now(),
 	}
