@@ -1,7 +1,6 @@
 package services
 
 import (
-	"encoding/json"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -22,11 +21,8 @@ func CreateModelset(isAdvance bool, name, description, creator, version, path, u
 	if err != nil {
 		return err
 	}
-	argumentsBytes, err := json.Marshal(arguments)
-	if err != nil {
-		return err
-	}
-	argumentsJson := string(argumentsBytes)
+	var argItem models.ArgumentsItem
+	argItem=arguments
 	modelset := models.Modelset{
 		Name:        name,
 		Description: description,
@@ -37,7 +33,8 @@ func CreateModelset(isAdvance bool, name, description, creator, version, path, u
 		Use:         use,
 		JobId:       jobId,
 		Status:      MODELSET_STATUS_NORMAL,
-		Arguments:   argumentsJson,
+		DataFormat: dataFormat,
+		Arguments:   &argItem,
 		EngineType:  engineType,
 		Precision:   precision,
 		IsAdvance:   isAdvance,
