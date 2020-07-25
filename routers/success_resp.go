@@ -37,7 +37,19 @@ type APISuccessRespGetFDInfo struct {
 type APISuccessRespGetConvTypes struct {
 	Code int                    `json:"code"`
 	Msg  string                 `json:"msg"`
-	Data models.ConvertionTypes `json:"data"`
+	Data models.ConversionTypes `json:"data"`
+}
+
+type APISuccessRespLsEdgeInferences struct {
+	Code int                  `json:"code"`
+	Msg  string               `json:"msg"`
+	Data LsEdgeInferencesResp `json:"data"`
+}
+
+type APISuccessRespCreateEdgeInference struct {
+	Code int                     `json:"code"`
+	Msg  string                  `json:"msg"`
+	Data CreateEdgeInferenceResp `json:"data"`
 }
 
 // models

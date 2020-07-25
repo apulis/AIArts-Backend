@@ -1,4 +1,8 @@
 definitions:
+  models.ArgumentsItem:
+    additionalProperties:
+      type: string
+    type: object
   models.CodeEnvItem:
     properties:
       JupyterUrl:
@@ -26,7 +30,36 @@ definitions:
     - name
     - status
     type: object
-  models.ConvertionTypes:
+  models.ConversionJob:
+    properties:
+      inputPath:
+        type: string
+      jobId:
+        type: string
+      jobName:
+        type: string
+      jobParams:
+        $ref: '#/definitions/models.JobParams'
+      jobStatus:
+        type: string
+      jobTime:
+        type: string
+      jobType:
+        type: string
+      modelconversionStatus:
+        type: string
+      modelconversionType:
+        type: string
+      outputPath:
+        type: string
+      priority:
+        type: integer
+      userName:
+        type: string
+      vcName:
+        type: string
+    type: object
+  models.ConversionTypes:
     properties:
       conversionTypes:
         items:
@@ -98,32 +131,112 @@ definitions:
       log:
         type: string
     type: object
+  models.JobParams:
+    properties:
+      cmd:
+        type: string
+      codePath:
+        type: string
+      containerUserId:
+        type: integer
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      enabledatapath:
+        type: boolean
+      enablejobpath:
+        type: boolean
+      enableworkpath:
+        type: boolean
+      env:
+        items:
+          type: string
+        type: array
+      familyToken:
+        type: string
+      gpuType:
+        type: string
+      hostNetwork:
+        type: boolean
+      image:
+        type: string
+      interactivePorts:
+        type: boolean
+      isParent:
+        type: integer
+      isPrivileged:
+        type: boolean
+      jobId:
+        type: string
+      jobName:
+        type: string
+      jobPath:
+        type: string
+      jobType:
+        type: string
+      jobtrainingtype:
+        type: string
+      numps:
+        type: integer
+      numpsworker:
+        type: integer
+      outputPath:
+        type: string
+      preemptionAllowed:
+        type: boolean
+      resourcegpu:
+        type: integer
+      startupFile:
+        type: string
+      team:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      vcName:
+        type: string
+      workPath:
+        type: string
+    type: object
   models.Modelset:
     properties:
+      arguments:
+        $ref: '#/definitions/models.ArgumentsItem'
       createdAt:
         $ref: '#/definitions/models.UnixTime'
       creator:
+        type: string
+      dataFormat:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
       description:
         type: string
+      engineType:
+        type: string
       id:
         type: integer
+      isAdvance:
+        type: boolean
       jobId:
         type: string
       name:
         type: string
       path:
         type: string
+      precision:
+        type: string
       size:
         type: integer
       status:
         type: string
-      type:
-        type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+      use:
+        description: 模型类型 计算机视觉
+        type: string
       version:
         type: string
     type: object
@@ -152,13 +265,37 @@ definitions:
       vcName:
         type: string
     type: object
-  models.Template:
+  models.TemplateItem:
+    properties:
+      metaData:
+        $ref: '#/definitions/models.TemplateMeta'
+      params:
+        $ref: '#/definitions/models.TemplateParams'
+    type: object
+  models.TemplateMeta:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      jobType:
+        type: string
+      name:
+        type: string
+      scope:
+        type: integer
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+    type: object
+  models.TemplateParams:
     properties:
       codePath:
         type: string
       createTime:
         type: string
       datasetPath:
+        type: string
+      desc:
         type: string
       deviceNum:
         type: integer
@@ -264,6 +401,15 @@ definitions:
       msg:
         type: string
     type: object
+  routers.APISuccessRespCreateEdgeInference:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.CreateEdgeInferenceResp'
+      msg:
+        type: string
+    type: object
   routers.APISuccessRespCreateTemplate:
     properties:
       code:
@@ -341,7 +487,7 @@ definitions:
       code:
         type: integer
       data:
-        $ref: '#/definitions/models.ConvertionTypes'
+        $ref: '#/definitions/models.ConversionTypes'
       msg:
         type: string
     type: object
@@ -381,15 +527,6 @@ definitions:
       msg:
         type: string
     type: object
-  routers.APISuccessRespGetModelsets:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/routers.GetModelsetsResp'
-      msg:
-        type: string
-    type: object
   routers.APISuccessRespGetResource:
     properties:
       code:
@@ -404,7 +541,7 @@ definitions:
       code:
         type: integer
       data:
-        $ref: '#/definitions/routers.GetTemplateRsp'
+        $ref: '#/definitions/models.TemplateItem'
       msg:
         type: string
     type: object
@@ -423,6 +560,15 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.JobLog'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespLsEdgeInferences:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.LsEdgeInferencesResp'
       msg:
         type: string
     type: object
@@ -449,32 +595,19 @@ definitions:
       id:
         type: string
     type: object
+  routers.CreateEdgeInferenceResp:
+    properties:
+      jobId:
+        type: string
+    type: object
   routers.CreateTemplateReq:
     properties:
-      codePath:
+      jobType:
         type: string
-      createTime:
-        type: string
-      datasetPath:
-        type: string
-      deviceNum:
+      scope:
         type: integer
-      deviceType:
-        type: string
-      engine:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      outputPath:
-        type: string
-      params:
-        additionalProperties:
-          type: string
-        type: object
-      startupFile:
-        type: string
+      templateData:
+        $ref: '#/definitions/models.TemplateParams'
     type: object
   routers.CreateTemplateRsp:
     properties:
@@ -522,7 +655,7 @@ definitions:
   routers.DeleteTemplateReq:
     properties:
       id:
-        type: string
+        type: integer
     type: object
   routers.DeleteTemplateRsp:
     type: object
@@ -546,9 +679,11 @@ definitions:
     properties:
       Templates:
         items:
-          $ref: '#/definitions/models.Template'
+          $ref: '#/definitions/models.TemplateItem'
         type: array
       total:
+        type: integer
+      totalPage:
         type: integer
     type: object
   routers.GetAllTrainingRsp:
@@ -590,21 +725,6 @@ definitions:
       model:
         $ref: '#/definitions/models.Modelset'
     type: object
-  routers.GetModelsetsResp:
-    properties:
-      models:
-        items:
-          $ref: '#/definitions/models.Modelset'
-        type: array
-      pageNum:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-      totalPage:
-        type: integer
-    type: object
   routers.GetResourceRsp:
     properties:
       aiFrameworks:
@@ -623,34 +743,7 @@ definitions:
   routers.GetTemplateReq:
     properties:
       id:
-        type: string
-    type: object
-  routers.GetTemplateRsp:
-    properties:
-      codePath:
-        type: string
-      createTime:
-        type: string
-      datasetPath:
-        type: string
-      deviceNum:
         type: integer
-      deviceType:
-        type: string
-      engine:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      outputPath:
-        type: string
-      params:
-        additionalProperties:
-          type: string
-        type: object
-      startupFile:
-        type: string
     type: object
   routers.GetTrainingReq:
     properties:
@@ -688,6 +781,32 @@ definitions:
       status:
         type: string
     type: object
+  routers.LsEdgeInferencesResp:
+    properties:
+      edgeInferences:
+        items:
+          $ref: '#/definitions/models.ConversionJob'
+        type: array
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.UpdateTemplateReq:
+    properties:
+      id:
+        type: integer
+      jobType:
+        type: string
+      scope:
+        type: integer
+      templateData:
+        $ref: '#/definitions/models.TemplateParams'
+    type: object
   routers.createDatasetReq:
     properties:
       description:
@@ -706,9 +825,7 @@ definitions:
     type: object
   routers.createEdgeInferenceReq:
     properties:
-      convertionType:
-        type: string
-      device:
+      conversionType:
         type: string
       inputPath:
         type: string
@@ -717,21 +834,34 @@ definitions:
       outputPath:
         type: string
     required:
-    - convertionType
-    - device
+    - conversionType
     - inputPath
     - jobName
     - outputPath
     type: object
   routers.createModelsetReq:
     properties:
+      arguments:
+        additionalProperties:
+          type: string
+        type: object
+      dataFormat:
+        type: string
       description:
         type: string
+      engineType:
+        type: string
+      isAdvance:
+        type: boolean
       jobId:
         type: string
       name:
         type: string
       path:
+        type: string
+      precision:
+        type: string
+      use:
         type: string
     required:
     - jobId
@@ -797,14 +927,14 @@ paths:
         name: pageSize
         required: true
         type: integer
-      - description: job status. get all jobs if it is all
+      - description: 'training module: artsTraining, code module: codeEnv'
         in: query
-        name: status
+        name: jobType
         required: true
         type: string
-      - description: the keyword of search
+      - description: 'public: 1, private: 2'
         in: query
-        name: searchWord
+        name: scope
         required: true
         type: string
       produces:
@@ -1442,6 +1572,14 @@ paths:
         name: pageSize
         required: true
         type: integer
+      - description: dataset name
+        in: query
+        name: name
+        type: string
+      - description: dataset status
+        in: query
+        name: status
+        type: string
       produces:
       - application/json
       responses:
@@ -1478,6 +1616,14 @@ paths:
         required: true
         schema:
           type: string
+      - description: dataset name
+        in: query
+        name: name
+        type: string
+      - description: dataset auth
+        in: query
+        name: IsPrivate
+        type: boolean
       produces:
       - application/json
       responses:
@@ -1596,7 +1742,36 @@ paths:
             $ref: '#/definitions/routers.APIException'
       summary: bind dataset
   /ai_arts/api/datasets/:id/unbind:
-    post: {}
+    post:
+      parameters:
+      - description: bind platform's name
+        in: body
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: bind platform's id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: unbind dataset
   /ai_arts/api/edge_inferences:
     get:
       parameters:
@@ -1614,7 +1789,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespLsEdgeInferences'
         "400":
           description: error
           schema:
@@ -1638,7 +1813,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessResp'
+            $ref: '#/definitions/routers.APISuccessRespCreateEdgeInference'
         "400":
           description: error
           schema:
@@ -1969,39 +2144,6 @@ paths:
             $ref: '#/definitions/routers.APISuccessResp'
       summary: submit a inference job
   /ai_arts/api/models:
-    get:
-      parameters:
-      - description: page number, from 1
-        in: query
-        name: pageNum
-        required: true
-        type: integer
-      - description: count per page
-        in: query
-        name: pageSize
-        required: true
-        type: integer
-      - description: name of model
-        in: query
-        name: name
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespGetModelsets'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: list models
     post:
       parameters:
       - description: json body

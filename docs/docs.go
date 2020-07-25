@@ -48,15 +48,15 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "job status. get all jobs if it is all",
-                        "name": "status",
+                        "description": "training module: artsTraining, code module: codeEnv",
+                        "name": "jobType",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "the keyword of search",
-                        "name": "searchWord",
+                        "description": "public: 1, private: 2",
+                        "name": "scope",
                         "in": "query",
                         "required": true
                     }
@@ -1019,6 +1019,18 @@ var doc = `{
                         "name": "pageSize",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataset name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataset status",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1074,6 +1086,18 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "dataset name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "dataset auth",
+                        "name": "IsPrivate",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1254,7 +1278,52 @@ var doc = `{
             }
         },
         "/ai_arts/api/datasets/:id/unbind": {
-            "post": {}
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "unbind dataset",
+                "parameters": [
+                    {
+                        "description": "bind platform's name",
+                        "name": "platform",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "bind platform's id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
         },
         "/ai_arts/api/edge_inferences": {
             "get": {
@@ -1280,7 +1349,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespLsEdgeInferences"
                         }
                     },
                     "400": {
@@ -1317,7 +1386,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
+                            "$ref": "#/definitions/routers.APISuccessRespCreateEdgeInference"
                         }
                     },
                     "400": {
@@ -1829,55 +1898,6 @@ var doc = `{
             }
         },
         "/ai_arts/api/models": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "list models",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "page number, from 1",
-                        "name": "pageNum",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "count per page",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "name of model",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetModelsets"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            },
             "post": {
                 "produces": [
                     "application/json"
@@ -2375,6 +2395,12 @@ var doc = `{
         }
     },
     "definitions": {
+        "models.ArgumentsItem": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
         "models.CodeEnvItem": {
             "type": "object",
             "required": [
@@ -2415,7 +2441,51 @@ var doc = `{
                 }
             }
         },
-        "models.ConvertionTypes": {
+        "models.ConversionJob": {
+            "type": "object",
+            "properties": {
+                "inputPath": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobParams": {
+                    "$ref": "#/definitions/models.JobParams"
+                },
+                "jobStatus": {
+                    "type": "string"
+                },
+                "jobTime": {
+                    "type": "string"
+                },
+                "jobType": {
+                    "type": "string"
+                },
+                "modelconversionStatus": {
+                    "type": "string"
+                },
+                "modelconversionType": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "vcName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ConversionTypes": {
             "type": "object",
             "properties": {
                 "conversionTypes": {
@@ -2522,13 +2592,123 @@ var doc = `{
                 }
             }
         },
+        "models.JobParams": {
+            "type": "object",
+            "properties": {
+                "cmd": {
+                    "type": "string"
+                },
+                "codePath": {
+                    "type": "string"
+                },
+                "containerUserId": {
+                    "type": "integer"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "enabledatapath": {
+                    "type": "boolean"
+                },
+                "enablejobpath": {
+                    "type": "boolean"
+                },
+                "enableworkpath": {
+                    "type": "boolean"
+                },
+                "env": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "familyToken": {
+                    "type": "string"
+                },
+                "gpuType": {
+                    "type": "string"
+                },
+                "hostNetwork": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "interactivePorts": {
+                    "type": "boolean"
+                },
+                "isParent": {
+                    "type": "integer"
+                },
+                "isPrivileged": {
+                    "type": "boolean"
+                },
+                "jobId": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobPath": {
+                    "type": "string"
+                },
+                "jobType": {
+                    "type": "string"
+                },
+                "jobtrainingtype": {
+                    "type": "string"
+                },
+                "numps": {
+                    "type": "integer"
+                },
+                "numpsworker": {
+                    "type": "integer"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "preemptionAllowed": {
+                    "type": "boolean"
+                },
+                "resourcegpu": {
+                    "type": "integer"
+                },
+                "startupFile": {
+                    "type": "string"
+                },
+                "team": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "vcName": {
+                    "type": "string"
+                },
+                "workPath": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Modelset": {
             "type": "object",
             "properties": {
+                "arguments": {
+                    "$ref": "#/definitions/models.ArgumentsItem"
+                },
                 "createdAt": {
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
+                    "type": "string"
+                },
+                "dataFormat": {
                     "type": "string"
                 },
                 "deletedAt": {
@@ -2537,8 +2717,14 @@ var doc = `{
                 "description": {
                     "type": "string"
                 },
+                "engineType": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "isAdvance": {
+                    "type": "boolean"
                 },
                 "jobId": {
                     "type": "string"
@@ -2549,17 +2735,21 @@ var doc = `{
                 "path": {
                     "type": "string"
                 },
+                "precision": {
+                    "type": "string"
+                },
                 "size": {
                     "type": "integer"
                 },
                 "status": {
                     "type": "string"
                 },
-                "type": {
-                    "type": "string"
-                },
                 "updatedAt": {
                     "$ref": "#/definitions/models.UnixTime"
+                },
+                "use": {
+                    "description": "模型类型 计算机视觉",
+                    "type": "string"
                 },
                 "version": {
                     "type": "string"
@@ -2604,7 +2794,41 @@ var doc = `{
                 }
             }
         },
-        "models.Template": {
+        "models.TemplateItem": {
+            "type": "object",
+            "properties": {
+                "metaData": {
+                    "$ref": "#/definitions/models.TemplateMeta"
+                },
+                "params": {
+                    "$ref": "#/definitions/models.TemplateParams"
+                }
+            }
+        },
+        "models.TemplateMeta": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "jobType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                }
+            }
+        },
+        "models.TemplateParams": {
             "type": "object",
             "properties": {
                 "codePath": {
@@ -2614,6 +2838,9 @@ var doc = `{
                     "type": "string"
                 },
                 "datasetPath": {
+                    "type": "string"
+                },
+                "desc": {
                     "type": "string"
                 },
                 "deviceNum": {
@@ -2776,6 +3003,20 @@ var doc = `{
                 }
             }
         },
+        "routers.APISuccessRespCreateEdgeInference": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.CreateEdgeInferenceResp"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.APISuccessRespCreateTemplate": {
             "type": "object",
             "properties": {
@@ -2895,7 +3136,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/models.ConvertionTypes"
+                    "$ref": "#/definitions/models.ConversionTypes"
                 },
                 "msg": {
                     "type": "string"
@@ -2958,20 +3199,6 @@ var doc = `{
                 }
             }
         },
-        "routers.APISuccessRespGetModelsets": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/routers.GetModelsetsResp"
-                },
-                "msg": {
-                    "type": "string"
-                }
-            }
-        },
         "routers.APISuccessRespGetResource": {
             "type": "object",
             "properties": {
@@ -2993,7 +3220,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/routers.GetTemplateRsp"
+                    "$ref": "#/definitions/models.TemplateItem"
                 },
                 "msg": {
                     "type": "string"
@@ -3022,6 +3249,20 @@ var doc = `{
                 },
                 "data": {
                     "$ref": "#/definitions/models.JobLog"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.APISuccessRespLsEdgeInferences": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/routers.LsEdgeInferencesResp"
                 },
                 "msg": {
                     "type": "string"
@@ -3063,44 +3304,25 @@ var doc = `{
                 }
             }
         },
+        "routers.CreateEdgeInferenceResp": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.CreateTemplateReq": {
             "type": "object",
             "properties": {
-                "codePath": {
+                "jobType": {
                     "type": "string"
                 },
-                "createTime": {
-                    "type": "string"
-                },
-                "datasetPath": {
-                    "type": "string"
-                },
-                "deviceNum": {
+                "scope": {
                     "type": "integer"
                 },
-                "deviceType": {
-                    "type": "string"
-                },
-                "engine": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "outputPath": {
-                    "type": "string"
-                },
-                "params": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "startupFile": {
-                    "type": "string"
+                "templateData": {
+                    "$ref": "#/definitions/models.TemplateParams"
                 }
             }
         },
@@ -3174,7 +3396,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -3212,10 +3434,13 @@ var doc = `{
                 "Templates": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Template"
+                        "$ref": "#/definitions/models.TemplateItem"
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
                     "type": "integer"
                 }
             }
@@ -3281,29 +3506,6 @@ var doc = `{
                 }
             }
         },
-        "routers.GetModelsetsResp": {
-            "type": "object",
-            "properties": {
-                "models": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Modelset"
-                    }
-                },
-                "pageNum": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "totalPage": {
-                    "type": "integer"
-                }
-            }
-        },
         "routers.GetResourceRsp": {
             "type": "object",
             "properties": {
@@ -3331,48 +3533,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "routers.GetTemplateRsp": {
-            "type": "object",
-            "properties": {
-                "codePath": {
-                    "type": "string"
-                },
-                "createTime": {
-                    "type": "string"
-                },
-                "datasetPath": {
-                    "type": "string"
-                },
-                "deviceNum": {
                     "type": "integer"
-                },
-                "deviceType": {
-                    "type": "string"
-                },
-                "engine": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "outputPath": {
-                    "type": "string"
-                },
-                "params": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "startupFile": {
-                    "type": "string"
                 }
             }
         },
@@ -3431,6 +3592,46 @@ var doc = `{
                 }
             }
         },
+        "routers.LsEdgeInferencesResp": {
+            "type": "object",
+            "properties": {
+                "edgeInferences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ConversionJob"
+                    }
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
+                    "type": "integer"
+                }
+            }
+        },
+        "routers.UpdateTemplateReq": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "jobType": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "integer"
+                },
+                "templateData": {
+                    "$ref": "#/definitions/models.TemplateParams"
+                }
+            }
+        },
         "routers.createDatasetReq": {
             "type": "object",
             "required": [
@@ -3457,17 +3658,13 @@ var doc = `{
         "routers.createEdgeInferenceReq": {
             "type": "object",
             "required": [
-                "convertionType",
-                "device",
+                "conversionType",
                 "inputPath",
                 "jobName",
                 "outputPath"
             ],
             "properties": {
-                "convertionType": {
-                    "type": "string"
-                },
-                "device": {
+                "conversionType": {
                     "type": "string"
                 },
                 "inputPath": {
@@ -3489,8 +3686,23 @@ var doc = `{
                 "path"
             ],
             "properties": {
+                "arguments": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "dataFormat": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
+                },
+                "engineType": {
+                    "type": "string"
+                },
+                "isAdvance": {
+                    "type": "boolean"
                 },
                 "jobId": {
                     "type": "string"
@@ -3499,6 +3711,12 @@ var doc = `{
                     "type": "string"
                 },
                 "path": {
+                    "type": "string"
+                },
+                "precision": {
+                    "type": "string"
+                },
+                "use": {
                     "type": "string"
                 }
             }
