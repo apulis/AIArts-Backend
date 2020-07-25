@@ -2,39 +2,84 @@ package services
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func GetAllTemplate(userName string, page, size int, jobStatus, searchWord string) ([]*models.Template, int, int, error) {
+func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*models.TemplateItem, int, int, error) {
 
-	url := ""
+	query := ""
+	provider := models.NewTemplateProvider(database.Db)
 
-	jobList := &models.JobList{}
-	err := DoRequest(url, "GET", nil, nil, jobList)
+	var err error
+	var templates []*models.Templates
 
-	if err != nil {
-		fmt.Printf("get all Template err[%+v]", err)
-		return nil, 0, 0, err
+	// 用户私有 + 公有
+	if scope == models.TemplateUserPublic {
+
+		query = "scope = ? or creator = ?"
+		if templates, err = provider.FindPage("", (page-1)*size, size, query, scope, userName); err != nil {
+			return nil, 0, 0, err
+		}
+		// public
+	} else if scope == models.TemplatePublic {
+
+		query = "scope = ? and job_type = ?"
+		if templates, err = provider.FindPage("", (page-1)*size, size, query, scope, jobType); err != nil {
+			return nil, 0, 0, err
+		}
+
+	} else {
+		query = "creator = ? and job_type = ?"
+		if templates, err = provider.FindPage("", (page-1)*size, size, query, userName, jobType); err != nil {
+			return nil, 0, 0, err
+		}
 	}
 
-	Templates := make([]*models.Template, 0)
-	return Templates, len(Templates), 1, nil
+	retItems := make([]*models.TemplateItem, 0)
+	for _, v := range templates {
+		if item := v.ToTemplateItem(); item != nil {
+			retItems = append(retItems, item)
+		}
+	}
+
+	return retItems, len(retItems), 1, nil
 }
 
-func CreateTemplate(userName string, Template models.Template) (string, error) {
+func CreateTemplate(userName string, scope int, jobType string, template models.TemplateParams) (int64, error) {
 
-	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	return url, nil
+	provider := models.NewTemplateProvider(database.Db)
+
+	record := &models.Templates{}
+	record.Load(scope, userName, jobType, &template)
+
+	id, err := provider.Insert(record.ToMap())
+	return id, err
 }
 
-func DeleteTemplate(userName, id string) error {
+func UpdateTemplate(id int64, userName string, scope int, jobType string, template models.TemplateParams) error {
 
-	return nil
+	provider := models.NewTemplateProvider(database.Db)
+
+	record := &models.Templates{}
+	record.Load(scope, userName, jobType, &template)
+
+	var err error
+	if id, err = provider.Update(id, record.ToMap()); id == 0 {
+		fmt.Printf("update template err: %v", err)
+	}
+
+	return err
 }
 
-func GetTemplate(userName, id string) (*models.Template, error) {
+func DeleteTemplate(userName string, id int64) error {
+	return database.Db.Raw(`DELETE FROM ai_arts.templates where id=?`, id).Error
+}
 
-	template := &models.Template{}
-	return template, nil
+func GetTemplate(userName string, id int64) (*models.Templates, error) {
+
+	provider := models.NewTemplateProvider(database.Db)
+	item, err := provider.FindById(id)
+
+	return item, err
 }
