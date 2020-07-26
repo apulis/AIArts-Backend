@@ -209,14 +209,14 @@ func quote(value string) string {
 }
 
 // 数据库记录
-func (this *Templates) Load(scope int, creator, jobType string, item *TemplateParams) {
+func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams) {
 
 	this.Scope = scope
 	this.JobType = jobType
 
 	this.Name = item.Name
 	this.Creator = creator
-	this.Data = *item
+	this.Data = item
 	this.CreatedAt = UnixTime{
 		Time: time.Now(),
 	}

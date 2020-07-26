@@ -2,7 +2,7 @@ package routers
 
 import (
 	"fmt"
-
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -22,6 +22,7 @@ type GetResourceReq struct {
 type GetResourceRsp struct {
 	AIFrameworks   map[string][]string `json:"aiFrameworks"`
 	DeviceList     []models.DeviceItem `json:"deviceList"`
+	NodeInfo       models.NodeInfo     `json:"nodeInfo"`
 	CodePathPrefix string              `json:"codePathPrefix"`
 }
 
@@ -38,16 +39,38 @@ func getResource(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	framework, devices, err := services.GetResource(userName)
+	vcInfo, err := services.GetResource(userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	rsp := &GetResourceRsp{
-		framework,
-		devices,
-		"/home/" + userName + "/",
+	rsp := &GetResourceRsp{}
+	rsp.AIFrameworks = make(map[string][]string)
+
+	for k, v := range configs.Config.Image {
+
+		rsp.AIFrameworks[k] = make([]string, 0)
+		for _, item := range v {
+			rsp.AIFrameworks[k] = append(rsp.AIFrameworks[k], item)
+		}
 	}
+
+	rsp.DeviceList = make([]models.DeviceItem, 0)
+	for k, v := range vcInfo.DeviceAvail {
+		rsp.DeviceList = append(rsp.DeviceList, models.DeviceItem{
+			DeviceType: k,
+			Avail:      v,
+		})
+	}
+
+	rsp.NodeInfo.TotalNodes = len(vcInfo.Nodes)
+	rsp.NodeInfo.CountByDeviceType = make(map[string]int)
+
+	for _, v := range vcInfo.Nodes {
+		rsp.NodeInfo.CountByDeviceType[v.GPUType] += 1
+	}
+
+	rsp.CodePathPrefix = "/home/" + userName + "/"
 
 	return SuccessResp(c, rsp)
 }

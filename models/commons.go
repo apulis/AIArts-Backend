@@ -61,6 +61,17 @@ func (t *UnixTime) Scan(v interface{}) error {
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
+// 以下结构体用于api/common
+type DeviceItem struct {
+	DeviceType string `json:"deviceType"`
+	Avail      int    `json:"avail"`
+}
+
+type NodeInfo struct {
+	TotalNodes        int            `json:"totalNodes"`
+	CountByDeviceType map[string]int `json:"countByDeviceType"`
+}
+
 // 模板类别
 const (
 	TemplatePublic     int = 1
@@ -141,8 +152,14 @@ type JobList struct {
 	RunningJobs  []*Job  `json:"runningJobs"`
 }
 
+type NodeStatus struct {
+	GPUType string `json:"gpuType"`
+}
+
+// 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
 	DeviceAvail map[string]int `json:"gpu_avaliable"`
+	Nodes       []NodeStatus   `json:"node_status"`
 }
 
 type JobId struct {
