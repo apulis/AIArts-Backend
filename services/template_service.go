@@ -1,9 +1,13 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/models"
+	"log"
+	"os"
+	"strings"
 )
 
 func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*models.TemplateItem, int, int, error) {
@@ -82,4 +86,43 @@ func GetTemplate(userName string, id int64) (*models.Templates, error) {
 	item, err := provider.FindById(id)
 
 	return item, err
+}
+
+// 将用户路径转换为host绝对路径
+func ConvertPath(userName, path string) (string, error) {
+
+	pathPrefix := fmt.Sprintf("/home/%s", userName)
+	if !strings.HasPrefix(path, pathPrefix) {
+		return "", errors.New("非法输出路径")
+	}
+
+	// todo： 从接口读取实际的存储路径
+	newPathPrefix := fmt.Sprintf("/dlwsdata/work/%s/", userName)
+	newPath := fmt.Sprintf("%s/%s", newPathPrefix, strings.TrimLeft(path, pathPrefix))
+
+	if fileInfo, err := os.Stat(newPath); err != nil {
+		return "", err
+	} else if !fileInfo.IsDir() {
+		return "", fmt.Errorf("路径非合法目录：%s", newPath)
+	}
+
+	return newPath, nil
+}
+
+// 上传结束后的处理工作
+func UploadDone(userName, filePath string) error {
+
+	if fileInfo, err := os.Stat(filePath); err != nil {
+		return err
+	} else if fileInfo.IsDir() {
+		return fmt.Errorf("非法文件：%s", filePath)
+	}
+
+	// Change permissions Linux.
+	if err := os.Chmod(filePath, 0755); err != nil {
+		log.Println("更改文件模式报错", filePath, err)
+		return err
+	}
+
+	return nil
 }

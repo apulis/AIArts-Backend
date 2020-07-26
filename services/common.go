@@ -24,3 +24,17 @@ func GetResource(userName string) (*models.VcInfo, error) {
 
 	return vcInfo, nil
 }
+
+func GetJobSummary(userName, jobType string) (*models.VcInfo, error) {
+
+	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s", configs.Config.DltsUrl, userName, jobType)
+	vcInfo := &models.VcInfo{}
+
+	err := DoRequest(url, "GET", nil, nil, vcInfo)
+	if err != nil {
+		fmt.Printf("get resource err[%+v]\n", err)
+		return nil, err
+	}
+
+	return vcInfo, nil
+}
