@@ -1,7 +1,10 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
+	"reflect"
 )
 
 type Modelset struct {
@@ -18,19 +21,25 @@ type Modelset struct {
 	Status      string `json:"status"`
 	Size        int    `json:"size"`
 	//模型类型 计算机视觉
-	Use        string `json:"use"`
-	JobId      string `json:"jobId"`
-	DataFormat string `json:"dataFormat"`
-	Arguments  string `gorm:"type:text" json:"arguments,omitempty"`
-	EngineType string `json:"engineType"`
-	Precision  string `json:"precision"`
-	IsAdvance  bool   `json:"isAdvance"`
+	Use        string         `json:"use"`
+	JobId      string         `json:"jobId"`
+	DataFormat string         `json:"dataFormat"`
+	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
+	EngineType string         `json:"engineType"`
+	Precision  string         `json:"precision"`
+	IsAdvance  bool           `json:"isAdvance"`
 }
+
+type ArgumentsItem map[string]string
 
 func ListModelSets(offset, limit int, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	total := 0
-	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = '%s' ", username, isAdvance)
+	is_advance := 0
+	if isAdvance {
+		is_advance = 1
+	}
+	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = %d ", username, is_advance)
 	if name != "" {
 		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
 	}
@@ -75,5 +84,36 @@ func DeleteModelset(modelset *Modelset) error {
 	if res.Error != nil {
 		return res.Error
 	}
+	return nil
+}
+
+func (this *ArgumentsItem) Value() (driver.Value, error) {
+	binData, err := json.Marshal(this)
+	if err != nil {
+		return nil, err
+	}
+	return string(binData), nil
+}
+
+func (this *ArgumentsItem) Scan(v interface{}) error {
+	switch t := v.(type) {
+	case string:
+		if t != "" {
+			err := json.Unmarshal([]byte(t), this)
+			if err != nil {
+				return err
+			}
+		}
+	case []byte:
+		if len(t) != 0 {
+			err := json.Unmarshal(t, this)
+			if err != nil {
+				return err
+			}
+		}
+	default:
+		return fmt.Errorf("无法将[%v] 反序列化为Modelset类型", reflect.TypeOf(v).Name())
+	}
+
 	return nil
 }

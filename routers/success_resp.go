@@ -1,8 +1,9 @@
 package routers
 
 import (
-	"github.com/apulis/AIArtsBackend/models"
 	"net/http"
+
+	"github.com/apulis/AIArtsBackend/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,31 @@ type APISuccessRespGetDatasets struct {
 	Code int             `json:"code"`
 	Msg  string          `json:"msg"`
 	Data GetDatasetsResp `json:"data"`
+}
+
+// edge inferences
+type APISuccessRespGetFDInfo struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	Data GetFDInfoResp `json:"data"`
+}
+
+type APISuccessRespGetConvTypes struct {
+	Code int                    `json:"code"`
+	Msg  string                 `json:"msg"`
+	Data models.ConversionTypes `json:"data"`
+}
+
+type APISuccessRespLsEdgeInferences struct {
+	Code int                  `json:"code"`
+	Msg  string               `json:"msg"`
+	Data LsEdgeInferencesResp `json:"data"`
+}
+
+type APISuccessRespCreateEdgeInference struct {
+	Code int                     `json:"code"`
+	Msg  string                  `json:"msg"`
+	Data CreateEdgeInferenceResp `json:"data"`
 }
 
 // models
