@@ -20,14 +20,17 @@ type Modelset struct {
 	Path        string `gorm:"type:text" json:"path"`
 	Status      string `json:"status"`
 	Size        int    `json:"size"`
-	//模型类型 计算机视觉
+
 	Use        string         `json:"use"`
 	JobId      string         `json:"jobId"`
 	DataFormat string         `json:"dataFormat"`
+	Dataset    string         `json:"dataset,omitempty"`
 	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
 	EngineType string         `json:"engineType"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
+
+
 }
 
 type ArgumentsItem map[string]string
