@@ -27,6 +27,7 @@ type lsDatasetsReq struct {
 	PageNum  int    `form:"pageNum"`
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
+	Status   string `form:"status"`
 }
 
 type createDatasetReq struct {
@@ -60,6 +61,8 @@ type GetDatasetsResp struct {
 // @Produce  json
 // @Param pageNum query int true "page number, from 1"
 // @Param pageSize query int true "count per page"
+// @Param name query string false "dataset name"
+// @Param status query string false "dataset status"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -76,11 +79,7 @@ func lsDatasets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	if req.Name == "" {
-		datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, username)
-	} else {
-		datasets, total, err = services.ListDatasetsByName(req.PageNum, req.PageSize, req.Name, username)
-	}
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -120,6 +119,8 @@ func getDataset(c *gin.Context) error {
 // @Param body body createDatasetReq true "json body"
 // @Param description body string true "dataset description"
 // @Param path body string true "dataset storage path"
+// @Param name query string false "dataset name"
+// @Param IsPrivate query bool false "dataset auth"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -199,8 +200,10 @@ func deleteDataset(c *gin.Context) error {
 
 // @Summary bind dataset
 // @Produce  json
+// @Param platform body string true "bind platform's name"
+// @Param id body string true "bind platform's id"
 // @Success 200 {object} APISuccessResp "success"
-// @Failure 400 {object} APIException "error"  "code": 30000, "already bind"
+// @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id/bind  [post]
 func bindDataset(c *gin.Context) error {
@@ -225,9 +228,11 @@ func bindDataset(c *gin.Context) error {
 
 // @Summary unbind dataset
 // @Produce  json
+// @Param platform body string true "bind platform's name"
+// @Param id body string true "bind platform's id"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
-// @Failure 404 {object} APIException "not found"  "code": 30000, "no bind"
+// @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets/:id/unbind  [post]
 func unbindDataset(c *gin.Context) error {
 	var id datasetId

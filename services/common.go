@@ -11,7 +11,7 @@ import (
 var db = database.Db
 var logger = loggers.Log
 
-func GetResource(userName string) (map[string][]string, []models.DeviceItem, error) {
+func GetResource(userName string) (*models.VcInfo, error) {
 
 	url := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
 	vcInfo := &models.VcInfo{}
@@ -19,25 +19,22 @@ func GetResource(userName string) (map[string][]string, []models.DeviceItem, err
 	err := DoRequest(url, "GET", nil, nil, vcInfo)
 	if err != nil {
 		fmt.Printf("get resource err[%+v]\n", err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	fw := make(map[string][]string)
-	for k, v := range configs.Config.Image {
+	return vcInfo, nil
+}
 
-		fw[k] = make([]string, 0)
-		for _, item := range v {
-			fw[k] = append(fw[k], item)
-		}
+func GetJobSummary(userName, jobType string) (map[string]int, error) {
+
+	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s", configs.Config.DltsUrl, userName, jobType)
+	summary := make(map[string]int)
+
+	err := DoRequest(url, "GET", nil, nil, &summary)
+	if err != nil {
+		fmt.Printf("get job summary err[%+v]\n", err)
+		return nil, err
 	}
 
-	devices := make([]models.DeviceItem, 0)
-	for k, v := range vcInfo.DeviceAvail {
-		devices = append(devices, models.DeviceItem{
-			DeviceType: k,
-			Avail:      v,
-		})
-	}
-
-	return fw, devices, nil
+	return summary, nil
 }

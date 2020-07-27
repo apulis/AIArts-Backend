@@ -67,7 +67,6 @@ func doRequest(url, method string, headers map[string]string, rawBody interface{
 		}
 	}
 
-	fmt.Println(string(responseData))
 	return responseData, err
 }
 

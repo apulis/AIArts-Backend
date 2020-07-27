@@ -10,6 +10,7 @@ import (
 
 func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
+	group.Use(Auth())
 	group.POST("/upload/dataset", wrapper(uploadDataset))
 	group.GET("/download/dataset/:id", wrapper(downloadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
@@ -24,16 +25,23 @@ type UploadFileResp struct {
 // @Produce  json
 // @Param data body string true "upload file key 'data'"
 // @Success 200 {object} UploadFileResp "success"
-// @Failure 400 {object} APIException "error"
+// @Failure 400 {object} APIException "error code:30009,msg:the /tmp direct is full"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/upload/dataset [post]
+
 func uploadDataset(c *gin.Context) error {
 	//多文件list
 	logger.Info("starting upload file")
 	file, err := c.FormFile("data")
+	isPrivate := c.PostForm("isPrivate")
+	//存储文件夹
+	dir := c.PostForm("dir")
 	if err != nil {
 		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
 	}
+
+	username := getUsername(c)
+
 	//取消大小限制
 	//if services.CheckFileOversize(file.Size) {
 	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
@@ -52,7 +60,7 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting extract file")
-	unzippedPath, err := services.ExtractFile(filePath, filetype)
+	unzippedPath, err := services.ExtractFile(filePath, filetype, dir, isPrivate, username)
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}

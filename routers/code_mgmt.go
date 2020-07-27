@@ -8,14 +8,15 @@ import (
 )
 
 func AddGroupCode(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/codes")
 
+	group := r.Group("/ai_arts/api/codes")
 	group.Use(Auth())
 
 	group.GET("/", wrapper(getAllCodeEnv))
 	group.POST("/", wrapper(createCodeEnv))
 	group.DELETE("/:id", wrapper(delCodeEnv))
 	group.GET("/:id/jupyter", wrapper(getJupyterPath))
+	group.POST("/upload", wrapper(uploadCode))
 }
 
 type GetAllCodeEnvReq struct {
@@ -165,4 +166,52 @@ func getJupyterPath(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, rspData)
+}
+
+// @Summary upload code
+// @Produce  json
+// @Param data body string true "upload file key 'data'"
+// @Success 200 {object} APISuccessRespCreateCodeEnv "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/upload [post]
+func uploadCode(c *gin.Context) error {
+
+	//多文件list
+	logger.Info("starting upload file")
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return AppError(PARAMETER_ERROR_CODE, err.Error())
+	}
+
+	codePath := c.PostForm("codePath")
+	if len(codePath) == 0 {
+		return AppError(PARAMETER_ERROR_CODE, "缺少代码路径")
+	}
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	outputDir, err := services.ConvertPath(userName, codePath)
+	if err != nil {
+		return AppError(INVALID_CODE_PATH, err.Error())
+	}
+
+	logger.Info("starting saving file")
+	err = c.SaveUploadedFile(file, outputDir)
+	if err != nil {
+		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
+	}
+
+	logger.Info("starting change file mode")
+
+	filePath := fmt.Sprintf("%s/%s", outputDir, file.Filename)
+	if err = services.UploadDone(userName, filePath); err != nil {
+		return AppError(COMPLETE_UPLOAD_ERR, err.Error())
+	}
+
+	return SuccessResp(c, nil)
 }

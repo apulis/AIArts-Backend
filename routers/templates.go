@@ -14,23 +14,27 @@ func AddGroupTemplate(r *gin.Engine) {
 	group.GET("/", wrapper(getAllTemplates))
 	group.GET("/:id", wrapper(getTemplate))
 	group.POST("/", wrapper(createTemplate))
+	group.PUT("/:id", wrapper(updateTemplate))
 	group.DELETE("/:id", wrapper(delTemplate))
 }
 
 type GetAllTemplateReq struct {
-	PageNum  int    `json:"pageNum"`
-	PageSize int    `json:"pageSize"`
-	From     string `json:"from"`
+	PageNum  int    `form:"pageNum"  json:"pageNum"`
+	PageSize int    `form:"pageSize" json:"pageSize"`
+	Scope    int    `form:"scope"   json:"scope"`
+	JobType  string `form:"jobType" json:"jobType"`
 }
 
 type GetAllTemplateRsp struct {
-	Templates []*models.Template `json:"Templates"`
-	Total     int                `json:"total"`
-	totalPage int                `json:"totalPage"`
+	Templates []*models.TemplateItem `json:"Templates"`
+	Total     int                    `json:"total"`
+	TotalPage int                    `json:"totalPage"`
 }
 
 type CreateTemplateReq struct {
-	models.Template
+	Scope        int                   `json:"scope"`
+	JobType      string                `json:"jobType"`
+	TemplateData models.TemplateParams `json:"templateData"`
 }
 
 type CreateTemplateRsp struct {
@@ -38,33 +42,36 @@ type CreateTemplateRsp struct {
 }
 
 type DeleteTemplateReq struct {
-	Id string `json:"id"`
+	Id int64 `json:"id"`
 }
 
 type DeleteTemplateRsp struct {
 }
 
+type UpdateTemplateReq struct {
+	Id           int64                 `json:"id"`
+	Scope        int                   `json:"scope"`
+	JobType      string                `json:"jobType"`
+	TemplateData models.TemplateParams `json:"templateData"`
+}
+
 type GetTemplateReq struct {
-	Id string `json:"id"`
+	Id int64 `json:"id"`
 }
 
-type GetTemplateRsp struct {
-	models.Template
-}
-
-// @Summary get all Templates
+// @Summary get all templates
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
-// @Param status query string true "job status. get all jobs if it is all"
-// @Param searchWord query string true "the keyword of search"
+// @Param jobType query string true "training module: artsTraining, code module: codeEnv"
+// @Param scope query string true "public: 1, private: 2"
 // @Success 200 {object} APISuccessRespGetAllTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [get]
+// @Router /ai_arts/api/templates [get]
 func getAllTemplates(c *gin.Context) error {
 
-	var req GetAllJobsReq
+	var req GetAllTemplateReq
 	var err error
 
 	if err = c.Bind(&req); err != nil {
@@ -76,7 +83,7 @@ func getAllTemplates(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTemplate(userName, req.PageNum, req.PageSize, req.JobStatus, req.SearchWord)
+	sets, total, totalPage, err := services.GetAllTemplate(userName, req.PageNum, req.PageSize, req.Scope, req.JobType)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -90,17 +97,17 @@ func getAllTemplates(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
-// @Summary create Template
+// @Summary create template
 // @Produce json
 // @Param param body CreateTemplateReq true "params"
 // @Success 200 {object} APISuccessRespCreateTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [post]
+// @Router /ai_arts/api/templates [post]
 func createTemplate(c *gin.Context) error {
 
-	var req models.Template
-	var id string
+	var req CreateTemplateReq
+	var id int64
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -112,7 +119,7 @@ func createTemplate(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	id, err = services.CreateTemplate(userName, req)
+	id, err = services.CreateTemplate(userName, req.Scope, req.JobType, req.TemplateData)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -120,17 +127,46 @@ func createTemplate(c *gin.Context) error {
 	return SuccessResp(c, id)
 }
 
-// @Summary get specific Template
+// @Summary update template
+// @Produce json
+// @Param param body UpdateTemplateReq true "params"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/templates [update]
+func updateTemplate(c *gin.Context) error {
+
+	var req UpdateTemplateReq
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err = services.UpdateTemplate(req.Id, userName, req.Scope, req.JobType, req.TemplateData)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, nil)
+}
+
+// @Summary get specific template
 // @Produce  json
 // @Param param body GetTemplateReq true "params"
 // @Success 200 {object} APISuccessRespGetTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates/:id [get]
+// @Router /ai_arts/api/templates/:id [get]
 func getTemplate(c *gin.Context) error {
 
-	var id models.UriJobId
-	var Template *models.Template
+	var id GetTemplateReq
+	var dbRecord *models.Templates
 
 	err := c.ShouldBindUri(&id)
 	if err != nil {
@@ -142,24 +178,41 @@ func getTemplate(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	Template, err = services.GetTemplate(userName, id.Id)
+	dbRecord, err = services.GetTemplate(userName, id.Id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	return SuccessResp(c, Template)
+	rspData := &models.TemplateItem{
+		MetaData: models.TemplateMeta{
+			Name:      dbRecord.Name,
+			Scope:     dbRecord.Scope,
+			JobType:   dbRecord.JobType,
+			Creator:   dbRecord.Creator,
+			CreatedAt: dbRecord.CreatedAt,
+			UpdatedAt: dbRecord.UpdatedAt,
+		},
+		Params: dbRecord.Data,
+	}
+
+	//err = json.Unmarshal([]byte(dbRecord.Data), rspData)
+	//if err != nil {
+	//	return AppError(TEMPLATE_INVALID_PARAMS, err.Error())
+	//}
+
+	return SuccessResp(c, rspData)
 }
 
-// @Summary delete one Template
+// @Summary delete one template
 // @Produce  json
 // @Param param body DeleteTemplateReq true "params"
 // @Success 200 {object} APISuccessRespDeleteTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates/:id [delete]
+// @Router /ai_arts/api/templates/:id [delete]
 func delTemplate(c *gin.Context) error {
 
-	var id models.UriJobId
+	var id DeleteTemplateReq
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())

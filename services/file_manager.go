@@ -148,10 +148,18 @@ func CompressFile(path string) (string, error) {
 	return targetPath, nil
 }
 
-func ExtractFile(fromPath, filetype string) (string, error) {
-	fileConf := configs.Config.File
-	datasetStorageDir := fileConf.DatasetDir + "/storage"
-	datasetStoragePath := fmt.Sprintf("%s/%d", datasetStorageDir, time.Now().UnixNano())
+func ExtractFile(fromPath, filetype, dir, isPrivate, username string) (string, error) {
+
+	var datasetStorageDir string
+	if isPrivate == "false" {
+		fileConf := configs.Config.File
+		datasetStorageDir = fileConf.DatasetDir + "/storage/" + dir
+	} else {
+		datasetStorageDir = fmt.Sprintf("/home/%s/storage/%s", username,dir)
+	}
+	//直接使用前端上传的path
+	datasetStoragePath:=datasetStorageDir
+	//datasetStoragePath := fmt.Sprintf("%s/%d", datasetStorageDir, time.Now().UnixNano())
 	_, err := os.Stat(datasetStoragePath)
 	if err != nil {
 		err = os.MkdirAll(datasetStoragePath, os.ModeDir|os.ModePerm)
@@ -159,7 +167,6 @@ func ExtractFile(fromPath, filetype string) (string, error) {
 			return "", err
 		}
 	}
-
 	logger.Info("Extracting file: ", fromPath, " to ", datasetStoragePath)
 	switch filetype {
 	case FILETYPE_ZIP:

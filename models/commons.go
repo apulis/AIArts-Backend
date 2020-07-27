@@ -22,8 +22,8 @@ type UnixTime struct {
 func init() {
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
-	//添加打印sql语句
-	db.LogMode(true)
+	createTableIfNotExists(VersionInfoSet{})
+	createTableIfNotExists(Templates{})
 }
 
 func createTableIfNotExists(modelType interface{}) {
@@ -60,6 +60,24 @@ func (t *UnixTime) Scan(v interface{}) error {
 	}
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
+
+// 以下结构体用于api/common
+type DeviceItem struct {
+	DeviceType string `json:"deviceType"`
+	Avail      int    `json:"avail"`
+}
+
+type NodeInfo struct {
+	TotalNodes        int            `json:"totalNodes"`
+	CountByDeviceType map[string]int `json:"countByDeviceType"`
+}
+
+// 模板类别
+const (
+	TemplatePublic     int = 1
+	TemplatePrivate    int = 2
+	TemplateUserPublic int = 3
+)
 
 // 以下结构体用于和DLTS平台交互
 const (
@@ -124,6 +142,7 @@ type JobMeta struct {
 	QueuedJobs        int `json:"queuedJobs"`
 	RunningJobs       int `json:"runningJobs"`
 	VisualizationJobs int `json:"visualizationJobs"`
+	TotalJobs         int `json:"totalJobs"`
 }
 
 type JobList struct {
@@ -133,8 +152,14 @@ type JobList struct {
 	RunningJobs  []*Job  `json:"runningJobs"`
 }
 
+type NodeStatus struct {
+	GPUType string `json:"gpuType"`
+}
+
+// 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
 	DeviceAvail map[string]int `json:"gpu_avaliable"`
+	Nodes       []NodeStatus   `json:"node_status"`
 }
 
 type JobId struct {
@@ -178,3 +203,8 @@ type EndpointWrapper struct {
 	Status      string `json:"status"`
 	AccessPoint string `json:"accessPoint"`
 }
+
+// 升级平台版本需要的信息
+var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
+var UPGRADE_CONFIG_FILE = "version.yaml"
+var Upgrade_Progress = -1

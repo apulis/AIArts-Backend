@@ -23,16 +23,24 @@ type modelsetId struct {
 }
 
 type lsModelsetsReq struct {
-	PageNum  int    `form:"pageNum"`
-	PageSize int    `form:"pageSize,default=10"`
-	Name     string `form:"name"`
+	PageNum   int    `form:"pageNum"`
+	PageSize  int    `form:"pageSize,default=10"`
+	Name      string `form:"name"`
+	Status    string `form:"status"`
+	IsAdvance bool   `form:"isAdvance"`
 }
 
 type createModelsetReq struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" `
-	Path        string `json:"path" binding:"required"`
-	JobId       string `json:"jobId" binding:"required"`
+	Name        string            `json:"name" binding:"required"`
+	Description string            `json:"description" `
+	Path        string            `json:"path" binding:"required"`
+	JobId       string            `json:"jobId" binding:"required"`
+	Use         string            `json:"use"`
+	DataFormat  string            `json:"dataFormat"`
+	Arguments   map[string]string `json:"arguments"`
+	EngineType  string            `json:"engineType"`
+	Precision   string            `json:"precision"`
+	IsAdvance   bool              `json:"isAdvance"`
 }
 
 type updateModelsetReq struct {
@@ -53,13 +61,16 @@ type GetModelsetsResp struct {
 
 // @Summary list models
 // @Produce  json
-// @Param pageNum query int true "page number, from 1"
-// @Param pageSize query int true "count per page"
-// @Param name query int true "name of model"
+// @Param pageNum query int true "page number"
+// @Param pageSize query int true "size per page"
+// @Param isAdvance query string true "job status. get all jobs if it is all"
+// @Param name query string true "the keyword of search"
+// @Param status query string true "the keyword of search"
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [get]
+
 func lsModelsets(c *gin.Context) error {
 	var req lsModelsetsReq
 	err := c.ShouldBindQuery(&req)
@@ -73,14 +84,11 @@ func lsModelsets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	if req.Name == "" {
-		modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize,username)
-	} else {
-		modelsets, total, err = services.ListModelSetsByName(req.PageNum, req.PageSize, req.Name,username)
-	}
+	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.IsAdvance, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	data := GetModelsetsResp{
 		Models:    modelsets,
 		Total:     total,
@@ -133,7 +141,7 @@ func createModelset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.Path, req.JobId)
+	err = services.CreateModelset(req.IsAdvance, req.Name, req.Description, username, "0.0.1", req.Path, req.Use, req.JobId, req.DataFormat, req.Arguments, req.EngineType, req.Precision)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
