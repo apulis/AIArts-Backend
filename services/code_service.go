@@ -78,7 +78,14 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord string
 		})
 	}
 
-	return codes, len(codes), 1, nil
+	totalJobs := jobList.Meta.TotalJobs
+	totalPages := totalJobs / page
+
+	if totalJobs%page != 0 {
+		totalPages += 1
+	}
+
+	return codes, totalJobs, totalPages, nil
 }
 
 func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error) {
