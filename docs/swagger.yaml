@@ -202,8 +202,12 @@ definitions:
     type: object
   models.Modelset:
     properties:
+      argumentPath:
+        description: 模型参数路径
+        type: string
       arguments:
         $ref: '#/definitions/models.ArgumentsItem'
+        description: omitempty 值为空，不编码
       createdAt:
         $ref: '#/definitions/models.UnixTime'
       creator:
@@ -224,9 +228,10 @@ definitions:
         type: boolean
       jobId:
         type: string
-      name:
+      modelPath:
+        description: 模型路径
         type: string
-      path:
+      name:
         type: string
       precision:
         type: string
@@ -237,6 +242,7 @@ definitions:
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
       use:
+        description: 模型类型 图像分类
         type: string
       version:
         type: string
@@ -344,8 +350,14 @@ definitions:
         type: string
       id:
         type: string
+      jobTrainingType:
+        type: string
       name:
         type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
       outputPath:
         type: string
       params:
@@ -594,8 +606,14 @@ definitions:
         type: string
       engine:
         type: string
+      jobTrainingType:
+        type: string
       name:
         type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
     required:
     - engine
     - name
@@ -642,8 +660,14 @@ definitions:
         type: string
       id:
         type: string
+      jobTrainingType:
+        type: string
       name:
         type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
       outputPath:
         type: string
       params:
@@ -730,6 +754,11 @@ definitions:
       fdinfo:
         $ref: '#/definitions/models.FDInfo'
     type: object
+  routers.GetJobSummaryReq:
+    properties:
+      jobType:
+        type: string
+    type: object
   routers.GetModelsetResp:
     properties:
       model:
@@ -780,8 +809,14 @@ definitions:
         type: string
       id:
         type: string
+      jobTrainingType:
+        type: string
       name:
         type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
       outputPath:
         type: string
       params:
@@ -852,6 +887,8 @@ definitions:
     type: object
   routers.createModelsetReq:
     properties:
+      argumentPath:
+        type: string
       arguments:
         additionalProperties:
           type: string
@@ -866,18 +903,17 @@ definitions:
         type: boolean
       jobId:
         type: string
-      name:
+      modelPath:
         type: string
-      path:
+      name:
         type: string
       precision:
         type: string
       use:
         type: string
     required:
-    - jobId
+    - argumentPath
     - name
-    - path
     type: object
   routers.getLocalEnvResp:
     properties:
@@ -1473,7 +1509,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: upload code
-  /ai_arts/api/common/jobs/summary:
+  /ai_arts/api/common/job/summary:
     get:
       parameters:
       - description: params
@@ -1481,7 +1517,7 @@ paths:
         name: param
         required: true
         schema:
-          $ref: '#/definitions/routers.UpdateTemplateReq'
+          $ref: '#/definitions/routers.GetJobSummaryReq'
       produces:
       - application/json
       responses:
@@ -1620,6 +1656,10 @@ paths:
             $ref: '#/definitions/routers.APIException'
         "404":
           description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "30010":
+          description: dataset is still using
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: delete dataset by id
@@ -1842,7 +1882,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
-  /ai_arts/api/edge_inferences/push/:id:
+  /ai_arts/api/edge_inferences/push/:jobId:
     post:
       parameters:
       - description: job id
@@ -1918,11 +1958,15 @@ paths:
     post:
       parameters:
       - description: upload file key 'data'
-        in: body
+        in: query
         name: data
         required: true
-        schema:
-          type: string
+        type: string
+      - description: upload file directory 'dir'
+        in: query
+        name: dir
+        required: true
+        type: string
       produces:
       - application/json
       responses:

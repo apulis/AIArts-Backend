@@ -8,8 +8,20 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func LsEdgeInferences(pageNum, pageSize int, user string) ([]models.ConversionJob, error) {
+func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, order string) ([]models.ConversionJob, error) {
 	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d", configs.Config.DltsUrl, models.DefaultVcName, user, pageNum, pageSize)
+	if jobName != "" {
+		url = url + fmt.Sprintf("&jobName=%s", jobName)
+	}
+	if convType != "" {
+		url = url + fmt.Sprintf("&convType=%s", convType)
+	}
+	if orderBy != "" {
+		url = url + fmt.Sprintf("&orderBy=%s", orderBy)
+	}
+	if order != "" {
+		url = url + fmt.Sprintf("order=%s", order)
+	}
 
 	var resp models.ConversionList
 	var res []models.ConversionJob
