@@ -73,6 +73,7 @@ func GetDatasets(projectId string, queryStringParameters models.QueryStringParam
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+queryStringParameters.GetName(), ro)
+	logger.Info(resp.String(), queryStringParameters)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New(resp.String())
