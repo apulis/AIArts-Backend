@@ -23,14 +23,15 @@ type UploadFileResp struct {
 
 // @Summary upload dataset file
 // @Produce  json
-// @Param data body string true "upload file key 'data'"
+// @Param data form string true "upload file key 'data'"
+// @Param isPrivate form string true "isPrivate key 'isPrivate'"
+// @Param dir form string true "upload file directory 'dir'"
 // @Success 200 {object} UploadFileResp "success"
 // @Failure 400 {object} APIException "error code:30009,msg:the /tmp direct is full"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/upload/dataset [post]
 
 func uploadDataset(c *gin.Context) error {
-	//多文件list
 	logger.Info("starting upload file")
 	file, err := c.FormFile("data")
 	isPrivate := c.PostForm("isPrivate")
@@ -39,9 +40,7 @@ func uploadDataset(c *gin.Context) error {
 	if err != nil {
 		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
 	}
-
 	username := getUsername(c)
-
 	//取消大小限制
 	//if services.CheckFileOversize(file.Size) {
 	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")

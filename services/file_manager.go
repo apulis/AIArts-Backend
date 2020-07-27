@@ -149,13 +149,16 @@ func CompressFile(path string) (string, error) {
 }
 
 func ExtractFile(fromPath, filetype, dir, isPrivate, username string) (string, error) {
-
 	var datasetStorageDir string
+	fileConf := configs.Config.File
 	if isPrivate == "false" {
-		fileConf := configs.Config.File
 		datasetStorageDir = fileConf.DatasetDir + "/storage/" + dir
 	} else {
 		datasetStorageDir = fmt.Sprintf("/home/%s/storage/%s", username,dir)
+		//debug
+		if username=="kaiyuan.xu"{
+			datasetStorageDir = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username,dir)
+		}
 	}
 	//直接使用前端上传的path
 	datasetStoragePath:=datasetStorageDir
