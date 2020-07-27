@@ -123,7 +123,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["desc"] = training.Desc
 
 	params["containerUserId"] = 0
-	params["jobtrainingtype"] = "RegularJob"
+	params["jobtrainingtype"] = training.JobTrainingType // "RegularJob"
 	params["preemptionAllowed"] = false
 	params["workPath"] = ""
 
@@ -135,6 +135,9 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
+
+	params["numworker"] = training.NumPs
+	params["numps"] = training.NumPsWorker
 
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName

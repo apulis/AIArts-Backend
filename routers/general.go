@@ -108,7 +108,7 @@ func getResource(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetResource "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/common/jobs/summary [get]
+// @Router /ai_arts/api/common/job/summary [get]
 func getJobSummary(c *gin.Context) error {
 
 	userName := getUsername(c)

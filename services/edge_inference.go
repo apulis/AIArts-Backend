@@ -9,8 +9,7 @@ import (
 )
 
 func LsEdgeInferences(pageNum, pageSize int, user string) ([]models.ConversionJob, error) {
-	fmt.Println(pageNum, pageSize)
-	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s", configs.Config.DltsUrl, models.DefaultVcName, user)
+	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d", configs.Config.DltsUrl, models.DefaultVcName, user, pageNum, pageSize)
 
 	var resp models.ConversionList
 	var res []models.ConversionJob
