@@ -34,7 +34,7 @@ type createDatasetReq struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Path        string `json:"path" binding:"required"`
-	IsPrivate   bool   `json:"isPrivate" binding:"required"`
+	IsPrivate   bool   `json:"isPrivate" `
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -119,8 +119,8 @@ func getDataset(c *gin.Context) error {
 // @Param body body createDatasetReq true "json body"
 // @Param description body string true "dataset description"
 // @Param path body string true "dataset storage path"
-// @Param name query string false "dataset name"
-// @Param IsPrivate query bool false "dataset auth"
+// @Param name body string false "dataset name"
+// @Param IsPrivate body bool false "dataset auth"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -131,10 +131,11 @@ func createDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.CheckDatasetPathValid(req.Path)
-	if err != nil {
-		return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
-	}
+	//因为会上传到home目录下
+	//err = services.CheckDatasetPathValid(req.Path)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
+	//}
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
