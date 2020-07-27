@@ -100,9 +100,7 @@ func ConvertPath(userName, path string) (string, error) {
 	newPathPrefix := fmt.Sprintf("/dlwsdata/work/%s/", userName)
 	newPath := fmt.Sprintf("%s/%s", newPathPrefix, strings.TrimPrefix(path, pathPrefix))
 
-	if fileInfo, err := os.Stat(newPath); err != nil {
-		return "", err
-	} else if !fileInfo.IsDir() {
+	if _, err := os.Stat(newPath); os.IsNotExist(err) {
 		return "", fmt.Errorf("路径非合法目录：%s", newPath)
 	}
 

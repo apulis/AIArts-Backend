@@ -158,7 +158,9 @@ type JobList struct {
 }
 
 type NodeStatus struct {
-	GPUType string `json:"gpuType"`
+	GPUType     string         `json:"gpuType"`
+	Allocatable map[string]int `json:"gpu_allocatable"`
+	Capacity    map[string]int `json:"gpu_capacity"`
 }
 
 // 接口：apis/GetVC?userName=&vcName=platform

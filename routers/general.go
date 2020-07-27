@@ -23,7 +23,7 @@ type GetResourceReq struct {
 type GetResourceRsp struct {
 	AIFrameworks   map[string][]string `json:"aiFrameworks"`
 	DeviceList     []models.DeviceItem `json:"deviceList"`
-	NodeInfo       models.NodeInfo     `json:"nodeInfo"`
+	NodeInfo       []models.NodeStatus `json:"nodeInfo"`
 	CodePathPrefix string              `json:"codePathPrefix"`
 }
 
@@ -90,13 +90,7 @@ func getResource(c *gin.Context) error {
 		})
 	}
 
-	rsp.NodeInfo.TotalNodes = len(vcInfo.Nodes)
-	rsp.NodeInfo.CountByDeviceType = make(map[string]int)
-
-	for _, v := range vcInfo.Nodes {
-		rsp.NodeInfo.CountByDeviceType[v.GPUType] += 1
-	}
-
+	rsp.NodeInfo = vcInfo.Nodes
 	rsp.CodePathPrefix = "/home/" + userName + "/"
 
 	return SuccessResp(c, rsp)
