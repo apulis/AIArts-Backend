@@ -145,9 +145,6 @@ func getFDInfo(c *gin.Context) error {
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
-	if fdinfo == (models.FDInfo{}) {
-		return ServeError(FDINFO_NOT_SET, "fdinfo not set")
-	}
 	data := GetFDInfoResp{FDInfo: fdinfo}
 	return SuccessResp(c, data)
 }
