@@ -17,25 +17,29 @@ type Modelset struct {
 	Description string `gorm:"type:text" json:"description"`
 	Creator     string `gorm:"not null" json:"creator"`
 	Version     string `gorm:"not null" json:"version"`
-	Path        string `gorm:"type:text" json:"path"`
 	Status      string `json:"status"`
 	Size        int    `json:"size"`
-
+	//模型类型 图像分类
 	Use        string         `json:"use"`
 	JobId      string         `json:"jobId"`
 	DataFormat string         `json:"dataFormat"`
 	Dataset    string         `json:"dataset,omitempty"`
+	//omitempty 值为空，不编码
 	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
 	EngineType string         `json:"engineType"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
+	//模型路径
+	ModelPath  string           `json:"modelPath"`
+	//模型参数路径
+	ArgumentPath  string           `json:"argumentPath"`
 
 
 }
 
 type ArgumentsItem map[string]string
 
-func ListModelSets(offset, limit int, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	total := 0
 	is_advance := 0
@@ -50,7 +54,8 @@ func ListModelSets(offset, limit int, isAdvance bool, name, status, username str
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	res := db.Debug().Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).Find(&modelsets)
+	orderQueryStr := fmt.Sprintf("%s %s ",orderBy, order)
+	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
 		return modelsets, total, res.Error

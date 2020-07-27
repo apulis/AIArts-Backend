@@ -37,7 +37,7 @@ type pushToFDReq struct {
 }
 
 type lsEdgeInferencesReq struct {
-	PageNum  int `form:"pageNum"`
+	PageNum  int `form:"pageNum,default=1"`
 	PageSize int `form:"pageSize,default=10"`
 }
 

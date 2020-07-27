@@ -9,35 +9,38 @@ const (
 	MODELSET_STATUS_DELETING = "deleting"
 )
 
-func ListModelSets(page, count int, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
+func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
 	limit := count
-	return models.ListModelSets(offset, limit, isAdvance, name, status, username)
+	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
 }
 
-func CreateModelset(isAdvance bool, name, description, creator, version, path, use, jobId, dataFormat string, arguments map[string]string, engineType, precision string) error {
-	size, err := GetDirSize(path)
+func CreateModelset(isAdvance bool, name, description, creator, version, use, jobId,
+	dataFormat string, arguments map[string]string, engineType, precision, modelPath, argumentPath string) error {
+	size, err := GetDirSize(modelPath)
 	if err != nil {
 		return err
 	}
+	//json转换格式
 	var argItem models.ArgumentsItem
-	argItem=arguments
+	argItem = arguments
 	modelset := models.Modelset{
-		Name:        name,
-		Description: description,
-		Creator:     creator,
-		Version:     version,
-		Path:        path,
-		Size:        size,
-		Use:         use,
-		JobId:       jobId,
-		Status:      MODELSET_STATUS_NORMAL,
-		DataFormat: dataFormat,
-		Arguments:   &argItem,
-		EngineType:  engineType,
-		Precision:   precision,
-		IsAdvance:   isAdvance,
+		Name:         name,
+		Description:  description,
+		Creator:      creator,
+		Version:      version,
+		Size:         size,
+		Use:          use,
+		JobId:        jobId,
+		Status:       MODELSET_STATUS_NORMAL,
+		DataFormat:   dataFormat,
+		Arguments:    &argItem,
+		EngineType:   engineType,
+		Precision:    precision,
+		IsAdvance:    isAdvance,
+		ModelPath:    modelPath,
+		ArgumentPath: argumentPath,
 	}
 	return models.CreateModelset(modelset)
 }

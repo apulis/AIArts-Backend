@@ -34,14 +34,12 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.GET("/datasets", wrapper(ListAllDatasets))
 }
 
-
-
-
 // @Summary list projects
 // @Description get projects of data-platform
 // @Produce  json
 // @Param pageNum query int false "page number, from 1"
 // @Param pageSize query int false "count per page"
+// @Param name query string false "select by name"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects [get]
 func GetProjects(c *gin.Context) error {
@@ -119,6 +117,7 @@ func UpdateProject(c *gin.Context) error {
 // @Param projectId path string true "project id"
 // @Param pageNum query int false "page number, from 1"
 // @Param pageSize query int false "count per page"
+// @Param name query string false "select by name"
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets [get]
 func GetDatasets(c *gin.Context) error {
@@ -374,7 +373,7 @@ func ConvertDataFormat(c *gin.Context) error {
 func ConvertSupportFormat(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
-	ret, err := services.ConvertSupportFormat(projectId,dataSetId)
+	ret, err := services.ConvertSupportFormat(projectId, dataSetId)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}

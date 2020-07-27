@@ -210,6 +210,8 @@ definitions:
         type: string
       dataFormat:
         type: string
+      dataset:
+        type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
       description:
@@ -235,10 +237,18 @@ definitions:
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
       use:
-        description: 模型类型 计算机视觉
         type: string
       version:
         type: string
+    type: object
+  models.NodeInfo:
+    properties:
+      countByDeviceType:
+        additionalProperties:
+          type: integer
+        type: object
+      totalNodes:
+        type: integer
     type: object
   models.PostInference:
     properties:
@@ -739,6 +749,8 @@ definitions:
         items:
           $ref: '#/definitions/models.DeviceItem'
         type: array
+      nodeInfo:
+        $ref: '#/definitions/models.NodeInfo'
     type: object
   routers.GetTemplateReq:
     properties:
@@ -819,7 +831,6 @@ definitions:
         type: string
     required:
     - description
-    - isPrivate
     - name
     - path
     type: object
@@ -914,118 +925,6 @@ info:
   contact: {}
   license: {}
 paths:
-  /ai_arts/api/Templates:
-    get:
-      parameters:
-      - description: page number
-        in: query
-        name: pageNum
-        required: true
-        type: integer
-      - description: size per page
-        in: query
-        name: pageSize
-        required: true
-        type: integer
-      - description: 'training module: artsTraining, code module: codeEnv'
-        in: query
-        name: jobType
-        required: true
-        type: string
-      - description: 'public: 1, private: 2'
-        in: query
-        name: scope
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespGetAllTemplate'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: get all templates
-    post:
-      parameters:
-      - description: params
-        in: body
-        name: param
-        required: true
-        schema:
-          $ref: '#/definitions/routers.CreateTemplateReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespCreateTemplate'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: create template
-  /ai_arts/api/Templates/:id:
-    delete:
-      parameters:
-      - description: params
-        in: body
-        name: param
-        required: true
-        schema:
-          $ref: '#/definitions/routers.DeleteTemplateReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespDeleteTemplate'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: delete one template
-    get:
-      parameters:
-      - description: params
-        in: body
-        name: param
-        required: true
-        schema:
-          $ref: '#/definitions/routers.GetTemplateReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespGetTemplate'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: get specific template
   /ai_arts/api/annotations/datasets:
     get:
       description: list all datasets for user
@@ -1058,6 +957,10 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: select by name
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -1148,6 +1051,10 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: select by name
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -1541,6 +1448,56 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get CodeEnv jupyter path
+  /ai_arts/api/codes/upload:
+    post:
+      parameters:
+      - description: upload file key 'data'
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateCodeEnv'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upload code
+  /ai_arts/api/common/jobs/summary:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.UpdateTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetResource'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get job summary
   /ai_arts/api/common/resource:
     get:
       produces:
@@ -1617,13 +1574,15 @@ paths:
         schema:
           type: string
       - description: dataset name
-        in: query
+        in: body
         name: name
-        type: string
+        schema:
+          type: string
       - description: dataset auth
-        in: query
+        in: body
         name: IsPrivate
-        type: boolean
+        schema:
+          type: boolean
       produces:
       - application/json
       responses:
@@ -2238,6 +2197,118 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
+  /ai_arts/api/templates:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 'training module: artsTraining, code module: codeEnv'
+        in: query
+        name: jobType
+        required: true
+        type: string
+      - description: 'public: 1, private: 2'
+        in: query
+        name: scope
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetAllTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get all templates
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create template
+  /ai_arts/api/templates/:id:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespDeleteTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete one template
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get specific template
   /ai_arts/api/trainings:
     get:
       parameters:

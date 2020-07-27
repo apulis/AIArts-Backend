@@ -25,177 +25,6 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ai_arts/api/Templates": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "get all templates",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "page number",
-                        "name": "pageNum",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "size per page",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "training module: artsTraining, code module: codeEnv",
-                        "name": "jobType",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "public: 1, private: 2",
-                        "name": "scope",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetAllTemplate"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "create template",
-                "parameters": [
-                    {
-                        "description": "params",
-                        "name": "param",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/routers.CreateTemplateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespCreateTemplate"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            }
-        },
-        "/ai_arts/api/Templates/:id": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "get specific template",
-                "parameters": [
-                    {
-                        "description": "params",
-                        "name": "param",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/routers.GetTemplateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetTemplate"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "delete one template",
-                "parameters": [
-                    {
-                        "description": "params",
-                        "name": "param",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/routers.DeleteTemplateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespDeleteTemplate"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            }
-        },
         "/ai_arts/api/annotations/datasets": {
             "get": {
                 "description": "list all datasets for user",
@@ -245,6 +74,12 @@ var doc = `{
                         "type": "integer",
                         "description": "count per page",
                         "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "select by name",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -348,6 +183,12 @@ var doc = `{
                         "type": "integer",
                         "description": "count per page",
                         "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "select by name",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -971,6 +812,84 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/codes/upload": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upload code",
+                "parameters": [
+                    {
+                        "description": "upload file key 'data'",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespCreateCodeEnv"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/common/jobs/summary": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get job summary",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.UpdateTemplateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetResource"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/common/resource": {
             "get": {
                 "produces": [
@@ -1088,16 +1007,20 @@ var doc = `{
                         }
                     },
                     {
-                        "type": "string",
                         "description": "dataset name",
                         "name": "name",
-                        "in": "query"
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
-                        "type": "boolean",
                         "description": "dataset auth",
                         "name": "IsPrivate",
-                        "in": "query"
+                        "in": "body",
+                        "schema": {
+                            "type": "boolean"
+                        }
                     }
                 ],
                 "responses": {
@@ -2043,6 +1966,177 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/templates": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get all templates",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "pageNum",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size per page",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "training module: artsTraining, code module: codeEnv",
+                        "name": "jobType",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "public: 1, private: 2",
+                        "name": "scope",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetAllTemplate"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create template",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.CreateTemplateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespCreateTemplate"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/templates/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get specific template",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetTemplateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetTemplate"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete one template",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.DeleteTemplateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespDeleteTemplate"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/trainings": {
             "get": {
                 "produces": [
@@ -2711,6 +2805,9 @@ var doc = `{
                 "dataFormat": {
                     "type": "string"
                 },
+                "dataset": {
+                    "type": "string"
+                },
                 "deletedAt": {
                     "$ref": "#/definitions/models.UnixTime"
                 },
@@ -2748,11 +2845,24 @@ var doc = `{
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
-                    "description": "模型类型 计算机视觉",
                     "type": "string"
                 },
                 "version": {
                     "type": "string"
+                }
+            }
+        },
+        "models.NodeInfo": {
+            "type": "object",
+            "properties": {
+                "countByDeviceType": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "totalNodes": {
+                    "type": "integer"
                 }
             }
         },
@@ -3526,6 +3636,9 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.DeviceItem"
                     }
+                },
+                "nodeInfo": {
+                    "$ref": "#/definitions/models.NodeInfo"
                 }
             }
         },
@@ -3636,7 +3749,6 @@ var doc = `{
             "type": "object",
             "required": [
                 "description",
-                "isPrivate",
                 "name",
                 "path"
             ],
