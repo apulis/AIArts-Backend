@@ -100,7 +100,7 @@ func AddDataset(projectId string, dataset models.UpdateDataSet) error {
 		JSON:    map[string]string{"platform": "label", "id": datasetRes.DatasetId},
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
-	resp2, err := grequests.Post("http://127.0.0.1/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/bind", ro2)
+	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/bind", ro2)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
 		return errors.New(resp2.String())
@@ -151,7 +151,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 		JSON:    map[string]string{"platform": "label", "id": dataSetId},
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
-	resp2, err := grequests.Delete("http://127.0.0.1/ai_arts/api/datasets/"+datasetRes.DataSetBindId+"/unbind", ro2)
+	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+datasetRes.DataSetBindId+"/unbind", ro2)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
 		return errors.New(resp2.String())
