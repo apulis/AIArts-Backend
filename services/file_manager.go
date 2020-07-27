@@ -171,7 +171,7 @@ func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
 		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 		//debug
 		if username == "kaiyuan.xu" {
-			datasetStoragePath = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username, dir)
+			datasetStoragePath = fmt.Sprintf("D:/storage/dataset/%s/storage/%s", username, dir)
 		}
 	}
 	return datasetStoragePath
@@ -225,6 +225,11 @@ func extractZip(fromPath, toPath string) error {
 
 	for _, file := range reader.File {
 		path := filepath.Join(toPath, transformEncode(file.Name))
+		//如果直接递归到底层是文件 比如 /data/pic/train/1.png 那么先要创建pic文件夹
+		//_, err := os.Stat(path)
+		//if err != nil {
+		//	err = os.MkdirAll(path, os.ModeDir|os.ModePerm)
+		//}
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
 			continue

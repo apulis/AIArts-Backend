@@ -184,6 +184,7 @@ func updateDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
+// @Failure 30010 {object} APIException "dataset is still using"
 // @Router /ai_arts/api/datasets/:id [delete]
 func deleteDataset(c *gin.Context) error {
 	var id datasetId
@@ -193,7 +194,7 @@ func deleteDataset(c *gin.Context) error {
 	}
 	err = services.DeleteDataset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(DATASET_IS_STILL_USE_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

@@ -24,7 +24,9 @@ const (
 
 	// dataset
 	//上传大文件template目录满
-	UPLOAD_TEMPDIR_FULL_COD = 30009
+	UPLOAD_TEMPDIR_FULL_CODE = 30009
+	//无法删除正在使用的数据集
+	DATASET_IS_STILL_USE_CODE = 30010
 
 	// user auth
 	NO_USRNAME = 30101

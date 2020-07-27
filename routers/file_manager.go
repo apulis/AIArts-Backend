@@ -38,7 +38,7 @@ func uploadDataset(c *gin.Context) error {
 	//存储文件夹
 	dir := c.PostForm("dir")
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
+		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
@@ -129,7 +129,7 @@ func uploadModelset(c *gin.Context) error {
 	}
 	//存储文件夹
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
+		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	filetype, err := services.CheckFileName(file.Filename)
 	if err != nil {
@@ -175,7 +175,15 @@ func downloadModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	err = services.CheckPathExists(modelset.Path)
+	//如果上传模型文件检查模型文件是否存在
+	if modelset.ModelPath != "" {
+		err = services.CheckPathExists(modelset.ModelPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(modelset.ArgumentPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
