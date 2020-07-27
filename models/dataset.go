@@ -25,28 +25,29 @@ type Dataset struct {
 	Size      int  `json:"size"`
 }
 
-func ListDatasets(offset, limit int, name, status, username string) ([]Dataset, int, error) {
+func ListDatasets(offset, limit int, orderBy, order, name, status, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
 	total := 0
-	//先查询该用户的所有数据中，再擦汗寻以及公开数据集
-	whereQueryStr :=  fmt.Sprintf("creator='%s' ",username)
-	orQueryStr :=  fmt.Sprintf("is_private=0 ")
+	//先查询该用户的所有数据中，再查询公开数据集
+	whereQueryStr := fmt.Sprintf("creator='%s' ", username)
+	orQueryStr := fmt.Sprintf("is_private=0 ")
+	orderQueryStr := fmt.Sprintf("%s %s ", orderBy, order)
 
 	if name != "" {
-		whereQueryStr += fmt.Sprintf("and name='%s' ",name)
-		orQueryStr += fmt.Sprintf("and name='%s' ",name)
+		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
+		orQueryStr += fmt.Sprintf("and name='%s' ", name)
 	}
 
 	if status != "" && status != "all" {
-		whereQueryStr +=  fmt.Sprintf("and status='%s' ",status)
-		orQueryStr +=  fmt.Sprintf("and status='%s' ",status)
+		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
+		orQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
-	res := db.Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).
+	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).
 		Or(orQueryStr).Find(&datasets)
 	if res.Error != nil {
 		return datasets, total, res.Error
 	}
-	db.Model(&Dataset{}).Where(whereQueryStr).Or(orQueryStr).Find(&datasets).Count(&total)
+	db.Model(&Dataset{}).Where(whereQueryStr).Or(orQueryStr).Count(&total)
 	return datasets, total, nil
 }
 

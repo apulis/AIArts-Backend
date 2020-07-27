@@ -39,7 +39,7 @@ type Modelset struct {
 
 type ArgumentsItem map[string]string
 
-func ListModelSets(offset, limit int, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	total := 0
 	is_advance := 0
@@ -54,7 +54,8 @@ func ListModelSets(offset, limit int, isAdvance bool, name, status, username str
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	res := db.Debug().Offset(offset).Limit(limit).Order("created_at desc").Where(whereQueryStr).Find(&modelsets)
+	orderQueryStr := fmt.Sprintf("%s %s ",orderBy, order)
+	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
 		return modelsets, total, res.Error

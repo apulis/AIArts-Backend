@@ -12,10 +12,10 @@ const (
 	DATASET_STATUS_DELETING = "deleting"
 )
 
-func ListDatasets(page, count int, name, status, username string) ([]models.Dataset, int, error) {
+func ListDatasets(page, count int, orderBy, order, name, status, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListDatasets(offset, limit, name, status, username)
+	return models.ListDatasets(offset, limit, orderBy, order, name, status, username)
 }
 func ListDatasetsByName(page, count int, name, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
