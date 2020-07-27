@@ -121,6 +121,10 @@ func createTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
+	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
+		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+	}
+
 	if valid, msg := req.ValidatePathByUser(userName); !valid {
 		return AppError(INVALID_CODE_PATH, msg)
 	}

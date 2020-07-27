@@ -88,6 +88,11 @@ const (
 	JobStatusAll string = "all"
 )
 
+const (
+	TrainingTypeDist    string = "PSDistJob"
+	TrainingTypeRegular string = "RegularJob"
+)
+
 type JobParams struct {
 	Cmd             string `json:"cmd"`
 	ContainerUserId int    `json:"containerUserId"`
