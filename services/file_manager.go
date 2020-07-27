@@ -155,6 +155,11 @@ func CompressFile(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	//权限改为777
+	//err = os.Chmod(path, os.FileMode(777))
+	//if err != nil {
+	//	return "", err
+	//}
 	if _, err := io.Copy(fileToWrite, &buf); err != nil {
 		return "", err
 	}
