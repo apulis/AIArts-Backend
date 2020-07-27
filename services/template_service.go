@@ -98,7 +98,7 @@ func ConvertPath(userName, path string) (string, error) {
 
 	// todo： 从接口读取实际的存储路径
 	newPathPrefix := fmt.Sprintf("/dlwsdata/work/%s/", userName)
-	newPath := fmt.Sprintf("%s/%s", newPathPrefix, strings.TrimLeft(path, pathPrefix))
+	newPath := fmt.Sprintf("%s/%s", newPathPrefix, strings.TrimPrefix(path, pathPrefix))
 
 	if fileInfo, err := os.Stat(newPath); err != nil {
 		return "", err

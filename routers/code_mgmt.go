@@ -105,6 +105,10 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
+	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
+		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+	}
+
 	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

@@ -2,10 +2,11 @@ package routers
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/services"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+
+	"github.com/apulis/AIArtsBackend/services"
+	"github.com/gin-gonic/gin"
 )
 
 func AddGroupFile(r *gin.Engine) {
@@ -23,9 +24,9 @@ type UploadFileResp struct {
 
 // @Summary upload dataset file
 // @Produce  json
-// @Param data form string true "upload file key 'data'"
-// @Param isPrivate form string true "isPrivate key 'isPrivate'"
-// @Param dir form string true "upload file directory 'dir'"
+// @Param data query string true "upload file key 'data'"
+// @Param isPrivate query string true "isPrivate key 'isPrivate'"
+// @Param dir query string true "upload file directory 'dir'"
 // @Success 200 {object} UploadFileResp "success"
 // @Failure 400 {object} APIException "error code:30009,msg:the /tmp direct is full"
 // @Failure 404 {object} APIException "not found"
@@ -38,12 +39,12 @@ func uploadDataset(c *gin.Context) error {
 	//存储文件夹
 	dir := c.PostForm("dir")
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
+		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
-	}	//取消大小限制
+	} //取消大小限制
 	//if services.CheckFileOversize(file.Size) {
 	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
 	//}
@@ -113,7 +114,8 @@ func downloadDataset(c *gin.Context) error {
 
 // @Summary upload model file, not implemented yet
 // @Produce  json
-// @Param data body string true "upload file key 'data'"
+// @Param data query string true "upload file key 'data'"
+// @Param dir query string true "upload file directory 'dir'"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -128,7 +130,7 @@ func uploadModelset(c *gin.Context) error {
 	}
 	//存储文件夹
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_COD, err.Error())
+		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	filetype, err := services.CheckFileName(file.Filename)
 	if err != nil {
@@ -144,7 +146,7 @@ func uploadModelset(c *gin.Context) error {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting extract file")
-	datasetStoragePath := services.GenerateModelStoragePath(dir,username)
+	datasetStoragePath := services.GenerateModelStoragePath(dir, username)
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
@@ -174,11 +176,19 @@ func downloadModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	err = services.CheckPathExists(modelset.Path)
+	//如果上传模型文件检查模型文件是否存在
+	if modelset.ModelPath != "" {
+		err = services.CheckPathExists(modelset.ModelPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(modelset.ArgumentPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	targetPath, err := services.CompressFile(modelset.Path)
+	targetPath, err := services.CompressFile(modelset.ModelPath)
 	if err != nil {
 		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
 	}

@@ -77,7 +77,14 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord strin
 		})
 	}
 
-	return trainings, len(trainings), 1, nil
+	totalJobs := jobList.Meta.TotalJobs
+	totalPages := totalJobs / page
+
+	if (totalJobs % page) != 0 {
+		totalPages += 1
+	}
+
+	return trainings, totalJobs, totalPages, nil
 }
 
 func CreateTraining(userName string, training models.Training) (string, error) {

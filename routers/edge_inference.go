@@ -16,7 +16,7 @@ func AddGroupEdgeInference(r *gin.Engine) {
 	group.GET("/conversion_types", wrapper(getConversionTypes))
 	group.GET("/fdinfo", wrapper(getFDInfo))
 	group.POST("/fdinfo", wrapper(setFDInfo))
-	group.POST("/push/:id", wrapper(pushToFD))
+	group.POST("/push/:jobId", wrapper(pushToFD))
 }
 
 type createEdgeInferenceReq struct {
@@ -33,12 +33,16 @@ type setFDInfoReq struct {
 }
 
 type pushToFDReq struct {
-	JobId string `json:"jobId" binding:"required"`
+	JobId string `uri:"jobId" binding:"required"`
 }
 
 type lsEdgeInferencesReq struct {
-	PageNum  int `form:"pageNum,default=1"`
-	PageSize int `form:"pageSize,default=10"`
+	PageNum             int    `form:"pageNum,default=1"`
+	PageSize            int    `form:"pageSize,default=10"`
+	JobName             string `form:"jobName"`
+	ModelConversionType string `form:"modelconversionType"`
+	OrderBy             string `form:"orderBy"`
+	Order               string `form:"order,default=desc" binding:"oneof=desc asc"`
 }
 
 type GetFDInfoResp struct {
@@ -75,7 +79,7 @@ func lsEdgeInferences(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	conversionList, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username)
+	conversionList, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.OrderBy, req.Order)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
@@ -178,7 +182,7 @@ func setFDInfo(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/edge_inferences/push/:id [post]
+// @Router /ai_arts/api/edge_inferences/push/:jobId [post]
 func pushToFD(c *gin.Context) error {
 	var req pushToFDReq
 	err := c.ShouldBindUri(&req)

@@ -28,6 +28,8 @@ type lsModelsetsReq struct {
 	Name      string `form:"name"`
 	Status    string `form:"status"`
 	IsAdvance bool   `form:"isAdvance"`
+	OrderBy   string `form:"orderBy,default=created_at"`
+	Order     string `form:"order,default=desc"`
 }
 
 type createModelsetReq struct {
@@ -85,7 +87,7 @@ func lsModelsets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.IsAdvance, req.Name, req.Status, username)
+	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.IsAdvance, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

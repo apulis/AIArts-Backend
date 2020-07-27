@@ -28,6 +28,8 @@ type lsDatasetsReq struct {
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
 	Status   string `form:"status"`
+	OrderBy  string `form:"orderBy,default=created_at"`
+	Order    string `form:"order,default=desc"`
 }
 
 type createDatasetReq struct {
@@ -79,7 +81,7 @@ func lsDatasets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.Name, req.Status, username)
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -184,6 +186,7 @@ func updateDataset(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
+// @Failure 30010 {object} APIException "dataset is still using"
 // @Router /ai_arts/api/datasets/:id [delete]
 func deleteDataset(c *gin.Context) error {
 	var id datasetId
@@ -193,7 +196,7 @@ func deleteDataset(c *gin.Context) error {
 	}
 	err = services.DeleteDataset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(DATASET_IS_STILL_USE_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
