@@ -187,7 +187,7 @@ func downloadModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	targetPath, err := services.CompressFile(modelset.Path)
+	targetPath, err := services.CompressFile(modelset.ModelPath)
 	if err != nil {
 		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
 	}
