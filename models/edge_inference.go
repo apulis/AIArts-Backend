@@ -15,14 +15,23 @@ type ConversionList struct {
 	Meta         JobMeta         `json:"meta"`
 	QueuedJobs   []ConversionJob `json:"queuedJobs"`
 	RunningJobs  []ConversionJob `json:"runningJobs"`
+	Total        int             `json:"total"`
 }
 
 type ConversionJob struct {
-	Job
-	InputPath        string `json:"inputPath"`
-	OutputPath       string `json:"outputPath"`
-	ConversionStatus string `json:"modelconversionStatus"`
-	ConversionType   string `json:"modelconversionType"`
+	JobId            string    `json:"jobId"`
+	JobName          string    `json:"jobName"`
+	JobParams        JobParams `json:"jobParams"`
+	JobStatus        string    `json:"jobStatus"`
+	JobTime          string    `json:"jobTime"`
+	JobType          string    `json:"jobType"`
+	Priority         int       `json:"priority"`
+	UserName         string    `json:"userName"`
+	VcName           string    `json:"vcName"`
+	InputPath        string    `json:"inputPath"`
+	OutputPath       string    `json:"outputPath"`
+	ConversionStatus string    `json:"modelconversionStatus"`
+	ConversionType   string    `json:"modelconversionType"`
 }
 
 type ConversionJobId struct {

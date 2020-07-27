@@ -851,7 +851,7 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/common/jobs/summary": {
+        "/ai_arts/api/common/job/summary": {
             "get": {
                 "produces": [
                     "application/json"
@@ -864,7 +864,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/routers.UpdateTemplateReq"
+                            "$ref": "#/definitions/routers.GetJobSummaryReq"
                         }
                     }
                 ],
@@ -1135,6 +1135,12 @@ var doc = `{
                         "description": "success",
                         "schema": {
                             "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "30010": {
+                        "description": "dataset is still using",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
                         }
                     },
                     "400": {
@@ -1420,7 +1426,7 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/edge_inferences/push/:id": {
+        "/ai_arts/api/edge_inferences/push/:jobId": {
             "post": {
                 "produces": [
                     "application/json"
@@ -1539,13 +1545,18 @@ var doc = `{
                 "summary": "upload model file, not implemented yet",
                 "parameters": [
                     {
+                        "type": "string",
                         "description": "upload file key 'data'",
                         "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "upload file directory 'dir'",
+                        "name": "dir",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2793,7 +2804,12 @@ var doc = `{
         "models.Modelset": {
             "type": "object",
             "properties": {
+                "argumentPath": {
+                    "description": "模型参数路径",
+                    "type": "string"
+                },
                 "arguments": {
+                    "description": "omitempty 值为空，不编码",
                     "$ref": "#/definitions/models.ArgumentsItem"
                 },
                 "createdAt": {
@@ -2826,10 +2842,11 @@ var doc = `{
                 "jobId": {
                     "type": "string"
                 },
-                "name": {
+                "modelPath": {
+                    "description": "模型路径",
                     "type": "string"
                 },
-                "path": {
+                "name": {
                     "type": "string"
                 },
                 "precision": {
@@ -2845,6 +2862,7 @@ var doc = `{
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
+                    "description": "模型类型 图像分类",
                     "type": "string"
                 },
                 "version": {
@@ -3009,8 +3027,17 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "jobTrainingType": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
+                },
+                "numPs": {
+                    "type": "integer"
+                },
+                "numPsWorker": {
+                    "type": "integer"
                 },
                 "outputPath": {
                     "type": "string"
@@ -3401,8 +3428,17 @@ var doc = `{
                 "engine": {
                     "type": "string"
                 },
+                "jobTrainingType": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
+                },
+                "numPs": {
+                    "type": "integer"
+                },
+                "numPsWorker": {
+                    "type": "integer"
                 }
             }
         },
@@ -3471,8 +3507,17 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "jobTrainingType": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
+                },
+                "numPs": {
+                    "type": "integer"
+                },
+                "numPsWorker": {
+                    "type": "integer"
                 },
                 "outputPath": {
                     "type": "string"
@@ -3608,6 +3653,14 @@ var doc = `{
                 }
             }
         },
+        "routers.GetJobSummaryReq": {
+            "type": "object",
+            "properties": {
+                "jobType": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.GetModelsetResp": {
             "type": "object",
             "properties": {
@@ -3685,8 +3738,17 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "jobTrainingType": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
+                },
+                "numPs": {
+                    "type": "integer"
+                },
+                "numPsWorker": {
+                    "type": "integer"
                 },
                 "outputPath": {
                     "type": "string"
@@ -3793,11 +3855,13 @@ var doc = `{
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
-                "jobId",
-                "name",
-                "path"
+                "argumentPath",
+                "name"
             ],
             "properties": {
+                "argumentPath": {
+                    "type": "string"
+                },
                 "arguments": {
                     "type": "object",
                     "additionalProperties": {
@@ -3819,10 +3883,10 @@ var doc = `{
                 "jobId": {
                     "type": "string"
                 },
-                "name": {
+                "modelPath": {
                     "type": "string"
                 },
-                "path": {
+                "name": {
                     "type": "string"
                 },
                 "precision": {
