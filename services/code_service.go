@@ -81,7 +81,7 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord string
 	totalJobs := jobList.Meta.TotalJobs
 	totalPages := totalJobs / page
 
-	if totalJobs%page != 0 {
+	if (totalJobs % page) != 0 {
 		totalPages += 1
 	}
 

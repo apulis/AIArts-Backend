@@ -80,7 +80,7 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord strin
 	totalJobs := jobList.Meta.TotalJobs
 	totalPages := totalJobs / page
 
-	if totalJobs%page != 0 {
+	if (totalJobs % page) != 0 {
 		totalPages += 1
 	}
 
