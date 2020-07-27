@@ -14,7 +14,7 @@ var BackendUrl string
 func GetProjects(queryStringParameters models.QueryStringParamInterface) ([]models.Project, int, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
+		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token, "Host": "127.0.0.1"},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+queryStringParameters.GetName(), ro)
 	if resp.StatusCode != 200 {
@@ -70,10 +70,9 @@ func UpdateProject(project models.Project, projectId string) error {
 func GetDatasets(projectId string, queryStringParameters models.QueryStringParamInterface) ([]models.DataSet, int, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
+		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token, "Host": "127.0.0.1"},
 	}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+queryStringParameters.GetName(), ro)
-	logger.Info(BackendUrl + "/api/projects/" + projectId + "/datasets?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + queryStringParameters.GetName())
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New(resp.String())
