@@ -199,20 +199,20 @@ func uploadCode(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	outputDir, err := services.ConvertPath(userName, codePath)
-	if err != nil {
-		return AppError(INVALID_CODE_PATH, err.Error())
-	}
+	//outputDir, err := services.ConvertPath(userName, codePath)
+	//if err != nil {
+	//	return AppError(INVALID_CODE_PATH, err.Error())
+	//}
 
 	logger.Info("starting saving file")
-	err = c.SaveUploadedFile(file, outputDir)
+	err = c.SaveUploadedFile(file, codePath)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
 
 	logger.Info("starting change file mode")
 
-	filePath := fmt.Sprintf("%s/%s", outputDir, file.Filename)
+	filePath := fmt.Sprintf("%s/%s", codePath, file.Filename)
 	if err = services.UploadDone(userName, filePath); err != nil {
 		return AppError(COMPLETE_UPLOAD_ERR, err.Error())
 	}
