@@ -104,7 +104,7 @@ func getResource(c *gin.Context) error {
 
 // @Summary get job summary
 // @Produce  json
-// @Param param body UpdateTemplateReq true "params"
+// @Param param body GetJobSummaryReq true "params"
 // @Success 200 {object} APISuccessRespGetResource "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
