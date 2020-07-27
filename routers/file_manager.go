@@ -113,7 +113,8 @@ func downloadDataset(c *gin.Context) error {
 
 // @Summary upload model file, not implemented yet
 // @Produce  json
-// @Param data body string true "upload file key 'data'"
+// @Param data form string true "upload file key 'data'"
+// @Param dir form string true "upload file directory 'dir'"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
