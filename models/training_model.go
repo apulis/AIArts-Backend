@@ -5,24 +5,28 @@ import (
 )
 
 type Training struct {
-	Id              string `json:"id"`
-	Name 			string `json:"name"`
-	Engine          string `json:"engine"`
-	DeviceType		string `json:"deviceType"`
-	DeviceNum 		int `json:"deviceNum"`
-	CodePath		string `json:"codePath"`
-	StartupFile		string `json:"startupFile"`
-	OutputPath		string `json:"outputPath"`
-	DatasetPath		string `json:"datasetPath"`
-	Params 			map[string]string `json:"params"`
-	Desc 			string `json:"desc"`
-	Status 			string `json:"status"`
-	CreateTime		string `json:"createTime"`
+	Id          string            `json:"id"`
+	Name        string            `json:"name"`
+	Engine      string            `json:"engine"`
+	DeviceType  string            `json:"deviceType"`
+	DeviceNum   int               `json:"deviceNum"`
+	CodePath    string            `json:"codePath"`
+	StartupFile string            `json:"startupFile"`
+	OutputPath  string            `json:"outputPath"`
+	DatasetPath string            `json:"datasetPath"`
+	Params      map[string]string `json:"params"`
+	Desc        string            `json:"desc"`
+	Status      string            `json:"status"`
+	CreateTime  string            `json:"createTime"`
+
+	JobTrainingType string `json:"jobTrainingType"`
+	NumPs           int    `json:"numPs"`
+	NumPsWorker     int    `json:"numPsWorker"`
 }
 
 func ValidHomePath(userName, path string) bool {
 	path = strings.TrimSpace(path)
-	usrHome := "/home/"+userName
+	usrHome := "/home/" + userName
 
 	if !strings.HasPrefix(path, usrHome) {
 		return false
@@ -37,7 +41,7 @@ func (t *Training) ValidatePathByUser(userName string) (bool, string) {
 		return false, "启动文件非python"
 	}
 
-	if !ValidHomePath(userName, t.StartupFile)  {
+	if !ValidHomePath(userName, t.StartupFile) {
 		return false, "启动文件路径错误"
 	}
 
@@ -50,5 +54,4 @@ func (t *Training) ValidatePathByUser(userName string) (bool, string) {
 	}
 
 	return true, ""
-} 
-
+}

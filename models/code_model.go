@@ -20,4 +20,8 @@ type CreateCodeEnv struct {
 	DeviceType string `json:"deviceType"`
 	DeviceNum  int    `json:"deviceNum"`
 	Desc       string `json:"desc"`
+
+	JobTrainingType string `json:"jobTrainingType"`
+	NumPs           int    `json:"numPs"`
+	NumPsWorker     int    `json:"numPsWorker"`
 }

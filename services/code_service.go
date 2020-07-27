@@ -100,7 +100,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["cmd"] = "sleep infinity"
 
 	params["containerUserId"] = 0
-	params["jobtrainingtype"] = "RegularJob"
+	params["jobtrainingtype"] = codeEnv.JobTrainingType //"RegularJob"
 	params["preemptionAllowed"] = false
 	params["workPath"] = ""
 
@@ -112,6 +112,9 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
+
+	params["numworker"] = codeEnv.NumPs
+	params["numps"] = codeEnv.NumPsWorker
 
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName
