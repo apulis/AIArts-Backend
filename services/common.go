@@ -25,16 +25,16 @@ func GetResource(userName string) (*models.VcInfo, error) {
 	return vcInfo, nil
 }
 
-func GetJobSummary(userName, jobType string) (*models.VcInfo, error) {
+func GetJobSummary(userName, jobType string) (map[string]int, error) {
 
 	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s", configs.Config.DltsUrl, userName, jobType)
-	vcInfo := &models.VcInfo{}
+	summary := make(map[string]int)
 
-	err := DoRequest(url, "GET", nil, nil, vcInfo)
+	err := DoRequest(url, "GET", nil, nil, &summary)
 	if err != nil {
-		fmt.Printf("get resource err[%+v]\n", err)
+		fmt.Printf("get job summary err[%+v]\n", err)
 		return nil, err
 	}
 
-	return vcInfo, nil
+	return summary, nil
 }

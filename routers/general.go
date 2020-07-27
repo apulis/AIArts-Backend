@@ -123,22 +123,10 @@ func getJobSummary(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	vcInfo, err := services.GetJobSummary(userName, req.JobType)
+	summary, err := services.GetJobSummary(userName, req.JobType)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	rsp := &GetResourceRsp{}
-	rsp.AIFrameworks = make(map[string][]string)
-
-	rsp.NodeInfo.TotalNodes = len(vcInfo.Nodes)
-	rsp.NodeInfo.CountByDeviceType = make(map[string]int)
-
-	for _, v := range vcInfo.Nodes {
-		rsp.NodeInfo.CountByDeviceType[v.GPUType] += 1
-	}
-
-	rsp.CodePathPrefix = "/home/" + userName + "/"
-
-	return SuccessResp(c, rsp)
+	return SuccessResp(c, summary)
 }

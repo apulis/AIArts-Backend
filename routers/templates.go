@@ -68,7 +68,7 @@ type GetTemplateReq struct {
 // @Success 200 {object} APISuccessRespGetAllTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [get]
+// @Router /ai_arts/api/templates [get]
 func getAllTemplates(c *gin.Context) error {
 
 	var req GetAllTemplateReq
@@ -103,7 +103,7 @@ func getAllTemplates(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespCreateTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [post]
+// @Router /ai_arts/api/templates [post]
 func createTemplate(c *gin.Context) error {
 
 	var req CreateTemplateReq
@@ -133,7 +133,7 @@ func createTemplate(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates [update]
+// @Router /ai_arts/api/templates [update]
 func updateTemplate(c *gin.Context) error {
 
 	var req UpdateTemplateReq
@@ -162,7 +162,7 @@ func updateTemplate(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates/:id [get]
+// @Router /ai_arts/api/templates/:id [get]
 func getTemplate(c *gin.Context) error {
 
 	var id GetTemplateReq
@@ -209,7 +209,7 @@ func getTemplate(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespDeleteTemplate "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/Templates/:id [delete]
+// @Router /ai_arts/api/templates/:id [delete]
 func delTemplate(c *gin.Context) error {
 
 	var id DeleteTemplateReq
