@@ -20,15 +20,20 @@ type Modelset struct {
 	Path        string `gorm:"type:text" json:"path"`
 	Status      string `json:"status"`
 	Size        int    `json:"size"`
-
+	//模型类型 图像分类
 	Use        string         `json:"use"`
 	JobId      string         `json:"jobId"`
 	DataFormat string         `json:"dataFormat"`
 	Dataset    string         `json:"dataset,omitempty"`
+	//omitempty 值为空，不编码
 	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
 	EngineType string         `json:"engineType"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
+	//模型路径
+	ModelPath  string           `json:"modelPath"`
+	//模型参数路径
+	ArgumentPath  string           `json:"argumentPath"`
 
 
 }

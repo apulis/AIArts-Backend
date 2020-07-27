@@ -96,6 +96,19 @@ func GetDatasetTempPath(filetype string) (string, error) {
 	datasetTempPath := fmt.Sprintf("%s/%d%s", datasetTempDir, time.Now().UnixNano(), filetype)
 	return datasetTempPath, nil
 }
+func GetModelTempPath(filetype string) (string, error) {
+	fileConf := configs.Config.File
+	modelTempDir := fileConf.ModelDir + "/tmp"
+	_, err := os.Stat(modelTempDir)
+	if err != nil {
+		err = os.MkdirAll(modelTempDir, os.ModeDir|os.ModePerm)
+		if err != nil {
+			return "", err
+		}
+	}
+	modelTempPath := fmt.Sprintf("%s/%d%s", modelTempDir, time.Now().UnixNano(), filetype)
+	return modelTempPath, nil
+}
 
 func CompressFile(path string) (string, error) {
 	fileInfo, err := os.Stat(path)
@@ -148,21 +161,32 @@ func CompressFile(path string) (string, error) {
 	return targetPath, nil
 }
 
-func ExtractFile(fromPath, filetype, dir, isPrivate, username string) (string, error) {
-	var datasetStorageDir string
+func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
+	var datasetStoragePath string
 	fileConf := configs.Config.File
+	//直接使用前端上传的path
 	if isPrivate == "false" {
-		datasetStorageDir = fileConf.DatasetDir + "/storage/" + dir
+		datasetStoragePath = fileConf.DatasetDir + "/storage/" + dir
 	} else {
-		datasetStorageDir = fmt.Sprintf("/home/%s/storage/%s", username,dir)
+		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 		//debug
-		if username=="kaiyuan.xu"{
-			datasetStorageDir = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username,dir)
+		if username == "kaiyuan.xu" {
+			datasetStoragePath = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username, dir)
 		}
 	}
+	return datasetStoragePath
+}
+func GenerateModelStoragePath(dir , username string) string {
+	var datasetStoragePath string
 	//直接使用前端上传的path
-	datasetStoragePath:=datasetStorageDir
-	//datasetStoragePath := fmt.Sprintf("%s/%d", datasetStorageDir, time.Now().UnixNano())
+	//debug
+	if username == "kaiyuan.xu" {
+		datasetStoragePath = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username, dir)
+	}
+	datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
+	return datasetStoragePath
+}
+func ExtractFile(fromPath, filetype, datasetStoragePath string) (string, error) {
 	_, err := os.Stat(datasetStoragePath)
 	if err != nil {
 		err = os.MkdirAll(datasetStoragePath, os.ModeDir|os.ModePerm)
