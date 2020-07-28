@@ -19,14 +19,13 @@ func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*
 	var templates []*models.Templates
 
 	// 用户私有 + 公有
-	if scope == models.TemplateUserPublic {
+	if scope == models.TemplatePublic {
 
-		query = "scope = ? or creator = ?"
-		if templates, err = provider.FindPage("", (page-1)*size, size, query, scope, userName); err != nil {
+		query = "scope in (?, ?) and job_type = ?"
+		if templates, err = provider.FindPage("", (page-1)*size, size, query, models.TemplatePublic, models.TemplatePredefined, jobType); err != nil {
 			return nil, 0, 0, err
 		}
-		// public
-	} else if scope == models.TemplatePublic || scope == models.TemplatePredefined {
+	} else if scope == models.TemplatePredefined {
 
 		query = "scope = ? and job_type = ?"
 		if templates, err = provider.FindPage("", (page-1)*size, size, query, scope, jobType); err != nil {

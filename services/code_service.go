@@ -121,8 +121,8 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
-	params["numworker"] = codeEnv.NumPs
-	params["numps"] = codeEnv.NumPsWorker
+	params["numpsworker"] = codeEnv.NumPsWorker
+	params["numps"] = codeEnv.NumPs
 
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName

@@ -102,21 +102,18 @@ type NodeInfo struct {
 
 // 模板类别
 const (
-	TemplatePublic     int = 1
-	TemplatePrivate    int = 2
-	TemplateUserPublic int = 3 // 读取用户列表兼公共列表
+	TemplatePublic     int = 1 // 公有
+	TemplatePrivate    int = 2 // 用户私有
 	TemplatePredefined int = 4 // 预置参数
 )
 
 // 以下结构体用于和DLTS平台交互
 const (
-	JobTypeTraining     string = "training"     // 老DLTS默认采用的jobType
-	JobTypeArtsTraining string = "artsTraining" // 供电局项目：模型训练
+	JobTypeTraining       string = "training"       // 老DLTS默认采用的jobType
+	JobTypeArtsTraining   string = "artsTraining"   // 供电局项目：模型训练
 	JobTypeArtsEvaluation string = "artsEvaluation" // 供电局项目：模型评估
-
-	JobTypeCodeEnv      string = "codeEnv"      // 供电局项目：代码环境
-
-	JobStatusAll string = "all"
+	JobTypeCodeEnv        string = "codeEnv"        // 供电局项目：代码环境
+	JobStatusAll          string = "all"
 )
 
 const (

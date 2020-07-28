@@ -21,10 +21,11 @@ type GetResourceReq struct {
 }
 
 type GetResourceRsp struct {
-	AIFrameworks   map[string][]string `json:"aiFrameworks"`
-	DeviceList     []models.DeviceItem `json:"deviceList"`
-	NodeInfo       []models.NodeStatus `json:"nodeInfo"`
-	CodePathPrefix string              `json:"codePathPrefix"`
+	AIFrameworks          map[string][]string `json:"aiFrameworks"`
+	DeviceList            []models.DeviceItem `json:"deviceList"`
+	NodeInfo              []models.NodeStatus `json:"nodeInfo"`
+	CodePathPrefix        string              `json:"codePathPrefix"`
+	NodeCountByDeviceType map[string]int      `json:"nodeCountByDeviceType"`
 }
 
 type GetJobSummaryReq struct {
