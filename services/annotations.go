@@ -19,7 +19,6 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	}
 
 	name, err := url.Parse(queryStringParameters.GetName())
-	logger.Info(queryStringParameters, name, queryStringParameters.GetName())
 	url := BackendUrl + "/api/projects?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
 	if queryStringParameters.OrderBy != "" {
 		url += "&orderBy=" + queryStringParameters.OrderBy

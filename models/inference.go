@@ -47,5 +47,5 @@ func (queryStringParameters QueryStringParametersV2) GetPageSize() int {
 }
 
 func (queryStringParameters QueryStringParametersV2) GetName() string {
-	return strings.Trim(strings.Trim(strings.Trim(queryStringParameters.Name, "\n"), " "), "\n")
+	return strings.TrimSpace(queryStringParameters.Name)
 }
