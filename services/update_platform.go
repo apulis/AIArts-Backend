@@ -147,7 +147,7 @@ func GetLocalUpgradeEnv() (bool, bool, error) {
 	if !isFileExists(upgradeFilePath) {
 		canUpgrade = false
 	}
-	return canUpgrade, false, nil
+	return canUpgrade, true, nil
 }
 
 func GetCurrentVersion() (models.VersionInfoSet, error) {
