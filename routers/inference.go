@@ -68,6 +68,7 @@ func ListInferenceJob(c *gin.Context) error {
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
+	logger.Info(queryStringParameters)
 	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
@@ -160,11 +161,11 @@ func Infer(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	signature_name := c.Query("signature_name")
 	file, err := c.FormFile("image")
-	content,_:= file.Open()
+	content, _ := file.Open()
 	defer content.Close()
 	buf := bytes.NewBuffer(nil)
 	io.Copy(buf, content)
-	resp, err := services.Infer(jobId, signature_name,buf.Bytes())
+	resp, err := services.Infer(jobId, signature_name, buf.Bytes())
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
