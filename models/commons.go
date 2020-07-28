@@ -183,6 +183,7 @@ type JobList struct {
 	Meta         JobMeta `json:"meta"`
 	QueuedJobs   []*Job  `json:"queuedJobs"`
 	RunningJobs  []*Job  `json:"runningJobs"`
+	AllJobs      []*Job  `json:"allJobs"`
 }
 
 type NodeStatus struct {
