@@ -232,4 +232,4 @@ type EndpointWrapper struct {
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
 var UPGRADE_CONFIG_FILE = "version.yaml"
 var Upgrade_Progress = -1
-var Log_Line_Point = 1
+var Log_Line_Point = 0

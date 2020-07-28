@@ -21,6 +21,7 @@ func GetUpgradeLog() (string, string, error) {
 	case 100:
 		status = "success"
 		models.Upgrade_Progress = -1
+		models.Log_Line_Point = 0
 	default:
 		status = "upgrading"
 		Log, err = acquireLog()
@@ -54,7 +55,7 @@ func acquireLog() (string, error) {
 
 	if lineCount > models.Log_Line_Point {
 		fmt.Println("latest line: " + strconv.Itoa(lineCount) + "; old line: " + strconv.Itoa(models.Log_Line_Point))
-		cmd = exec.Command("/bin/sh", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+		cmd = exec.Command("/bin/sh", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point+1)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
 		models.Log_Line_Point = lineCount
 		log, err := cmd.Output()
 		if err != nil {
