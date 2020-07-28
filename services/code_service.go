@@ -40,33 +40,7 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, order
 	}
 
 	codes := make([]*models.CodeEnvItem, 0)
-	for _, v := range jobList.RunningJobs {
-		codes = append(codes, &models.CodeEnvItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.CodePath,
-			Status:     v.JobStatus,
-			CreateTime: v.JobTime,
-			JupyterUrl: "",
-			Desc:       v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.QueuedJobs {
-		codes = append(codes, &models.CodeEnvItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.CodePath,
-			Status:     v.JobStatus,
-			CreateTime: v.JobTime,
-			JupyterUrl: "",
-			Desc:       v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.FinishedJobs {
+	for _, v := range jobList.AllJobs {
 		codes = append(codes, &models.CodeEnvItem{
 			Id:         v.JobId,
 			Name:       v.JobName,

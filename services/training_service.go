@@ -24,7 +24,7 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 	}
 
 	trainings := make([]*models.Training, 0)
-	for _, v := range jobList.RunningJobs {
+	for _, v := range jobList.AllJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -32,42 +32,6 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 			DeviceType:  v.JobParams.GpuType,
 			CodePath:    v.JobParams.CodePath,
 			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			Desc:        v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.QueuedJobs {
-		trainings = append(trainings, &models.Training{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			CodePath:    v.JobParams.CodePath,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			Desc:        v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.FinishedJobs {
-		trainings = append(trainings, &models.Training{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			CodePath:    v.JobParams.CodePath,
 			StartupFile: v.JobParams.StartupFile,
 			OutputPath:  v.JobParams.OutputPath,
 			DatasetPath: v.JobParams.DatasetPath,
