@@ -133,7 +133,7 @@ func (queryStringParameters QueryStringParameters) GetPageSize() int {
 }
 
 func (queryStringParameters QueryStringParameters) GetName() string {
-	return queryStringParameters.Name
+	return strings.Trim(strings.Trim(strings.Trim(queryStringParameters.Name, "\n"), " "), "\n")
 }
 
 type QueryStringParamInterface interface {

@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 type PostInference struct {
 	UserName        string `json:"userName"`
 	Image           string `json:"image"`
@@ -45,5 +47,5 @@ func (queryStringParameters QueryStringParametersV2) GetPageSize() int {
 }
 
 func (queryStringParameters QueryStringParametersV2) GetName() string {
-	return queryStringParameters.Name
+	return strings.Trim(strings.Trim(strings.Trim(queryStringParameters.Name, "\n"), " "), "\n")
 }
