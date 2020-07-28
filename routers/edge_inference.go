@@ -79,12 +79,11 @@ func lsEdgeInferences(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	conversionList, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.OrderBy, req.Order)
+	conversionList, total, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.OrderBy, req.Order)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 
-	total := len(conversionList)
 	res := LsEdgeInferencesResp{
 		EdgeInferences: conversionList,
 		Total:          total,
