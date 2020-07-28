@@ -70,7 +70,7 @@ func CheckFileOversize(size int64) bool {
 	return true
 }
 
-func GetDirSize(path string) (int, error) {
+func GetDirSize(path string) (int64, error) {
 	var size int64
 	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -81,7 +81,7 @@ func GetDirSize(path string) (int, error) {
 		}
 		return err
 	})
-	return int(size), err
+	return size, err
 }
 
 func GetDatasetTempPath(filetype string) (string, error) {
