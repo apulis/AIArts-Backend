@@ -25,7 +25,19 @@ func init() {
 	createTableIfNotExists(VersionInfoSet{})
 	createTableIfNotExists(Templates{})
 }
+//驼峰转下划线形式
+func CamelToCase(name string) string {
+	var upperStr string
+	for _,v := range name{
+		if v >= 65 && v <= 90 {
+			upperStr += "_"+string(v+32)
+		}else{
+			upperStr+=string(v)
+		}
 
+	}
+	return upperStr
+}
 func createTableIfNotExists(modelType interface{}) {
 	val := reflect.Indirect(reflect.ValueOf(modelType))
 	modelName := val.Type().Name()

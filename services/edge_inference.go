@@ -8,7 +8,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, order string) ([]models.ConversionJob, error) {
+func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, order string) ([]models.ConversionJob, int, error) {
 	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d", configs.Config.DltsUrl, models.DefaultVcName, user, pageNum, pageSize)
 	if jobName != "" {
 		url = url + fmt.Sprintf("&jobName=%s", jobName)
@@ -20,14 +20,14 @@ func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, o
 		url = url + fmt.Sprintf("&orderBy=%s", orderBy)
 	}
 	if order != "" {
-		url = url + fmt.Sprintf("order=%s", order)
+		url = url + fmt.Sprintf("&order=%s", order)
 	}
 
 	var resp models.ConversionList
 	var res []models.ConversionJob
 	err := DoRequest(url, "GET", nil, nil, &resp)
 	if err != nil {
-		return res, err
+		return res, 0, err
 	}
 
 	for _, v := range resp.QueuedJobs {
@@ -40,7 +40,7 @@ func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, o
 		res = append(res, v)
 	}
 
-	return res, err
+	return res, resp.Total, err
 }
 
 func CreateEdgeInference(jobName, inputPath, outputPath, convType, userName string) (string, error) {

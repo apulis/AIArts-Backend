@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io"
@@ -175,20 +176,24 @@ func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
 	} else {
 		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 		//debug
-		if username == "kaiyuan.xu" {
-			datasetStoragePath = fmt.Sprintf("D:/storage/dataset/%s/storage/%s", username, dir)
+		if gin.Mode() == "debug" {
+			if username == "kaiyuan.xu" {
+				datasetStoragePath = fmt.Sprintf("D:/storage/dataset/%s/storage/%s", username, dir)
+			}
 		}
 	}
 	return datasetStoragePath
 }
 func GenerateModelStoragePath(dir , username string) string {
 	var datasetStoragePath string
+	datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 	//直接使用前端上传的path
 	//debug
-	if username == "kaiyuan.xu" {
-		datasetStoragePath = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username, dir)
+	if gin.Mode() == "debug" {
+		if username == "kaiyuan.xu" {
+			datasetStoragePath = fmt.Sprintf("D:/work/tmp/%s/storage/%s", username, dir)
+		}
 	}
-	datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 	return datasetStoragePath
 }
 func ExtractFile(fromPath, filetype, datasetStoragePath string) (string, error) {

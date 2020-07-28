@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"reflect"
 )
 
@@ -54,9 +55,11 @@ func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name,
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	orderQueryStr := fmt.Sprintf("%s %s ",orderBy, order)
-	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
-
+	orderQueryStr := fmt.Sprintf("%s %s ",CamelToCase(orderBy), order)
+	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+	if gin.Mode() == "debug" {
+		res = db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+	}
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
