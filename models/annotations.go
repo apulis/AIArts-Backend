@@ -116,14 +116,14 @@ type QueryStringParameters struct {
 }
 
 func (queryStringParameters QueryStringParameters) GetPageNum() int {
-	if queryStringParameters.Page <= 0 {
+	if queryStringParameters.Page < 0 {
 		return 1
 	}
 	return queryStringParameters.Page
 }
 
 func (queryStringParameters QueryStringParameters) GetPageSize() int {
-	if queryStringParameters.Size <= 0 {
+	if queryStringParameters.Size < 0 {
 		return 5
 	}
 	if queryStringParameters.Size >= 100 {

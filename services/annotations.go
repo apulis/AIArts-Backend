@@ -290,7 +290,6 @@ func ListAllDatasets(queryStringParameters models.QueryStringParamInterface) ([]
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
-	logger.Info(queryStringParameters.GetPageNum(), queryStringParameters.GetPageSize())
 	resp, err := grequests.Get(BackendUrl+"/api/listDatasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())

@@ -28,14 +28,14 @@ type QueryStringParametersV2 struct {
 }
 
 func (queryStringParameters QueryStringParametersV2) GetPageNum() int {
-	if queryStringParameters.PageNum <= 0 {
+	if queryStringParameters.PageNum < 0 {
 		return 1
 	}
 	return queryStringParameters.PageNum
 }
 
 func (queryStringParameters QueryStringParametersV2) GetPageSize() int {
-	if queryStringParameters.PageSize <= 0 {
+	if queryStringParameters.PageSize < 0 {
 		return 5
 	}
 	if queryStringParameters.PageSize >= 100 {
