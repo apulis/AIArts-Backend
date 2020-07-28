@@ -35,7 +35,7 @@ type getEvaluationResp struct {
 	OutputPath   string `json:"outputPath"`
 	CreatedAt    string `json:"createdAt"`
 	Status       string `json:"status"`
-	DatasetName  string `json:"DatasetName"`
+	DatasetName  string `json:"datasetName"`
 	ArgumentPath string `json:"argumentPath"`
 	Log          string `json:"log"`
 }
@@ -296,7 +296,7 @@ func getEvaluation(c *gin.Context) error {
 	data := getEvaluationResp{
 		ModelName:   modelset.Name,
 		EngineType:  job.Engine,
-		DeviceType:  job.DatasetPath,
+		DeviceType:  job.DeviceType,
 		DeviceNum:   job.DeviceNum,
 		CreatedAt:   job.CreateTime,
 		Status:      job.Status,
