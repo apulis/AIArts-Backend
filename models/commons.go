@@ -25,14 +25,15 @@ func init() {
 	createTableIfNotExists(VersionInfoSet{})
 	createTableIfNotExists(Templates{})
 }
+
 //驼峰转下划线形式
 func CamelToCase(name string) string {
 	var upperStr string
-	for _,v := range name{
+	for _, v := range name {
 		if v >= 65 && v <= 90 {
-			upperStr += "_"+string(v+32)
-		}else{
-			upperStr+=string(v)
+			upperStr += "_" + string(v+32)
+		} else {
+			upperStr += string(v)
 		}
 
 	}
@@ -88,7 +89,7 @@ type NodeInfo struct {
 const (
 	TemplatePublic     int = 1
 	TemplatePrivate    int = 2
-	TemplateUserPublic int = 3
+	TemplateUserPublic int = 3 // 读取用户列表兼公共列表
 )
 
 // 以下结构体用于和DLTS平台交互
@@ -189,6 +190,10 @@ type UriJobId struct {
 	Id string `uri:"id" binding:"required"`
 }
 
+type TemplateId struct {
+	Id int64 `uri:"id" binding:"required"`
+}
+
 type JobLog struct {
 	Cursor string `json:"cursor"`
 	Log    string `json:"log"`
@@ -227,3 +232,4 @@ type EndpointWrapper struct {
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
 var UPGRADE_CONFIG_FILE = "version.yaml"
 var Upgrade_Progress = -1
+var Log_Line_Point = 1

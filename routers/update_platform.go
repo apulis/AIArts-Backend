@@ -9,7 +9,7 @@ import (
 func AddGroupUpdatePlatform(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/version")
 
-	// group.Use(Auth())
+	group.Use(Auth())
 
 	group.GET("/info", wrapper(getVersionInfo))
 	group.GET("/detail/:id", wrapper(getVersionDetailByID))

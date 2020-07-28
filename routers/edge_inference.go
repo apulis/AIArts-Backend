@@ -65,6 +65,10 @@ type CreateEdgeInferenceResp struct {
 // @Produce  json
 // @Param pageNum query int false "page number, from 1"
 // @Param pageSize query int false "count per page"
+// @Param jobName query string false "job name"
+// @Param modelconversionType query string false "model conversion type"
+// @Param orderBy query string false "order by item"
+// @Param order query string false "desc or asc"
 // @Success 200 {object} APISuccessRespLsEdgeInferences "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
