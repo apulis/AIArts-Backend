@@ -31,7 +31,7 @@ func ListDatasets(offset, limit int, orderBy, order, name, status, username stri
 	//先查询该用户的所有数据中，再查询公开数据集
 	whereQueryStr := fmt.Sprintf("creator='%s' ", username)
 	orQueryStr := fmt.Sprintf("is_private=0 ")
-	orderQueryStr := fmt.Sprintf("%s %s ", orderBy, order)
+	orderQueryStr := fmt.Sprintf("%s %s ",CamelToCase(orderBy), order)
 
 	if name != "" {
 		whereQueryStr += fmt.Sprintf("and name='%s' ", name)

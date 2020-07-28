@@ -54,7 +54,7 @@ func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name,
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	orderQueryStr := fmt.Sprintf("%s %s ",orderBy, order)
+	orderQueryStr := fmt.Sprintf("%s %s ",CamelToCase(orderBy), order)
 	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
