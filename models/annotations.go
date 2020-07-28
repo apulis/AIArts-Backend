@@ -108,9 +108,11 @@ type OneTask struct {
 }
 
 type QueryStringParameters struct {
-	Page int    `form:"page"`
-	Size int    `form:"size"`
-	Name string `form:"name"`
+	Page    int    `form:"page"`
+	Size    int    `form:"size"`
+	Name    string `form:"name"`
+	OrderBy string `form:"orderBy"`
+	Order   string `form:"order"`
 }
 
 func (queryStringParameters QueryStringParameters) GetPageNum() int {
