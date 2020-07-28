@@ -7,20 +7,39 @@ import (
 )
 
 func AddGroupModel(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/models")
-
+	group := r.Group("/ai_arts/api")
 	group.Use(Auth())
 
-	group.GET("/", wrapper(lsModelsets))
-	group.GET("/:id", wrapper(getModelset))
-	group.POST("/", wrapper(createModelset))
-	group.POST("/:id", wrapper(updateModelset))
-	group.DELETE("/:id", wrapper(deleteModelset))
+	group.GET("/models/", wrapper(lsModelsets))
+	group.GET("/models/:id", wrapper(getModelset))
+	group.POST("/models/", wrapper(createModelset))
+	group.POST("/models/:id", wrapper(updateModelset))
+	group.DELETE("/models/:id", wrapper(deleteModelset))
+	group.GET("/models/:id/evaluation", wrapper(getEvaluation))
+	group.POST("/models/:id/evaluation", wrapper(createEvaluation))
+
 }
 
 type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
+type createEvaluationResp struct {
+	JobId string `json:"jobId"`
+}
+type getEvaluationResp struct {
+	ModelName    string `json:"modelName"`
+	EngineType   string `json:"engineType"`
+	DeviceType   string `json:"deviceType"`
+	DeviceNum    int    `json:"deviceNum"`
+	StartupFile  string `json:"startupFile"`
+	OutputPath   string `json:"outputPath"`
+	CreatedAt    string `json:"createdAt"`
+	Status       string `json:"status"`
+	DatasetName  string `json:"DatasetName"`
+	ArgumentPath string `json:"argumentPath"`
+	Log          string `json:"log"`
+}
+
 
 type lsModelsetsReq struct {
 	PageNum   int    `form:"pageNum"`
@@ -205,5 +224,85 @@ func deleteModelset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary create Training
+// @Produce json
+// @Param param body CreateEvaluationReq true "params"
+// @Success 200 {object} APISuccessRespCreateTraining "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/models/:id/evaluation [post]
+func createEvaluation(c *gin.Context) error {
+	var req services.CreateEvaluationReq
+	var id int
+	err := c.ShouldBindUri(&id)
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	modelset, err := services.GetModelset(id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	username := getUsername(c)
+
+	jobId, err := services.CreateEvaluation(username, req)
+	if err != nil {
+		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
+	}
+	modelset.DatasetName = req.DatasetName
+
+	modelset.EvaluationId = jobId
+	err = models.UpdateModelset(&modelset)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := createEvaluationResp{
+		JobId: jobId,
+	}
+	return SuccessResp(c, data)
+}
+
+// @Summary get evaluation by modelid
+// @Produce  json
+// @Param id path int true "model id"
+// @Success 200 {object} APISuccessRespGetModelset "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/models/:id/evaluation [get]
+func getEvaluation(c *gin.Context) error {
+	var id int
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	modelset, err := services.GetModelset(id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	username := getUsername(c)
+	job, err := services.GetTraining(username, modelset.EvaluationId)
+	if err != nil {
+		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
+	}
+	log, err := services.GetTrainingLog(username, modelset.EvaluationId)
+	logResp := ""
+	if log != nil {
+		logResp = log.Log
+	}
+
+	data := getEvaluationResp{
+		ModelName:   modelset.Name,
+		EngineType:  job.Engine,
+		DeviceType:  job.DatasetPath,
+		DeviceNum:   job.DeviceNum,
+		CreatedAt:   job.CreateTime,
+		Status:      job.Status,
+		DatasetName: modelset.DatasetName,
+		Log:         logResp,
+	}
+
 	return SuccessResp(c, data)
 }

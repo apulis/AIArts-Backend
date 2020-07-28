@@ -108,9 +108,11 @@ type OneTask struct {
 }
 
 type QueryStringParameters struct {
-	Page int    `form:"page"`
-	Size int    `form:"size"`
-	Name string `form:"name"`
+	Page    int    `form:"page"`
+	Size    int    `form:"size"`
+	Name    string `form:"name"`
+	OrderBy string `form:"orderBy"`
+	Order   string `form:"order"`
 }
 
 func (queryStringParameters QueryStringParameters) GetPageNum() int {
@@ -121,7 +123,7 @@ func (queryStringParameters QueryStringParameters) GetPageNum() int {
 }
 
 func (queryStringParameters QueryStringParameters) GetPageSize() int {
-	if queryStringParameters.Size <= 0 {
+	if queryStringParameters.Size < 0 {
 		return 5
 	}
 	if queryStringParameters.Size >= 100 {
@@ -131,7 +133,7 @@ func (queryStringParameters QueryStringParameters) GetPageSize() int {
 }
 
 func (queryStringParameters QueryStringParameters) GetName() string {
-	return queryStringParameters.Name
+	return strings.TrimSpace(queryStringParameters.Name)
 }
 
 type QueryStringParamInterface interface {

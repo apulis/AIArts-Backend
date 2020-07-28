@@ -40,4 +40,5 @@ require (
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200723000907-a7c6fd066f6d // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 )

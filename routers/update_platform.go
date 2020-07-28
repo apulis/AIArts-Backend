@@ -9,7 +9,7 @@ import (
 func AddGroupUpdatePlatform(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/version")
 
-	// group.Use(Auth())
+	group.Use(Auth())
 
 	group.GET("/info", wrapper(getVersionInfo))
 	group.GET("/detail/:id", wrapper(getVersionDetailByID))
@@ -134,7 +134,7 @@ func upgradeOnline(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/version/upgrade/local [post]
 func upgradeLocal(c *gin.Context) error {
-	err := services.UpgradePlatformByLocal()
+	err := services.UpgradePlatformByLocal(getUsername(c))
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

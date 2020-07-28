@@ -12,13 +12,21 @@ import (
 
 var BackendUrl string
 
-func GetProjects(queryStringParameters models.QueryStringParamInterface) ([]models.Project, int, error) {
+func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.Project, int, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token, "Host": "127.0.0.1"},
 	}
+
 	name, err := url.Parse(queryStringParameters.GetName())
-	resp, err := grequests.Get(BackendUrl+"/api/projects?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+name.String(), ro)
+	url := BackendUrl + "/api/projects?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
+	if queryStringParameters.OrderBy != "" {
+		url += "&orderBy=" + queryStringParameters.OrderBy
+	}
+	if queryStringParameters.OrderBy != "" {
+		url += "&order=" + queryStringParameters.Order
+	}
+	resp, err := grequests.Get(url, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New(resp.String())
@@ -69,14 +77,20 @@ func UpdateProject(project models.Project, projectId string) error {
 	return err
 }
 
-func GetDatasets(projectId string, queryStringParameters models.QueryStringParamInterface) ([]models.DataSet, int, error) {
+func GetDatasets(projectId string, queryStringParameters models.QueryStringParameters) ([]models.DataSet, int, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token, "Host": "127.0.0.1"},
 	}
-
 	name, err := url.Parse(queryStringParameters.GetName())
-	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize())+"&name="+name.String(), ro)
+	requrl := BackendUrl + "/api/projects/" + projectId + "/datasets?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
+	if queryStringParameters.OrderBy != "" {
+		requrl += "&orderBy=" + queryStringParameters.OrderBy
+	}
+	if queryStringParameters.OrderBy != "" {
+		requrl += "&order=" + queryStringParameters.Order
+	}
+	resp, err := grequests.Get(requrl, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New(resp.String())

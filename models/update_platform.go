@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	"strings"
+	"io/ioutil"
 
-	"github.com/spf13/viper"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type VersionInfoSet struct {
@@ -15,16 +15,19 @@ type VersionInfoSet struct {
 
 	Description string `gorm:"type:text" json:"description"`
 	Version     string `gorm:"not null" json:"version"`
+	Creator     string `json:"creator"`
 }
 
 type UpgradeYaml struct {
-	Version       string
-	UpgradeScript string
-	Description   string
+	Version       string `yaml:"Version"`
+	UpgradeScript string `yaml:"UpgradeScript"`
+	Description   string `yaml:"Description"`
+	Creator       string `yaml:"Creator"`
 }
 
 func UploadVersionInfoSet(versionInfo VersionInfoSet) error {
-	return db.Create(&versionInfo).Error
+	return nil
+	//return db.Create(&versionInfo).Error
 }
 
 func GetCurrentVersion() (VersionInfoSet, error) {
@@ -47,14 +50,15 @@ func GetVersionLogs() ([]VersionInfoSet, error) {
 
 func GetUpgradeConfig() (UpgradeYaml, error) {
 	var config UpgradeYaml
-	viper.SetConfigName(strings.Replace(UPGRADE_CONFIG_FILE, ".yaml", "", -1))
-	viper.AddConfigPath(UPGRADE_FILE_PATH)
-	err := viper.ReadInConfig()
+	yamlFile, err := ioutil.ReadFile(UPGRADE_FILE_PATH + "/" + UPGRADE_CONFIG_FILE)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error read upgrade config file: %s \n", err))
+		fmt.Errorf("Fatal error read upgrade config file: %s \n", err)
 		return config, err
 	}
-
-	viper.Unmarshal(&config)
-	return config, err
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		fmt.Errorf("Fatal error unmarsh upgrade config file: %s \n", err)
+		return config, err
+	}
+	return config, nil
 }

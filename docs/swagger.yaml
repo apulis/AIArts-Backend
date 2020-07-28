@@ -247,14 +247,18 @@ definitions:
       version:
         type: string
     type: object
-  models.NodeInfo:
+  models.NodeStatus:
     properties:
-      countByDeviceType:
+      gpu_allocatable:
         additionalProperties:
           type: integer
         type: object
-      totalNodes:
-        type: integer
+      gpu_capacity:
+        additionalProperties:
+          type: integer
+        type: object
+      gpuType:
+        type: string
     type: object
   models.PostInference:
     properties:
@@ -779,7 +783,9 @@ definitions:
           $ref: '#/definitions/models.DeviceItem'
         type: array
       nodeInfo:
-        $ref: '#/definitions/models.NodeInfo'
+        items:
+          $ref: '#/definitions/models.NodeStatus'
+        type: array
     type: object
   routers.GetTemplateReq:
     properties:
@@ -1782,6 +1788,22 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: job name
+        in: query
+        name: jobName
+        type: string
+      - description: model conversion type
+        in: query
+        name: modelconversionType
+        type: string
+      - description: order by item
+        in: query
+        name: orderBy
+        type: string
+      - description: desc or asc
+        in: query
+        name: order
+        type: string
       produces:
       - application/json
       responses:
