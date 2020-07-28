@@ -17,7 +17,9 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token, "Host": "127.0.0.1"},
 	}
+
 	name, err := url.Parse(queryStringParameters.GetName())
+	logger.Info(queryStringParameters, name)
 	url := BackendUrl + "/api/projects?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
 	if queryStringParameters.OrderBy != "" {
 		url += "&orderBy=" + queryStringParameters.OrderBy
