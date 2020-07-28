@@ -79,6 +79,7 @@ func GetUpgradeProgress() (string, int) {
 	case 100:
 		status = "success"
 		models.Upgrade_Progress = -1
+		models.Log_Line_Point = 1
 	default:
 		status = "upgrading"
 	}
