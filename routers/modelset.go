@@ -229,7 +229,7 @@ func deleteModelset(c *gin.Context) error {
 
 // @Summary create Training
 // @Produce json
-// @Param param body CreateEvaluationReq true "params"
+// @Param param body services.CreateEvaluationReq true "params"
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
