@@ -1272,6 +1272,30 @@ var doc = `{
                         "description": "count per page",
                         "name": "pageSize",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "job name",
+                        "name": "jobName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "model conversion type",
+                        "name": "modelconversionType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order by item",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "desc or asc",
+                        "name": "order",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2870,17 +2894,23 @@ var doc = `{
                 }
             }
         },
-        "models.NodeInfo": {
+        "models.NodeStatus": {
             "type": "object",
             "properties": {
-                "countByDeviceType": {
+                "gpuType": {
+                    "type": "string"
+                },
+                "gpu_allocatable": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "integer"
                     }
                 },
-                "totalNodes": {
-                    "type": "integer"
+                "gpu_capacity": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -3691,7 +3721,10 @@ var doc = `{
                     }
                 },
                 "nodeInfo": {
-                    "$ref": "#/definitions/models.NodeInfo"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NodeStatus"
+                    }
                 }
             }
         },
