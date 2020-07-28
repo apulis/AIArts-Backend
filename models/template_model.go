@@ -127,7 +127,7 @@ func Update(db *sql.DB, table string, id int64, data map[string]interface{}) (ro
 		if !escapedScopePattern.MatchString(key) {
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
-		querySegs[idx] = quote(key) + "=?"
+		querySegs[idx] = quote(ToSnakeCase(key)) + "=?"
 		args[idx] = val
 		idx++
 	}
@@ -229,7 +229,13 @@ func (this *Templates) ToMap() map[string]interface{} {
 	data := make(map[string]interface{})
 	data["name"] = this.Name
 	data["scope"] = this.Scope
-	data["data"] = this.Data
+
+	//
+	binData, err := json.Marshal(this.Data)
+	if err == nil {
+		data["data"] = string(binData)
+	}
+
 	data["jobType"] = this.JobType
 	data["creator"] = this.Creator
 

@@ -77,7 +77,9 @@ func UpdateTemplate(id int64, userName string, scope int, jobType string, templa
 }
 
 func DeleteTemplate(userName string, id int64) error {
-	return database.Db.Raw(`DELETE FROM ai_arts.templates where id=?`, id).Error
+	//return database.Db.Raw(`DELETE FROM ai_arts.templates where id=?`, id).Error
+	db := database.Db.Exec(`DELETE FROM ai_arts.templates where id=?`, id)
+	return db.Error
 }
 
 func GetTemplate(userName string, id int64) (*models.Templates, error) {

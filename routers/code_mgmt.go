@@ -205,7 +205,7 @@ func uploadCode(c *gin.Context) error {
 	//}
 
 	logger.Info("starting saving file")
-	err = c.SaveUploadedFile(file, codePath)
+	err = c.SaveUploadedFile(file, codePath+"/"+file.Filename)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}

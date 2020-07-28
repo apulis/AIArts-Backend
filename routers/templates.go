@@ -42,7 +42,7 @@ type CreateTemplateRsp struct {
 }
 
 type DeleteTemplateReq struct {
-	Id int64 `json:"id"`
+	Id int64 `uri:"id" json:"id"`
 }
 
 type DeleteTemplateRsp struct {
@@ -56,7 +56,7 @@ type UpdateTemplateReq struct {
 }
 
 type GetTemplateReq struct {
-	Id int64 `json:"id"`
+	Id int64 `uri:"id" json:"id"`
 }
 
 // @Summary get all templates
