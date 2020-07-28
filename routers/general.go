@@ -91,6 +91,12 @@ func getResource(c *gin.Context) error {
 		})
 	}
 
+	// 统计设备类型的节点数
+	rsp.NodeCountByDeviceType = make(map[string]int)
+	for _, v := range vcInfo.Nodes {
+		rsp.NodeCountByDeviceType[v.GPUType] = rsp.NodeCountByDeviceType[v.GPUType] + 1
+	}
+
 	rsp.NodeInfo = vcInfo.Nodes
 	rsp.CodePathPrefix = "/home/" + userName + "/"
 
