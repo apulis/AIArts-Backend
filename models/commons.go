@@ -76,7 +76,7 @@ type NodeInfo struct {
 const (
 	TemplatePublic     int = 1
 	TemplatePrivate    int = 2
-	TemplateUserPublic int = 3
+	TemplateUserPublic int = 3 // 读取用户列表兼公共列表
 )
 
 // 以下结构体用于和DLTS平台交互
@@ -175,6 +175,10 @@ type JobId struct {
 
 type UriJobId struct {
 	Id string `uri:"id" binding:"required"`
+}
+
+type TemplateId struct {
+	Id int64 `uri:"id" binding:"required"`
 }
 
 type JobLog struct {
