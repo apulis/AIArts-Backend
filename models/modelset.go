@@ -1,10 +1,10 @@
+
 package models
 
 import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"reflect"
 )
 
@@ -25,6 +25,8 @@ type Modelset struct {
 	JobId      string         `json:"jobId"`
 	DataFormat string         `json:"dataFormat"`
 	Dataset    string         `json:"dataset,omitempty"`
+	DatasetName    string         `json:"datasetName,omitempty"`
+	DatasetPath   string         `json:"datasetPath,omitempty"`
 	//omitempty 值为空，不编码
 	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
 	EngineType string         `json:"engineType"`
@@ -34,7 +36,8 @@ type Modelset struct {
 	ModelPath  string           `json:"modelPath"`
 	//模型参数路径
 	ArgumentPath  string           `json:"argumentPath"`
-
+	//评估训练任务id
+	EvaluationId      string         `json:"evaluationId"`
 
 }
 
@@ -55,11 +58,9 @@ func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name,
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	orderQueryStr := fmt.Sprintf("%s %s ",CamelToCase(orderBy), order)
-	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
-	if gin.Mode() == "debug" {
-		res = db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
-	}
+	orderQueryStr := fmt.Sprintf("%s %s ",orderBy, order)
+	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}

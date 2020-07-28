@@ -111,6 +111,8 @@ const (
 const (
 	JobTypeTraining     string = "training"     // 老DLTS默认采用的jobType
 	JobTypeArtsTraining string = "artsTraining" // 供电局项目：模型训练
+	JobTypeArtsEvaluation string = "artsEvaluation" // 供电局项目：模型评估
+
 	JobTypeCodeEnv      string = "codeEnv"      // 供电局项目：代码环境
 
 	JobStatusAll string = "all"
