@@ -24,6 +24,8 @@ func init() {
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
 	createTableIfNotExists(Templates{})
+
+	initVersionInfoTable()
 }
 
 //驼峰转下划线形式
@@ -72,6 +74,19 @@ func (t *UnixTime) Scan(v interface{}) error {
 		return nil
 	}
 	return fmt.Errorf("cannot convert %v to timestamp", v)
+}
+
+// init version info of platform, make sure there is at least one record in versionInfo
+func initVersionInfoTable() {
+	initVersion := VersionInfoSet{
+		Description: "DLTS platform, help you to achieve all possibility.",
+		Version:     "v1.0.1",
+		Creator:     "YTung",
+	}
+	err := UploadVersionInfoSet(initVersion)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // 以下结构体用于api/common
@@ -232,4 +247,4 @@ type EndpointWrapper struct {
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
 var UPGRADE_CONFIG_FILE = "version.yaml"
 var Upgrade_Progress = -1
-var Log_Line_Point = 1
+var Log_Line_Point = 0

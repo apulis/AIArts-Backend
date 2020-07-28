@@ -18,9 +18,14 @@ func GetUpgradeLog() (string, string, error) {
 	switch progress {
 	case -1:
 		status = "not ready"
+	case 300:
+		status = "error"
+		models.Upgrade_Progress = -1
+		models.Log_Line_Point = 0
 	case 100:
 		status = "success"
 		models.Upgrade_Progress = -1
+		models.Log_Line_Point = 0
 	default:
 		status = "upgrading"
 		Log, err = acquireLog()
@@ -54,7 +59,7 @@ func acquireLog() (string, error) {
 
 	if lineCount > models.Log_Line_Point {
 		fmt.Println("latest line: " + strconv.Itoa(lineCount) + "; old line: " + strconv.Itoa(models.Log_Line_Point))
-		cmd = exec.Command("/bin/sh", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+		cmd = exec.Command("/bin/sh", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point+1)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
 		models.Log_Line_Point = lineCount
 		log, err := cmd.Output()
 		if err != nil {
@@ -86,16 +91,16 @@ func GetUpgradeProgress() (string, int) {
 	return status, progress
 }
 
-func UpgradePlatformByLocal() error {
+func UpgradePlatformByLocal(userName string) error {
 	if models.Upgrade_Progress != -1 {
 		fmt.Println("upgrading, please wait until upgrade finish")
 		return errors.New("upgrading, please wait until upgrade finish")
 	}
-	go UpgradePlatformdLocally()
+	go UpgradePlatformdLocally(userName)
 	return nil
 }
 
-func UpgradePlatformdLocally() error {
+func UpgradePlatformdLocally(userName string) error {
 	models.Upgrade_Progress = 0
 	// upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
 	// if err != nil {
@@ -114,29 +119,32 @@ func UpgradePlatformdLocally() error {
 	if err != nil {
 		fmt.Println("fail to run command")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
 	fmt.Println(upgradeConfig.Version)
 	newVersion := upgradeConfig.Version
 	description := upgradeConfig.Description
-	newCreator := upgradeConfig.Creator
+	newCreator := userName
 	versionInfoSet := models.VersionInfoSet{
 		Description: description,
 		Version:     newVersion,
 		Creator:     newCreator,
 	}
-	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /var/log")
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /data/log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("mkdir fail")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
-	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /var/log/upgrade.log")
+	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /data/log/upgrade.log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("move log fail")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
 	models.Upgrade_Progress = 100
