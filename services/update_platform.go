@@ -91,16 +91,16 @@ func GetUpgradeProgress() (string, int) {
 	return status, progress
 }
 
-func UpgradePlatformByLocal() error {
+func UpgradePlatformByLocal(userName string) error {
 	if models.Upgrade_Progress != -1 {
 		fmt.Println("upgrading, please wait until upgrade finish")
 		return errors.New("upgrading, please wait until upgrade finish")
 	}
-	go UpgradePlatformdLocally()
+	go UpgradePlatformdLocally(userName)
 	return nil
 }
 
-func UpgradePlatformdLocally() error {
+func UpgradePlatformdLocally(userName string) error {
 	models.Upgrade_Progress = 0
 	// upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
 	// if err != nil {
@@ -125,7 +125,7 @@ func UpgradePlatformdLocally() error {
 	fmt.Println(upgradeConfig.Version)
 	newVersion := upgradeConfig.Version
 	description := upgradeConfig.Description
-	newCreator := upgradeConfig.Creator
+	newCreator := userName
 	versionInfoSet := models.VersionInfoSet{
 		Description: description,
 		Version:     newVersion,
