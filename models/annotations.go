@@ -133,6 +133,7 @@ func (queryStringParameters QueryStringParameters) GetPageSize() int {
 }
 
 func (queryStringParameters QueryStringParameters) GetName() string {
+	logger.Info(strings.Trim(strings.Trim(strings.Trim(queryStringParameters.Name, "\n"), " "), "\n"))
 	return queryStringParameters.Name
 }
 
