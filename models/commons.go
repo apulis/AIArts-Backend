@@ -25,7 +25,19 @@ func init() {
 	createTableIfNotExists(VersionInfoSet{})
 	createTableIfNotExists(Templates{})
 }
+//驼峰转下划线形式
+func CamelToCase(name string) string {
+	var upperStr string
+	for _,v := range name{
+		if v >= 65 && v <= 90 {
+			upperStr += "_"+string(v+32)
+		}else{
+			upperStr+=string(v)
+		}
 
+	}
+	return upperStr
+}
 func createTableIfNotExists(modelType interface{}) {
 	val := reflect.Indirect(reflect.ValueOf(modelType))
 	modelName := val.Type().Name()
@@ -158,7 +170,9 @@ type JobList struct {
 }
 
 type NodeStatus struct {
-	GPUType string `json:"gpuType"`
+	GPUType     string         `json:"gpuType"`
+	Allocatable map[string]int `json:"gpu_allocatable"`
+	Capacity    map[string]int `json:"gpu_capacity"`
 }
 
 // 接口：apis/GetVC?userName=&vcName=platform

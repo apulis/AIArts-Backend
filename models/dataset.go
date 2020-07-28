@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"strings"
 )
 
@@ -31,7 +32,7 @@ func ListDatasets(offset, limit int, orderBy, order, name, status, username stri
 	//先查询该用户的所有数据中，再查询公开数据集
 	whereQueryStr := fmt.Sprintf("creator='%s' ", username)
 	orQueryStr := fmt.Sprintf("is_private=0 ")
-	orderQueryStr := fmt.Sprintf("%s %s ", orderBy, order)
+	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 
 	if name != "" {
 		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
@@ -44,6 +45,11 @@ func ListDatasets(offset, limit int, orderBy, order, name, status, username stri
 	}
 	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).
 		Or(orQueryStr).Find(&datasets)
+
+	if gin.Mode() == "debug" {
+		res = db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).
+			Or(orQueryStr).Find(&datasets)
+	}
 	if res.Error != nil {
 		return datasets, total, res.Error
 	}
