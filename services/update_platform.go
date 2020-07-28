@@ -18,6 +18,10 @@ func GetUpgradeLog() (string, string, error) {
 	switch progress {
 	case -1:
 		status = "not ready"
+	case 300:
+		status = "error"
+		models.Upgrade_Progress = -1
+		models.Log_Line_Point = 0
 	case 100:
 		status = "success"
 		models.Upgrade_Progress = -1
@@ -115,6 +119,7 @@ func UpgradePlatformdLocally() error {
 	if err != nil {
 		fmt.Println("fail to run command")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
 	fmt.Println(upgradeConfig.Version)
@@ -131,6 +136,7 @@ func UpgradePlatformdLocally() error {
 	if err != nil {
 		err = errors.New("mkdir fail")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
 	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /data/log/upgrade.log")
@@ -138,6 +144,7 @@ func UpgradePlatformdLocally() error {
 	if err != nil {
 		err = errors.New("move log fail")
 		fmt.Println("Execute Command failed:" + err.Error())
+		models.Upgrade_Progress = 300
 		return err
 	}
 	models.Upgrade_Progress = 100
