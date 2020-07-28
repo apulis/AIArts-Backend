@@ -40,6 +40,7 @@ definitions:
         type: string
       jobParams:
         $ref: '#/definitions/models.JobParams'
+        type: object
       jobStatus:
         type: string
       jobTime:
@@ -75,10 +76,12 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
@@ -96,6 +99,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -208,19 +212,29 @@ definitions:
       arguments:
         $ref: '#/definitions/models.ArgumentsItem'
         description: omitempty 值为空，不编码
+        type: object
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       dataFormat:
         type: string
       dataset:
         type: string
+      datasetName:
+        type: string
+      datasetPath:
+        type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       engineType:
+        type: string
+      evaluationId:
+        description: 评估训练任务id
         type: string
       id:
         type: integer
@@ -241,6 +255,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       use:
         description: 模型类型 图像分类
         type: string
@@ -289,15 +304,20 @@ definitions:
     properties:
       metaData:
         $ref: '#/definitions/models.TemplateMeta'
+        type: object
       params:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
     type: object
   models.TemplateMeta:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
+      id:
+        type: integer
       jobType:
         type: string
       name:
@@ -306,6 +326,7 @@ definitions:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
     type: object
   models.TemplateParams:
     properties:
@@ -323,8 +344,6 @@ definitions:
         type: string
       engine:
         type: string
-      id:
-        type: integer
       name:
         type: string
       outputPath:
@@ -374,22 +393,24 @@ definitions:
         type: string
     type: object
   models.UnixTime:
-    properties:
-      time.Time:
-        type: string
     type: object
   models.VersionInfoSet:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
+      creator:
+        type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -415,6 +436,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -424,6 +446,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -433,6 +456,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateEdgeInferenceResp'
+        type: object
       msg:
         type: string
     type: object
@@ -442,6 +466,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -451,6 +476,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -460,6 +486,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -469,6 +496,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -478,6 +506,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -487,6 +516,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -496,6 +526,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -505,6 +536,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.EndpointWrapper'
+        type: object
       msg:
         type: string
     type: object
@@ -514,6 +546,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.ConversionTypes'
+        type: object
       msg:
         type: string
     type: object
@@ -523,6 +556,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetResp'
+        type: object
       msg:
         type: string
     type: object
@@ -532,6 +566,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetsResp'
+        type: object
       msg:
         type: string
     type: object
@@ -541,6 +576,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetFDInfoResp'
+        type: object
       msg:
         type: string
     type: object
@@ -550,6 +586,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetModelsetResp'
+        type: object
       msg:
         type: string
     type: object
@@ -559,6 +596,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetResourceRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -568,6 +606,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.TemplateItem'
+        type: object
       msg:
         type: string
     type: object
@@ -577,6 +616,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -586,6 +626,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.JobLog'
+        type: object
       msg:
         type: string
     type: object
@@ -595,6 +636,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.LsEdgeInferencesResp'
+        type: object
       msg:
         type: string
     type: object
@@ -640,6 +682,7 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
     type: object
   routers.CreateTemplateRsp:
     properties:
@@ -737,6 +780,7 @@ definitions:
     properties:
       dataset:
         $ref: '#/definitions/models.Dataset'
+        type: object
     type: object
   routers.GetDatasetsResp:
     properties:
@@ -757,6 +801,7 @@ definitions:
     properties:
       fdinfo:
         $ref: '#/definitions/models.FDInfo'
+        type: object
     type: object
   routers.GetJobSummaryReq:
     properties:
@@ -767,6 +812,7 @@ definitions:
     properties:
       model:
         $ref: '#/definitions/models.Modelset'
+        type: object
     type: object
   routers.GetResourceRsp:
     properties:
@@ -859,6 +905,7 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
     type: object
   routers.createDatasetReq:
     properties:
@@ -946,6 +993,7 @@ definitions:
     properties:
       versionInfo:
         $ref: '#/definitions/models.VersionInfoSet'
+        type: object
       versionLogs:
         items:
           $ref: '#/definitions/models.VersionInfoSet'
@@ -962,6 +1010,27 @@ definitions:
     required:
     - password
     - username
+    type: object
+  services.CreateEvaluationReq:
+    properties:
+      argumentPath:
+        type: string
+      datasetName:
+        type: string
+      datasetPath:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      name:
+        type: string
+      outputPath:
+        type: string
+      startupFile:
+        type: string
     type: object
 info:
   contact: {}
@@ -2263,6 +2332,54 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
+  /ai_arts/api/models/:id/evaluation:
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelset'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get evaluation by modelid
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/services.CreateEvaluationReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create Training
   /ai_arts/api/templates:
     get:
       parameters:

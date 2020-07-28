@@ -19,16 +19,16 @@ type Modelset struct {
 	Creator     string `gorm:"not null" json:"creator"`
 	Version     string `gorm:"not null" json:"version"`
 	Status      string `json:"status"`
-	Size        int    `json:"size"`
+	Size        int64    `gorm:"type bigint(20)" json:"size"`
 	//模型类型 图像分类
 	Use        string         `json:"use"`
 	JobId      string         `json:"jobId"`
 	DataFormat string         `json:"dataFormat"`
-	Dataset    string         `json:"dataset,omitempty"`
-	DatasetName    string         `json:"datasetName,omitempty"`
-	DatasetPath   string         `json:"datasetPath,omitempty"`
+	Dataset    string         `json:"dataset"`
+	DatasetName    string         `json:"datasetName"`
+	DatasetPath   string         `json:"datasetPath"`
 	//omitempty 值为空，不编码
-	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
+	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments"`
 	EngineType string         `json:"engineType"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`

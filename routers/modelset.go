@@ -24,7 +24,7 @@ type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
 type createEvaluationResp struct {
-	JobId string `json:"jobId"`
+	EvaluationId string `json:"jobId"`
 }
 type getEvaluationResp struct {
 	ModelName    string `json:"modelName"`
@@ -35,7 +35,7 @@ type getEvaluationResp struct {
 	OutputPath   string `json:"outputPath"`
 	CreatedAt    string `json:"createdAt"`
 	Status       string `json:"status"`
-	DatasetName  string `json:"DatasetName"`
+	DatasetName  string `json:"datasetName"`
 	ArgumentPath string `json:"argumentPath"`
 	Log          string `json:"log"`
 }
@@ -229,7 +229,7 @@ func deleteModelset(c *gin.Context) error {
 
 // @Summary create Training
 // @Produce json
-// @Param param body CreateEvaluationReq true "params"
+// @Param param body services.CreateEvaluationReq true "params"
 // @Success 200 {object} APISuccessRespCreateTraining "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -248,19 +248,34 @@ func createEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 
+	//如果上传模型文件检查模型文件是否存在
+	err = services.CheckPathExists(req.DatasetPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(req.ArgumentPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(req.OutputPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
 	modelset.DatasetName = req.DatasetName
-
 	modelset.EvaluationId = jobId
 	err = models.UpdateModelset(&modelset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := createEvaluationResp{
-		JobId: jobId,
+		EvaluationId: jobId,
 	}
 	return SuccessResp(c, data)
 }
@@ -296,7 +311,7 @@ func getEvaluation(c *gin.Context) error {
 	data := getEvaluationResp{
 		ModelName:   modelset.Name,
 		EngineType:  job.Engine,
-		DeviceType:  job.DatasetPath,
+		DeviceType:  job.DeviceType,
 		DeviceNum:   job.DeviceNum,
 		CreatedAt:   job.CreateTime,
 		Status:      job.Status,

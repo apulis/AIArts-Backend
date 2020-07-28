@@ -2001,6 +2001,80 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/models/:id/evaluation": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get evaluation by modelid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "model id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespGetModelset"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create Training",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/services.CreateEvaluationReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessRespCreateTraining"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/templates": {
             "get": {
                 "produces": [
@@ -2583,6 +2657,7 @@ var doc = `{
                     "type": "string"
                 },
                 "jobParams": {
+                    "type": "object",
                     "$ref": "#/definitions/models.JobParams"
                 },
                 "jobStatus": {
@@ -2633,12 +2708,14 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2664,6 +2741,7 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -2834,9 +2912,11 @@ var doc = `{
                 },
                 "arguments": {
                     "description": "omitempty 值为空，不编码",
+                    "type": "object",
                     "$ref": "#/definitions/models.ArgumentsItem"
                 },
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -2848,13 +2928,24 @@ var doc = `{
                 "dataset": {
                     "type": "string"
                 },
+                "datasetName": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
                     "type": "string"
                 },
                 "engineType": {
+                    "type": "string"
+                },
+                "evaluationId": {
+                    "description": "评估训练任务id",
                     "type": "string"
                 },
                 "id": {
@@ -2883,6 +2974,7 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
@@ -2956,9 +3048,11 @@ var doc = `{
             "type": "object",
             "properties": {
                 "metaData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateMeta"
                 },
                 "params": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -2967,10 +3061,14 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "jobType": {
                     "type": "string"
@@ -2982,6 +3080,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 }
             }
@@ -3009,9 +3108,6 @@ var doc = `{
                 },
                 "engine": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -3087,20 +3183,20 @@ var doc = `{
             }
         },
         "models.UnixTime": {
-            "type": "object",
-            "properties": {
-                "time.Time": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "models.VersionInfoSet": {
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
+                "creator": {
+                    "type": "string"
+                },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3110,6 +3206,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3149,6 +3246,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -3163,6 +3261,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -3177,6 +3276,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateEdgeInferenceResp"
                 },
                 "msg": {
@@ -3191,6 +3291,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTemplateRsp"
                 },
                 "msg": {
@@ -3205,6 +3306,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -3219,6 +3321,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -3233,6 +3336,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTemplateRsp"
                 },
                 "msg": {
@@ -3247,6 +3351,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -3261,6 +3366,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTemplateRsp"
                 },
                 "msg": {
@@ -3275,6 +3381,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -3289,6 +3396,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -3303,6 +3411,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.ConversionTypes"
                 },
                 "msg": {
@@ -3317,6 +3426,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -3331,6 +3441,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -3345,6 +3456,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetFDInfoResp"
                 },
                 "msg": {
@@ -3359,6 +3471,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetResp"
                 },
                 "msg": {
@@ -3373,6 +3486,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -3387,6 +3501,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateItem"
                 },
                 "msg": {
@@ -3401,6 +3516,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -3415,6 +3531,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -3429,6 +3546,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.LsEdgeInferencesResp"
                 },
                 "msg": {
@@ -3498,6 +3616,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3648,6 +3767,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "dataset": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -3679,6 +3799,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "fdinfo": {
+                    "type": "object",
                     "$ref": "#/definitions/models.FDInfo"
                 }
             }
@@ -3695,6 +3816,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "model": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
@@ -3836,6 +3958,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3967,6 +4090,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "versionInfo": {
+                    "type": "object",
                     "$ref": "#/definitions/models.VersionInfoSet"
                 },
                 "versionLogs": {
@@ -3991,6 +4115,38 @@ var doc = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "services.CreateEvaluationReq": {
+            "type": "object",
+            "properties": {
+                "argumentPath": {
+                    "type": "string"
+                },
+                "datasetName": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "startupFile": {
                     "type": "string"
                 }
             }
