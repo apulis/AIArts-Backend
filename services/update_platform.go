@@ -125,14 +125,14 @@ func UpgradePlatformdLocally() error {
 		Version:     newVersion,
 		Creator:     newCreator,
 	}
-	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /var/log")
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /data/log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("mkdir fail")
 		fmt.Println("Execute Command failed:" + err.Error())
 		return err
 	}
-	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /var/log/upgrade.log")
+	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /data/log/upgrade.log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("move log fail")
