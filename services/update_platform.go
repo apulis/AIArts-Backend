@@ -110,17 +110,19 @@ func UpgradePlatformdLocally() error {
 	upgradeScript := upgradeConfig.UpgradeScript
 	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript+" > "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log")
 	err = cmd.Run()
-
 	if err != nil {
+		fmt.Println("fail to run command")
 		fmt.Println("Execute Command failed:" + err.Error())
 		return err
 	}
 	fmt.Println(upgradeConfig.Version)
 	newVersion := upgradeConfig.Version
 	description := upgradeConfig.Description
+	newCreator := upgradeConfig.Creator
 	versionInfoSet := models.VersionInfoSet{
 		Description: description,
 		Version:     newVersion,
+		Creator:     newCreator,
 	}
 	cmd = exec.Command("/bin/bash", "-c", "mkdir -p /var/log")
 	err = cmd.Run()
