@@ -24,7 +24,7 @@ type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
 type createEvaluationResp struct {
-	JobId string `json:"jobId"`
+	EvaluationId string `json:"jobId"`
 }
 type getEvaluationResp struct {
 	ModelName    string `json:"modelName"`
@@ -248,19 +248,34 @@ func createEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 
+	//如果上传模型文件检查模型文件是否存在
+	err = services.CheckPathExists(req.DatasetPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(req.ArgumentPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(req.OutputPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
 	modelset.DatasetName = req.DatasetName
-
 	modelset.EvaluationId = jobId
 	err = models.UpdateModelset(&modelset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := createEvaluationResp{
-		JobId: jobId,
+		EvaluationId: jobId,
 	}
 	return SuccessResp(c, data)
 }
