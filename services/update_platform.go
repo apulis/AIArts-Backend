@@ -36,8 +36,8 @@ func acquireLog() (string, error) {
 	if !isFileExists(models.UPGRADE_FILE_PATH + "/" + "/upgrade.log") {
 		return "prepare environment", nil
 	}
-	// cmd := exec.Command("/bin/bash", "-c", "tail -n 2500 "+models.UPGRADE_FILE_PATH+"/upgrade.log")
-	cmd := exec.Command("/bin/bash", "-c", "wc -l "+models.UPGRADE_FILE_PATH+"/upgrade.log"+" | awk '{print $1}' | tr -d '\\n' ")
+	// cmd := exec.Command("/bin/sh", "-c", "tail -n 2500 "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+	cmd := exec.Command("/bin/sh", "-c", "wc -l "+models.UPGRADE_FILE_PATH+"/upgrade.log"+" | awk '{print $1}' | tr -d '\\n' ")
 	lineCountOutput, err := cmd.Output()
 	if err != nil {
 		err = errors.New("count log file lines fail")
@@ -54,7 +54,7 @@ func acquireLog() (string, error) {
 
 	if lineCount > models.Log_Line_Point {
 		fmt.Println("latest line: " + strconv.Itoa(lineCount) + "; old line: " + strconv.Itoa(models.Log_Line_Point))
-		cmd = exec.Command("/bin/bash", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
+		cmd = exec.Command("/bin/sh", "-c", "sed -n '"+strconv.Itoa(models.Log_Line_Point)+","+strconv.Itoa(lineCount)+"p' "+models.UPGRADE_FILE_PATH+"/upgrade.log")
 		models.Log_Line_Point = lineCount
 		log, err := cmd.Output()
 		if err != nil {
@@ -109,7 +109,7 @@ func UpgradePlatformdLocally() error {
 		return err
 	}
 	upgradeScript := upgradeConfig.UpgradeScript
-	cmd := exec.Command("/bin/bash", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript+" > "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log")
+	cmd := exec.Command("/bin/sh", "-c", models.UPGRADE_FILE_PATH+"/"+upgradeScript+" > "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log")
 	err = cmd.Run()
 	if err != nil {
 		fmt.Println("fail to run command")
@@ -125,14 +125,14 @@ func UpgradePlatformdLocally() error {
 		Version:     newVersion,
 		Creator:     newCreator,
 	}
-	cmd = exec.Command("/bin/bash", "-c", "mkdir -p /var/log")
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /var/log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("mkdir fail")
 		fmt.Println("Execute Command failed:" + err.Error())
 		return err
 	}
-	cmd = exec.Command("/bin/bash", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /var/log/upgrade.log")
+	cmd = exec.Command("/bin/sh", "-c", "mv "+models.UPGRADE_FILE_PATH+"/"+"/upgrade.log"+" /var/log/upgrade.log")
 	err = cmd.Run()
 	if err != nil {
 		err = errors.New("move log fail")
