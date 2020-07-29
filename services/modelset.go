@@ -32,9 +32,14 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 
 func CreateModelset(isAdvance bool, name, description, creator, version, use, jobId,
 	dataFormat string, arguments map[string]string, engineType, precision, modelPath, argumentPath string) error {
-	size, err := GetDirSize(modelPath)
-	if err != nil {
-		return err
+	//获取训练任务的文件夹size
+	size:=3156465
+	if modelPath!=""{
+		size, err := GetDirSize(modelPath)
+		if err != nil {
+			return err
+		}
+		fmt.Sprint(size)
 	}
 	//json转换格式
 	var argItem models.ArgumentsItem
