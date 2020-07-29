@@ -308,7 +308,8 @@ func getEvaluation(c *gin.Context) error {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
 	log, err := services.GetTrainingLog(username, modelset.EvaluationId)
-	logResp := ""
+	//logResp := ""
+	logResp:=""
 	if log != nil {
 		logResp = log.Log
 	}
