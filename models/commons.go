@@ -9,6 +9,7 @@ import (
 
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
+	"github.com/jinzhu/gorm"
 )
 
 var db = database.Db
@@ -78,12 +79,18 @@ func (t *UnixTime) Scan(v interface{}) error {
 
 // init version info of platform, make sure there is at least one record in versionInfo
 func initVersionInfoTable() {
+	checkDataset := new(VersionInfoSet)
+	err := db.Limit(1).Find(checkDataset).Error
+	if err != gorm.ErrRecordNotFound {
+		return
+	}
 	initVersion := VersionInfoSet{
 		Description: "DLTS platform, help you to achieve all possibility.",
 		Version:     "v1.0.1",
 		Creator:     "YTung",
 	}
-	err := UploadVersionInfoSet(initVersion)
+	err = UploadVersionInfoSet(initVersion)
+	fmt.Println("upload ready")
 	if err != nil {
 		panic(err)
 	}
