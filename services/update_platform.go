@@ -105,7 +105,7 @@ func GetUpgradeProgress() (string, int) {
 }
 
 func UpgradePlatformByLocal(userName string) error {
-	if models.Upgrade_Progress != -1 {
+	if models.Upgrade_Progress == 0 {
 		fmt.Println("upgrading, please wait until upgrade finish")
 		return errors.New("upgrading, please wait until upgrade finish")
 	}
