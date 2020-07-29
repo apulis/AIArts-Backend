@@ -139,7 +139,7 @@ func upgradeOnline(c *gin.Context) error {
 func upgradeLocal(c *gin.Context) error {
 	err := services.UpgradePlatformByLocal(getUsername(c))
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(ALREADY_UPGRADING_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
