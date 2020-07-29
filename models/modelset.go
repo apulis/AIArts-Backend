@@ -49,11 +49,10 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 	var modelsets []Modelset
 	total := 0
 
-	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 ")
+	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 ", username)
 	if isAdvance {
-		whereQueryStr = fmt.Sprintf(" is_advance = 1 ")
+		whereQueryStr = fmt.Sprintf(" is_advance = 1")
 	}
-	whereQueryStr = fmt.Sprintf("creator='%s'  ", username)
 	if name != "" {
 		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
 	}
