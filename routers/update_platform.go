@@ -23,6 +23,7 @@ func AddGroupUpdatePlatform(r *gin.Engine) {
 type getVersionInfoResp struct {
 	CurrentVersion models.VersionInfoSet   `json:"versionInfo"`
 	VersionInfo    []models.VersionInfoSet `json:"versionLogs"`
+	IsUpgrading    string                  `json:"isUpgrading"`
 }
 
 type getVersionInfoReq struct {
@@ -58,9 +59,11 @@ func getVersionInfo(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+	isUpgarding := services.GetUpgradeStatus()
 	data := getVersionInfoResp{
 		CurrentVersion: currentversion,
 		VersionInfo:    versionlogs,
+		IsUpgrading:    isUpgarding,
 	}
 	return SuccessResp(c, data)
 

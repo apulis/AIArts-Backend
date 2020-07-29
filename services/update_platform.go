@@ -14,20 +14,17 @@ func GetUpgradeLog() (string, string, error) {
 	var status string
 	var Log string
 	var err error
-	progress := models.Upgrade_Progress
-	switch progress {
-	case -1:
-		status = "not ready"
-	case 300:
-		status = "error"
+	status = GetUpgradeStatus()
+	switch status {
+	case "not ready":
+		Log = ""
+	case "error":
 		models.Upgrade_Progress = -1
 		models.Log_Line_Point = 0
-	case 100:
-		status = "success"
+	case "success":
 		models.Upgrade_Progress = -1
 		models.Log_Line_Point = 0
-	default:
-		status = "upgrading"
+	case "upgrading":
 		Log, err = acquireLog()
 		if err != nil {
 			return "error", Log, err
@@ -35,6 +32,22 @@ func GetUpgradeLog() (string, string, error) {
 		fmt.Println(string(Log))
 	}
 	return status, Log, nil
+}
+
+func GetUpgradeStatus() string {
+	var status string
+	progress := models.Upgrade_Progress
+	switch progress {
+	case -1:
+		status = "not ready"
+	case 300:
+		status = "error"
+	case 100:
+		status = "success"
+	default:
+		status = "upgrading"
+	}
+	return status
 }
 
 func acquireLog() (string, error) {
