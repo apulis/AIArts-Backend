@@ -23,6 +23,7 @@ func AddGroupUpdatePlatform(r *gin.Engine) {
 type getVersionInfoResp struct {
 	CurrentVersion models.VersionInfoSet   `json:"versionInfo"`
 	VersionInfo    []models.VersionInfoSet `json:"versionLogs"`
+	IsUpgrading    bool                    `json:"isUpgrading"`
 }
 
 type getVersionInfoReq struct {
@@ -58,9 +59,17 @@ func getVersionInfo(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+	status := services.GetUpgradeStatus()
+	var isUpgrading bool
+	if status == "upgrading" {
+		isUpgrading = true
+	} else {
+		isUpgrading = false
+	}
 	data := getVersionInfoResp{
 		CurrentVersion: currentversion,
 		VersionInfo:    versionlogs,
+		IsUpgrading:    isUpgrading,
 	}
 	return SuccessResp(c, data)
 
@@ -136,7 +145,7 @@ func upgradeOnline(c *gin.Context) error {
 func upgradeLocal(c *gin.Context) error {
 	err := services.UpgradePlatformByLocal(getUsername(c))
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(ALREADY_UPGRADING_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

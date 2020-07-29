@@ -2964,11 +2964,19 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "outputPath": {
+                    "description": "启动文件路径",
+                    "type": "string"
+                },
                 "precision": {
                     "type": "string"
                 },
                 "size": {
                     "type": "integer"
+                },
+                "startupFile": {
+                    "description": "启动文件路径",
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"
@@ -3842,6 +3850,12 @@ var doc = `{
                         "$ref": "#/definitions/models.DeviceItem"
                     }
                 },
+                "nodeCountByDeviceType": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
                 "nodeInfo": {
                     "type": "array",
                     "items": {
@@ -4089,6 +4103,9 @@ var doc = `{
         "routers.getVersionInfoResp": {
             "type": "object",
             "properties": {
+                "isUpgrading": {
+                    "type": "boolean"
+                },
                 "versionInfo": {
                     "type": "object",
                     "$ref": "#/definitions/models.VersionInfoSet"
@@ -4137,7 +4154,7 @@ var doc = `{
                 "deviceType": {
                     "type": "string"
                 },
-                "engine": {
+                "engineType": {
                     "type": "string"
                 },
                 "name": {

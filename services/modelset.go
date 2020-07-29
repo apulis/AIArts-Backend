@@ -11,8 +11,7 @@ const (
 	MODELSET_STATUS_DELETING = "deleting"
 )
 type CreateEvaluationReq struct {
-
-	Engine       string `json:"engine"`
+	EngineType       string `json:"engineType"`
 	DeviceType   string `json:"deviceType"`
 	DeviceNum    int    `json:"deviceNum"`
 	StartupFile  string `json:"startupFile"`
@@ -97,7 +96,7 @@ func CreateEvaluation(userName string, evaluation CreateEvaluationReq) (string, 
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
-	params["image"] = evaluation.Engine
+	params["image"] = evaluation.EngineType
 	params["gpuType"] = evaluation.DeviceType
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum

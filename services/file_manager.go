@@ -235,16 +235,11 @@ func extractZip(fromPath, toPath string) error {
 
 	for _, file := range reader.File {
 		path := filepath.Join(toPath, transformEncode(file.Name))
-		//如果直接递归到底层是文件 比如 /data/pic/train/1.png 那么先要创建pic文件夹
-		//_, err := os.Stat(path)
-		//if err != nil {
-		//	err = os.MkdirAll(path, os.ModeDir|os.ModePerm)
-		//}
+		//如果直接递归到底层是文件 比如 /data/pic/train/1.png 那么先要创建pic文件夹,linux与windows的zip压缩包文件夹头结构不一样
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
 			continue
 		}
-
 		fileReader, err := file.Open()
 		if err != nil {
 			return err

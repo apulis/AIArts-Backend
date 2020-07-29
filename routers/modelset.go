@@ -40,7 +40,6 @@ type getEvaluationResp struct {
 	Log          string `json:"log"`
 }
 
-
 type lsModelsetsReq struct {
 	PageNum   int    `form:"pageNum"`
 	PageSize  int    `form:"pageSize,default=10"`
@@ -248,7 +247,7 @@ func createEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 
-	//如果上传模型文件检查模型文件是否存在
+	//检查模型文件是否存在
 	err = services.CheckPathExists(req.DatasetPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
@@ -258,7 +257,7 @@ func createEvaluation(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	//检查模型参数文件是否存在
+	//检查输出路径是否存在
 	err = services.CheckPathExists(req.OutputPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
@@ -268,8 +267,14 @@ func createEvaluation(c *gin.Context) error {
 	if err != nil {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
+	//更新评估参数
 	modelset.DatasetName = req.DatasetName
+	modelset.EngineType = req.EngineType
+	modelset.DatasetPath = req.DatasetPath
+	modelset.OutputPath = req.OutputPath
+	modelset.StartupFile = req.StartupFile
 	modelset.EvaluationId = jobId
+
 	err = models.UpdateModelset(&modelset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -310,7 +315,7 @@ func getEvaluation(c *gin.Context) error {
 
 	data := getEvaluationResp{
 		ModelName:   modelset.Name,
-		EngineType:  job.Engine,
+		EngineType:  modelset.EngineType,
 		DeviceType:  job.DeviceType,
 		DeviceNum:   job.DeviceNum,
 		CreatedAt:   job.CreateTime,

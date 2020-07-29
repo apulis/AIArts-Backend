@@ -26,8 +26,7 @@ type UpgradeYaml struct {
 }
 
 func UploadVersionInfoSet(versionInfo VersionInfoSet) error {
-	return nil
-	//return db.Create(&versionInfo).Error
+	return db.Create(&versionInfo).Error
 }
 
 func GetCurrentVersion() (VersionInfoSet, error) {

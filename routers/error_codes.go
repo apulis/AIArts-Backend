@@ -49,6 +49,7 @@ const (
 	// upgrade platform
 	UPGRADE_FILE_PATH_DO_NOT_EXIST = 30501
 	FILE_READ_ERROR                = 30502
+	ALREADY_UPGRADING_CODE         = 30503
 
 	// edge inference
 	FDINFO_NOT_SET   = 30601
