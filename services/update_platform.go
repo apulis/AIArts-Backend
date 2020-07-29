@@ -19,10 +19,8 @@ func GetUpgradeLog() (string, string, error) {
 	case "not ready":
 		Log = ""
 	case "error":
-		models.Upgrade_Progress = -1
 		models.Log_Line_Point = 0
 	case "success":
-		models.Upgrade_Progress = -1
 		models.Log_Line_Point = 0
 	case "upgrading":
 		Log, err = acquireLog()
