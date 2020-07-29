@@ -22,7 +22,6 @@ type UnixTime struct {
 
 func init() {
 
-	db = database.Db
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
