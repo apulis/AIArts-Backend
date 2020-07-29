@@ -247,7 +247,7 @@ func createEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 
-	////如果检查模型文件是否存在
+	//检查模型文件是否存在
 	err = services.CheckPathExists(req.DatasetPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
