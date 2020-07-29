@@ -170,6 +170,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.DatasetPath = job.JobParams.DatasetPath
 	training.Status = job.JobStatus
 	training.Desc = job.JobParams.Desc
+	training.Params = job.JobParams.ScriptParams
 
 	return training, nil
 }

@@ -165,6 +165,8 @@ type JobParams struct {
 	OutputPath  string `json:"outputPath"`
 	DatasetPath string `json:"datasetPath"`
 	Desc        string `json:"desc"`
+
+	ScriptParams map[string]string `json:"scriptParams"`
 }
 
 type Job struct {
