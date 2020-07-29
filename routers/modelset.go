@@ -248,20 +248,20 @@ func createEvaluation(c *gin.Context) error {
 	username := getUsername(c)
 
 	//检查模型文件是否存在
-	err = services.CheckPathExists(req.DatasetPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.ArgumentPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	//检查输出路径是否存在
-	err = services.CheckPathExists(req.OutputPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
+	//err = services.CheckPathExists(req.DatasetPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查模型参数文件是否存在
+	//err = services.CheckPathExists(req.ArgumentPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查输出路径是否存在
+	//err = services.CheckPathExists(req.OutputPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
 
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
