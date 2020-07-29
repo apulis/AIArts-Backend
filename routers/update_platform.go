@@ -138,7 +138,7 @@ func upgradeOnline(c *gin.Context) error {
 
 // @Summary upgrade through local package
 // @Produce  json
-// @Success 200 {object} APISuccessRespGetDataset
+// @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/version/upgrade/local [post]
