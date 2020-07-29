@@ -57,6 +57,7 @@ type AuthConfig struct {
 var Config ProjectConfig
 
 func init() {
+
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 

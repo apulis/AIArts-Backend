@@ -20,6 +20,8 @@ type UnixTime struct {
 }
 
 func init() {
+
+	db = database.Db
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
@@ -102,9 +104,10 @@ type NodeInfo struct {
 
 // 模板类别
 const (
-	TemplatePublic     int = 1 // 公有
-	TemplatePrivate    int = 2 // 用户私有
-	TemplatePredefined int = 4 // 预置参数
+	TemplatePublic        int = 1 // 公有
+	TemplatePrivate       int = 2 // 用户私有
+	TemplatePublicPrivate int = 3 // 公有（包括预置参数）和私有
+	TemplatePredefined    int = 4 // 预置参数
 )
 
 // 以下结构体用于和DLTS平台交互

@@ -18,6 +18,7 @@ import (
 var logger = loggers.Log
 
 func main() {
+
 	port := configs.Config.Port
 	router := routers.NewRouter()
 
