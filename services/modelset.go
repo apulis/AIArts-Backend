@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -8,7 +10,20 @@ const (
 	MODELSET_STATUS_NORMAL   = "normal"
 	MODELSET_STATUS_DELETING = "deleting"
 )
+type CreateEvaluationReq struct {
 
+	Engine       string `json:"engine"`
+	DeviceType   string `json:"deviceType"`
+	DeviceNum    int    `json:"deviceNum"`
+	StartupFile  string `json:"startupFile"`
+	OutputPath   string `json:"outputPath"`
+	DatasetPath  string `json:"datasetPath"`
+	DatasetName  string `json:"datasetName"`
+	ArgumentPath string `json:"argumentPath"`
+	Name       string `json:"name"`
+
+
+}
 func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
@@ -75,4 +90,57 @@ func DeleteModelset(id int) error {
 	//	return err
 	//}
 	return models.DeleteModelset(&modelset)
+}
+func CreateEvaluation(userName string, evaluation CreateEvaluationReq) (string, error) {
+	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
+	params := make(map[string]interface{})
+	params["userName"] = userName
+	params["jobName"] = evaluation.Name
+	params["jobType"] = models.JobTypeArtsEvaluation
+	params["image"] = evaluation.Engine
+	params["gpuType"] = evaluation.DeviceType
+	params["resourcegpu"] = evaluation.DeviceNum
+	params["DeviceNum"] = evaluation.DeviceNum
+	params["cmd"] = "python " + evaluation.StartupFile
+	if len(evaluation.DatasetPath) > 0 {
+		params["cmd"] = params["cmd"].(string) + " --checkpoint_path=" + evaluation.DatasetPath
+	}
+	if len(evaluation.OutputPath) > 0 {
+		params["cmd"] = params["cmd"].(string) + " --eval_dir=" + evaluation.OutputPath
+	}
+	if len(evaluation.DatasetPath) > 0 {
+		params["cmd"] = params["cmd"].(string) + " --dataset_dir=" + evaluation.OutputPath
+	}
+	params["startupFile"] = evaluation.StartupFile
+	params["datasetPath"] = evaluation.DatasetPath
+	//params["codePath"] = evaluation.CodePath
+	params["outputPath"] = evaluation.OutputPath
+	//params["scriptParams"] = evaluation.Params
+	//params["desc"] = evaluation.Desc
+	params["containerUserId"] = 0
+	params["jobtrainingtype"] = "RegularJob"
+	params["preemptionAllowed"] = false
+	params["workPath"] = ""
+	params["enableworkpath"] = true
+	params["enabledatapath"] = true
+	params["enablejobpath"] = true
+	params["jobPath"] = "job"
+	params["hostNetwork"] = false
+	params["isPrivileged"] = false
+	params["interactivePorts"] = false
+	//params["numworker"] = training.NumPs
+	//params["numps"] = training.NumPsWorker
+	params["vcName"] = models.DefaultVcName
+	params["team"] = models.DefaultVcName
+	logger.Info(params)
+
+	id := &models.JobId{}
+	err := DoRequest(url, "POST", nil, params, id)
+
+	if err != nil {
+		fmt.Printf("create evaluation err[%+v]\n", err)
+		return "", err
+	}
+
+	return id.Id, nil
 }

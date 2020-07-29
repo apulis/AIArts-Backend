@@ -7,12 +7,13 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func GetAllTraining(userName string, page, size int, jobStatus, searchWord string) ([]*models.Training, int, int, error) {
+func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
 
-	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s`,
+	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsTraining,
-		page, size, jobStatus, searchWord)
+		page, size, jobStatus, searchWord,
+		orderBy, order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -23,7 +24,7 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord strin
 	}
 
 	trainings := make([]*models.Training, 0)
-	for _, v := range jobList.RunningJobs {
+	for _, v := range jobList.AllJobs {
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -31,42 +32,6 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord strin
 			DeviceType:  v.JobParams.GpuType,
 			CodePath:    v.JobParams.CodePath,
 			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			Desc:        v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.QueuedJobs {
-		trainings = append(trainings, &models.Training{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			CodePath:    v.JobParams.CodePath,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			Desc:        v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.FinishedJobs {
-		trainings = append(trainings, &models.Training{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			CodePath:    v.JobParams.CodePath,
 			StartupFile: v.JobParams.StartupFile,
 			OutputPath:  v.JobParams.OutputPath,
 			DatasetPath: v.JobParams.DatasetPath,
