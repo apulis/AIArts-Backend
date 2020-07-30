@@ -7,9 +7,8 @@ import (
 )
 
 func AddGroupModel(r *gin.Engine) {
-	group := r.Group("/ai_arts/api")
+	group := r.Group("/ai_arts/api/models/")
 	group.Use(Auth())
-
 	group.GET("/", wrapper(lsModelsets))
 	group.GET("/:id", wrapper(getModelset))
 	group.POST("/", wrapper(createModelset))

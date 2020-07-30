@@ -49,7 +49,7 @@ type getEvaluationResp struct {
 // @Success 200 {object} APISuccessRespGetModelsets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/models [get]
+// @Router /ai_arts/api/evaluations [get]
 func lsEvaluations(c *gin.Context) error {
 	var req getEvaluationsReq
 	err := c.ShouldBindQuery(&req)
