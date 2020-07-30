@@ -87,12 +87,6 @@ func lsEvaluations(c *gin.Context) error {
 // @Router /ai_arts/api/evaluations [post]
 func createEvaluation(c *gin.Context) error {
 	var req models.Training
-	var id int
-	err := c.ShouldBindUri(&id)
-	err = c.ShouldBindJSON(&req)
-	if err != nil {
-		return ParameterError(err.Error())
-	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
