@@ -9,7 +9,6 @@ import (
 func AddGroupEvaluation(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/evaluations/")
 	group.Use(Auth())
-
 	group.GET("/", wrapper(lsEvaluations))
 	group.GET("/:id", wrapper(getEvaluation))
 	group.POST("/", wrapper(createEvaluation))
@@ -36,8 +35,9 @@ type getEvaluationsResp struct {
 	PageSize    int                `json:"pageSize"`
 }
 type getEvaluationResp struct {
-	Evaluation models.Training `json:"evaluation"`
-	Log        string          `json:"log"`
+	Evaluation models.Training   `json:"evaluation"`
+	Log        string            `json:"log"`
+	Indicator  map[string]string `json:"indicator"`
 }
 
 // @Summary list models
@@ -80,7 +80,7 @@ func lsEvaluations(c *gin.Context) error {
 
 // @Summary create Evaluation
 // @Produce json
-// @Param param body models.Training true "ID:modelID ， NAME : model NAME"
+// @Param param body models.Training true "ID:modelID ， NAME : model NAME Desc：dataset Name"
 // @Success 200 {object} createEvaluationResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
@@ -93,10 +93,6 @@ func createEvaluation(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	//modelset, err := services.GetModelset(id)
-	//if err != nil {
-	//	return AppError(APP_ERROR_CODE, err.Error())
-	//}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
@@ -143,7 +139,7 @@ func createEvaluation(c *gin.Context) error {
 // @Summary get evaluation by id
 // @Produce  json
 // @Param id path int true "evaluation id"
-// @Success 200 {object} getEvaluationReq "success"
+// @Success 200 {object} getEvaluationResp "success {"accuary":"0.001"}"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations/:id [get]
@@ -170,9 +166,11 @@ func getEvaluation(c *gin.Context) error {
 	if log != nil {
 		logResp = log.Log
 	}
+	indicator := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
 		Evaluation: *job,
 		Log:        logResp,
+		Indicator:  indicator,
 	}
 	return SuccessResp(c, data)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"regexp"
 )
 
 func CreateEvaluation(userName string, training models.Training) (string, error) {
@@ -136,6 +137,7 @@ func DeleteEvaluation(userName, id string) error {
 	return nil
 }
 
+
 func GetEvaluation(userName, id string) (*models.Training, error) {
 	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	params := make(map[string]interface{})
@@ -177,4 +179,20 @@ func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
 	}
 
 	return jobLog, nil
+}
+
+func GetRegexpLog(log string)(map[string]string){
+	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")
+	recall_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
+	if len(recall_reg.FindStringSubmatch(log))>1{
+		recall:=recall_reg.FindStringSubmatch(log)[1]
+		accuracy:=acc_reg.FindStringSubmatch(log)[1]
+		indicator := map[string]string{
+			"Recall_5":recall,
+			"Accuracy":accuracy,
+		}
+		return indicator
+	}
+	return nil
+
 }
