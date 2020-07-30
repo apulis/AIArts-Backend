@@ -1003,12 +1003,17 @@ definitions:
     - argumentPath
     - name
     type: object
-  routers.getEvaluationReq:
+  routers.getEvaluationResp:
     properties:
-      id:
+      evaluation:
+        $ref: '#/definitions/models.Training'
+        type: object
+      indicator:
+        additionalProperties:
+          type: string
+        type: object
+      log:
         type: string
-    required:
-    - id
     type: object
   routers.getLocalEnvResp:
     properties:
@@ -2067,7 +2072,7 @@ paths:
       summary: list models
     post:
       parameters:
-      - description: 'ID:modelID ， NAME : model NAME'
+      - description: 'ID:modelID ， NAME : model NAME Desc：dataset Name'
         in: body
         name: param
         required: true
@@ -2124,9 +2129,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: success
+          description: success {"accuary":"0.001"}
           schema:
-            $ref: '#/definitions/routers.getEvaluationReq'
+            $ref: '#/definitions/routers.getEvaluationResp'
         "400":
           description: error
           schema:

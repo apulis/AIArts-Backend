@@ -1551,7 +1551,7 @@ var doc = `{
                 "summary": "create Evaluation",
                 "parameters": [
                     {
-                        "description": "ID:modelID ， NAME : model NAME",
+                        "description": "ID:modelID ， NAME : model NAME Desc：dataset Name",
                         "name": "param",
                         "in": "body",
                         "required": true,
@@ -1599,9 +1599,9 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "success {\"accuary\":\"0.001\"}",
                         "schema": {
-                            "$ref": "#/definitions/routers.getEvaluationReq"
+                            "$ref": "#/definitions/routers.getEvaluationResp"
                         }
                     },
                     "400": {
@@ -4224,13 +4224,20 @@ var doc = `{
                 }
             }
         },
-        "routers.getEvaluationReq": {
+        "routers.getEvaluationResp": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
-                "id": {
+                "evaluation": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Training"
+                },
+                "indicator": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "log": {
                     "type": "string"
                 }
             }
