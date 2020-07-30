@@ -28,19 +28,24 @@ type Modelset struct {
 	DatasetPath string `json:"datasetPath"`
 	//omitempty 值为空，不编码
 	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments"`
-	EngineType string         `json:"engineType"`
+	Engine string         `json:"engine"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
 	//模型路径
 	ModelPath string `json:"modelPath"`
 	//模型参数路径
 	ArgumentPath string `json:"argumentPath"`
-	//启动文件路径
+	// 输出文件路径
 	OutputPath string `json:"outputPath"`
 	//启动文件路径
 	StartupFile string `json:"startupFile"`
 	//评估训练任务id
 	EvaluationId string `json:"evaluationId"`
+	// 评估设备类型
+	DeviceType string `json:"deviceType"`
+
+	DeviceNum int `json:"deviceNum"`
+
 }
 
 type ArgumentsItem map[string]string

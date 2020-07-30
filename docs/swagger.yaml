@@ -191,6 +191,10 @@ definitions:
         type: boolean
       resourcegpu:
         type: integer
+      scriptParams:
+        additionalProperties:
+          type: string
+        type: object
       startupFile:
         type: string
       team:
@@ -231,7 +235,12 @@ definitions:
         type: object
       description:
         type: string
-      engineType:
+      deviceNum:
+        type: integer
+      deviceType:
+        description: 评估设备类型
+        type: string
+      engine:
         type: string
       evaluationId:
         description: 评估训练任务id
@@ -248,7 +257,7 @@ definitions:
       name:
         type: string
       outputPath:
-        description: 启动文件路径
+        description: 输出文件路径
         type: string
       precision:
         type: string
@@ -582,16 +591,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetFDInfoResp'
-        type: object
-      msg:
-        type: string
-    type: object
-  routers.APISuccessRespGetModelset:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/routers.GetModelsetResp'
         type: object
       msg:
         type: string
@@ -948,6 +947,11 @@ definitions:
     - jobName
     - outputPath
     type: object
+  routers.createEvaluationResp:
+    properties:
+      jobId:
+        type: string
+    type: object
   routers.createModelsetReq:
     properties:
       argumentPath:
@@ -977,6 +981,16 @@ definitions:
     required:
     - argumentPath
     - name
+    type: object
+  routers.getEvaluationResp:
+    properties:
+      evaluationId:
+        type: string
+      job:
+        $ref: '#/definitions/models.Training'
+        type: object
+      log:
+        type: string
     type: object
   routers.getLocalEnvResp:
     properties:
@@ -1022,27 +1036,6 @@ definitions:
     required:
     - password
     - username
-    type: object
-  services.CreateEvaluationReq:
-    properties:
-      argumentPath:
-        type: string
-      datasetName:
-        type: string
-      datasetPath:
-        type: string
-      deviceNum:
-        type: integer
-      deviceType:
-        type: string
-      engineType:
-        type: string
-      name:
-        type: string
-      outputPath:
-        type: string
-      startupFile:
-        type: string
     type: object
 info:
   contact: {}
@@ -2311,7 +2304,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetModelset'
+            $ref: '#/definitions/routers.GetModelsetResp'
         "400":
           description: error
           schema:
@@ -2358,7 +2351,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetModelset'
+            $ref: '#/definitions/routers.getEvaluationResp'
         "400":
           description: error
           schema:
@@ -2375,14 +2368,14 @@ paths:
         name: param
         required: true
         schema:
-          $ref: '#/definitions/services.CreateEvaluationReq'
+          $ref: '#/definitions/models.Training'
       produces:
       - application/json
       responses:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespCreateTraining'
+            $ref: '#/definitions/routers.createEvaluationResp'
         "400":
           description: error
           schema:
@@ -2683,9 +2676,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetDataset'
+            $ref: '#/definitions/routers.APISuccessResp'
         "400":
           description: error
           schema:

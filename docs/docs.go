@@ -1913,7 +1913,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetModelset"
+                            "$ref": "#/definitions/routers.GetModelsetResp"
                         }
                     },
                     "400": {
@@ -2020,7 +2020,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetModelset"
+                            "$ref": "#/definitions/routers.getEvaluationResp"
                         }
                     },
                     "400": {
@@ -2049,7 +2049,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/services.CreateEvaluationReq"
+                            "$ref": "#/definitions/models.Training"
                         }
                     }
                 ],
@@ -2057,7 +2057,7 @@ var doc = `{
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespCreateTraining"
+                            "$ref": "#/definitions/routers.createEvaluationResp"
                         }
                     },
                     "400": {
@@ -2520,9 +2520,9 @@ var doc = `{
                 "summary": "upgrade through local package",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/routers.APISuccessRespGetDataset"
+                            "$ref": "#/definitions/routers.APISuccessResp"
                         }
                     },
                     "400": {
@@ -2883,6 +2883,12 @@ var doc = `{
                 "resourcegpu": {
                     "type": "integer"
                 },
+                "scriptParams": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "startupFile": {
                     "type": "string"
                 },
@@ -2941,7 +2947,14 @@ var doc = `{
                 "description": {
                     "type": "string"
                 },
-                "engineType": {
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "description": "评估设备类型",
+                    "type": "string"
+                },
+                "engine": {
                     "type": "string"
                 },
                 "evaluationId": {
@@ -2965,7 +2978,7 @@ var doc = `{
                     "type": "string"
                 },
                 "outputPath": {
-                    "description": "启动文件路径",
+                    "description": "输出文件路径",
                     "type": "string"
                 },
                 "precision": {
@@ -3466,21 +3479,6 @@ var doc = `{
                 "data": {
                     "type": "object",
                     "$ref": "#/definitions/routers.GetFDInfoResp"
-                },
-                "msg": {
-                    "type": "string"
-                }
-            }
-        },
-        "routers.APISuccessRespGetModelset": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "object",
-                    "$ref": "#/definitions/routers.GetModelsetResp"
                 },
                 "msg": {
                     "type": "string"
@@ -4022,6 +4020,14 @@ var doc = `{
                 }
             }
         },
+        "routers.createEvaluationResp": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
@@ -4063,6 +4069,21 @@ var doc = `{
                     "type": "string"
                 },
                 "use": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.getEvaluationResp": {
+            "type": "object",
+            "properties": {
+                "evaluationId": {
+                    "type": "string"
+                },
+                "job": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Training"
+                },
+                "log": {
                     "type": "string"
                 }
             }
@@ -4132,38 +4153,6 @@ var doc = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "services.CreateEvaluationReq": {
-            "type": "object",
-            "properties": {
-                "argumentPath": {
-                    "type": "string"
-                },
-                "datasetName": {
-                    "type": "string"
-                },
-                "datasetPath": {
-                    "type": "string"
-                },
-                "deviceNum": {
-                    "type": "integer"
-                },
-                "deviceType": {
-                    "type": "string"
-                },
-                "engineType": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "outputPath": {
-                    "type": "string"
-                },
-                "startupFile": {
                     "type": "string"
                 }
             }

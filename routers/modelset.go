@@ -27,18 +27,9 @@ type createEvaluationResp struct {
 	EvaluationId string `json:"jobId"`
 }
 type getEvaluationResp struct {
-	ModelName    string `json:"modelName"`
-	EngineType   string `json:"engineType"`
-	DeviceType   string `json:"deviceType"`
-	DeviceNum    int    `json:"deviceNum"`
-	StartupFile  string `json:"startupFile"`
-	OutputPath   string `json:"outputPath"`
-	CreatedAt    string `json:"createdAt"`
-	Status       string `json:"status"`
-	DatasetName  string `json:"datasetName"`
-	ArgumentPath string `json:"argumentPath"`
-	Log          string `json:"log"`
-	EvaluationId string `json:"evaluationId"`
+	Job          models.Training `json:"job"`
+	Log          string          `json:"log"`
+	EvaluationId string          `json:"evaluationId"`
 }
 
 type lsModelsetsReq struct {
@@ -124,7 +115,7 @@ func lsModelsets(c *gin.Context) error {
 // @Summary get model by id
 // @Produce  json
 // @Param id path int true "model id"
-// @Success 200 {object} APISuccessRespGetModelset "success"
+// @Success 200 {object} GetModelsetResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id [get]
@@ -156,17 +147,17 @@ func createModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	//如果上传模型文件检查模型文件是否存在
-	//if req.ModelPath != "" {
-	//	err = services.CheckPathExists(req.ModelPath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
+	if req.ModelPath != "" {
+		err = services.CheckPathExists(req.ModelPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
 	//检查模型参数文件是否存在
-	//err = services.CheckPathExists(req.ArgumentPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
+	err = services.CheckPathExists(req.ArgumentPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
@@ -229,8 +220,8 @@ func deleteModelset(c *gin.Context) error {
 
 // @Summary create Training
 // @Produce json
-// @Param param body services.CreateEvaluationReq true "params"
-// @Success 200 {object} APISuccessRespCreateTraining "success"
+// @Param param body models.Training true "params"
+// @Success 200 {object} createEvaluationResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id/evaluation [post]
@@ -248,6 +239,7 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	username := getUsername(c)
+
 	//检查模型文件是否存在
 	//err = services.CheckPathExists(req.DatasetPath)
 	//if err != nil {
@@ -264,8 +256,7 @@ func createEvaluation(c *gin.Context) error {
 	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	//}
 
-	jobId, err := services.CreateTraining(username,req)
-	//jobId, err := services.CreateEvaluation(username, req)
+	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
@@ -292,7 +283,7 @@ func createEvaluation(c *gin.Context) error {
 // @Summary get evaluation by modelid
 // @Produce  json
 // @Param id path int true "model id"
-// @Success 200 {object} APISuccessRespGetModelset "success"
+// @Success 200 {object} getEvaluationResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id/evaluation [get]
@@ -317,13 +308,7 @@ func getEvaluation(c *gin.Context) error {
 		logResp = log.Log
 	}
 	data := getEvaluationResp{
-		ModelName:    modelset.Name,
-		EngineType:   modelset.EngineType,
-		DeviceType:   job.DeviceType,
-		DeviceNum:    job.DeviceNum,
-		CreatedAt:    job.CreateTime,
-		Status:       job.Status,
-		DatasetName:  modelset.DatasetName,
+		Job:          *job,
 		Log:          logResp,
 		EvaluationId: modelset.EvaluationId,
 	}
