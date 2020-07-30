@@ -38,6 +38,7 @@ type getEvaluationResp struct {
 	DatasetName  string `json:"datasetName"`
 	ArgumentPath string `json:"argumentPath"`
 	Log          string `json:"log"`
+	EvaluationId string `json:"evaluationId"`
 }
 
 type lsModelsetsReq struct {
@@ -155,17 +156,17 @@ func createModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	//如果上传模型文件检查模型文件是否存在
-	if req.ModelPath != "" {
-		err = services.CheckPathExists(req.ModelPath)
-		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-		}
-	}
+	//if req.ModelPath != "" {
+	//	err = services.CheckPathExists(req.ModelPath)
+	//	if err != nil {
+	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//	}
+	//}
 	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.ArgumentPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
+	//err = services.CheckPathExists(req.ArgumentPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
@@ -234,7 +235,8 @@ func deleteModelset(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id/evaluation [post]
 func createEvaluation(c *gin.Context) error {
-	var req services.CreateEvaluationReq
+	//var req services.CreateEvaluationReq
+	var req models.Training
 	var id int
 	err := c.ShouldBindUri(&id)
 	err = c.ShouldBindJSON(&req)
@@ -246,35 +248,37 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	username := getUsername(c)
-
 	//检查模型文件是否存在
-	err = services.CheckPathExists(req.DatasetPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.ArgumentPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	//检查输出路径是否存在
-	err = services.CheckPathExists(req.OutputPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
+	//err = services.CheckPathExists(req.DatasetPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查模型参数文件是否存在
+	//err = services.CheckPathExists(req.ArgumentPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查输出路径是否存在
+	//err = services.CheckPathExists(req.OutputPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
 
-	jobId, err := services.CreateEvaluation(username, req)
+	jobId, err := services.CreateTraining(username,req)
+	//jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
 	}
 	//更新评估参数
-	modelset.DatasetName = req.DatasetName
-	modelset.EngineType = req.EngineType
-	modelset.DatasetPath = req.DatasetPath
-	modelset.OutputPath = req.OutputPath
-	modelset.StartupFile = req.StartupFile
+	//var argItem models.ArgumentsItem
+	//argItem = req.Arguments
+	//modelset.DatasetName = req.DatasetName
+	//modelset.EngineType = req.EngineType
+	//modelset.DatasetPath = req.DatasetPath
+	//modelset.OutputPath = req.OutputPath
+	//modelset.StartupFile = req.StartupFile
+	//modelset.Arguments = &argItem
 	modelset.EvaluationId = jobId
-
 	err = models.UpdateModelset(&modelset)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -312,16 +316,16 @@ func getEvaluation(c *gin.Context) error {
 	if log != nil {
 		logResp = log.Log
 	}
-
 	data := getEvaluationResp{
-		ModelName:   modelset.Name,
-		EngineType:  modelset.EngineType,
-		DeviceType:  job.DeviceType,
-		DeviceNum:   job.DeviceNum,
-		CreatedAt:   job.CreateTime,
-		Status:      job.Status,
-		DatasetName: modelset.DatasetName,
-		Log:         logResp,
+		ModelName:    modelset.Name,
+		EngineType:   modelset.EngineType,
+		DeviceType:   job.DeviceType,
+		DeviceNum:    job.DeviceNum,
+		CreatedAt:    job.CreateTime,
+		Status:       job.Status,
+		DatasetName:  modelset.DatasetName,
+		Log:          logResp,
+		EvaluationId: modelset.EvaluationId,
 	}
 
 	return SuccessResp(c, data)
