@@ -134,7 +134,19 @@ func KillJob(jobId string, userName string) (interface{}, error) {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, errors.New(resp.String())
 	}
-	var jobLog interface{}
-	json.Unmarshal(resp.Bytes(), &jobLog)
-	return jobLog, err
+	var ret interface{}
+	json.Unmarshal(resp.Bytes(), &ret)
+	return ret, err
+}
+
+func DeleteJob(jobId string) (interface{}, error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Delete(BackendUrl+"/apis/DeleteJob?&jobId="+jobId, nil)
+	if resp.StatusCode != 200 {
+		logger.Error("response code is ", resp.StatusCode, resp.String())
+		return nil, errors.New(resp.String())
+	}
+	var ret interface{}
+	json.Unmarshal(resp.Bytes(), &ret)
+	return ret, err
 }
