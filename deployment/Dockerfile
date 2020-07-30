@@ -26,7 +26,6 @@ FROM alpine:3.11
 RUN apk --no-cache add ca-certificates libdrm
 WORKDIR /root/
 COPY --from=0 /go/bin/AIArtsBackend .
-COPY --from=0 /go/src/apulis/AIArtsBackend/config.yaml .
 CMD ["./AIArtsBackend"]
 
 
