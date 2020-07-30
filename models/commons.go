@@ -9,6 +9,7 @@ import (
 
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
+	"github.com/jinzhu/gorm"
 )
 
 var db = database.Db
@@ -20,6 +21,7 @@ type UnixTime struct {
 }
 
 func init() {
+
 	createTableIfNotExists(Dataset{})
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
@@ -78,12 +80,18 @@ func (t *UnixTime) Scan(v interface{}) error {
 
 // init version info of platform, make sure there is at least one record in versionInfo
 func initVersionInfoTable() {
+	checkDataset := new(VersionInfoSet)
+	err := db.Limit(1).Find(checkDataset).Error
+	if err != gorm.ErrRecordNotFound {
+		return
+	}
 	initVersion := VersionInfoSet{
 		Description: "DLTS platform, help you to achieve all possibility.",
 		Version:     "v1.0.1",
 		Creator:     "YTung",
 	}
-	err := UploadVersionInfoSet(initVersion)
+	err = UploadVersionInfoSet(initVersion)
+	fmt.Println("upload ready")
 	if err != nil {
 		panic(err)
 	}
@@ -102,18 +110,19 @@ type NodeInfo struct {
 
 // 模板类别
 const (
-	TemplatePublic     int = 1
-	TemplatePrivate    int = 2
-	TemplateUserPublic int = 3 // 读取用户列表兼公共列表
+	TemplatePublic        int = 1 // 公有
+	TemplatePrivate       int = 2 // 用户私有
+	TemplatePublicPrivate int = 3 // 公有（包括预置参数）和私有
+	TemplatePredefined    int = 4 // 预置参数
 )
 
 // 以下结构体用于和DLTS平台交互
 const (
-	JobTypeTraining     string = "training"     // 老DLTS默认采用的jobType
-	JobTypeArtsTraining string = "artsTraining" // 供电局项目：模型训练
-	JobTypeCodeEnv      string = "codeEnv"      // 供电局项目：代码环境
-
-	JobStatusAll string = "all"
+	JobTypeTraining       string = "training"       // 老DLTS默认采用的jobType
+	JobTypeArtsTraining   string = "artsTraining"   // 供电局项目：模型训练
+	JobTypeArtsEvaluation string = "artsEvaluation" // 供电局项目：模型评估
+	JobTypeCodeEnv        string = "codeEnv"        // 供电局项目：代码环境
+	JobStatusAll          string = "all"
 )
 
 const (
@@ -156,6 +165,8 @@ type JobParams struct {
 	OutputPath  string `json:"outputPath"`
 	DatasetPath string `json:"datasetPath"`
 	Desc        string `json:"desc"`
+
+	ScriptParams map[string]string `json:"scriptParams"`
 }
 
 type Job struct {
@@ -183,6 +194,7 @@ type JobList struct {
 	Meta         JobMeta `json:"meta"`
 	QueuedJobs   []*Job  `json:"queuedJobs"`
 	RunningJobs  []*Job  `json:"runningJobs"`
+	AllJobs      []*Job  `json:"allJobs"`
 }
 
 type NodeStatus struct {
@@ -246,5 +258,12 @@ type EndpointWrapper struct {
 // 升级平台版本需要的信息
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
 var UPGRADE_CONFIG_FILE = "version.yaml"
+
+/* Upgrade_Progress原是作为进度条百分比，现在作为升级过程的状态码，目前共有以下集中
+* -1: not ready,系统刚进入时的准备状态（可以与success合并，作为健康态的表现）
+* 0: upgrading,正在升级
+* 100: success,升级完成，也是健康态
+* 300: error,升级出错
+ */
 var Upgrade_Progress = -1
 var Log_Line_Point = 0

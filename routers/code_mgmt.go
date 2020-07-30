@@ -69,7 +69,8 @@ func getAllCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize, req.JobStatus, req.SearchWord)
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize,
+		req.JobStatus, req.SearchWord, req.OrderBy, req.Order)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

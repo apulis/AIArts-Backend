@@ -21,10 +21,11 @@ type GetResourceReq struct {
 }
 
 type GetResourceRsp struct {
-	AIFrameworks   map[string][]string `json:"aiFrameworks"`
-	DeviceList     []models.DeviceItem `json:"deviceList"`
-	NodeInfo       []models.NodeStatus `json:"nodeInfo"`
-	CodePathPrefix string              `json:"codePathPrefix"`
+	AIFrameworks          map[string][]string `json:"aiFrameworks"`
+	DeviceList            []models.DeviceItem `json:"deviceList"`
+	NodeInfo              []models.NodeStatus `json:"nodeInfo"`
+	CodePathPrefix        string              `json:"codePathPrefix"`
+	NodeCountByDeviceType map[string]int      `json:"nodeCountByDeviceType"`
 }
 
 type GetJobSummaryReq struct {
@@ -88,6 +89,12 @@ func getResource(c *gin.Context) error {
 			DeviceType: k,
 			Avail:      v,
 		})
+	}
+
+	// 统计设备类型的节点数
+	rsp.NodeCountByDeviceType = make(map[string]int)
+	for _, v := range vcInfo.Nodes {
+		rsp.NodeCountByDeviceType[v.GPUType] = rsp.NodeCountByDeviceType[v.GPUType] + 1
 	}
 
 	rsp.NodeInfo = vcInfo.Nodes

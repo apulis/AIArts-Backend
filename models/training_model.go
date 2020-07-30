@@ -18,7 +18,6 @@ type Training struct {
 	Desc        string            `json:"desc"`
 	Status      string            `json:"status"`
 	CreateTime  string            `json:"createTime"`
-
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`
 	NumPsWorker     int    `json:"numPsWorker"`

@@ -30,6 +30,8 @@ type GetAllJobsReq struct {
 	PageSize   int    `form:"pageSize" json:"pageSize"`
 	JobStatus  string `form:"status" json:"status"`
 	SearchWord string `form:"searchWord" json:"searchWord"`
+	OrderBy    string `form:"orderBy" json:"orderBy"`
+	Order      string `form:"order" json:"order"`
 }
 
 type GetAllTrainingRsp struct {
@@ -85,7 +87,8 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize, req.JobStatus, req.SearchWord)
+	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize,
+		req.JobStatus, req.SearchWord, req.OrderBy, req.Order)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

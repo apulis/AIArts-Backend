@@ -22,8 +22,8 @@ type Dataset struct {
 	//plantform#id*plantform_id
 	Binds string `json:"binds"`
 	//是否是公开数据集
-	IsPrivate bool `json:"isPrivate"`
-	Size      int  `json:"size"`
+	IsPrivate bool  `json:"isPrivate"`
+	Size      int64 `gorm:"type bigint(20)" json:"size"`
 }
 
 func ListDatasets(offset, limit int, orderBy, order, name, status, username string) ([]Dataset, int, error) {

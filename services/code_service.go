@@ -23,12 +23,13 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord string) ([]*models.CodeEnvItem, int, int, error) {
+func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.CodeEnvItem, int, int, error) {
 
-	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s`,
+	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeCodeEnv,
-		page, size, jobStatus, searchWord)
+		page, size, jobStatus, searchWord,
+		orderBy, order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -39,33 +40,7 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord string
 	}
 
 	codes := make([]*models.CodeEnvItem, 0)
-	for _, v := range jobList.RunningJobs {
-		codes = append(codes, &models.CodeEnvItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.CodePath,
-			Status:     v.JobStatus,
-			CreateTime: v.JobTime,
-			JupyterUrl: "",
-			Desc:       v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.QueuedJobs {
-		codes = append(codes, &models.CodeEnvItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.CodePath,
-			Status:     v.JobStatus,
-			CreateTime: v.JobTime,
-			JupyterUrl: "",
-			Desc:       v.JobParams.Desc,
-		})
-	}
-
-	for _, v := range jobList.FinishedJobs {
+	for _, v := range jobList.AllJobs {
 		codes = append(codes, &models.CodeEnvItem{
 			Id:         v.JobId,
 			Name:       v.JobName,
@@ -120,8 +95,8 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
-	params["numworker"] = codeEnv.NumPs
-	params["numps"] = codeEnv.NumPsWorker
+	params["numpsworker"] = codeEnv.NumPsWorker
+	params["numps"] = codeEnv.NumPs
 
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName

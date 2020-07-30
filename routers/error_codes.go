@@ -1,3 +1,4 @@
+
 package routers
 
 const (
@@ -28,6 +29,12 @@ const (
 	//无法删除正在使用的数据集
 	DATASET_IS_STILL_USE_CODE = 30010
 
+	// modelset
+	//创建评估训练任务出错
+	CREATE_TRAINING_FAILED_CODE = 30701
+	//获取评估训练任务出错
+	GET_TRAINING_FAILED_CODE = 30702
+
 	// user auth
 	NO_USRNAME = 30101
 
@@ -42,6 +49,7 @@ const (
 	// upgrade platform
 	UPGRADE_FILE_PATH_DO_NOT_EXIST = 30501
 	FILE_READ_ERROR                = 30502
+	ALREADY_UPGRADING_CODE         = 30503
 
 	// edge inference
 	FDINFO_NOT_SET   = 30601

@@ -7,19 +7,29 @@ import (
 )
 
 func AddGroupModel(r *gin.Engine) {
-	group := r.Group("/ai_arts/api/models")
-
+	group := r.Group("/ai_arts/api")
 	group.Use(Auth())
 
-	group.GET("/", wrapper(lsModelsets))
-	group.GET("/:id", wrapper(getModelset))
-	group.POST("/", wrapper(createModelset))
-	group.POST("/:id", wrapper(updateModelset))
-	group.DELETE("/:id", wrapper(deleteModelset))
+	group.GET("/models/", wrapper(lsModelsets))
+	group.GET("/models/:id", wrapper(getModelset))
+	group.POST("/models/", wrapper(createModelset))
+	group.POST("/models/:id", wrapper(updateModelset))
+	group.DELETE("/models/:id", wrapper(deleteModelset))
+	group.GET("/models/:id/evaluation", wrapper(getEvaluation))
+	group.POST("/models/:id/evaluation", wrapper(createEvaluation))
+
 }
 
 type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
+}
+type createEvaluationResp struct {
+	EvaluationId string `json:"jobId"`
+}
+type getEvaluationResp struct {
+	Job          models.Training `json:"job"`
+	Log          string          `json:"log"`
+	EvaluationId string          `json:"evaluationId"`
 }
 
 type lsModelsetsReq struct {
@@ -105,7 +115,7 @@ func lsModelsets(c *gin.Context) error {
 // @Summary get model by id
 // @Produce  json
 // @Param id path int true "model id"
-// @Success 200 {object} APISuccessRespGetModelset "success"
+// @Success 200 {object} GetModelsetResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id [get]
@@ -205,5 +215,103 @@ func deleteModelset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
+	return SuccessResp(c, data)
+}
+
+// @Summary create Training
+// @Produce json
+// @Param param body models.Training true "params"
+// @Success 200 {object} createEvaluationResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/models/:id/evaluation [post]
+func createEvaluation(c *gin.Context) error {
+	//var req services.CreateEvaluationReq
+	var req models.Training
+	var id int
+	err := c.ShouldBindUri(&id)
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	modelset, err := services.GetModelset(id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	username := getUsername(c)
+
+	//检查模型文件是否存在
+	//err = services.CheckPathExists(req.DatasetPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查模型参数文件是否存在
+	//err = services.CheckPathExists(req.ArgumentPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	////检查输出路径是否存在
+	//err = services.CheckPathExists(req.OutputPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+
+	jobId, err := services.CreateEvaluation(username, req)
+	if err != nil {
+		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
+	}
+	//更新评估参数
+	//var argItem models.ArgumentsItem
+	//argItem = req.Arguments
+	//modelset.DatasetName = req.DatasetName
+	//modelset.EngineType = req.EngineType
+	//modelset.DatasetPath = req.DatasetPath
+	//modelset.OutputPath = req.OutputPath
+	//modelset.StartupFile = req.StartupFile
+	//modelset.Arguments = &argItem
+	modelset.EvaluationId = jobId
+	err = models.UpdateModelset(&modelset)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := createEvaluationResp{
+		EvaluationId: jobId,
+	}
+	return SuccessResp(c, data)
+}
+
+// @Summary get evaluation by modelid
+// @Produce  json
+// @Param id path int true "model id"
+// @Success 200 {object} getEvaluationResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/models/:id/evaluation [get]
+func getEvaluation(c *gin.Context) error {
+	var id int
+	err := c.ShouldBindUri(&id)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	modelset, err := services.GetModelset(id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	username := getUsername(c)
+	job, err := services.GetTraining(username, modelset.EvaluationId)
+	if err != nil {
+		return AppError(CREATE_TRAINING_FAILED_CODE, err.Error())
+	}
+	log, err := services.GetTrainingLog(username, modelset.EvaluationId)
+	logResp := ""
+	if log != nil {
+		logResp = log.Log
+	}
+	data := getEvaluationResp{
+		Job:          *job,
+		Log:          logResp,
+		EvaluationId: modelset.EvaluationId,
+	}
+
 	return SuccessResp(c, data)
 }

@@ -14,7 +14,7 @@ func AddGroupTemplate(r *gin.Engine) {
 	group.GET("/", wrapper(getAllTemplates))
 	group.GET("/:id", wrapper(getTemplate))
 	group.POST("/", wrapper(createTemplate))
-	group.PUT("/:id", wrapper(updateTemplate))
+	group.PUT("/", wrapper(updateTemplate))
 	group.DELETE("/:id", wrapper(delTemplate))
 }
 
@@ -185,6 +185,7 @@ func getTemplate(c *gin.Context) error {
 
 	rspData := &models.TemplateItem{
 		MetaData: models.TemplateMeta{
+			Id:        dbRecord.ID,
 			Name:      dbRecord.Name,
 			Scope:     dbRecord.Scope,
 			JobType:   dbRecord.JobType,

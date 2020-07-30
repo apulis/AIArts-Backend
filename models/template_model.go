@@ -21,6 +21,7 @@ const (
 
 // 此结构体用于前后端通信
 type TemplateMeta struct {
+	Id      int    `json:"id,omitempty"`
 	Name    string `json:"name"`
 	Scope   int    `json:"scope"`
 	JobType string `json:"jobType"`
@@ -31,7 +32,6 @@ type TemplateMeta struct {
 }
 
 type TemplateParams struct {
-	Id          int               `json:"id,omitempty"`
 	Name        string            `json:"name"`
 	Engine      string            `json:"engine"`
 	DeviceType  string            `json:"deviceType"`
@@ -67,10 +67,10 @@ type Templates struct {
 
 var (
 	escapedScopePattern = regexp.MustCompile("^\\s*[-_\\w\\d\\.`]+\\s*$")
-)
 
-var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+	matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+	matchAllCap   = regexp.MustCompile("([a-z0-9])([A-Z])")
+)
 
 func ToSnakeCase(str string) string {
 	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
@@ -250,6 +250,7 @@ func (this *Templates) ToTemplateItem() *TemplateItem {
 
 	item := &TemplateItem{
 		MetaData: TemplateMeta{
+			Id:        this.ID,
 			Name:      this.Name,
 			Scope:     this.Scope,
 			JobType:   this.JobType,

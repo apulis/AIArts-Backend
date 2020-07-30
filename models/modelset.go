@@ -4,7 +4,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"reflect"
 )
 
@@ -19,35 +18,46 @@ type Modelset struct {
 	Creator     string `gorm:"not null" json:"creator"`
 	Version     string `gorm:"not null" json:"version"`
 	Status      string `json:"status"`
-	Size        int    `json:"size"`
+	Size        int64  `gorm:"type bigint(20)" json:"size"`
 	//模型类型 图像分类
-	Use        string         `json:"use"`
-	JobId      string         `json:"jobId"`
-	DataFormat string         `json:"dataFormat"`
-	Dataset    string         `json:"dataset,omitempty"`
+	Use         string `json:"use"`
+	JobId       string `json:"jobId"`
+	DataFormat  string `json:"dataFormat"`
+	Dataset     string `json:"dataset"`
+	DatasetName string `json:"datasetName"`
+	DatasetPath string `json:"datasetPath"`
 	//omitempty 值为空，不编码
-	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments,omitempty"`
-	EngineType string         `json:"engineType"`
+	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments"`
+	Engine string         `json:"engine"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
 	//模型路径
-	ModelPath  string           `json:"modelPath"`
+	ModelPath string `json:"modelPath"`
 	//模型参数路径
-	ArgumentPath  string           `json:"argumentPath"`
+	ArgumentPath string `json:"argumentPath"`
+	// 输出文件路径
+	OutputPath string `json:"outputPath"`
+	//启动文件路径
+	StartupFile string `json:"startupFile"`
+	//评估训练任务id
+	EvaluationId string `json:"evaluationId"`
+	// 评估设备类型
+	DeviceType string `json:"deviceType"`
 
+	DeviceNum int `json:"deviceNum"`
 
 }
 
 type ArgumentsItem map[string]string
 
-func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	total := 0
-	is_advance := 0
+
+	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 ", username)
 	if isAdvance {
-		is_advance = 1
+		whereQueryStr = fmt.Sprintf(" is_advance = 1")
 	}
-	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = %d ", username, is_advance)
 	if name != "" {
 		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
 	}
@@ -55,11 +65,9 @@ func ListModelSets(offset, limit int,orderBy,order string, isAdvance bool, name,
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
-	orderQueryStr := fmt.Sprintf("%s %s ",CamelToCase(orderBy), order)
-	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
-	if gin.Mode() == "debug" {
-		res = db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
-	}
+	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
+	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
