@@ -31,9 +31,8 @@ const (
 
 	// modelset
 	//创建评估训练任务出错
-	CREATE_TRAINING_FAILED_CODE = 30701
-	//获取评估训练任务出错
-	GET_TRAINING_FAILED_CODE = 30702
+	CREATE_EVALUATION_FAILED_CODE = 30701
+
 
 	// user auth
 	NO_USRNAME = 30101

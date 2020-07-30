@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -99,75 +98,4 @@ func DeleteModelset(id int) error {
 	//	return err
 	//}
 	return models.DeleteModelset(&modelset)
-}
-func CreateEvaluation(userName string, training models.Training) (string, error) {
-	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	params := make(map[string]interface{})
-	params["userName"] = userName
-	params["jobName"] = training.Name
-	params["jobType"] = models.JobTypeArtsEvaluation
-
-	params["image"] = training.Engine
-	params["gpuType"] = training.DeviceType
-	params["resourcegpu"] = training.DeviceNum
-	params["DeviceNum"] = training.DeviceNum
-	params["cmd"] = "" // use StartupFile, params instead
-
-	if configs.Config.InteractiveModeJob {
-		params["cmd"] = "sleep infinity" // use StartupFile, params instead
-	} else {
-
-		params["cmd"] = "python " + training.StartupFile
-		for k, v := range training.Params {
-			if len(k) > 0 && len(v) > 0 {
-				params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
-			}
-		}
-
-		if len(training.DatasetPath) > 0 {
-			params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
-		}
-
-		if len(training.OutputPath) > 0 {
-			params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
-		}
-	}
-
-	params["startupFile"] = training.StartupFile
-	params["datasetPath"] = training.DatasetPath
-	params["codePath"] = training.CodePath
-	params["outputPath"] = training.OutputPath
-	params["scriptParams"] = training.Params
-	params["desc"] = training.Desc
-
-	params["containerUserId"] = 0
-	params["jobtrainingtype"] = training.JobTrainingType // "RegularJob"
-	params["preemptionAllowed"] = false
-	params["workPath"] = ""
-
-	params["enableworkpath"] = true
-	params["enabledatapath"] = true
-	params["enablejobpath"] = true
-	params["jobPath"] = "job"
-
-	params["hostNetwork"] = false
-	params["isPrivileged"] = false
-	params["interactivePorts"] = false
-
-	params["numworker"] = training.NumPs
-	params["numps"] = training.NumPsWorker
-
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
-
-	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
-
-	if err != nil {
-		fmt.Printf("create training err[%+v]\n", err)
-		return "", err
-	}
-
-	return id.Id, nil
-
 }

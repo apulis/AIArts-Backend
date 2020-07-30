@@ -37,7 +37,7 @@ type GetAllJobsReq struct {
 type GetAllTrainingRsp struct {
 	Trainings []*models.Training `json:"Trainings"`
 	Total     int                `json:"total"`
-	totalPage int                `json:"totalPage"`
+	TotalPage int                `json:"totalPage"`
 }
 
 type CreateTrainingReq struct {

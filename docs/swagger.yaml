@@ -595,6 +595,16 @@ definitions:
       msg:
         type: string
     type: object
+  routers.APISuccessRespGetModelsets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetModelsetsResp'
+        type: object
+      msg:
+        type: string
+    type: object
   routers.APISuccessRespGetResource:
     properties:
       code:
@@ -780,6 +790,8 @@ definitions:
         type: array
       total:
         type: integer
+      totalPage:
+        type: integer
     type: object
   routers.GetDatasetResp:
     properties:
@@ -813,11 +825,20 @@ definitions:
       jobType:
         type: string
     type: object
-  routers.GetModelsetResp:
+  routers.GetModelsetsResp:
     properties:
-      model:
-        $ref: '#/definitions/models.Modelset'
-        type: object
+      models:
+        items:
+          $ref: '#/definitions/models.Modelset'
+        type: array
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
     type: object
   routers.GetResourceRsp:
     properties:
@@ -982,15 +1003,12 @@ definitions:
     - argumentPath
     - name
     type: object
-  routers.getEvaluationResp:
+  routers.getEvaluationReq:
     properties:
-      evaluationId:
+      id:
         type: string
-      job:
-        $ref: '#/definitions/models.Training'
-        type: object
-      log:
-        type: string
+    required:
+    - id
     type: object
   routers.getLocalEnvResp:
     properties:
@@ -1012,6 +1030,12 @@ definitions:
         type: integer
       status:
         type: string
+    type: object
+  routers.getModelsetResp:
+    properties:
+      model:
+        $ref: '#/definitions/models.Modelset'
+        type: object
     type: object
   routers.getVersionInfoResp:
     properties:
@@ -2002,6 +2026,78 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/evaluations:
+    post:
+      parameters:
+      - description: 'ID:modelID ， NAME : model NAME'
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/models.Training'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.createEvaluationResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create Evaluation
+  /ai_arts/api/evaluations/:id:
+    delete:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete evaluation by id
+    get:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getEvaluationReq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get evaluation by id
   /ai_arts/api/files/download/dataset/:id:
     get:
       parameters:
@@ -2079,6 +2175,23 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: upload model file, not implemented yet
+  /ai_arts/api/inferences/DeleteJob:
+    delete:
+      description: delete a inference job
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: Delete a inference job
   /ai_arts/api/inferences/GetAllDevice:
     get:
       description: get all device type detail
@@ -2243,6 +2356,44 @@ paths:
             $ref: '#/definitions/routers.APISuccessResp'
       summary: submit a inference job
   /ai_arts/api/models:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: the keyword of search
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: the keyword of search
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelsets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list models
     post:
       parameters:
       - description: json body
@@ -2304,7 +2455,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.GetModelsetResp'
+            $ref: '#/definitions/routers.getModelsetResp'
         "400":
           description: error
           schema:
@@ -2337,54 +2488,6 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
-  /ai_arts/api/models/:id/evaluation:
-    get:
-      parameters:
-      - description: model id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.getEvaluationResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: get evaluation by modelid
-    post:
-      parameters:
-      - description: params
-        in: body
-        name: param
-        required: true
-        schema:
-          $ref: '#/definitions/models.Training'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.createEvaluationResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: create Training
   /ai_arts/api/templates:
     get:
       parameters:
