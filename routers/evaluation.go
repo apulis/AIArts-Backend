@@ -177,7 +177,7 @@ func getEvaluation(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations/:id [delete]
 func stopEvaluation(c *gin.Context) error {
-	var id string
+	var id getEvaluationReq
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
@@ -186,7 +186,7 @@ func stopEvaluation(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.DeleteEvaluation(username, id)
+	err = services.DeleteEvaluation(username, id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
