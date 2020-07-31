@@ -39,6 +39,6 @@ Backend for AIArts.
 * 已集成swagger，生成文档时执行`swag init`即可
 * 写文档可参考每个router的sample
 
-###部署
+### 部署
 * 公用数据集存放路径`/dlwsdata/storage/dataset/storage`
-* 私有数据集存放路径`/dlwsdata/work/kaiyuan.xu/storage`
+* 私有数据集存放路径`/dlwsdata/work/user/storage`
