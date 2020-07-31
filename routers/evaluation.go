@@ -23,7 +23,7 @@ type getEvaluationsReq struct {
 	PageNum  int    `form:"pageNum" json:"pageNum"`
 	PageSize int    `form:"pageSize" json:"pageSize"`
 	Status   string `form:"status" json:"status"`
-	Search     string `form:"search" json:"search"`
+	Search   string `form:"search" json:"search"`
 	OrderBy  string `form:"orderBy" json:"orderBy"`
 	Order    string `form:"order" json:"order"`
 }
@@ -93,17 +93,21 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 	//检查数据集文件是否存在
-	err = services.CheckPathExists(req.DatasetPath)
+	if req.DatasetPath != "" {
+		err = services.CheckPathExists(req.DatasetPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
+
+	//检查模型参数文件是否存在
+	err = services.CheckPathExists(req.CodePath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	//检查模型参数文件是否存在
-	//err = services.CheckPathExists(req.ParamPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
 	//检查输出路径是否存在
 	err = services.CheckPathExists(req.OutputPath)
+
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
