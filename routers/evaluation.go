@@ -56,9 +56,6 @@ func lsEvaluations(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	if req.Status == "" {
-		req.Status = "all"
-	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
@@ -87,6 +84,10 @@ func lsEvaluations(c *gin.Context) error {
 // @Router /ai_arts/api/evaluations [post]
 func createEvaluation(c *gin.Context) error {
 	var req models.Training
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
