@@ -59,14 +59,14 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 		whereQueryStr = fmt.Sprintf(" is_advance = 1")
 	}
 	if name != "" {
-		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
+		whereQueryStr +=  "and name like '%"+ name + "%' "
 	}
 	if status != "" {
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
-	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
 		return modelsets, total, res.Error

@@ -23,7 +23,7 @@ type getEvaluationsReq struct {
 	PageNum  int    `form:"pageNum" json:"pageNum"`
 	PageSize int    `form:"pageSize" json:"pageSize"`
 	Status   string `form:"status" json:"status"`
-	Name     string `form:"name" json:"name"`
+	Search     string `form:"search" json:"search"`
 	OrderBy  string `form:"orderBy" json:"orderBy"`
 	Order    string `form:"order" json:"order"`
 }
@@ -61,7 +61,7 @@ func lsEvaluations(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 	evaluations, total, totalPage, err := services.GetEvaluations(username, req.PageNum, req.PageSize,
-		req.Status, req.Name, req.OrderBy, req.Order)
+		req.Status, req.Search, req.OrderBy, req.Order)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
@@ -83,8 +83,9 @@ func lsEvaluations(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations [post]
 func createEvaluation(c *gin.Context) error {
+	logger.Info((c.Request.Body))
 	var req models.Training
-	err := c.ShouldBindJSON(&req)
+	err := c.BindJSON(&req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -92,21 +93,21 @@ func createEvaluation(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	//检查模型文件是否存在
-	//err = services.CheckPathExists(req.DatasetPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	////检查模型参数文件是否存在
+	//检查数据集文件是否存在
+	err = services.CheckPathExists(req.DatasetPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
+	//检查模型参数文件是否存在
 	//err = services.CheckPathExists(req.ArgumentPath)
 	//if err != nil {
 	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	//}
-	////检查输出路径是否存在
-	//err = services.CheckPathExists(req.OutputPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
+	//检查输出路径是否存在
+	err = services.CheckPathExists(req.OutputPath)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
@@ -144,10 +145,6 @@ func getEvaluation(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	//modelset, err := services.GetModelset(id)
-	//if err != nil {
-	//	return AppError(APP_ERROR_CODE, err.Error())
-	//}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
