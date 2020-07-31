@@ -2717,7 +2717,7 @@ var doc = `{
         }
     },
     "definitions": {
-        "models.ArgumentsItem": {
+        "models.ParamsItem": {
             "type": "object",
             "additionalProperties": {
                 "type": "string"
@@ -3031,14 +3031,14 @@ var doc = `{
         "models.Modelset": {
             "type": "object",
             "properties": {
-                "argumentPath": {
+                "paramPath": {
                     "description": "模型参数路径",
                     "type": "string"
                 },
-                "arguments": {
+                "params": {
                     "description": "omitempty 值为空，不编码",
                     "type": "object",
-                    "$ref": "#/definitions/models.ArgumentsItem"
+                    "$ref": "#/definitions/models.ParamsItem"
                 },
                 "createdAt": {
                     "type": "object",
@@ -4182,14 +4182,14 @@ var doc = `{
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
-                "argumentPath",
+                "paramPath",
                 "name"
             ],
             "properties": {
-                "argumentPath": {
+                "paramPath": {
                     "type": "string"
                 },
-                "arguments": {
+                "params": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"

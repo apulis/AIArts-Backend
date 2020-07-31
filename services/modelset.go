@@ -11,18 +11,17 @@ const (
 )
 
 type CreateEvaluationReq struct {
-	EngineType   string `json:"engineType"`
-	DeviceType   string `json:"deviceType"`
-	DeviceNum    int    `json:"deviceNum"`
-	StartupFile  string `json:"startupFile"`
-	OutputPath   string `json:"outputPath"`
-	DatasetPath  string `json:"datasetPath"`
-	DatasetName  string `json:"datasetName"`
-	ArgumentPath string `json:"argumentPath"`
-	CodePath     string `json:"codePath"`
-
-	Name      string            `json:"name"`
-	Arguments map[string]string `json:"arguments"`
+	EngineType  string            `json:"engineType"`
+	DeviceType  string            `json:"deviceType"`
+	DeviceNum   int               `json:"deviceNum"`
+	StartupFile string            `json:"startupFile"`
+	OutputPath  string            `json:"outputPath"`
+	DatasetPath string            `json:"datasetPath"`
+	DatasetName string            `json:"datasetName"`
+	ParamPath   string            `json:"paramPath"`
+	CodePath    string            `json:"codePath"`
+	Name        string            `json:"name"`
+	Params      map[string]string `json:"params"`
 }
 
 func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
@@ -32,38 +31,33 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
 }
 
-func CreateModelset(isAdvance bool, name, description, creator, version, use, jobId,
-	dataFormat string, arguments map[string]string, engine, precision, modelPath, argumentPath string) error {
-	var size int64
-	//获取预制模型的文件size
-	if modelPath != "" {
-		modelSize, err := GetDirSize(modelPath)
-		if err != nil {
-			return fmt.Errorf("the model path %s is invaild", modelPath)
-		}
-		size = modelSize
-	} else {
-		size = int64(0)
-	}
-	//json转换格式
-	var argItem models.ArgumentsItem
-	argItem = arguments
+func CreateModelset(name, description, creator, version, jobId,codePath, paramPath string) error {
+	//只能创建非预置模型
 	modelset := models.Modelset{
-		Name:         name,
-		Description:  description,
-		Creator:      creator,
-		Version:      version,
-		Size:         size,
-		Use:          use,
-		JobId:        jobId,
-		Status:       MODELSET_STATUS_NORMAL,
-		DataFormat:   dataFormat,
-		Arguments:    &argItem,
-		Engine:       engine,
-		Precision:    precision,
-		IsAdvance:    isAdvance,
-		ModelPath:    modelPath,
-		ArgumentPath: argumentPath,
+		Name:        name,
+		Description: description,
+		Creator:     creator,
+		Version:     version,
+		JobId:       jobId,
+		Status:      MODELSET_STATUS_NORMAL,
+		IsAdvance:   false,
+		ParamPath:   paramPath,
+	}
+	//获取训练作业输出模型的玩类型
+	if codePath == "" {
+		job, _ := GetTraining(creator, jobId)
+		var paramItem models.ParamsItem
+		paramItem = job.Params
+		if job != nil {
+			modelset.OutputPath = job.OutputPath
+			modelset.CodePath = job.CodePath
+			modelset.DatasetPath = job.DatasetPath
+			modelset.StartupFile = job.StartupFile
+			modelset.Params = &paramItem
+			modelset.Engine = job.Engine
+		} else {
+			return fmt.Errorf("the job id is invaild")
+		}
 	}
 	return models.CreateModelset(modelset)
 }

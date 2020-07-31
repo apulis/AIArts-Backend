@@ -168,7 +168,6 @@ func GetEvaluation(userName, id string) (*models.Training, error) {
 }
 
 func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
-
 	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	jobLog := &models.JobLog{}
 

@@ -83,7 +83,6 @@ func lsEvaluations(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations [post]
 func createEvaluation(c *gin.Context) error {
-	logger.Info((c.Request.Body))
 	var req models.Training
 	err := c.BindJSON(&req)
 	if err != nil {
@@ -99,7 +98,7 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
 	//检查模型参数文件是否存在
-	//err = services.CheckPathExists(req.ArgumentPath)
+	//err = services.CheckPathExists(req.ParamPath)
 	//if err != nil {
 	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	//}
@@ -113,19 +112,6 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	//更新评估参数
-	//var argItem models.ArgumentsItem
-	//argItem = req.Arguments
-	//modelset.DatasetName = req.DatasetName
-	//modelset.EngineType = req.EngineType
-	//modelset.DatasetPath = req.DatasetPath
-	//modelset.OutputPath = req.OutputPath
-	//modelset.StartupFile = req.StartupFile
-	//modelset.Arguments = &argItem
-	//modelset.EvaluationId = jobId
-	//err = models.UpdateModelset(&modelset)
-	//if err != nil {
-	//	return AppError(APP_ERROR_CODE, err.Error())
-	//}
 	data := createEvaluationResp{
 		EvaluationId: jobId,
 	}

@@ -1,5 +1,5 @@
 definitions:
-  models.ArgumentsItem:
+  models.ParamsItem:
     additionalProperties:
       type: string
     type: object
@@ -210,11 +210,11 @@ definitions:
     type: object
   models.Modelset:
     properties:
-      argumentPath:
+      paramPath:
         description: 模型参数路径
         type: string
-      arguments:
-        $ref: '#/definitions/models.ArgumentsItem'
+      params:
+        $ref: '#/definitions/models.ParamsItem'
         description: omitempty 值为空，不编码
         type: object
       createdAt:
@@ -975,9 +975,9 @@ definitions:
     type: object
   routers.createModelsetReq:
     properties:
-      argumentPath:
+      paramPath:
         type: string
-      arguments:
+      params:
         additionalProperties:
           type: string
         type: object
@@ -1000,7 +1000,7 @@ definitions:
       use:
         type: string
     required:
-    - argumentPath
+    - paramPath
     - name
     type: object
   routers.getEvaluationResp:

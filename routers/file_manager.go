@@ -162,7 +162,7 @@ func uploadModelset(c *gin.Context) error {
 // @Summary download model by id
 // @Produce  json
 // @Param id path int true "model id"
-// @Success 200 {object} APISuccessResp "success"
+// @Success 200 {object} APISuccessResp "success  download the code path dir"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/download/model/:id [get]
@@ -176,19 +176,8 @@ func downloadModelset(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	//如果上传模型文件检查模型文件是否存在
-	if modelset.ModelPath != "" {
-		err = services.CheckPathExists(modelset.ModelPath)
-		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-		}
-	}
-	//检查模型参数文件是否存在
-	err = services.CheckPathExists(modelset.ArgumentPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	targetPath, err := services.CompressFile(modelset.ModelPath)
+	//just download the code path
+	targetPath, err := services.CompressFile(modelset.CodePath)
 	if err != nil {
 		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
 	}

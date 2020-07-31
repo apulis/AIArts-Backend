@@ -24,7 +24,6 @@ type createEvaluationResp struct {
 	EvaluationId string `json:"jobId"`
 }
 
-
 type lsModelsetsReq struct {
 	PageNum   int    `form:"pageNum"`
 	PageSize  int    `form:"pageSize,default=10"`
@@ -36,17 +35,11 @@ type lsModelsetsReq struct {
 }
 
 type createModelsetReq struct {
-	Name         string            `json:"name" binding:"required"`
-	Description  string            `json:"description" `
-	JobId        string            `json:"jobId"`
-	Use          string            `json:"use"`
-	DataFormat   string            `json:"dataFormat"`
-	Arguments    map[string]string `json:"arguments"`
-	EngineType   string            `json:"engineType"`
-	Precision    string            `json:"precision"`
-	IsAdvance    bool              `json:"isAdvance"`
-	ModelPath    string            `json:"modelPath"`
-	ArgumentPath string            `json:"argumentPath" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" `
+	JobId       string `json:"jobId"`
+	CodePath   string `json:"codePath"`
+	ParamPath   string `json:"paramPath" binding:"required"`
 }
 
 type updateModelsetReq struct {
@@ -140,14 +133,14 @@ func createModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	//如果上传模型文件检查模型文件是否存在
-	if req.ModelPath != "" {
-		err = services.CheckPathExists(req.ModelPath)
+	if req.CodePath != "" {
+		err = services.CheckPathExists(req.CodePath)
 		if err != nil {
 			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
 	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.ArgumentPath)
+	err = services.CheckPathExists(req.ParamPath)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
@@ -155,8 +148,7 @@ func createModelset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateModelset(req.IsAdvance, req.Name, req.Description, username, "0.0.1", req.Use, req.JobId,
-		req.DataFormat, req.Arguments, req.EngineType, req.Precision, req.ModelPath, req.ArgumentPath)
+	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
