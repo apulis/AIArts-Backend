@@ -43,7 +43,7 @@ func CreateModelset(name, description, creator, version, jobId,codePath, paramPa
 		IsAdvance:   false,
 		ParamPath:   paramPath,
 	}
-	//获取训练作业输出模型的玩类型
+	//获取训练作业输出模型的类型
 	if codePath == "" {
 		job, _ := GetTraining(creator, jobId)
 		var paramItem models.ParamsItem
@@ -58,6 +58,8 @@ func CreateModelset(name, description, creator, version, jobId,codePath, paramPa
 		} else {
 			return fmt.Errorf("the job id is invaild")
 		}
+	}else{
+		modelset.CodePath = codePath
 	}
 	return models.CreateModelset(modelset)
 }
