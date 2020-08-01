@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -27,17 +26,18 @@ type getEvaluationsReq struct {
 	OrderBy  string `form:"orderBy" json:"orderBy"`
 	Order    string `form:"order" json:"order"`
 }
+
 type getEvaluationsResp struct {
-	Evaluations []*models.Training `json:"evaluations"`
-	Total       int                `json:"total"`
-	TotalPage   int                `json:"totalPage"`
-	PageNum     int                `json:"pageNum"`
-	PageSize    int                `json:"pageSize"`
+	Evaluations []*services.Evaluation `json:"evaluations"`
+	Total       int                    `json:"total"`
+	TotalPage   int                    `json:"totalPage"`
+	PageNum     int                    `json:"pageNum"`
+	PageSize    int                    `json:"pageSize"`
 }
 type getEvaluationResp struct {
-	Evaluation models.Training   `json:"evaluation"`
-	Log        string            `json:"log"`
-	Indicator  map[string]string `json:"indicator"`
+	Evaluation services.Evaluation `json:"evaluation"`
+	Log        string              `json:"log"`
+	Indicator  map[string]string   `json:"indicator"`
 }
 
 // @Summary list models
@@ -77,13 +77,14 @@ func lsEvaluations(c *gin.Context) error {
 
 // @Summary create Evaluation
 // @Produce json
-// @Param param body models.Training true "ID:modelID ， NAME : model NAME Desc：dataset Name"
+// @Param param body createEvaluationsReq true "name:model name ， datasetName ：dataset name"
 // @Success 200 {object} createEvaluationResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations [post]
 func createEvaluation(c *gin.Context) error {
-	var req models.Training
+	var req services.Evaluation
+
 	err := c.BindJSON(&req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -125,7 +126,7 @@ func createEvaluation(c *gin.Context) error {
 // @Summary get evaluation by id
 // @Produce  json
 // @Param id path int true "evaluation id"
-// @Success 200 {object} getEvaluationResp "success {"accuary":"0.001"}"
+// @Success 200 {object} getEvaluationResp "success indicator:{"accuary":"0.001"}"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations/:id [get]
