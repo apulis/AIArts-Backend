@@ -1492,7 +1492,7 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "list models",
+                "summary": "list evaluations",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1551,12 +1551,12 @@ var doc = `{
                 "summary": "create Evaluation",
                 "parameters": [
                     {
-                        "description": "ID:modelID ， NAME : model NAME Desc：dataset Name",
+                        "description": "name:model name ， datasetName ：dataset name",
                         "name": "param",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Training"
+                            "$ref": "#/definitions/services.Evaluation"
                         }
                     }
                 ],
@@ -1599,7 +1599,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "success {\"accuary\":\"0.001\"}",
+                        "description": "success indicator:{\"accuary\":\"0.001\"}",
                         "schema": {
                             "$ref": "#/definitions/routers.getEvaluationResp"
                         }
@@ -1708,7 +1708,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "success  download the code path dir",
                         "schema": {
                             "$ref": "#/definitions/routers.APISuccessResp"
                         }
@@ -2049,6 +2049,70 @@ var doc = `{
             }
         },
         "/ai_arts/api/models": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get model by id",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "isAdvance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "all",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.getModelsetResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
             "post": {
                 "produces": [
                     "application/json"
@@ -2717,12 +2781,6 @@ var doc = `{
         }
     },
     "definitions": {
-        "models.ParamsItem": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "string"
-            }
-        },
         "models.CodeEnvItem": {
             "type": "object",
             "required": [
@@ -3031,14 +3089,9 @@ var doc = `{
         "models.Modelset": {
             "type": "object",
             "properties": {
-                "paramPath": {
-                    "description": "模型参数路径",
+                "codePath": {
+                    "description": "模型路径",
                     "type": "string"
-                },
-                "params": {
-                    "description": "omitempty 值为空，不编码",
-                    "type": "object",
-                    "$ref": "#/definitions/models.ParamsItem"
                 },
                 "createdAt": {
                     "type": "object",
@@ -3089,16 +3142,21 @@ var doc = `{
                 "jobId": {
                     "type": "string"
                 },
-                "modelPath": {
-                    "description": "模型路径",
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "outputPath": {
                     "description": "输出文件路径",
                     "type": "string"
+                },
+                "paramPath": {
+                    "description": "指定的模型参数路径",
+                    "type": "string"
+                },
+                "params": {
+                    "description": "omitempty 值为空，不编码",
+                    "type": "object",
+                    "$ref": "#/definitions/models.ParamsItem"
                 },
                 "precision": {
                     "type": "string"
@@ -3144,6 +3202,12 @@ var doc = `{
                         "type": "integer"
                     }
                 }
+            }
+        },
+        "models.ParamsItem": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
             }
         },
         "models.PostInference": {
@@ -4182,44 +4246,23 @@ var doc = `{
         "routers.createModelsetReq": {
             "type": "object",
             "required": [
-                "paramPath",
-                "name"
+                "name",
+                "paramPath"
             ],
             "properties": {
-                "paramPath": {
-                    "type": "string"
-                },
-                "params": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "dataFormat": {
+                "codePath": {
                     "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
-                "engineType": {
-                    "type": "string"
-                },
-                "isAdvance": {
-                    "type": "boolean"
-                },
                 "jobId": {
-                    "type": "string"
-                },
-                "modelPath": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "precision": {
-                    "type": "string"
-                },
-                "use": {
+                "paramPath": {
                     "type": "string"
                 }
             }
@@ -4229,7 +4272,7 @@ var doc = `{
             "properties": {
                 "evaluation": {
                     "type": "object",
-                    "$ref": "#/definitions/models.Training"
+                    "$ref": "#/definitions/services.Evaluation"
                 },
                 "indicator": {
                     "type": "object",
@@ -4302,6 +4345,33 @@ var doc = `{
                 }
             }
         },
+        "routers.lsModelsetsReq": {
+            "type": "object",
+            "properties": {
+                "isAdvance": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "all",
+                    "type": "string"
+                }
+            }
+        },
         "routers.setFDInfoReq": {
             "type": "object",
             "required": [
@@ -4316,6 +4386,56 @@ var doc = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "services.Evaluation": {
+            "type": "object",
+            "properties": {
+                "codePath": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "datasetName": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
+                "deviceNum": {
+                    "type": "integer"
+                },
+                "deviceType": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputPath": {
+                    "type": "string"
+                },
+                "paramPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "startupFile": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

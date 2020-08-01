@@ -28,6 +28,7 @@ type lsModelsetsReq struct {
 	PageNum   int    `form:"pageNum"`
 	PageSize  int    `form:"pageSize,default=10"`
 	Name      string `form:"name"`
+	//all
 	Status    string `form:"status"`
 	IsAdvance bool   `form:"isAdvance"`
 	OrderBy   string `form:"orderBy,default=created_at"`
@@ -58,18 +59,13 @@ type GetModelsetsResp struct {
 	PageSize  int               `json:"pageSize"`
 }
 
-// @Summary list models
+// @Summary get model by id
 // @Produce  json
-// @Param pageNum query int true "page number"
-// @Param pageSize query int true "size per page"
-// @Param isAdvance query string true "job status. get all jobs if it is all"
-// @Param name query string true "the keyword of search"
-// @Param status query string true "the keyword of search"
-// @Success 200 {object} APISuccessRespGetModelsets "success"
+// @Param query query lsModelsetsReq true "query"
+// @Success 200 {object} getModelsetResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [get]
-
 func lsModelsets(c *gin.Context) error {
 	var req lsModelsetsReq
 	err := c.ShouldBindQuery(&req)

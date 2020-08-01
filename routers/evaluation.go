@@ -40,7 +40,7 @@ type getEvaluationResp struct {
 	Indicator  map[string]string   `json:"indicator"`
 }
 
-// @Summary list models
+// @Summary list evaluations
 // @Produce  json
 // @Param pageNum query int true "page number"
 // @Param pageSize query int true "size per page"
@@ -77,7 +77,7 @@ func lsEvaluations(c *gin.Context) error {
 
 // @Summary create Evaluation
 // @Produce json
-// @Param param body createEvaluationsReq true "name:model name ， datasetName ：dataset name"
+// @Param param body services.Evaluation true "name:model name ， datasetName ：dataset name"
 // @Success 200 {object} createEvaluationResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
