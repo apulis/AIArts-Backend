@@ -175,12 +175,6 @@ func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
 		datasetStoragePath = fileConf.DatasetDir + "/storage/" + dir
 	} else {
 		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
-		//debug
-		if gin.Mode() == "debug" {
-			if username == "kaiyuan.xu" {
-				datasetStoragePath = fmt.Sprintf("D:/storage/dataset/%s/storage/%s", username, dir)
-			}
-		}
 	}
 	return datasetStoragePath
 }
