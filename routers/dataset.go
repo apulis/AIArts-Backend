@@ -30,7 +30,7 @@ type lsDatasetsReq struct {
 	Status       string `form:"status"`
 	OrderBy      string `form:"orderBy,default=created_at"`
 	Order        string `form:"order,default=desc"`
-	IsTranslated bool   `form:"isTranslated" binding:"required"`
+	IsTranslated bool   `form:"isTranslated"`
 }
 
 type createDatasetReq struct {
