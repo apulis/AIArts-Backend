@@ -23,6 +23,7 @@ type Dataset struct {
 	Binds string `json:"binds"`
 	//是否是公开数据集
 	IsPrivate bool  `json:"isPrivate"`
+	IsTranslated bool  `json:"isTranslated"`
 	Size      int64 `gorm:"type bigint(20)" json:"size"`
 }
 

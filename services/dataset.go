@@ -22,7 +22,7 @@ func ListDatasetsByName(page, count int, name, username string) ([]models.Datase
 	limit := count
 	return models.ListDataSetsByName(offset, limit, name, username)
 }
-func CreateDataset(name, description, creator, version, path string, isPrivate bool) error {
+func CreateDataset(name, description, creator, version, path string, isPrivate bool,isTranslated bool) error {
 	size, err := GetDirSize(path)
 	if err != nil {
 		return err
@@ -35,6 +35,7 @@ func CreateDataset(name, description, creator, version, path string, isPrivate b
 		Path:        path,
 		Size:        size,
 		IsPrivate:   isPrivate,
+		IsTranslated:   isTranslated,
 		Status:      DATASET_STATUS_NORMAL,
 	}
 	return models.CreateDataset(dataset)

@@ -37,6 +37,8 @@ type createDatasetReq struct {
 	Description string `json:"description" binding:"required"`
 	Path        string `json:"path" binding:"required"`
 	IsPrivate   bool   `json:"isPrivate" `
+	IsTranslated   bool   `json:"isTranslated" `
+
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -146,7 +148,7 @@ func createDataset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate)
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
