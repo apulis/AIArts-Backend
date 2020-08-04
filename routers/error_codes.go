@@ -28,12 +28,13 @@ const (
 	UPLOAD_TEMPDIR_FULL_CODE = 30009
 	//无法删除正在使用的数据集
 	DATASET_IS_STILL_USE_CODE = 30010
-
+	// dataset
+	//访问标注平台获取数据集出错
+	FAILED_FETCH_ANNOTATION_CODE = 30011
 	// modelset
 	//创建评估训练任务出错
-	CREATE_TRAINING_FAILED_CODE = 30701
-	//获取评估训练任务出错
-	GET_TRAINING_FAILED_CODE = 30702
+	CREATE_EVALUATION_FAILED_CODE = 30701
+
 
 	// user auth
 	NO_USRNAME = 30101

@@ -56,7 +56,7 @@ type APISuccessRespCreateEdgeInference struct {
 type APISuccessRespGetModelset struct {
 	Code int             `json:"code"`
 	Msg  string          `json:"msg"`
-	Data GetModelsetResp `json:"data"`
+	Data getModelsetResp `json:"data"`
 }
 
 type APISuccessRespGetModelsets struct {

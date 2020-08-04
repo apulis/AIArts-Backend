@@ -1,8 +1,4 @@
 definitions:
-  models.ArgumentsItem:
-    additionalProperties:
-      type: string
-    type: object
   models.CodeEnvItem:
     properties:
       JupyterUrl:
@@ -191,6 +187,10 @@ definitions:
         type: boolean
       resourcegpu:
         type: integer
+      scriptParams:
+        additionalProperties:
+          type: string
+        type: object
       startupFile:
         type: string
       team:
@@ -206,13 +206,9 @@ definitions:
     type: object
   models.Modelset:
     properties:
-      argumentPath:
-        description: 模型参数路径
+      codePath:
+        description: 模型路径
         type: string
-      arguments:
-        $ref: '#/definitions/models.ArgumentsItem'
-        description: omitempty 值为空，不编码
-        type: object
       createdAt:
         $ref: '#/definitions/models.UnixTime'
         type: object
@@ -231,7 +227,12 @@ definitions:
         type: object
       description:
         type: string
-      engineType:
+      deviceNum:
+        type: integer
+      deviceType:
+        description: 评估设备类型
+        type: string
+      engine:
         type: string
       evaluationId:
         description: 评估训练任务id
@@ -242,14 +243,18 @@ definitions:
         type: boolean
       jobId:
         type: string
-      modelPath:
-        description: 模型路径
-        type: string
       name:
         type: string
       outputPath:
-        description: 启动文件路径
+        description: 输出文件路径
         type: string
+      paramPath:
+        description: 指定的模型参数路径
+        type: string
+      params:
+        $ref: '#/definitions/models.ParamsItem'
+        description: omitempty 值为空，不编码
+        type: object
       precision:
         type: string
       size:
@@ -280,6 +285,10 @@ definitions:
         type: object
       gpuType:
         type: string
+    type: object
+  models.ParamsItem:
+    additionalProperties:
+      type: string
     type: object
   models.PostInference:
     properties:
@@ -586,12 +595,12 @@ definitions:
       msg:
         type: string
     type: object
-  routers.APISuccessRespGetModelset:
+  routers.APISuccessRespGetModelsets:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/routers.GetModelsetResp'
+        $ref: '#/definitions/routers.GetModelsetsResp'
         type: object
       msg:
         type: string
@@ -781,6 +790,8 @@ definitions:
         type: array
       total:
         type: integer
+      totalPage:
+        type: integer
     type: object
   routers.GetDatasetResp:
     properties:
@@ -814,11 +825,20 @@ definitions:
       jobType:
         type: string
     type: object
-  routers.GetModelsetResp:
+  routers.GetModelsetsResp:
     properties:
-      model:
-        $ref: '#/definitions/models.Modelset'
-        type: object
+      models:
+        items:
+          $ref: '#/definitions/models.Modelset'
+        type: array
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
     type: object
   routers.GetResourceRsp:
     properties:
@@ -948,35 +968,38 @@ definitions:
     - jobName
     - outputPath
     type: object
+  routers.createEvaluationResp:
+    properties:
+      jobId:
+        type: string
+    type: object
   routers.createModelsetReq:
     properties:
-      argumentPath:
-        type: string
-      arguments:
-        additionalProperties:
-          type: string
-        type: object
-      dataFormat:
+      codePath:
         type: string
       description:
         type: string
-      engineType:
-        type: string
-      isAdvance:
-        type: boolean
       jobId:
-        type: string
-      modelPath:
         type: string
       name:
         type: string
-      precision:
-        type: string
-      use:
+      paramPath:
         type: string
     required:
-    - argumentPath
     - name
+    - paramPath
+    type: object
+  routers.getEvaluationResp:
+    properties:
+      evaluation:
+        $ref: '#/definitions/services.Evaluation'
+        type: object
+      indicator:
+        additionalProperties:
+          type: string
+        type: object
+      log:
+        type: string
     type: object
   routers.getLocalEnvResp:
     properties:
@@ -999,6 +1022,12 @@ definitions:
       status:
         type: string
     type: object
+  routers.getModelsetResp:
+    properties:
+      model:
+        $ref: '#/definitions/models.Modelset'
+        type: object
+    type: object
   routers.getVersionInfoResp:
     properties:
       isUpgrading:
@@ -1010,6 +1039,24 @@ definitions:
         items:
           $ref: '#/definitions/models.VersionInfoSet'
         type: array
+    type: object
+  routers.lsModelsetsReq:
+    properties:
+      isAdvance:
+        type: boolean
+      name:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        description: all
+        type: string
     type: object
   routers.setFDInfoReq:
     properties:
@@ -1023,9 +1070,11 @@ definitions:
     - password
     - username
     type: object
-  services.CreateEvaluationReq:
+  services.Evaluation:
     properties:
-      argumentPath:
+      codePath:
+        type: string
+      createTime:
         type: string
       datasetName:
         type: string
@@ -1035,13 +1084,23 @@ definitions:
         type: integer
       deviceType:
         type: string
-      engineType:
+      engine:
+        type: string
+      id:
         type: string
       name:
         type: string
       outputPath:
         type: string
+      paramPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
       startupFile:
+        type: string
+      status:
         type: string
     type: object
 info:
@@ -2009,6 +2068,116 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/evaluations:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: the keyword of search
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: the keyword of search
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelsets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list evaluations
+    post:
+      parameters:
+      - description: name:model name ， datasetName ：dataset name
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/services.Evaluation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.createEvaluationResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create Evaluation
+  /ai_arts/api/evaluations/:id:
+    delete:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete evaluation by id
+    get:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success indicator:{"accuary":"0.001"}
+          schema:
+            $ref: '#/definitions/routers.getEvaluationResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get evaluation by id
   /ai_arts/api/files/download/dataset/:id:
     get:
       parameters:
@@ -2045,7 +2214,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: success
+          description: success  download the code path dir
           schema:
             $ref: '#/definitions/routers.APISuccessResp'
         "400":
@@ -2086,6 +2255,23 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: upload model file, not implemented yet
+  /ai_arts/api/inferences/DeleteJob:
+    delete:
+      description: delete a inference job
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: Delete a inference job
   /ai_arts/api/inferences/GetAllDevice:
     get:
       description: get all device type detail
@@ -2250,6 +2436,46 @@ paths:
             $ref: '#/definitions/routers.APISuccessResp'
       summary: submit a inference job
   /ai_arts/api/models:
+    get:
+      parameters:
+      - in: query
+        name: isAdvance
+        type: boolean
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - description: all
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getModelsetResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get model by id
     post:
       parameters:
       - description: json body
@@ -2311,7 +2537,7 @@ paths:
         "200":
           description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetModelset'
+            $ref: '#/definitions/routers.getModelsetResp'
         "400":
           description: error
           schema:
@@ -2344,54 +2570,6 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
-  /ai_arts/api/models/:id/evaluation:
-    get:
-      parameters:
-      - description: model id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespGetModelset'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: get evaluation by modelid
-    post:
-      parameters:
-      - description: params
-        in: body
-        name: param
-        required: true
-        schema:
-          $ref: '#/definitions/services.CreateEvaluationReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessRespCreateTraining'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: create Training
   /ai_arts/api/templates:
     get:
       parameters:
@@ -2683,9 +2861,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: success
           schema:
-            $ref: '#/definitions/routers.APISuccessRespGetDataset'
+            $ref: '#/definitions/routers.APISuccessResp'
         "400":
           description: error
           schema:

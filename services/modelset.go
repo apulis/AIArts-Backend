@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
@@ -10,19 +9,21 @@ const (
 	MODELSET_STATUS_NORMAL   = "normal"
 	MODELSET_STATUS_DELETING = "deleting"
 )
+
 type CreateEvaluationReq struct {
-	EngineType       string `json:"engineType"`
-	DeviceType   string `json:"deviceType"`
-	DeviceNum    int    `json:"deviceNum"`
-	StartupFile  string `json:"startupFile"`
-	OutputPath   string `json:"outputPath"`
-	DatasetPath  string `json:"datasetPath"`
-	DatasetName  string `json:"datasetName"`
-	ArgumentPath string `json:"argumentPath"`
-	Name       string `json:"name"`
-
-
+	EngineType  string            `json:"engineType"`
+	DeviceType  string            `json:"deviceType"`
+	DeviceNum   int               `json:"deviceNum"`
+	StartupFile string            `json:"startupFile"`
+	OutputPath  string            `json:"outputPath"`
+	DatasetPath string            `json:"datasetPath"`
+	DatasetName string            `json:"datasetName"`
+	ParamPath   string            `json:"paramPath"`
+	CodePath    string            `json:"codePath"`
+	Name        string            `json:"name"`
+	Params      map[string]string `json:"params"`
 }
+
 func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
@@ -30,34 +31,35 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
 }
 
-func CreateModelset(isAdvance bool, name, description, creator, version, use, jobId,
-	dataFormat string, arguments map[string]string, engineType, precision, modelPath, argumentPath string) error {
-	//获取训练任务的文件夹size
-	//if jobId==""{
-	//	size, err := GetDirSize(modelPath)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	//json转换格式
-	var argItem models.ArgumentsItem
-	argItem = arguments
+func CreateModelset(name, description, creator, version, jobId,codePath, paramPath string) error {
+	//只能创建非预置模型
 	modelset := models.Modelset{
-		Name:         name,
-		Description:  description,
-		Creator:      creator,
-		Version:      version,
-		//Size:         size,
-		Use:          use,
-		JobId:        jobId,
-		Status:       MODELSET_STATUS_NORMAL,
-		DataFormat:   dataFormat,
-		Arguments:    &argItem,
-		EngineType:   engineType,
-		Precision:    precision,
-		IsAdvance:    isAdvance,
-		ModelPath:    modelPath,
-		ArgumentPath: argumentPath,
+		Name:        name,
+		Description: description,
+		Creator:     creator,
+		Version:     version,
+		JobId:       jobId,
+		Status:      MODELSET_STATUS_NORMAL,
+		IsAdvance:   false,
+		ParamPath:   paramPath,
+	}
+	//获取训练作业输出模型的类型
+	if codePath == "" {
+		job, _ := GetTraining(creator, jobId)
+		var paramItem models.ParamsItem
+		paramItem = job.Params
+		if job != nil {
+			modelset.OutputPath = job.OutputPath
+			modelset.CodePath = job.CodePath
+			modelset.DatasetPath = job.DatasetPath
+			modelset.StartupFile = job.StartupFile
+			modelset.Params = &paramItem
+			modelset.Engine = job.Engine
+		} else {
+			return fmt.Errorf("the job id is invaild")
+		}
+	}else{
+		modelset.CodePath = codePath
 	}
 	return models.CreateModelset(modelset)
 }
@@ -92,57 +94,4 @@ func DeleteModelset(id int) error {
 	//	return err
 	//}
 	return models.DeleteModelset(&modelset)
-}
-func CreateEvaluation(userName string, evaluation CreateEvaluationReq) (string, error) {
-	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
-	params := make(map[string]interface{})
-	params["userName"] = userName
-	params["jobName"] = evaluation.Name
-	params["jobType"] = models.JobTypeArtsEvaluation
-	params["image"] = evaluation.EngineType
-	params["gpuType"] = evaluation.DeviceType
-	params["resourcegpu"] = evaluation.DeviceNum
-	params["DeviceNum"] = evaluation.DeviceNum
-	params["cmd"] = "python " + evaluation.StartupFile
-	if len(evaluation.DatasetPath) > 0 {
-		params["cmd"] = params["cmd"].(string) + " --checkpoint_path=" + evaluation.DatasetPath
-	}
-	if len(evaluation.OutputPath) > 0 {
-		params["cmd"] = params["cmd"].(string) + " --eval_dir=" + evaluation.OutputPath
-	}
-	if len(evaluation.DatasetPath) > 0 {
-		params["cmd"] = params["cmd"].(string) + " --dataset_dir=" + evaluation.OutputPath
-	}
-	params["startupFile"] = evaluation.StartupFile
-	params["datasetPath"] = evaluation.DatasetPath
-	//params["codePath"] = evaluation.CodePath
-	params["outputPath"] = evaluation.OutputPath
-	//params["scriptParams"] = evaluation.Params
-	//params["desc"] = evaluation.Desc
-	params["containerUserId"] = 0
-	params["jobtrainingtype"] = "RegularJob"
-	params["preemptionAllowed"] = false
-	params["workPath"] = ""
-	params["enableworkpath"] = true
-	params["enabledatapath"] = true
-	params["enablejobpath"] = true
-	params["jobPath"] = "job"
-	params["hostNetwork"] = false
-	params["isPrivileged"] = false
-	params["interactivePorts"] = false
-	//params["numworker"] = training.NumPs
-	//params["numps"] = training.NumPsWorker
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
-	logger.Info(params)
-
-	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
-
-	if err != nil {
-		fmt.Printf("create evaluation err[%+v]\n", err)
-		return "", err
-	}
-
-	return id.Id, nil
 }

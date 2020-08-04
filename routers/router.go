@@ -33,6 +33,8 @@ func NewRouter() *gin.Engine {
 	AddGroupCode(r)
 	AddGroupModel(r)
 	AddGroupTraining(r)
+	AddGroupEvaluation(r)
+
 	AddGroupDataset(r)
 	AddGroupAnnotation(r)
 	AddGroupInference(r)

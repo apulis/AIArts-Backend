@@ -22,6 +22,7 @@ func AddGroupInference(r *gin.Engine) {
 	group.GET("/GetJobStatus", wrapper(GetJobStatus))
 	group.POST("/Infer", wrapper(Infer))
 	group.GET("/KillJob", wrapper(KillJob))
+	group.DELETE("/DeleteJob", wrapper(DeleteJob))
 }
 
 // @Summary submit a inference job
@@ -166,6 +167,21 @@ func Infer(c *gin.Context) error {
 	buf := bytes.NewBuffer(nil)
 	io.Copy(buf, content)
 	resp, err := services.Infer(jobId, signature_name, buf.Bytes())
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, resp)
+}
+
+// @Summary Delete a inference job
+// @Description delete a inference job
+// @Produce  json
+// @Param jobId query string true "inference job Id "
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/inferences/DeleteJob [DELETE]
+func DeleteJob(c *gin.Context) error {
+	jobId := c.Query("jobId")
+	resp, err := services.DeleteJob(jobId)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}

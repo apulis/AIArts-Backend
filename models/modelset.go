@@ -27,23 +27,27 @@ type Modelset struct {
 	DatasetName string `json:"datasetName"`
 	DatasetPath string `json:"datasetPath"`
 	//omitempty 值为空，不编码
-	Arguments  *ArgumentsItem `gorm:"type:text" json:"arguments"`
-	EngineType string         `json:"engineType"`
+	Params  *ParamsItem `gorm:"type:text" json:"params"`
+	Engine string         `json:"engine"`
 	Precision  string         `json:"precision"`
 	IsAdvance  bool           `json:"isAdvance"`
 	//模型路径
-	ModelPath string `json:"modelPath"`
-	//模型参数路径
-	ArgumentPath string `json:"argumentPath"`
-	//启动文件路径
+	CodePath string `json:"codePath"`
+	//指定的模型参数路径
+	ParamPath string `json:"paramPath"`
+	// 输出文件路径
 	OutputPath string `json:"outputPath"`
 	//启动文件路径
 	StartupFile string `json:"startupFile"`
 	//评估训练任务id
 	EvaluationId string `json:"evaluationId"`
+	// 评估设备类型
+	DeviceType string `json:"deviceType"`
+	DeviceNum int `json:"deviceNum"`
+
 }
 
-type ArgumentsItem map[string]string
+type ParamsItem map[string]string
 
 func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
@@ -54,14 +58,14 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 		whereQueryStr = fmt.Sprintf(" is_advance = 1")
 	}
 	if name != "" {
-		whereQueryStr += fmt.Sprintf("and name='%s' ", name)
+		whereQueryStr +=  "and name like '%"+ name + "%' "
 	}
 	if status != "" {
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
-	res := db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
+	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
 		return modelsets, total, res.Error
@@ -101,7 +105,7 @@ func DeleteModelset(modelset *Modelset) error {
 	return nil
 }
 
-func (this *ArgumentsItem) Value() (driver.Value, error) {
+func (this *ParamsItem) Value() (driver.Value, error) {
 	binData, err := json.Marshal(this)
 	if err != nil {
 		return nil, err
@@ -109,7 +113,7 @@ func (this *ArgumentsItem) Value() (driver.Value, error) {
 	return string(binData), nil
 }
 
-func (this *ArgumentsItem) Scan(v interface{}) error {
+func (this *ParamsItem) Scan(v interface{}) error {
 	switch t := v.(type) {
 	case string:
 		if t != "" {
