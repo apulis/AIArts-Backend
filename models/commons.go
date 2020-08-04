@@ -78,7 +78,7 @@ func (t *UnixTime) Scan(v interface{}) error {
 	return fmt.Errorf("cannot convert %v to timestamp", v)
 }
 
-// init version info of platform, make sure there is at least one record in versionInfo
+// init version info of platform, make sure there is at least one record in versionInfo table
 func initVersionInfoTable() {
 	checkDataset := new(VersionInfoSet)
 	err := db.Limit(1).Find(checkDataset).Error
@@ -88,7 +88,7 @@ func initVersionInfoTable() {
 	initVersion := VersionInfoSet{
 		Description: "DLTS platform, help you to achieve all possibility.",
 		Version:     "v1.0.1",
-		Creator:     "YTung",
+		Creator:     "Administrator",
 	}
 	err = UploadVersionInfoSet(initVersion)
 	fmt.Println("upload ready")
@@ -258,9 +258,8 @@ type EndpointWrapper struct {
 // 升级平台版本需要的信息
 var UPGRADE_FILE_PATH = "/data/DLTSUpgrade"
 var UPGRADE_CONFIG_FILE = "version.yaml"
-
 /* Upgrade_Progress原是作为进度条百分比，现在作为升级过程的状态码，目前共有以下集中
-* -1: not ready,系统刚进入时的准备状态（可以与success合并，作为健康态的表现）
+* -1: not ready,系统刚进入时的准备状态（可以与success合并，但是仍未合并，作为健康态的表现）
 * 0: upgrading,正在升级
 * 100: success,升级完成，也是健康态
 * 300: error,升级出错
