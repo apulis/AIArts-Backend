@@ -222,8 +222,8 @@ type TemplateId struct {
 }
 
 type JobLog struct {
-	Cursor string `json:"cursor"`
-	Log    string `json:"log"`
+	Cursor string `json:"cursor,omitempty"`
+	Log    string `json:"log,omitempty"`
 }
 
 // 创建endpoint
