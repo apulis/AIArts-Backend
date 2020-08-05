@@ -22,21 +22,25 @@ type Dataset struct {
 	//plantform#id*plantform_id
 	Binds string `json:"binds"`
 	//是否是公开数据集
-	IsPrivate bool  `json:"isPrivate"`
-	Size      int64 `gorm:"type bigint(20)" json:"size"`
+	IsPrivate    bool  `json:"isPrivate"`
+	IsTranslated bool  `json:"isTranslated"`
+	Size         int64 `gorm:"type bigint(20)" json:"size"`
 }
 
-func ListDatasets(offset, limit int, orderBy, order, name, status, username string) ([]Dataset, int, error) {
+func ListDatasets(offset, limit int, orderBy, order, name, status string, isTranslated bool, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
 	total := 0
-	//先查询该用户的所有数据中，再查询公开数据集
+	//先查询该用户的所有数据集，再查询公开数据集
 	whereQueryStr := fmt.Sprintf("creator = '%s' ", username)
 	orQueryStr := fmt.Sprintf("is_private=0 ")
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
-
+	if isTranslated {
+		whereQueryStr += "and is_translated = 1 "
+		orQueryStr += "and is_translated = 1 "
+	}
 	if name != "" {
-		whereQueryStr += "and name like '%"+ name + "%' "
-		orQueryStr += "and name like '%"+ name + "%' "
+		whereQueryStr += "and name like '%" + name + "%' "
+		orQueryStr += "and name like '%" + name + "%' "
 	}
 
 	if status != "" && status != "all" {

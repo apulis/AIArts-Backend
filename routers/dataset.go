@@ -24,19 +24,21 @@ type datasetId struct {
 }
 
 type lsDatasetsReq struct {
-	PageNum  int    `form:"pageNum,default=1"`
-	PageSize int    `form:"pageSize,default=10"`
-	Name     string `form:"name"`
-	Status   string `form:"status"`
-	OrderBy  string `form:"orderBy,default=created_at"`
-	Order    string `form:"order,default=desc"`
+	PageNum      int    `form:"pageNum,default=1"`
+	PageSize     int    `form:"pageSize,default=10"`
+	Name         string `form:"name"`
+	Status       string `form:"status"`
+	OrderBy      string `form:"orderBy,default=updated_at"`
+	Order        string `form:"order,default=desc"`
+	IsTranslated bool   `form:"isTranslated"`
 }
 
 type createDatasetReq struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
-	Path        string `json:"path" binding:"required"`
-	IsPrivate   bool   `json:"isPrivate" `
+	Name         string `json:"name" binding:"required"`
+	Description  string `json:"description" binding:"required"`
+	Path         string `json:"path" binding:"required"`
+	IsPrivate    bool   `json:"isPrivate" `
+	IsTranslated bool   `json:"isTranslated" `
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -61,15 +63,13 @@ type GetDatasetsResp struct {
 
 // @Summary list datasets
 // @Produce  json
-// @Param pageNum query int true "page number, from 1"
-// @Param pageSize query int true "count per page"
-// @Param name query string false "dataset name"
-// @Param status query string false "dataset status"
+// @Param query query lsDatasetsReq true "isUsable 返回用户可用的数据集"
 // @Success 200 {object} APISuccessRespGetDatasets "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [get]
 func lsDatasets(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
 	var req lsDatasetsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
@@ -81,7 +81,39 @@ func lsDatasets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, username)
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
+	//获取该用户能够访问的所有已经标注好的数据库
+	if req.IsTranslated{
+		var annoDatasets []models.DataSet
+		queryStringParameters := models.QueryStringParametersV2{
+			PageNum:  req.PageNum,
+			PageSize: req.PageNum,
+			Name:     req.Name,
+			Status:   req.Status,
+			OrderBy:  req.OrderBy,
+			Order:    req.Order,
+		}
+
+		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
+		if err != nil {
+			return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
+		}
+		for _, v := range annoDatasets {
+			if v.ConvertStatus == "finished" {
+				modelset := models.Dataset{
+					Name:        v.Name,
+					Description: v.Info,
+					Path:        v.ConvertOutPath,
+					Status:      v.Name,
+					//是否是公开数据集
+					IsPrivate:    v.IsPrivate,
+					IsTranslated: true,
+				}
+				datasets = append(datasets, modelset)
+			}
+		}
+		total += len(annoDatasets)
+	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -146,7 +178,7 @@ func createDataset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate)
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
