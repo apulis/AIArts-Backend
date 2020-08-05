@@ -209,7 +209,7 @@ func quote(value string) string {
 }
 
 // 数据库记录
-func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams) {
+func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams, isNew bool) {
 
 	this.Scope = scope
 	this.JobType = jobType
@@ -217,11 +217,17 @@ func (this *Templates) Load(scope int, creator, jobType string, item TemplatePar
 	this.Name = item.Name
 	this.Creator = creator
 	this.Data = item
-	this.CreatedAt = UnixTime{
-		Time: time.Now(),
-	}
 
-	this.UpdatedAt = this.CreatedAt
+	if isNew {
+		this.CreatedAt = UnixTime{
+			Time: time.Now(),
+		}
+		this.UpdatedAt = this.CreatedAt
+	} else {
+		this.UpdatedAt = UnixTime{
+			Time: time.Now(),
+		}
+	}
 }
 
 func (this *Templates) ToMap() map[string]interface{} {
@@ -230,7 +236,6 @@ func (this *Templates) ToMap() map[string]interface{} {
 	data["name"] = this.Name
 	data["scope"] = this.Scope
 
-	//
 	binData, err := json.Marshal(this.Data)
 	if err == nil {
 		data["data"] = string(binData)
@@ -239,9 +244,13 @@ func (this *Templates) ToMap() map[string]interface{} {
 	data["jobType"] = this.JobType
 	data["creator"] = this.Creator
 
-	data["createdAt"] = this.CreatedAt
-	data["updatedAt"] = this.UpdatedAt
-	data["deletedAt"] = this.DeletedAt
+	if !this.CreatedAt.IsZero() {
+		data["createdAt"] = this.CreatedAt
+	}
+
+	if !this.UpdatedAt.IsZero() {
+		data["updatedAt"] = this.UpdatedAt
+	}
 
 	return data
 }

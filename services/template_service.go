@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*models.TemplateItem, int, int, error) {
+func GetAllTemplate(userName string, page, size, scope int, jobType, searchWord, orderBy, order string) ([]*models.TemplateItem, int, int, error) {
 
 	query := ""
 	provider := models.NewTemplateProvider(database.Db)
@@ -18,9 +18,23 @@ func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*
 	var err error
 	var templates []*models.Templates
 
+	extQuery := ""
+	if len(searchWord) > 0 {
+		extQuery += " and name like '" + searchWord + "'"
+	}
+
+	if len(orderBy) > 0 {
+		extQuery += " order border by " + orderBy
+		if strings.ToLower(order) == "asc" {
+			extQuery += " asc"
+		} else {
+			extQuery += " desc"
+		}
+	}
+
 	// 用户私有 + 公有
 	if scope == models.TemplatePublicPrivate {
-		query = "(scope in (?, ?) or creator = ?)and job_type = ?"
+		query = "(scope in (?, ?) or creator = ?) and job_type = ?"
 		if templates, err = provider.FindPage("", (page-1)*size, size, query,
 			models.TemplatePublic, models.TemplatePredefined, userName, jobType); err != nil {
 			return nil, 0, 0, err
@@ -28,18 +42,31 @@ func GetAllTemplate(userName string, page, size, scope int, jobType string) ([]*
 	} else if scope == models.TemplatePublic {
 
 		query = "scope in (?, ?) and job_type = ?"
+		if len(extQuery) > 0 {
+			query += extQuery
+		}
+
 		if templates, err = provider.FindPage("", (page-1)*size, size, query, models.TemplatePublic, models.TemplatePredefined, jobType); err != nil {
 			return nil, 0, 0, err
 		}
 	} else if scope == models.TemplatePredefined {
 
 		query = "scope = ? and job_type = ?"
+		if len(extQuery) > 0 {
+			query += extQuery
+		}
+
 		if templates, err = provider.FindPage("", (page-1)*size, size, query, scope, jobType); err != nil {
 			return nil, 0, 0, err
 		}
 
 	} else if scope == models.TemplatePrivate {
-		query = "creator = ? and job_type = ?"
+
+		query = "creator = ? and job_type = ? "
+		if len(extQuery) > 0 {
+			query += extQuery
+		}
+
 		if templates, err = provider.FindPage("", (page-1)*size, size, query, userName, jobType); err != nil {
 			return nil, 0, 0, err
 		}
@@ -60,7 +87,7 @@ func CreateTemplate(userName string, scope int, jobType string, template models.
 	provider := models.NewTemplateProvider(database.Db)
 
 	record := &models.Templates{}
-	record.Load(scope, userName, jobType, template)
+	record.Load(scope, userName, jobType, template, true)
 
 	id, err := provider.Insert(record.ToMap())
 	return id, err
@@ -71,7 +98,7 @@ func UpdateTemplate(id int64, userName string, scope int, jobType string, templa
 	provider := models.NewTemplateProvider(database.Db)
 
 	record := &models.Templates{}
-	record.Load(scope, userName, jobType, template)
+	record.Load(scope, userName, jobType, template, false)
 
 	var err error
 	if id, err = provider.Update(id, record.ToMap()); id == 0 {
