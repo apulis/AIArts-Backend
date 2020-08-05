@@ -2,9 +2,9 @@ package services
 
 import (
 	"fmt"
-	urllib "net/url"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	urllib "net/url"
 )
 
 func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {

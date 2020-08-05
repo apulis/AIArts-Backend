@@ -926,28 +926,37 @@ var doc = `{
                 "summary": "list datasets",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "page number, from 1",
-                        "name": "pageNum",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "count per page",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
+                        "type": "boolean",
+                        "name": "isTranslated",
+                        "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "dataset name",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "dataset status",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     }
@@ -2905,6 +2914,9 @@ var doc = `{
                     "description": "是否是公开数据集",
                     "type": "boolean"
                 },
+                "isTranslated": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -4204,6 +4216,9 @@ var doc = `{
                 "isPrivate": {
                     "type": "boolean"
                 },
+                "isTranslated": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -4255,6 +4270,9 @@ var doc = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "isAdvance": {
+                    "type": "boolean"
                 },
                 "jobId": {
                     "type": "string"
@@ -4342,6 +4360,32 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.VersionInfoSet"
                     }
+                }
+            }
+        },
+        "routers.lsDatasetsReq": {
+            "type": "object",
+            "properties": {
+                "isTranslated": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

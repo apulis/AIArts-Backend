@@ -59,6 +59,7 @@ type GetDatasetsResp struct {
 	TotalPage int              `json:"totalPage"`
 	PageNum   int              `json:"pageNum"`
 	PageSize  int              `json:"pageSize"`
+	Message   string           `json:"message"`
 }
 
 // @Summary list datasets
@@ -83,7 +84,8 @@ func lsDatasets(c *gin.Context) error {
 	}
 	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
 	//获取该用户能够访问的所有已经标注好的数据库
-	if req.IsTranslated{
+	var message = "success"
+	if req.IsTranslated {
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
 			PageNum:  req.PageNum,
@@ -96,23 +98,27 @@ func lsDatasets(c *gin.Context) error {
 
 		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
 		if err != nil {
-			return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
-		}
-		for _, v := range annoDatasets {
-			if v.ConvertStatus == "finished" {
-				modelset := models.Dataset{
-					Name:        v.Name,
-					Description: v.Info,
-					Path:        v.ConvertOutPath,
-					Status:      v.Name,
-					//是否是公开数据集
-					IsPrivate:    v.IsPrivate,
-					IsTranslated: true,
+			message = "label image platform is error"
+			//return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
+		} else {
+			for _, v := range annoDatasets {
+				if v.ConvertStatus == "finished" {
+					modelset := models.Dataset{
+						Name:        v.Name,
+						Description: v.Info,
+						Path:        v.ConvertOutPath,
+						Status:      v.Name,
+						//是否是公开数据集
+						IsPrivate:    v.IsPrivate,
+						IsTranslated: true,
+					}
+					datasets = append(datasets, modelset)
+					total += 1
+
 				}
-				datasets = append(datasets, modelset)
 			}
+
 		}
-		total += len(annoDatasets)
 	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -123,6 +129,7 @@ func lsDatasets(c *gin.Context) error {
 		PageNum:   req.PageNum,
 		PageSize:  req.PageSize,
 		TotalPage: total/req.PageSize + 1,
+		Message:   message,
 	}
 	return SuccessResp(c, data)
 }

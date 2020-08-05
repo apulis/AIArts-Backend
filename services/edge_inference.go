@@ -3,9 +3,9 @@ package services
 import (
 	"errors"
 	"fmt"
-	urllib "net/url"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	urllib "net/url"
 )
 
 func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, order string) ([]models.ConversionJob, int, error) {
