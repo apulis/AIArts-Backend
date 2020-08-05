@@ -2,17 +2,17 @@ package services
 
 import (
 	"fmt"
-
+	urllib "net/url"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 )
 
 func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
-
+	//把传输过来的searchword空格改为%20urlencode
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsTraining,
-		page, size, jobStatus, searchWord,
+		page, size, jobStatus, urllib.PathEscape(searchWord),
 		orderBy, order)
 
 	jobList := &models.JobList{}

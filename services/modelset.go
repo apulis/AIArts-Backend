@@ -31,7 +31,7 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
 }
 
-func CreateModelset(name, description, creator, version, jobId,codePath, paramPath string) error {
+func CreateModelset(name, description, creator, version, jobId,codePath, paramPath string,isAdvance bool) error {
 	//只能创建非预置模型
 	modelset := models.Modelset{
 		Name:        name,
@@ -40,7 +40,7 @@ func CreateModelset(name, description, creator, version, jobId,codePath, paramPa
 		Version:     version,
 		JobId:       jobId,
 		Status:      MODELSET_STATUS_NORMAL,
-		IsAdvance:   false,
+		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
 	}
 	//获取训练作业输出模型的类型

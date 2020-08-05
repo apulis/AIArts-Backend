@@ -28,7 +28,7 @@ type lsDatasetsReq struct {
 	PageSize     int    `form:"pageSize,default=10"`
 	Name         string `form:"name"`
 	Status       string `form:"status"`
-	OrderBy      string `form:"orderBy,default=created_at"`
+	OrderBy      string `form:"orderBy,default=updated_at"`
 	Order        string `form:"order,default=desc"`
 	IsTranslated bool   `form:"isTranslated"`
 }
@@ -96,7 +96,7 @@ func lsDatasets(c *gin.Context) error {
 
 		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
 		if err != nil {
-			return AppError(FAILED_FETCH_ANNOTATION_CODE, err.Error())
+			return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
 		}
 		for _, v := range annoDatasets {
 			if v.ConvertStatus == "finished" {
