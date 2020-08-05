@@ -85,6 +85,8 @@ definitions:
       isPrivate:
         description: 是否是公开数据集
         type: boolean
+      isTranslated:
+        type: boolean
       name:
         type: string
       path:
@@ -943,6 +945,8 @@ definitions:
         type: string
       isPrivate:
         type: boolean
+      isTranslated:
+        type: boolean
       name:
         type: string
       path:
@@ -979,6 +983,8 @@ definitions:
         type: string
       description:
         type: string
+      isAdvance:
+        type: boolean
       jobId:
         type: string
       name:
@@ -1039,6 +1045,23 @@ definitions:
         items:
           $ref: '#/definitions/models.VersionInfoSet'
         type: array
+    type: object
+  routers.lsDatasetsReq:
+    properties:
+      isTranslated:
+        type: boolean
+      name:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
     type: object
   routers.lsModelsetsReq:
     properties:
@@ -1701,22 +1724,25 @@ paths:
   /ai_arts/api/datasets:
     get:
       parameters:
-      - description: page number, from 1
-        in: query
-        name: pageNum
-        required: true
-        type: integer
-      - description: count per page
-        in: query
-        name: pageSize
-        required: true
-        type: integer
-      - description: dataset name
-        in: query
+      - in: query
+        name: isTranslated
+        type: boolean
+      - in: query
         name: name
         type: string
-      - description: dataset status
-        in: query
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
         name: status
         type: string
       produces:
