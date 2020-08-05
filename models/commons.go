@@ -87,7 +87,7 @@ func initVersionInfoTable() {
 	}
 	initVersion := VersionInfoSet{
 		Description: "DLTS platform, help you to achieve all possibility.",
-		Version:     "v1.0.1",
+		Version:     "1.0.1",
 		Creator:     "Administrator",
 	}
 	err = UploadVersionInfoSet(initVersion)
