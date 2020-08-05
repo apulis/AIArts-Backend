@@ -55,7 +55,7 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 
 	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 ", username)
 	if isAdvance {
-		whereQueryStr = fmt.Sprintf(" is_advance = 1")
+		whereQueryStr = fmt.Sprintf(" is_advance = 1 ")
 	}
 	if name != "" {
 		whereQueryStr +=  "and name like '%"+ name + "%' "
