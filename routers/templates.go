@@ -19,10 +19,13 @@ func AddGroupTemplate(r *gin.Engine) {
 }
 
 type GetAllTemplateReq struct {
-	PageNum  int    `form:"pageNum"  json:"pageNum"`
-	PageSize int    `form:"pageSize" json:"pageSize"`
-	Scope    int    `form:"scope"   json:"scope"`
-	JobType  string `form:"jobType" json:"jobType"`
+	PageNum    int    `form:"pageNum"  json:"pageNum"`
+	PageSize   int    `form:"pageSize" json:"pageSize"`
+	Scope      int    `form:"scope"   json:"scope"`
+	JobType    string `form:"jobType" json:"jobType"`
+	SearchWord string `form:"searchWord" json:"searchWord"`
+	OrderBy    string `form:"orderBy" json:"orderBy"`
+	Order      string `form:"order" json:"order"`
 }
 
 type GetAllTemplateRsp struct {
@@ -83,7 +86,8 @@ func getAllTemplates(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTemplate(userName, req.PageNum, req.PageSize, req.Scope, req.JobType)
+	sets, total, totalPage, err := services.GetAllTemplate(userName, req.PageNum, req.PageSize,
+		req.Scope, req.JobType, req.SearchWord, req.OrderBy, req.Order)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

@@ -43,9 +43,9 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / page
+	totalPages := totalJobs / size
 
-	if (totalJobs % page) != 0 {
+	if (totalJobs % size) != 0 {
 		totalPages += 1
 	}
 
