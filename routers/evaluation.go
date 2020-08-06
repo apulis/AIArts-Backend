@@ -106,12 +106,12 @@ func createEvaluation(c *gin.Context) error {
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
-	//检查输出路径是否存在
-	err = services.CheckPathExists(req.OutputPath)
-
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
+	//检查输出路径是否存在自动去创建
+	//err = services.CheckPathExists(req.OutputPath)
+	//if err != nil {
+	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//}
+	//
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())

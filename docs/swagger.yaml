@@ -218,9 +218,8 @@ definitions:
         type: string
       dataFormat:
         type: string
-      dataset:
-        type: string
       datasetName:
+        description: Dataset     string `json:"dataset"`
         type: string
       datasetPath:
         type: string
@@ -807,6 +806,8 @@ definitions:
         items:
           $ref: '#/definitions/models.Dataset'
         type: array
+      message:
+        type: string
       pageNum:
         type: integer
       pageSize:
@@ -981,7 +982,15 @@ definitions:
     properties:
       codePath:
         type: string
+      dataFormat:
+        type: string
+      datasetName:
+        type: string
+      datasetPath:
+        type: string
       description:
+        type: string
+      engine:
         type: string
       isAdvance:
         type: boolean
@@ -989,7 +998,26 @@ definitions:
         type: string
       name:
         type: string
+      outputPath:
+        description: |-
+          指定的模型参数路径
+          输出文件路径
+        type: string
       paramPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        description: omitempty 值为空，不编码
+        type: object
+      precision:
+        type: string
+      size:
+        type: integer
+      startupFile:
+        description: 启动文件路径
+        type: string
+      use:
         type: string
     required:
     - name
@@ -2820,7 +2848,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get specific training
-  /ai_arts/api/trainings/log/:id:
+  /ai_arts/api/trainings/:id/log:
     get:
       parameters:
       - description: params

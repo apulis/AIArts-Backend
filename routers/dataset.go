@@ -89,9 +89,7 @@ func lsDatasets(c *gin.Context) error {
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
 			PageNum:  req.PageNum,
-			PageSize: req.PageNum,
-			Name:     req.Name,
-			Status:   req.Status,
+			PageSize: req.PageSize,
 			OrderBy:  req.OrderBy,
 			Order:    req.Order,
 		}
@@ -103,7 +101,7 @@ func lsDatasets(c *gin.Context) error {
 		} else {
 			for _, v := range annoDatasets {
 				if v.ConvertStatus == "finished" {
-					modelset := models.Dataset{
+					dataset := models.Dataset{
 						Name:        v.Name,
 						Description: v.Info,
 						Path:        v.ConvertOutPath,
@@ -112,7 +110,7 @@ func lsDatasets(c *gin.Context) error {
 						IsPrivate:    v.IsPrivate,
 						IsTranslated: true,
 					}
-					datasets = append(datasets, modelset)
+					datasets = append(datasets, dataset)
 					total += 1
 
 				}
