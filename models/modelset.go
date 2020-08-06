@@ -23,7 +23,7 @@ type Modelset struct {
 	Use         string `json:"use"`
 	JobId       string `json:"jobId"`
 	DataFormat  string `json:"dataFormat"`
-	Dataset     string `json:"dataset"`
+	//Dataset     string `json:"dataset"`
 	DatasetName string `json:"datasetName"`
 	DatasetPath string `json:"datasetPath"`
 	//omitempty 值为空，不编码

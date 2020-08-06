@@ -2609,7 +2609,7 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/trainings/log/:id": {
+        "/ai_arts/api/trainings/:id/log": {
             "get": {
                 "produces": [
                     "application/json"
@@ -3115,10 +3115,8 @@ var doc = `{
                 "dataFormat": {
                     "type": "string"
                 },
-                "dataset": {
-                    "type": "string"
-                },
                 "datasetName": {
+                    "description": "Dataset     string ` + "`" + `json:\"dataset\"` + "`" + `",
                     "type": "string"
                 },
                 "datasetPath": {
@@ -4000,6 +3998,9 @@ var doc = `{
                         "$ref": "#/definitions/models.Dataset"
                     }
                 },
+                "message": {
+                    "type": "string"
+                },
                 "pageNum": {
                     "type": "integer"
                 },
@@ -4268,7 +4269,19 @@ var doc = `{
                 "codePath": {
                     "type": "string"
                 },
+                "dataFormat": {
+                    "type": "string"
+                },
+                "datasetName": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "engine": {
                     "type": "string"
                 },
                 "isAdvance": {
@@ -4280,7 +4293,31 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "outputPath": {
+                    "description": "指定的模型参数路径\n输出文件路径",
+                    "type": "string"
+                },
                 "paramPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "description": "omitempty 值为空，不编码",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "precision": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "startupFile": {
+                    "description": "启动文件路径",
+                    "type": "string"
+                },
+                "use": {
                     "type": "string"
                 }
             }
