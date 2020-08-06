@@ -16,20 +16,22 @@ func GetAllTemplate(userName string, page, size, scope int, jobType, searchWord,
 	provider := models.NewTemplateProvider(database.Db)
 
 	var err error
+	var total int
 	var templates []*models.Templates
+	var extQuery, orderQuery string
 
-	extQuery := ""
 	if len(searchWord) > 0 {
-		extQuery += " and name like '" + searchWord + "'"
+		extQuery += " and name like '%" + searchWord + "%'"
 	}
 
 	if len(orderBy) > 0 {
-		extQuery += " order border by " + orderBy
 		if strings.ToLower(order) == "asc" {
-			extQuery += " asc"
+			orderQuery = orderBy + " asc"
 		} else {
-			extQuery += " desc"
+			orderQuery = orderBy + " desc"
 		}
+	} else {
+		orderQuery = "created_at desc"
 	}
 
 	// 用户私有 + 公有
@@ -67,7 +69,11 @@ func GetAllTemplate(userName string, page, size, scope int, jobType, searchWord,
 			query += extQuery
 		}
 
-		if templates, err = provider.FindPage("", (page-1)*size, size, query, userName, jobType); err != nil {
+		if templates, err = provider.FindPage(orderQuery, (page-1)*size, size, query, userName, jobType); err != nil {
+			return nil, 0, 0, err
+		}
+
+		if total, err = provider.Count(query, userName, jobType); err != nil {
 			return nil, 0, 0, err
 		}
 	}
@@ -79,7 +85,12 @@ func GetAllTemplate(userName string, page, size, scope int, jobType, searchWord,
 		}
 	}
 
-	return retItems, len(retItems), 1, nil
+	totalPages := total / size
+	if (total % size) != 0 {
+		totalPages += 1
+	}
+
+	return retItems, total, totalPages, nil
 }
 
 func CreateTemplate(userName string, scope int, jobType string, template models.TemplateParams) (int64, error) {

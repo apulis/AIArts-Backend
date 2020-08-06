@@ -174,6 +174,22 @@ func (this *TemplateProvider) FindPage(order string, offset, limit int, query st
 	return tmp, nil
 }
 
+func (this *TemplateProvider) Count(query string, args ...interface{}) (int, error) {
+
+	var count int
+	db := this.gormDb.Table(this.TableName())
+
+	if query != "" {
+		db = db.Where(query, args...)
+	}
+
+	if err := db.Count(&count).Error; err != nil && err != gorm.ErrRecordNotFound {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (this *TemplateProvider) Insert(data map[string]interface{}) (lastInsertId int64, err error) {
 	n, err := Insert(this.gormDb.DB(), this.TableName(), data)
 	return int64(n), err
