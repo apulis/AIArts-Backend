@@ -37,12 +37,14 @@ type pushToFDReq struct {
 }
 
 type lsEdgeInferencesReq struct {
-	PageNum             int    `form:"pageNum,default=1"`
-	PageSize            int    `form:"pageSize,default=10"`
-	JobName             string `form:"jobName"`
-	ModelConversionType string `form:"modelconversionType"`
-	OrderBy             string `form:"orderBy"`
-	Order               string `form:"order,default=desc" binding:"oneof=desc asc"`
+	PageNum               int    `form:"pageNum,default=1"`
+	PageSize              int    `form:"pageSize,default=10"`
+	JobName               string `form:"jobName"`
+	ModelConversionType   string `form:"modelconversionType"`
+	OrderBy               string `form:"orderBy"`
+	Order                 string `form:"order,default=desc" binding:"oneof=desc asc"`
+	JobStatus             string `form:"jobStatus"`
+	ModelConversionStatus string `form:"modelconversionStatus"`
 }
 
 type GetFDInfoResp struct {
@@ -83,7 +85,7 @@ func lsEdgeInferences(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	conversionList, total, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.OrderBy, req.Order)
+	conversionList, total, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.JobStatus, req.ModelConversionStatus, req.OrderBy, req.Order)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
