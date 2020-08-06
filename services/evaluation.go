@@ -194,15 +194,15 @@ func GetRegexpLog(log string) map[string]string {
 		indicator["Recall"] = recall
 	}
 	if len(recall_5_reg.FindStringSubmatch(log)) > 1 {
-		recall_5 := recall_reg.FindStringSubmatch(log)[1]
+		recall_5 := recall_5_reg.FindStringSubmatch(log)[1]
 		indicator["Recall_5"] = recall_5
 	}
 	if len(acc_reg.FindStringSubmatch(log)) > 1 {
-		accuracy := recall_reg.FindStringSubmatch(log)[1]
+		accuracy := acc_reg.FindStringSubmatch(log)[1]
 		indicator["Accuracy"] = accuracy
 	}
 	if len(precision_reg.FindStringSubmatch(log)) > 1 {
-		precision := recall_reg.FindStringSubmatch(log)[1]
+		precision := precision_reg.FindStringSubmatch(log)[1]
 		indicator["Precision"] = precision
 	}
 	return indicator
