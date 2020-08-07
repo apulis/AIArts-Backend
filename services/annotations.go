@@ -281,7 +281,7 @@ func ConvertDataFormat(convert models.ConvertDataFormat) (interface{}, error) {
 		return nil, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	ro2 := &grequests.RequestOptions{
-		JSON:    map[string]string{"convertStatus": "queued"},
+		JSON:    map[string]string{"convertStatus": "queue"},
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
 	resp2, err := grequests.Patch(configs.Config.Anno.BackendUrl+"/api/projects/"+convert.ProjectId+"/datasets/"+convert.DatasetId, ro2)
