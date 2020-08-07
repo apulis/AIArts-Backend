@@ -926,28 +926,37 @@ var doc = `{
                 "summary": "list datasets",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "page number, from 1",
-                        "name": "pageNum",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "count per page",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
+                        "type": "boolean",
+                        "name": "isTranslated",
+                        "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "dataset name",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "dataset status",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     }
@@ -2600,7 +2609,7 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/trainings/log/:id": {
+        "/ai_arts/api/trainings/:id/log": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2905,6 +2914,9 @@ var doc = `{
                     "description": "是否是公开数据集",
                     "type": "boolean"
                 },
+                "isTranslated": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -3103,10 +3115,8 @@ var doc = `{
                 "dataFormat": {
                     "type": "string"
                 },
-                "dataset": {
-                    "type": "string"
-                },
                 "datasetName": {
+                    "description": "Dataset     string ` + "`" + `json:\"dataset\"` + "`" + `",
                     "type": "string"
                 },
                 "datasetPath": {
@@ -3988,6 +3998,9 @@ var doc = `{
                         "$ref": "#/definitions/models.Dataset"
                     }
                 },
+                "message": {
+                    "type": "string"
+                },
                 "pageNum": {
                     "type": "integer"
                 },
@@ -4204,6 +4217,9 @@ var doc = `{
                 "isPrivate": {
                     "type": "boolean"
                 },
+                "isTranslated": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -4253,8 +4269,23 @@ var doc = `{
                 "codePath": {
                     "type": "string"
                 },
+                "dataFormat": {
+                    "type": "string"
+                },
+                "datasetName": {
+                    "type": "string"
+                },
+                "datasetPath": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "isAdvance": {
+                    "type": "boolean"
                 },
                 "jobId": {
                     "type": "string"
@@ -4262,7 +4293,31 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "outputPath": {
+                    "description": "指定的模型参数路径\n输出文件路径",
+                    "type": "string"
+                },
                 "paramPath": {
+                    "type": "string"
+                },
+                "params": {
+                    "description": "omitempty 值为空，不编码",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "precision": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "startupFile": {
+                    "description": "启动文件路径",
+                    "type": "string"
+                },
+                "use": {
                     "type": "string"
                 }
             }
@@ -4342,6 +4397,32 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.VersionInfoSet"
                     }
+                }
+            }
+        },
+        "routers.lsDatasetsReq": {
+            "type": "object",
+            "properties": {
+                "isTranslated": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

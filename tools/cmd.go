@@ -9,9 +9,5 @@ import (
 func main() {
 
 	os.Chdir("../")
-
-	LoadConfig()
-	InitDb()
-	LoadTemplates(os.Args[1])
 	log.Println("Server exiting")
 }

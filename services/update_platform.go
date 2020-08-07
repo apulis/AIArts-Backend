@@ -113,13 +113,6 @@ func UpgradePlatformByLocal(userName string) error {
 
 func UpgradePlatformdLocally(userName string) error {
 	models.Upgrade_Progress = 0
-	// upgradeFiles, err := ioutil.ReadDir(models.UPGRADE_FILE_PATH)
-	// if err != nil {
-	// 	return err
-	// }
-	// for _, file := range upgradeFiles {
-	// 	fmt.Println(file.Name())
-	// }
 	upgradeConfig, err := models.GetUpgradeConfig()
 	if err != nil {
 		return err
@@ -179,16 +172,6 @@ func GetCurrentVersion() (models.VersionInfoSet, error) {
 }
 
 func GetVersionLogs() ([]models.VersionInfoSet, error) {
-	// var versionLogs []models.VersionInfoSet
-	// versionLogs, err := models.GetVersionLogs()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// var logs []string = make([]string, 0)
-	// for _, versionInfo := range versionLogs {
-	// 	logs = append(logs, versionInfo.Version + "update in" + )
-	// }
-	// return logs, nil
 	return models.GetVersionLogs()
 }
 

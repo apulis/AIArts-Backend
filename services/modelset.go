@@ -31,7 +31,9 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
 }
 
-func CreateModelset(name, description, creator, version, jobId,codePath, paramPath string) error {
+func CreateModelset(name, description, creator, version, jobId, codePath, paramPath string, isAdvance bool,
+	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile string) error {
+
 	//只能创建非预置模型
 	modelset := models.Modelset{
 		Name:        name,
@@ -40,10 +42,34 @@ func CreateModelset(name, description, creator, version, jobId,codePath, paramPa
 		Version:     version,
 		JobId:       jobId,
 		Status:      MODELSET_STATUS_NORMAL,
-		IsAdvance:   false,
+		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
 	}
-	//获取训练作业输出模型的类型
+	if use != "" {
+		var paramItem models.ParamsItem
+		paramItem = params
+		modelset = models.Modelset{
+			Name:        name,
+			Description: description,
+			Creator:     creator,
+			Version:     version,
+			JobId:       jobId,
+			Status:      MODELSET_STATUS_NORMAL,
+			IsAdvance:   isAdvance,
+			ParamPath:   paramPath,
+			Use:         use,
+			Size:        size,
+			DataFormat:  dataFormat,
+			DatasetPath: datasetPath,
+			DatasetName: datasetName,
+			Params:      &paramItem,
+			Engine:      engine,
+			Precision:   precision,
+			OutputPath:  outputPath,
+			StartupFile: startupFile,
+		}
+	}
+	//获取训练作业输出模型的类型 job
 	if codePath == "" {
 		job, _ := GetTraining(creator, jobId)
 		var paramItem models.ParamsItem
@@ -58,7 +84,7 @@ func CreateModelset(name, description, creator, version, jobId,codePath, paramPa
 		} else {
 			return fmt.Errorf("the job id is invaild")
 		}
-	}else{
+	} else {
 		modelset.CodePath = codePath
 	}
 	return models.CreateModelset(modelset)

@@ -205,7 +205,7 @@ func delTraining(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetTrainingLog "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/trainings/log/:id [get]
+// @Router /ai_arts/api/trainings/:id/log [get]
 func getLog(c *gin.Context) error {
 
 	var id models.UriJobId

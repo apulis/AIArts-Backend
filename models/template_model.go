@@ -174,6 +174,22 @@ func (this *TemplateProvider) FindPage(order string, offset, limit int, query st
 	return tmp, nil
 }
 
+func (this *TemplateProvider) Count(query string, args ...interface{}) (int, error) {
+
+	var count int
+	db := this.gormDb.Table(this.TableName())
+
+	if query != "" {
+		db = db.Where(query, args...)
+	}
+
+	if err := db.Count(&count).Error; err != nil && err != gorm.ErrRecordNotFound {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (this *TemplateProvider) Insert(data map[string]interface{}) (lastInsertId int64, err error) {
 	n, err := Insert(this.gormDb.DB(), this.TableName(), data)
 	return int64(n), err
@@ -209,7 +225,7 @@ func quote(value string) string {
 }
 
 // 数据库记录
-func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams) {
+func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams, isNew bool) {
 
 	this.Scope = scope
 	this.JobType = jobType
@@ -217,11 +233,17 @@ func (this *Templates) Load(scope int, creator, jobType string, item TemplatePar
 	this.Name = item.Name
 	this.Creator = creator
 	this.Data = item
-	this.CreatedAt = UnixTime{
-		Time: time.Now(),
-	}
 
-	this.UpdatedAt = this.CreatedAt
+	if isNew {
+		this.CreatedAt = UnixTime{
+			Time: time.Now(),
+		}
+		this.UpdatedAt = this.CreatedAt
+	} else {
+		this.UpdatedAt = UnixTime{
+			Time: time.Now(),
+		}
+	}
 }
 
 func (this *Templates) ToMap() map[string]interface{} {
@@ -230,7 +252,6 @@ func (this *Templates) ToMap() map[string]interface{} {
 	data["name"] = this.Name
 	data["scope"] = this.Scope
 
-	//
 	binData, err := json.Marshal(this.Data)
 	if err == nil {
 		data["data"] = string(binData)
@@ -239,9 +260,13 @@ func (this *Templates) ToMap() map[string]interface{} {
 	data["jobType"] = this.JobType
 	data["creator"] = this.Creator
 
-	data["createdAt"] = this.CreatedAt
-	data["updatedAt"] = this.UpdatedAt
-	data["deletedAt"] = this.DeletedAt
+	if !this.CreatedAt.IsZero() {
+		data["createdAt"] = this.CreatedAt
+	}
+
+	if !this.UpdatedAt.IsZero() {
+		data["updatedAt"] = this.UpdatedAt
+	}
 
 	return data
 }

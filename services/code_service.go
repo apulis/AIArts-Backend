@@ -5,6 +5,7 @@ import (
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"math/rand"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -28,7 +29,7 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, order
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeCodeEnv,
-		page, size, jobStatus, searchWord,
+		page, size, jobStatus, url.QueryEscape(searchWord),
 		orderBy, order)
 
 	jobList := &models.JobList{}
@@ -54,9 +55,9 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, order
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / page
+	totalPages := totalJobs / size
 
-	if (totalJobs % page) != 0 {
+	if (totalJobs % size) != 0 {
 		totalPages += 1
 	}
 
@@ -71,7 +72,17 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["userName"] = userName
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = models.JobTypeCodeEnv
-	params["image"] = codeEnv.Engine
+
+	imageName := codeEnv.Engine
+	if len(configs.Config.PrivateRegistry) > 0 {
+		if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
+			imageName = configs.Config.PrivateRegistry + imageName
+		} else {
+			imageName = configs.Config.PrivateRegistry + "/" + imageName
+		}
+	}
+
+	params["image"] = imageName
 
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum

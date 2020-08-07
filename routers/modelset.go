@@ -41,6 +41,22 @@ type createModelsetReq struct {
 	JobId       string `json:"jobId"`
 	CodePath   string `json:"codePath"`
 	ParamPath   string `json:"paramPath" binding:"required"`
+	IsAdvance bool   `json:"isAdvance,default=false"`
+
+	Use   string `json:"use"`
+	Size   int64 `json:"size"`
+	DataFormat  string `json:"dataFormat"`
+	DatasetName string `json:"datasetName"`
+	DatasetPath string `json:"datasetPath"`
+	//omitempty 值为空，不编码
+	Params  map[string]string `json:"params"`
+	Engine string         `json:"engine"`
+	Precision  string         `json:"precision"`
+	//指定的模型参数路径
+	// 输出文件路径
+	OutputPath string `json:"outputPath"`
+	//启动文件路径
+	StartupFile string `json:"startupFile"`
 }
 
 type updateModelsetReq struct {
@@ -144,7 +160,9 @@ func createModelset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath)
+
+	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath,req.IsAdvance,
+		req.Use,req.Size,req.DataFormat,req.DatasetName,req.DatasetPath,req.Params,req.Engine,req.Precision,req.OutputPath,req.StartupFile)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

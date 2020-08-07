@@ -28,7 +28,7 @@ type lsDatasetsReq struct {
 	PageSize     int    `form:"pageSize,default=10"`
 	Name         string `form:"name"`
 	Status       string `form:"status"`
-	OrderBy      string `form:"orderBy,default=created_at"`
+	OrderBy      string `form:"orderBy,default=updated_at"`
 	Order        string `form:"order,default=desc"`
 	IsTranslated bool   `form:"isTranslated"`
 }
@@ -59,6 +59,7 @@ type GetDatasetsResp struct {
 	TotalPage int              `json:"totalPage"`
 	PageNum   int              `json:"pageNum"`
 	PageSize  int              `json:"pageSize"`
+	Message   string           `json:"message"`
 }
 
 // @Summary list datasets
@@ -83,36 +84,39 @@ func lsDatasets(c *gin.Context) error {
 	}
 	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
 	//获取该用户能够访问的所有已经标注好的数据库
-	if req.IsTranslated{
+	var message = "success"
+	if req.IsTranslated {
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
 			PageNum:  req.PageNum,
-			PageSize: req.PageNum,
-			Name:     req.Name,
-			Status:   req.Status,
+			PageSize: req.PageSize,
 			OrderBy:  req.OrderBy,
 			Order:    req.Order,
 		}
 
 		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
 		if err != nil {
-			return AppError(FAILED_FETCH_ANNOTATION_CODE, err.Error())
-		}
-		for _, v := range annoDatasets {
-			if v.ConvertStatus == "finished" {
-				modelset := models.Dataset{
-					Name:        v.Name,
-					Description: v.Info,
-					Path:        v.ConvertOutPath,
-					Status:      v.Name,
-					//是否是公开数据集
-					IsPrivate:    v.IsPrivate,
-					IsTranslated: true,
+			message = "label image platform is error"
+			//return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
+		} else {
+			for _, v := range annoDatasets {
+				if v.ConvertStatus == "finished" {
+					dataset := models.Dataset{
+						Name:        v.Name,
+						Description: v.Info,
+						Path:        v.ConvertOutPath,
+						Status:      v.Name,
+						//是否是公开数据集
+						IsPrivate:    v.IsPrivate,
+						IsTranslated: true,
+					}
+					datasets = append(datasets, dataset)
+					total += 1
+
 				}
-				datasets = append(datasets, modelset)
 			}
+
 		}
-		total += len(annoDatasets)
 	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -123,6 +127,7 @@ func lsDatasets(c *gin.Context) error {
 		PageNum:   req.PageNum,
 		PageSize:  req.PageSize,
 		TotalPage: total/req.PageSize + 1,
+		Message:   message,
 	}
 	return SuccessResp(c, data)
 }

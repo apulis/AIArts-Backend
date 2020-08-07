@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"net/url"
 	"regexp"
 )
 
@@ -87,7 +88,7 @@ func GetEvaluations(userName string, page, size int, jobStatus, searchWord, orde
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsEvaluation,
-		page, size, jobStatus, searchWord,
+		page, size, jobStatus, url.PathEscape(searchWord),
 		orderBy, order)
 
 	jobList := &models.JobList{}
@@ -158,7 +159,6 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	evaluation.DeviceType = job.JobParams.GpuType
 	evaluation.Status = job.JobStatus
 	evaluation.CreateTime = job.JobTime
-	evaluation.Params = nil
 	evaluation.CodePath = job.JobParams.CodePath
 	evaluation.StartupFile = job.JobParams.StartupFile
 	evaluation.OutputPath = job.JobParams.OutputPath
@@ -184,16 +184,26 @@ func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
 
 func GetRegexpLog(log string) map[string]string {
 	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")
-	recall_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
+	recall_5_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
+	recall_reg, _ := regexp.Compile("Recall\\[(.*?)\\]")
+	precision_reg, _ := regexp.Compile("Precision\\[(.*?)\\]")
+	indicator := map[string]string{
+	}
 	if len(recall_reg.FindStringSubmatch(log)) > 1 {
 		recall := recall_reg.FindStringSubmatch(log)[1]
-		accuracy := acc_reg.FindStringSubmatch(log)[1]
-		indicator := map[string]string{
-			"Recall_5": recall,
-			"Accuracy": accuracy,
-		}
-		return indicator
+		indicator["Recall"] = recall
 	}
-	return nil
-
+	if len(recall_5_reg.FindStringSubmatch(log)) > 1 {
+		recall_5 := recall_5_reg.FindStringSubmatch(log)[1]
+		indicator["Recall_5"] = recall_5
+	}
+	if len(acc_reg.FindStringSubmatch(log)) > 1 {
+		accuracy := acc_reg.FindStringSubmatch(log)[1]
+		indicator["Accuracy"] = accuracy
+	}
+	if len(precision_reg.FindStringSubmatch(log)) > 1 {
+		precision := precision_reg.FindStringSubmatch(log)[1]
+		indicator["Precision"] = precision
+	}
+	return indicator
 }
