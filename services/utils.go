@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -89,4 +90,22 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 	}
 
 	return nil
+}
+
+// 如果配置了私有仓库，则添加私有仓库前缀
+func ConvertImage(image string) string {
+
+	imageName := strings.TrimSpace(image)
+	if len(configs.Config.PrivateRegistry) > 0 {
+		// 不带私有仓库前缀
+		if !strings.HasPrefix(imageName, configs.Config.PrivateRegistry) {
+			if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
+				imageName = configs.Config.PrivateRegistry + imageName
+			} else {
+				imageName = configs.Config.PrivateRegistry + "/" + imageName
+			}
+		}
+	}
+
+	return imageName
 }
