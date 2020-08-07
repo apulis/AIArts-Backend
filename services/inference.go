@@ -20,7 +20,7 @@ func PostInferenceJob(inference models.PostInference) (string, error) {
 	resp, err := grequests.Post(BackendUrl+"/apis/PostInferenceJob", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return "", errors.New(resp.String())
+		return "", errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var jobRes models.InferenceJobResp
 	json.Unmarshal(resp.Bytes(), &jobRes)
@@ -41,7 +41,7 @@ func ListInferenceJob(jobOwner string, vcName string, queryStringParameters mode
 	resp, err := grequests.Get(requrl, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var jobs interface{}
 	json.Unmarshal(resp.Bytes(), &jobs)
@@ -53,7 +53,7 @@ func GetAllSupportInference() (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetAllSupportInference", nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var inferences interface{}
 	json.Unmarshal(resp.Bytes(), &inferences)
@@ -65,7 +65,7 @@ func GetAllDevice(userName string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetAllDevice?userName="+userName, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var devices interface{}
 	json.Unmarshal(resp.Bytes(), &devices)
@@ -77,7 +77,7 @@ func GetJobDetail(userName string, jobId string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetInferenceJobDetail?userName="+userName+"&jobId="+jobId, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var jobDetail interface{}
 	json.Unmarshal(resp.Bytes(), &jobDetail)
@@ -89,7 +89,7 @@ func GetJobLog(userName string, jobId string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetJobLog?userName="+userName+"&jobId="+jobId, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var jobLog interface{}
 	json.Unmarshal(resp.Bytes(), &jobLog)
@@ -101,7 +101,7 @@ func GetJobStatus(jobId string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/GetJobStatus?&jobId="+jobId, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var jobLog interface{}
 	json.Unmarshal(resp.Bytes(), &jobLog)
@@ -120,7 +120,7 @@ func Infer(jobId string, signature_name string, image []byte) (interface{}, erro
 	resp, err := grequests.Post(BackendUrl+"/apis/Infer?&jobId="+jobId+"&signature_name="+signature_name, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var respImage interface{}
 	json.Unmarshal(resp.Bytes(), &respImage)
@@ -132,7 +132,7 @@ func KillJob(jobId string, userName string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/apis/KillJob?&jobId="+jobId+"&userName="+userName, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var ret interface{}
 	json.Unmarshal(resp.Bytes(), &ret)
@@ -144,7 +144,7 @@ func DeleteJob(jobId string) (interface{}, error) {
 	resp, err := grequests.Delete(BackendUrl+"/apis/DeleteJob?&jobId="+jobId, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New(resp.String())
+		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
 	}
 	var ret interface{}
 	json.Unmarshal(resp.Bytes(), &ret)
