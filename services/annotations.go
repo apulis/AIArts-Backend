@@ -19,7 +19,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	}
 
 	name, err := url.Parse(queryStringParameters.GetName())
-	url := BackendUrl + "/api/projects?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
+	url := BackendUrl + "/api/projectss?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
 	if queryStringParameters.OrderBy != "" {
 		url += "&orderBy=" + queryStringParameters.OrderBy
 	}
@@ -27,7 +27,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 		url += "&order=" + queryStringParameters.Order
 	}
 	resp, err := grequests.Get(url, ro)
-	logger.Info(string(resp.StatusCode), resp.StatusCode)
+	logger.Info(string(resp.StatusCode), resp.StatusCode, strconv.Itoa(resp.StatusCode))
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New("remote server return code is " + (string(resp.StatusCode)))
