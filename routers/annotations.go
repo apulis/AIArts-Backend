@@ -347,6 +347,7 @@ func GetDataSetLabels(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat [post]
 func ConvertDataFormat(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
 	projectId := c.Param("projectId")
 	dataSetId := c.Param("dataSetId")
 	var convert models.ConvertDataFormat
