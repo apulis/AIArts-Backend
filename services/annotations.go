@@ -19,7 +19,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	}
 
 	name, err := url.Parse(queryStringParameters.GetName())
-	url := BackendUrl + "/api/projectss?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
+	url := BackendUrl + "/api/projects?page=" + strconv.Itoa(queryStringParameters.GetPageNum()) + "&size=" + strconv.Itoa(queryStringParameters.GetPageSize()) + "&name=" + name.String()
 	if queryStringParameters.OrderBy != "" {
 		url += "&orderBy=" + queryStringParameters.OrderBy
 	}
@@ -27,7 +27,6 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 		url += "&order=" + queryStringParameters.Order
 	}
 	resp, err := grequests.Get(url, ro)
-	logger.Info(string(resp.StatusCode), resp.StatusCode, strconv.Itoa(resp.StatusCode))
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, 0, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
@@ -45,7 +44,7 @@ func DeleteProject(projectId string) error {
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -59,7 +58,7 @@ func AddProject(project models.Project) error {
 	resp, err := grequests.Post(BackendUrl+"/api/projects", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -73,7 +72,7 @@ func UpdateProject(project models.Project, projectId string) error {
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -94,7 +93,7 @@ func GetDatasets(projectId string, queryStringParameters models.QueryStringParam
 	resp, err := grequests.Get(requrl, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, 0, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, 0, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var datasets models.DatasetsReq
 	json.Unmarshal(resp.Bytes(), &datasets)
@@ -110,7 +109,7 @@ func AddDataset(projectId string, dataset models.UpdateDataSet) error {
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	// add bind dataset record
 	var datasetRes models.AddDatasetReq
@@ -122,7 +121,7 @@ func AddDataset(projectId string, dataset models.UpdateDataSet) error {
 	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/bind", ro2)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
-		return errors.New("remote server return code is " + (string(resp2.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -135,7 +134,7 @@ func GetDatasetInfo(projectId string, dataSetId string) (models.DataSet, error) 
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return models.DataSet{}, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return models.DataSet{}, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var dataset models.DatasetReq
 	json.Unmarshal(resp.Bytes(), &dataset)
@@ -151,7 +150,7 @@ func UpdateDataSet(projectId string, dataSetId string, dataset models.UpdateData
 	resp, err := grequests.Patch(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -165,7 +164,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	// delete bind dataset record
 	var datasetRes models.DeleteDatasetReq
@@ -177,7 +176,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+datasetRes.DataSetBindId+"/unbind", ro2)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
-		return errors.New("remote server return code is " + (string(resp2.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -190,7 +189,7 @@ func GetTasks(projectId string, dataSetId string, queryStringParameters models.Q
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks?page="+strconv.Itoa(queryStringParameters.GetPageNum())+"&size="+strconv.Itoa(queryStringParameters.GetPageSize()), ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, 0, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, 0, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var taskList models.TasksList
 	json.Unmarshal(resp.Bytes(), &taskList)
@@ -205,7 +204,7 @@ func GetNextTask(projectId string, dataSetId string, taskId string) (interface{}
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/next/"+taskId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return "", errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return "", errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var nextTask models.NextTask
 	json.Unmarshal(resp.Bytes(), &nextTask)
@@ -220,7 +219,7 @@ func GetPreviousTask(projectId string, dataSetId string, taskId string) (interfa
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/previous/"+taskId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return "", errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return "", errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var nextTask models.PreviousTask
 	json.Unmarshal(resp.Bytes(), &nextTask)
@@ -235,7 +234,7 @@ func GetOneTask(projectId string, dataSetId string, taskId string) (interface{},
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return "", errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return "", errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var oneTask models.OneTask
 	json.Unmarshal(resp.Bytes(), &oneTask)
@@ -251,7 +250,7 @@ func PostOneTask(projectId string, dataSetId string, taskId string, value string
 	resp, err := grequests.Post(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/annotations/"+taskId, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	return err
 }
@@ -264,7 +263,7 @@ func GetDataSetLabels(projectId string, dataSetId string) (interface{}, error) {
 	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/labels", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var labels models.LabelReq
 	json.Unmarshal(resp.Bytes(), &labels)
@@ -279,7 +278,7 @@ func ConvertDataFormat(convert models.ConvertDataFormat) (interface{}, error) {
 	resp, err := grequests.Post(BackendUrl+"/apis/ConvertDataFormat", ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var ret interface{}
 	json.Unmarshal(resp.Bytes(), &ret)
@@ -300,7 +299,7 @@ func ListAllDatasets(queryStringParameters models.QueryStringParamInterface) ([]
 	resp, err := grequests.Get(url, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, 0, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, 0, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var datasets models.DatasetsReq
 	json.Unmarshal(resp.Bytes(), &datasets)
