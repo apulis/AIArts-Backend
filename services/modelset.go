@@ -69,8 +69,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 			StartupFile: startupFile,
 		}
 	}
-
-	//获取训练作业输出模型的类型
+	//获取训练作业输出模型的类型 job
 	if codePath == "" {
 		job, _ := GetTraining(creator, jobId)
 		var paramItem models.ParamsItem
