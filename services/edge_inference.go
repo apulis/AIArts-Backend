@@ -3,12 +3,13 @@ package services
 import (
 	"errors"
 	"fmt"
+	urllib "net/url"
+
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
-	urllib "net/url"
 )
 
-func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, order string) ([]models.ConversionJob, int, error) {
+func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, jobStatus, convStatus, orderBy, order string) ([]models.ConversionJob, int, error) {
 	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d", configs.Config.DltsUrl, models.DefaultVcName, user, pageNum, pageSize)
 	//urlencode改为%20
 	if jobName != "" {
@@ -22,6 +23,12 @@ func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, orderBy, o
 	}
 	if order != "" {
 		url = url + fmt.Sprintf("&order=%s", order)
+	}
+	if jobStatus != "" {
+		url = url + fmt.Sprintf("&jobStatus=%s", urllib.PathEscape(jobStatus))
+	}
+	if convStatus != "" {
+		url = url + fmt.Sprintf("&convStatus=%s", urllib.PathEscape(convStatus))
 	}
 
 	var resp models.ConversionList

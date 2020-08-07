@@ -44,10 +44,9 @@ func doRequest(url, method string, headers map[string]string, rawBody interface{
 		}
 	}
 
-	//req.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.DefaultClient
-
 	resp, err := client.Do(req)
+
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 		return err
 	}
 
-	logger.Info(rspData)
+	//logger.Info(rspData)
 	if len(rspData) > 0 {
 		err = json.Unmarshal(rspData, output)
 		if err != nil {
