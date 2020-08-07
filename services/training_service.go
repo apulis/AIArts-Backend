@@ -62,12 +62,15 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["jobName"] = training.Name
 	params["jobType"] = models.JobTypeArtsTraining
 
-	imageName := training.Engine
+	imageName := strings.TrimSpace(training.Engine)
 	if len(configs.Config.PrivateRegistry) > 0 {
-		if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
-			imageName = configs.Config.PrivateRegistry + imageName
-		} else {
-			imageName = configs.Config.PrivateRegistry + "/" + imageName
+		// 不带私有仓库前缀
+		if !strings.HasPrefix(imageName, configs.Config.PrivateRegistry) {
+			if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
+				imageName = configs.Config.PrivateRegistry + imageName
+			} else {
+				imageName = configs.Config.PrivateRegistry + "/" + imageName
+			}
 		}
 	}
 
