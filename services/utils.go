@@ -78,13 +78,14 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 
 	logger.Info(url)
 	logger.Info(rawBody)
-	logger.Info(rspData)
 
 	if len(rspData) > 0 {
 		err = json.Unmarshal(rspData, output)
 		if err != nil {
 			return err
 		}
+
+		logger.Info(output)
 	}
 
 	return nil
