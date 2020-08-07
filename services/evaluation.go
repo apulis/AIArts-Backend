@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"net/url"
 	"regexp"
 )
 
@@ -87,7 +88,7 @@ func GetEvaluations(userName string, page, size int, jobStatus, searchWord, orde
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsEvaluation,
-		page, size, jobStatus, searchWord,
+		page, size, jobStatus, url.PathEscape(searchWord),
 		orderBy, order)
 
 	jobList := &models.JobList{}
@@ -158,7 +159,6 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	evaluation.DeviceType = job.JobParams.GpuType
 	evaluation.Status = job.JobStatus
 	evaluation.CreateTime = job.JobTime
-	evaluation.Params = nil
 	evaluation.CodePath = job.JobParams.CodePath
 	evaluation.StartupFile = job.JobParams.StartupFile
 	evaluation.OutputPath = job.JobParams.OutputPath
