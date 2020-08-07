@@ -30,7 +30,7 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 	logger.Info(string(resp.StatusCode), resp.StatusCode, strconv.Itoa(resp.StatusCode))
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return nil, 0, errors.New("remote server return code is " + (string(resp.StatusCode)))
+		return nil, 0, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
 	var projects models.ProjectsReq
 	json.Unmarshal(resp.Bytes(), &projects)
