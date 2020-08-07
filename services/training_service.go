@@ -5,6 +5,7 @@ import (
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	urllib "net/url"
+	"strings"
 )
 
 func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
@@ -61,7 +62,16 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["jobName"] = training.Name
 	params["jobType"] = models.JobTypeArtsTraining
 
-	params["image"] = training.Engine
+	imageName := training.Engine
+	if len(configs.Config.PrivateRegistry) > 0 {
+		if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
+			imageName = configs.Config.PrivateRegistry + imageName
+		} else {
+			imageName = configs.Config.PrivateRegistry + "/" + imageName
+		}
+	}
+
+	params["image"] = imageName
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum

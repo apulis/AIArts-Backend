@@ -18,6 +18,7 @@ type ProjectConfig struct {
 	Token              string
 	Image              map[string][]string
 	InteractiveModeJob bool
+	PrivateRegistry    string
 }
 
 type LogConfig struct {
