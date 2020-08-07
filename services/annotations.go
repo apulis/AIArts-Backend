@@ -280,6 +280,14 @@ func ConvertDataFormat(convert models.ConvertDataFormat) (interface{}, error) {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, errors.New("remote server return code is " + (strconv.Itoa(resp.StatusCode)))
 	}
+	ro2 := &grequests.RequestOptions{
+		JSON: map[string]string{"convertStatus": "queued"},
+	}
+	resp2, err := grequests.Patch(configs.Config.Anno.BackendUrl+"/api/projects/"+convert.ProjectId+"/datasets/"+convert.DatasetId, ro2)
+	if resp2.StatusCode != 200 {
+		logger.Error("response code is ", resp2.StatusCode, resp2.String())
+		return nil, errors.New("remote server return code is " + (strconv.Itoa(resp2.StatusCode)))
+	}
 	var ret interface{}
 	json.Unmarshal(resp.Bytes(), &ret)
 	return ret, err
