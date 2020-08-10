@@ -77,15 +77,13 @@ func lsDatasets(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	var datasets []models.Dataset
-	var total int
+	var total = 0
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 	var message = "success"
-	//返回所有数据
 	if req.IsTranslated {
-		req.PageSize = 9000
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
 			PageNum:  req.PageNum,
