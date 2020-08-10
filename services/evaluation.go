@@ -187,6 +187,7 @@ func GetRegexpLog(log string) map[string]string {
 	recall_5_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
 	recall_reg, _ := regexp.Compile("Recall\\[(.*?)\\]")
 	precision_reg, _ := regexp.Compile("Precision\\[(.*?)\\]")
+
 	indicator := map[string]string{
 	}
 	if len(recall_reg.FindStringSubmatch(log)) > 1 {
@@ -204,6 +205,33 @@ func GetRegexpLog(log string) map[string]string {
 	if len(precision_reg.FindStringSubmatch(log)) > 1 {
 		precision := precision_reg.FindStringSubmatch(log)[1]
 		indicator["Precision"] = precision
+	}
+	//目标检测
+	mAP_reg, _ := regexp.Compile("mAP@0.5IOU: (.*)")
+	localization_loss_reg, _ := regexp.Compile("localization_loss: (.*)")
+	classification_loss_reg, _ := regexp.Compile("classification_loss: (.*)")
+	regularization_loss_reg, _ := regexp.Compile("regularization_loss: (.*)")
+	total_loss_reg, _ := regexp.Compile("total_loss: (.*)")
+
+	if len(mAP_reg.FindStringSubmatch(log)) > 1 {
+		mAP := mAP_reg.FindStringSubmatch(log)[1]
+		indicator["mAP"] = mAP
+	}
+	if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
+		localization_loss := localization_loss_reg.FindStringSubmatch(log)[1]
+		indicator["Localization_Loss"] = localization_loss
+	}
+	if len(classification_loss_reg.FindStringSubmatch(log)) > 1 {
+		classification_loss := classification_loss_reg.FindStringSubmatch(log)[1]
+		indicator["Classification_Loss"] = classification_loss
+	}
+	if len(regularization_loss_reg.FindStringSubmatch(log)) > 1 {
+		regularization_loss := regularization_loss_reg.FindStringSubmatch(log)[1]
+		indicator["Regularization_Loss"] = regularization_loss
+	}
+	if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
+		total_loss := total_loss_reg.FindStringSubmatch(log)[1]
+		indicator["Total_Loss"] = total_loss
 	}
 	return indicator
 }
