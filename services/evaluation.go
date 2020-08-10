@@ -26,12 +26,15 @@ type Evaluation struct {
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
+
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
+
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
-	params["image"] = evaluation.Engine
+
+	params["image"] = ConvertImage(evaluation.Engine)
 	params["gpuType"] = evaluation.DeviceType
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum
@@ -187,8 +190,7 @@ func GetRegexpLog(log string) map[string]string {
 	recall_5_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
 	recall_reg, _ := regexp.Compile("Recall\\[(.*?)\\]")
 	precision_reg, _ := regexp.Compile("Precision\\[(.*?)\\]")
-	indicator := map[string]string{
-	}
+	indicator := map[string]string{}
 	if len(recall_reg.FindStringSubmatch(log)) > 1 {
 		recall := recall_reg.FindStringSubmatch(log)[1]
 		indicator["Recall"] = recall

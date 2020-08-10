@@ -73,17 +73,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = models.JobTypeCodeEnv
 
-	imageName := codeEnv.Engine
-	if len(configs.Config.PrivateRegistry) > 0 {
-		if strings.HasSuffix(configs.Config.PrivateRegistry, "/") {
-			imageName = configs.Config.PrivateRegistry + imageName
-		} else {
-			imageName = configs.Config.PrivateRegistry + "/" + imageName
-		}
-	}
-
-	params["image"] = imageName
-
+	params["image"] = ConvertImage(codeEnv.Engine)
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum
 
