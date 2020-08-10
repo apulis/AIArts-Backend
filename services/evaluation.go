@@ -61,7 +61,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["codePath"] = evaluation.CodePath
 	params["outputPath"] = evaluation.OutputPath
 	params["scriptParams"] = evaluation.Params
-	params["desc"] = fmt.Sprintf("%s-%s", evaluation.DatasetName, evaluation.ParamPath)
+	params["desc"] = fmt.Sprintf("%s^%s", evaluation.DatasetName, evaluation.ParamPath)
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
@@ -163,8 +163,8 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	evaluation.StartupFile = job.JobParams.StartupFile
 	evaluation.OutputPath = job.JobParams.OutputPath
 	evaluation.DatasetPath = job.JobParams.DatasetPath
-	//解析desc为数据集名称-模型文件名称
-	descSplit := strings.Split(job.JobParams.Desc, "-")
+	//解析desc为数据集名称^模型文件名称
+	descSplit := strings.Split(job.JobParams.Desc, "^")
 	if len(descSplit) > 1 {
 		datasetName := descSplit[0]
 		evaluation.DatasetName = datasetName
