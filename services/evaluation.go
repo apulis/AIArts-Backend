@@ -6,6 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"net/url"
 	"regexp"
+	"strings"
 )
 
 type Evaluation struct {
@@ -57,7 +58,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["codePath"] = evaluation.CodePath
 	params["outputPath"] = evaluation.OutputPath
 	params["scriptParams"] = evaluation.Params
-	params["desc"] = evaluation.DatasetName
+	params["desc"] = fmt.Sprintf("%s-%s", evaluation.DatasetName, evaluation.ParamPath)
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
@@ -73,18 +74,14 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["team"] = models.DefaultVcName
 	id := &models.JobId{}
 	err := DoRequest(url, "POST", nil, params, id)
-
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return "", err
 	}
-
 	return id.Id, nil
-
 }
 
 func GetEvaluations(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*Evaluation, int, int, error) {
-
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsEvaluation,
@@ -163,8 +160,16 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	evaluation.StartupFile = job.JobParams.StartupFile
 	evaluation.OutputPath = job.JobParams.OutputPath
 	evaluation.DatasetPath = job.JobParams.DatasetPath
-	evaluation.Status = job.JobStatus
-	evaluation.DatasetName = job.JobParams.Desc
+	//解析desc为数据集名称-模型文件名称
+	descSplit := strings.Split(job.JobParams.Desc, "-")
+	if len(descSplit) > 1 {
+		datasetName := descSplit[0]
+		evaluation.DatasetName = datasetName
+		//workpath为评估参数文件路径
+		paramPath := descSplit[1]
+		evaluation.DatasetName = datasetName
+		evaluation.ParamPath = paramPath
+	}
 	evaluation.Params = job.JobParams.ScriptParams
 	return evaluation, nil
 }
