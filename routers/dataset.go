@@ -82,10 +82,10 @@ func lsDatasets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
-	//获取该用户能够访问的所有已经标注好的数据库
 	var message = "success"
+	//返回所有数据
 	if req.IsTranslated {
+		req.PageSize = 9000
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
 			PageNum:  req.PageNum,
@@ -93,7 +93,6 @@ func lsDatasets(c *gin.Context) error {
 			OrderBy:  req.OrderBy,
 			Order:    req.Order,
 		}
-
 		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
 		if err != nil {
 			message = "label image platform is error"
@@ -115,9 +114,12 @@ func lsDatasets(c *gin.Context) error {
 
 				}
 			}
-
 		}
 	}
+
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
+	//获取该用户能够访问的所有已经标注好的数据库
+
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
