@@ -92,7 +92,12 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["enablejobpath"] = true
 	params["jobPath"] = "job"
 
-	params["hostNetwork"] = false
+	if codeEnv.JobTrainingType == "PSDistJob" {
+		params["hostNetwork"] = true
+	} else {
+		params["hostNetwork"] = false
+	}
+
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
