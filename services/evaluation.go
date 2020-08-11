@@ -41,11 +41,6 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["DeviceNum"] = evaluation.DeviceNum
 	params["cmd"] = "" // use StartupFile, params instead
 	params["cmd"] = "python " + evaluation.StartupFile
-	for k, v := range evaluation.Params {
-		if len(k) > 0 && len(v) > 0 {
-			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
-		}
-	}
 	if len(evaluation.DatasetPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --data_path " + evaluation.DatasetPath
 	}
@@ -55,6 +50,12 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	if len(evaluation.ParamPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --checkpoint_path  " + evaluation.ParamPath
 	}
+	for k, v := range evaluation.Params {
+		if len(k) > 0 && len(v) > 0 {
+			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
+		}
+	}
+
 	logger.Info(fmt.Sprintf("evaluation : %s", params["cmd"]))
 	params["startupFile"] = evaluation.StartupFile
 	params["datasetPath"] = evaluation.DatasetPath
@@ -180,13 +181,11 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
 	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	jobLog := &models.JobLog{}
-
 	err := DoRequest(url, "GET", nil, nil, jobLog)
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return nil, err
 	}
-
 	return jobLog, nil
 }
 
@@ -238,6 +237,23 @@ func GetRegexpLog(log string) map[string]string {
 	if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
 		total_loss := total_loss_reg.FindStringSubmatch(log)[1]
 		indicator["Total_Loss"] = total_loss
+	}
+	//pytorch
+	acc_pytorch_reg, _ := regexp.Compile("Accuracy:(.+)")
+	if len(acc_pytorch_reg.FindStringSubmatch(log)) > 1 {
+		acc_pytorch := acc_pytorch_reg.FindStringSubmatch(log)[1]
+		indicator["Accuracy"] = acc_pytorch
+	}
+	avg_loss_pytorch_reg, _ := regexp.Compile("Average loss: (.+?),")
+	if len(avg_loss_pytorch_reg.FindStringSubmatch(log)) > 1 {
+		avg_loss_pytorch := avg_loss_pytorch_reg.FindStringSubmatch(log)[1]
+		indicator["Average_Loss"] = avg_loss_pytorch
+	}
+	//mxnet
+	acc_mxnet_reg, _ := regexp.Compile("accuracy=(.+)")
+	if len(acc_mxnet_reg.FindStringSubmatch(log)) > 1 {
+		acc_mxnet := acc_mxnet_reg.FindStringSubmatch(log)[1]
+		indicator["Accuracy"] = acc_mxnet
 	}
 	return indicator
 }
