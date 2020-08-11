@@ -21,11 +21,11 @@ type GetResourceReq struct {
 }
 
 type GetResourceRsp struct {
-	AIFrameworks          map[string][]string `json:"aiFrameworks"`
-	DeviceList            []models.DeviceItem `json:"deviceList"`
-	NodeInfo              []models.NodeStatus `json:"nodeInfo"`
-	CodePathPrefix        string              `json:"codePathPrefix"`
-	NodeCountByDeviceType map[string]int      `json:"nodeCountByDeviceType"`
+	AIFrameworks          map[string][]string  `json:"aiFrameworks"`
+	DeviceList            []models.DeviceItem  `json:"deviceList"`
+	NodeInfo              []*models.NodeStatus `json:"nodeInfo"`
+	CodePathPrefix        string               `json:"codePathPrefix"`
+	NodeCountByDeviceType map[string]int       `json:"nodeCountByDeviceType"`
 }
 
 type GetJobSummaryReq struct {
@@ -97,9 +97,13 @@ func getResource(c *gin.Context) error {
 		rsp.NodeCountByDeviceType[v.GPUType] = rsp.NodeCountByDeviceType[v.GPUType] + 1
 	}
 
-	rsp.NodeInfo = vcInfo.Nodes
-	rsp.CodePathPrefix = "/home/" + userName + "/"
+	for _, v := range vcInfo.Nodes {
+		if len(v.GPUType) != 0 {
+			rsp.NodeInfo = append(rsp.NodeInfo, v)
+		}
+	}
 
+	rsp.CodePathPrefix = "/home/" + userName + "/"
 	return SuccessResp(c, rsp)
 }
 
