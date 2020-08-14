@@ -22,6 +22,21 @@ func GetResource(userName string) (*models.VcInfo, error) {
 		return nil, err
 	}
 
+	url = fmt.Sprintf("%s/GetAllDevice?userName=%s", configs.Config.DltsUrl, userName)
+	devices := make(map[string]models.DeviceItem2)
+
+	err = DoRequest(url, "GET", nil, nil, &devices)
+	if err != nil {
+		fmt.Printf("get all devices err[%+v]\n", err)
+		return nil, err
+	}
+
+	for _, v := range vcInfo.Nodes {
+		if val, ok := devices[v.GPUType]; ok {
+			v.DeviceStr = val.DeviceStr
+		}
+	}
+
 	return vcInfo, nil
 }
 
