@@ -83,6 +83,13 @@ func lsDatasets(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 	var message = "success"
+	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
+	//获取该用户能够访问的所有已经标注好的数据库
+
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
 	if req.IsTranslated {
 		var annoDatasets []models.DataSet
 		queryStringParameters := models.QueryStringParametersV2{
@@ -115,12 +122,7 @@ func lsDatasets(c *gin.Context) error {
 		}
 	}
 
-	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
-	//获取该用户能够访问的所有已经标注好的数据库
 
-	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
-	}
 	data := GetDatasetsResp{
 		Datasets:  datasets,
 		Total:     total,
