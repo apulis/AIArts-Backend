@@ -6,6 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -189,28 +190,90 @@ func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
 	return jobLog, nil
 }
 
-func GetRegexpLog(log string) map[string]string {
+func GetRegexpLog(log string) (map[string]string,map[string]string) {
 	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")
 	recall_5_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
 	recall_reg, _ := regexp.Compile("Recall\\[(.*?)\\]")
 	precision_reg, _ := regexp.Compile("Precision\\[(.*?)\\]")
 	indicator := map[string]string{}
+	confusion:= map[string]string{}
 	if len(recall_reg.FindStringSubmatch(log)) > 1 {
-		recall := recall_reg.FindStringSubmatch(log)[1]
-		indicator["Recall"] = recall
+		indicator["Recall"] = recall_reg.FindStringSubmatch(log)[1]
 	}
 	if len(recall_5_reg.FindStringSubmatch(log)) > 1 {
-		recall_5 := recall_5_reg.FindStringSubmatch(log)[1]
-		indicator["Recall_5"] = recall_5
+		indicator["Recall_5"] = recall_5_reg.FindStringSubmatch(log)[1]
 	}
 	if len(acc_reg.FindStringSubmatch(log)) > 1 {
-		accuracy := acc_reg.FindStringSubmatch(log)[1]
-		indicator["Accuracy"] = accuracy
+		indicator["Accuracy"] = acc_reg.FindStringSubmatch(log)[1]
 	}
 	if len(precision_reg.FindStringSubmatch(log)) > 1 {
-		precision := precision_reg.FindStringSubmatch(log)[1]
-		indicator["Precision"] = precision
+		indicator["Precision"] = precision_reg.FindStringSubmatch(log)[1]
 	}
+	//二分类混淆矩阵
+	VALUE_reg, _ := regexp.Compile("\\[(.+)\\]")
+	TP_reg, _ := regexp.Compile("TP: (.+?])")
+	if len(TP_reg.FindStringSubmatch(log)) > 1 {
+		TP_string := TP_reg.FindStringSubmatch(log)[1]
+		label_x1_reg, _ := regexp.Compile("(.*?),")
+		label_y1_reg, _ := regexp.Compile(" (.+?)\\[")
+		confusion["x1"] = label_x1_reg.FindStringSubmatch(TP_string)[1]
+		confusion["y1"] = label_y1_reg.FindStringSubmatch(TP_string)[1]
+		confusion["TP"] = VALUE_reg.FindStringSubmatch(TP_string)[1]
+
+		TN_reg, _ := regexp.Compile("TN: (.+?])")
+		if len(TN_reg.FindStringSubmatch(log)) > 1 {
+			TN_string := TN_reg.FindStringSubmatch(log)[1]
+			label_x2_reg, _ := regexp.Compile("(.*?),")
+			label_y2_reg, _ := regexp.Compile(" (.+?)\\[")
+			confusion["x2"] = label_x2_reg.FindStringSubmatch(TN_string)[1]
+			confusion["y2"] = label_y2_reg.FindStringSubmatch(TN_string)[1]
+			confusion["TN"] = VALUE_reg.FindStringSubmatch(TN_string)[1]
+		}
+		FN_reg, _ := regexp.Compile("FN: (.+?])")
+		if len(FN_reg.FindStringSubmatch(log)) > 1 {
+			FN_string := FN_reg.FindStringSubmatch(log)[1]
+			confusion["FN"] = VALUE_reg.FindStringSubmatch(FN_string)[1]
+		}
+		FP_reg, _ := regexp.Compile("FP: (.+?])")
+		if len(FP_reg.FindStringSubmatch(log)) > 1 {
+			FP_string := FP_reg.FindStringSubmatch(log)[1]
+			confusion["FP"] = VALUE_reg.FindStringSubmatch(FP_string)[1]
+		}
+		TP, _ := strconv.ParseFloat(confusion["TP"], 32)
+		FN, _ := strconv.ParseFloat(confusion["FN"], 32)
+		FP, _ := strconv.ParseFloat(confusion["FP"], 32)
+		TN, _ := strconv.ParseFloat(confusion["TN"], 32)
+		confusion["Recall1"] = strconv.FormatFloat(TP/(TP+FN), 'f', -1, 32)
+		confusion["Recall2"] = strconv.FormatFloat(TN/(FP+TN), 'f', -1, 32)
+		confusion["Precision1"] = strconv.FormatFloat(TP/(FP+TP), 'f', -1, 32)
+		confusion["Precision2"] = strconv.FormatFloat(TN/(FN+TN), 'f', -1, 32)
+
+		Accuracy_reg, _ := regexp.Compile("Accuracy\\[(.+)\\]")
+		if len(Accuracy_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Accuracy"] = Accuracy_reg.FindStringSubmatch(log)[1]
+		}
+		Recall_reg, _ := regexp.Compile("Recall\\[(.+)\\]")
+		if len(Recall_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Recall"] = Recall_reg.FindStringSubmatch(log)[1]
+		}
+		Precision_reg, _ := regexp.Compile("Precision\\[(.+)\\]")
+		if len(Precision_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Precision"] = Precision_reg.FindStringSubmatch(log)[1]
+		}
+		F1_score_reg, _ := regexp.Compile("F1_score\\[(.+)\\]")
+		if len(F1_score_reg.FindStringSubmatch(log)) > 1 {
+			indicator["F1_score"] = F1_score_reg.FindStringSubmatch(log)[1]
+		}
+		Auc_ROC_reg, _ := regexp.Compile("Auc_ROC\\[(.+)\\]")
+		if len(Auc_ROC_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Auc_ROC"] = Auc_ROC_reg.FindStringSubmatch(log)[1]
+		}
+		Auc_PR_reg, _ := regexp.Compile("Auc_PR\\[(.+)\\]")
+		if len(Auc_PR_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Auc_PR"] = Auc_PR_reg.FindStringSubmatch(log)[1]
+		}
+	}
+
 	//目标检测
 	mAP_reg, _ := regexp.Compile("mAP@0.5IOU: (.*)")
 	localization_loss_reg, _ := regexp.Compile("localization_loss: (.*)")
@@ -219,41 +282,35 @@ func GetRegexpLog(log string) map[string]string {
 	total_loss_reg, _ := regexp.Compile("total_loss: (.*)")
 
 	if len(mAP_reg.FindStringSubmatch(log)) > 1 {
-		mAP := mAP_reg.FindStringSubmatch(log)[1]
-		indicator["mAP"] = mAP
+		indicator["mAP"] = mAP_reg.FindStringSubmatch(log)[1]
+
+		if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Localization_Loss"] = localization_loss_reg.FindStringSubmatch(log)[1]
+		}
+		if len(classification_loss_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Classification_Loss"] = classification_loss_reg.FindStringSubmatch(log)[1]
+		}
+		if len(regularization_loss_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Regularization_Loss"] = regularization_loss_reg.FindStringSubmatch(log)[1]
+		}
+		if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Total_Loss"] = total_loss_reg.FindStringSubmatch(log)[1]
+		}
+		//pytorch
+		acc_pytorch_reg, _ := regexp.Compile("Accuracy:(.+)")
+		if len(acc_pytorch_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Accuracy"] = acc_pytorch_reg.FindStringSubmatch(log)[1]
+		}
+		avg_loss_pytorch_reg, _ := regexp.Compile("Average loss: (.+?),")
+		if len(avg_loss_pytorch_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Average_Loss"] = avg_loss_pytorch_reg.FindStringSubmatch(log)[1]
+		}
+		//mxnet
+		acc_mxnet_reg, _ := regexp.Compile("accuracy=(.+)")
+		if len(acc_mxnet_reg.FindStringSubmatch(log)) > 1 {
+			indicator["Accuracy"] = acc_mxnet_reg.FindStringSubmatch(log)[1]
+		}
 	}
-	if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
-		localization_loss := localization_loss_reg.FindStringSubmatch(log)[1]
-		indicator["Localization_Loss"] = localization_loss
-	}
-	if len(classification_loss_reg.FindStringSubmatch(log)) > 1 {
-		classification_loss := classification_loss_reg.FindStringSubmatch(log)[1]
-		indicator["Classification_Loss"] = classification_loss
-	}
-	if len(regularization_loss_reg.FindStringSubmatch(log)) > 1 {
-		regularization_loss := regularization_loss_reg.FindStringSubmatch(log)[1]
-		indicator["Regularization_Loss"] = regularization_loss
-	}
-	if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
-		total_loss := total_loss_reg.FindStringSubmatch(log)[1]
-		indicator["Total_Loss"] = total_loss
-	}
-	//pytorch
-	acc_pytorch_reg, _ := regexp.Compile("Accuracy:(.+)")
-	if len(acc_pytorch_reg.FindStringSubmatch(log)) > 1 {
-		acc_pytorch := acc_pytorch_reg.FindStringSubmatch(log)[1]
-		indicator["Accuracy"] = acc_pytorch
-	}
-	avg_loss_pytorch_reg, _ := regexp.Compile("Average loss: (.+?),")
-	if len(avg_loss_pytorch_reg.FindStringSubmatch(log)) > 1 {
-		avg_loss_pytorch := avg_loss_pytorch_reg.FindStringSubmatch(log)[1]
-		indicator["Average_Loss"] = avg_loss_pytorch
-	}
-	//mxnet
-	acc_mxnet_reg, _ := regexp.Compile("accuracy=(.+)")
-	if len(acc_mxnet_reg.FindStringSubmatch(log)) > 1 {
-		acc_mxnet := acc_mxnet_reg.FindStringSubmatch(log)[1]
-		indicator["Accuracy"] = acc_mxnet
-	}
-	return indicator
+
+	return indicator,confusion
 }

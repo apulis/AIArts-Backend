@@ -1025,6 +1025,10 @@ definitions:
     type: object
   routers.getEvaluationResp:
     properties:
+      confusion:
+        additionalProperties:
+          type: string
+        type: object
       evaluation:
         $ref: '#/definitions/services.Evaluation'
         type: object
@@ -2220,7 +2224,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: success indicator:{"accuary":"0.001"}
+          description: success indicator:{"accuary":"0.001"},confusion
           schema:
             $ref: '#/definitions/routers.getEvaluationResp'
         "400":
