@@ -38,6 +38,7 @@ type getEvaluationResp struct {
 	Evaluation services.Evaluation `json:"evaluation"`
 	Log        string              `json:"log"`
 	Indicator  map[string]string   `json:"indicator"`
+	Confusion  map[string]string   `json:"confusion"`
 }
 
 // @Summary list evaluations
@@ -126,7 +127,7 @@ func createEvaluation(c *gin.Context) error {
 // @Summary get evaluation by id
 // @Produce  json
 // @Param id path int true "evaluation id"
-// @Success 200 {object} getEvaluationResp "success indicator:{"accuary":"0.001"}"
+// @Success 200 {object} getEvaluationResp "success indicator:{"accuary":"0.001"},confusion"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations/:id [get]
@@ -149,11 +150,12 @@ func getEvaluation(c *gin.Context) error {
 	if log != nil {
 		logResp = log.Log
 	}
-	indicator := services.GetRegexpLog(logResp)
+	indicator,confusion  := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
 		Evaluation: *job,
 		Log:        logResp,
 		Indicator:  indicator,
+		Confusion:  confusion,
 	}
 	return SuccessResp(c, data)
 }

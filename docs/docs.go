@@ -1608,7 +1608,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "success indicator:{\"accuary\":\"0.001\"}",
+                        "description": "success indicator:{\"accuary\":\"0.001\"},confusion",
                         "schema": {
                             "$ref": "#/definitions/routers.getEvaluationResp"
                         }
@@ -4325,6 +4325,12 @@ var doc = `{
         "routers.getEvaluationResp": {
             "type": "object",
             "properties": {
+                "confusion": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "evaluation": {
                     "type": "object",
                     "$ref": "#/definitions/services.Evaluation"
