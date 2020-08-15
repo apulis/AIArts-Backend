@@ -283,7 +283,6 @@ func GetRegexpLog(log string) (map[string]string,map[string]string) {
 
 	if len(mAP_reg.FindStringSubmatch(log)) > 1 {
 		indicator["mAP"] = mAP_reg.FindStringSubmatch(log)[1]
-
 		if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
 			indicator["Localization_Loss"] = localization_loss_reg.FindStringSubmatch(log)[1]
 		}
@@ -296,21 +295,24 @@ func GetRegexpLog(log string) (map[string]string,map[string]string) {
 		if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
 			indicator["Total_Loss"] = total_loss_reg.FindStringSubmatch(log)[1]
 		}
-		//pytorch
-		acc_pytorch_reg, _ := regexp.Compile("Accuracy:(.+)")
-		if len(acc_pytorch_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Accuracy"] = acc_pytorch_reg.FindStringSubmatch(log)[1]
-		}
-		avg_loss_pytorch_reg, _ := regexp.Compile("Average loss: (.+?),")
-		if len(avg_loss_pytorch_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Average_Loss"] = avg_loss_pytorch_reg.FindStringSubmatch(log)[1]
-		}
-		//mxnet
-		acc_mxnet_reg, _ := regexp.Compile("accuracy=(.+)")
-		if len(acc_mxnet_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Accuracy"] = acc_mxnet_reg.FindStringSubmatch(log)[1]
-		}
 	}
+
+	//pytorch
+
+	acc_pytorch_reg, _ := regexp.Compile("Accuracy:(.+)")
+	if len(acc_pytorch_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Accuracy"] = acc_pytorch_reg.FindStringSubmatch(log)[1]
+	}
+	avg_loss_pytorch_reg, _ := regexp.Compile("Average loss: (.+?),")
+	if len(avg_loss_pytorch_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Average_Loss"] = avg_loss_pytorch_reg.FindStringSubmatch(log)[1]
+	}
+	//mxnet
+	acc_mxnet_reg, _ := regexp.Compile("accuracy=(.+)")
+	if len(acc_mxnet_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Accuracy"] = acc_mxnet_reg.FindStringSubmatch(log)[1]
+	}
+
 
 	return indicator,confusion
 }
