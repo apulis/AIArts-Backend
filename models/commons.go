@@ -88,7 +88,7 @@ func initVersionInfoTable() {
 	initVersion := VersionInfoSet{
 		Description: "当前版本号：1.0.1",
 		Version:     "1.0.1",
-		Creator:     "Administrator",
+		Creator:     "admin",
 	}
 	err = UploadVersionInfoSet(initVersion)
 	fmt.Println("upload ready")
