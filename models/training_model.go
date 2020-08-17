@@ -40,17 +40,17 @@ func (t *Training) ValidatePathByUser(userName string) (bool, string) {
 		return false, "启动文件非python"
 	}
 
-	if !ValidHomePath(userName, t.StartupFile) {
-		return false, "启动文件路径错误"
-	}
+	//if !ValidHomePath(userName, t.StartupFile) {
+	//	return false, "启动文件路径错误"
+	//}
 
-	if !ValidHomePath(userName, t.CodePath) {
-		return false, "代码路径不在home下"
-	}
+	//if !ValidHomePath(userName, t.CodePath) {
+	//	return false, "代码路径不在home下"
+	//}
 
-	if !ValidHomePath(userName, t.OutputPath) {
-		return false, "输出文件路径不在home目录下"
-	}
+	//if !ValidHomePath(userName, t.OutputPath) {
+	//	return false, "输出文件路径不在home目录下"
+	//}
 
 	return true, ""
 }

@@ -86,7 +86,7 @@ func initVersionInfoTable() {
 		return
 	}
 	initVersion := VersionInfoSet{
-		Description: "DLTS platform, help you to achieve all possibility.",
+		Description: "当前版本号：1.0.1",
 		Version:     "1.0.1",
 		Creator:     "Administrator",
 	}
