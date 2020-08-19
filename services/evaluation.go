@@ -275,26 +275,25 @@ func GetRegexpLog(log string) (map[string]string,map[string]string) {
 	}
 
 	//目标检测
-	mAP_reg, _ := regexp.Compile("mAP@0.5IOU: (.*)")
+	mAP_reg, _ := regexp.Compile("mAP: (.*)")
 	localization_loss_reg, _ := regexp.Compile("localization_loss: (.*)")
 	classification_loss_reg, _ := regexp.Compile("classification_loss: (.*)")
 	regularization_loss_reg, _ := regexp.Compile("regularization_loss: (.*)")
 	total_loss_reg, _ := regexp.Compile("total_loss: (.*)")
-
 	if len(mAP_reg.FindStringSubmatch(log)) > 1 {
 		indicator["mAP"] = mAP_reg.FindStringSubmatch(log)[1]
-		if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Localization_Loss"] = localization_loss_reg.FindStringSubmatch(log)[1]
-		}
-		if len(classification_loss_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Classification_Loss"] = classification_loss_reg.FindStringSubmatch(log)[1]
-		}
-		if len(regularization_loss_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Regularization_Loss"] = regularization_loss_reg.FindStringSubmatch(log)[1]
-		}
-		if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
-			indicator["Total_Loss"] = total_loss_reg.FindStringSubmatch(log)[1]
-		}
+	}
+	if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Localization_Loss"] = localization_loss_reg.FindStringSubmatch(log)[1]
+	}
+	if len(classification_loss_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Classification_Loss"] = classification_loss_reg.FindStringSubmatch(log)[1]
+	}
+	if len(regularization_loss_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Regularization_Loss"] = regularization_loss_reg.FindStringSubmatch(log)[1]
+	}
+	if len(total_loss_reg.FindStringSubmatch(log)) > 1 {
+		indicator["Total_Loss"] = total_loss_reg.FindStringSubmatch(log)[1]
 	}
 
 	//pytorch
