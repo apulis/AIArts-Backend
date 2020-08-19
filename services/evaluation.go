@@ -280,8 +280,9 @@ func GetRegexpLog(log string) (map[string]string,map[string]string) {
 	classification_loss_reg, _ := regexp.Compile("classification_loss: (.*)")
 	regularization_loss_reg, _ := regexp.Compile("regularization_loss: (.*)")
 	total_loss_reg, _ := regexp.Compile("total_loss: (.*)")
-
-	indicator["mAP"] = mAP_reg.FindStringSubmatch(log)[1]
+	if len(mAP_reg.FindStringSubmatch(log)) > 1 {
+		indicator["mAP"] = mAP_reg.FindStringSubmatch(log)[1]
+	}
 	if len(localization_loss_reg.FindStringSubmatch(log)) > 1 {
 		indicator["Localization_Loss"] = localization_loss_reg.FindStringSubmatch(log)[1]
 	}
