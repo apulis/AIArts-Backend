@@ -36,7 +36,6 @@ definitions:
         type: string
       jobParams:
         $ref: '#/definitions/models.JobParams'
-        type: object
       jobStatus:
         type: string
       jobTime:
@@ -72,12 +71,10 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       description:
         type: string
       id:
@@ -97,7 +94,6 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       version:
         type: string
     type: object
@@ -213,7 +209,6 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       creator:
         type: string
       dataFormat:
@@ -225,7 +220,6 @@ definitions:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       description:
         type: string
       deviceNum:
@@ -255,7 +249,6 @@ definitions:
       params:
         $ref: '#/definitions/models.ParamsItem'
         description: omitempty 值为空，不编码
-        type: object
       precision:
         type: string
       size:
@@ -267,7 +260,6 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       use:
         description: 模型类型 图像分类
         type: string
@@ -276,6 +268,8 @@ definitions:
     type: object
   models.NodeStatus:
     properties:
+      deviceStr:
+        type: string
       gpu_allocatable:
         additionalProperties:
           type: integer
@@ -320,16 +314,13 @@ definitions:
     properties:
       metaData:
         $ref: '#/definitions/models.TemplateMeta'
-        type: object
       params:
         $ref: '#/definitions/models.TemplateParams'
-        type: object
     type: object
   models.TemplateMeta:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       creator:
         type: string
       id:
@@ -342,7 +333,6 @@ definitions:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
     type: object
   models.TemplateParams:
     properties:
@@ -409,24 +399,24 @@ definitions:
         type: string
     type: object
   models.UnixTime:
+    properties:
+      time.Time:
+        type: string
     type: object
   models.VersionInfoSet:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       description:
         type: string
       id:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
-        type: object
       version:
         type: string
     type: object
@@ -452,7 +442,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllCodeEnvRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -462,7 +451,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateCodeEnvRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -472,7 +460,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateEdgeInferenceResp'
-        type: object
       msg:
         type: string
     type: object
@@ -482,7 +469,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTemplateRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -492,7 +478,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTrainingRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -502,7 +487,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteCodeEnvRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -512,7 +496,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTemplateRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -522,7 +505,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTrainingRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -532,7 +514,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTemplateRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -542,7 +523,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTrainingRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -552,7 +532,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.EndpointWrapper'
-        type: object
       msg:
         type: string
     type: object
@@ -562,7 +541,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.ConversionTypes'
-        type: object
       msg:
         type: string
     type: object
@@ -572,7 +550,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetResp'
-        type: object
       msg:
         type: string
     type: object
@@ -582,7 +559,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetsResp'
-        type: object
       msg:
         type: string
     type: object
@@ -592,7 +568,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetFDInfoResp'
-        type: object
       msg:
         type: string
     type: object
@@ -602,7 +577,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetModelsetsResp'
-        type: object
       msg:
         type: string
     type: object
@@ -612,7 +586,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetResourceRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -622,7 +595,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.TemplateItem'
-        type: object
       msg:
         type: string
     type: object
@@ -632,7 +604,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetTrainingRsp'
-        type: object
       msg:
         type: string
     type: object
@@ -642,7 +613,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.JobLog'
-        type: object
       msg:
         type: string
     type: object
@@ -652,7 +622,6 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.LsEdgeInferencesResp'
-        type: object
       msg:
         type: string
     type: object
@@ -698,7 +667,6 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
-        type: object
     type: object
   routers.CreateTemplateRsp:
     properties:
@@ -798,7 +766,6 @@ definitions:
     properties:
       dataset:
         $ref: '#/definitions/models.Dataset'
-        type: object
     type: object
   routers.GetDatasetsResp:
     properties:
@@ -821,7 +788,6 @@ definitions:
     properties:
       fdinfo:
         $ref: '#/definitions/models.FDInfo'
-        type: object
     type: object
   routers.GetJobSummaryReq:
     properties:
@@ -938,7 +904,6 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
-        type: object
     type: object
   routers.createDatasetReq:
     properties:
@@ -1031,7 +996,6 @@ definitions:
         type: object
       evaluation:
         $ref: '#/definitions/services.Evaluation'
-        type: object
       indicator:
         additionalProperties:
           type: string
@@ -1064,7 +1028,6 @@ definitions:
     properties:
       model:
         $ref: '#/definitions/models.Modelset'
-        type: object
     type: object
   routers.getVersionInfoResp:
     properties:
@@ -1072,46 +1035,10 @@ definitions:
         type: boolean
       versionInfo:
         $ref: '#/definitions/models.VersionInfoSet'
-        type: object
       versionLogs:
         items:
           $ref: '#/definitions/models.VersionInfoSet'
         type: array
-    type: object
-  routers.lsDatasetsReq:
-    properties:
-      isTranslated:
-        type: boolean
-      name:
-        type: string
-      order:
-        type: string
-      orderBy:
-        type: string
-      pageNum:
-        type: integer
-      pageSize:
-        type: integer
-      status:
-        type: string
-    type: object
-  routers.lsModelsetsReq:
-    properties:
-      isAdvance:
-        type: boolean
-      name:
-        type: string
-      order:
-        type: string
-      orderBy:
-        type: string
-      pageNum:
-        type: integer
-      pageSize:
-        type: integer
-      status:
-        description: all
-        type: string
     type: object
   routers.setFDInfoReq:
     properties:
@@ -2042,6 +1969,30 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update dataset
+  /ai_arts/api/edge_inferences/:jobId:
+    delete:
+      parameters:
+      - description: job id
+        in: path
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete edge_inference by jobId
   /ai_arts/api/edge_inferences/conversion_types:
     get:
       produces:

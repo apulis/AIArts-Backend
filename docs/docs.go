@@ -1366,6 +1366,43 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/edge_inferences/:jobId": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete edge_inference by jobId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "job id",
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/edge_inferences/conversion_types": {
             "get": {
                 "produces": [
@@ -2843,7 +2880,6 @@ var doc = `{
                     "type": "string"
                 },
                 "jobParams": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobParams"
                 },
                 "jobStatus": {
@@ -2894,14 +2930,12 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2930,7 +2964,6 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3106,7 +3139,6 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3123,7 +3155,6 @@ var doc = `{
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3165,7 +3196,6 @@ var doc = `{
                 },
                 "params": {
                     "description": "omitempty 值为空，不编码",
-                    "type": "object",
                     "$ref": "#/definitions/models.ParamsItem"
                 },
                 "precision": {
@@ -3182,7 +3212,6 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
@@ -3197,6 +3226,9 @@ var doc = `{
         "models.NodeStatus": {
             "type": "object",
             "properties": {
+                "deviceStr": {
+                    "type": "string"
+                },
                 "gpuType": {
                     "type": "string"
                 },
@@ -3262,11 +3294,9 @@ var doc = `{
             "type": "object",
             "properties": {
                 "metaData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateMeta"
                 },
                 "params": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3275,7 +3305,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3294,7 +3323,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 }
             }
@@ -3397,20 +3425,23 @@ var doc = `{
             }
         },
         "models.UnixTime": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
         },
         "models.VersionInfoSet": {
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3420,7 +3451,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3460,7 +3490,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -3475,7 +3504,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -3490,7 +3518,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateEdgeInferenceResp"
                 },
                 "msg": {
@@ -3505,7 +3532,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTemplateRsp"
                 },
                 "msg": {
@@ -3520,7 +3546,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -3535,7 +3560,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -3550,7 +3574,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTemplateRsp"
                 },
                 "msg": {
@@ -3565,7 +3588,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -3580,7 +3602,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTemplateRsp"
                 },
                 "msg": {
@@ -3595,7 +3616,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -3610,7 +3630,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -3625,7 +3644,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.ConversionTypes"
                 },
                 "msg": {
@@ -3640,7 +3658,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -3655,7 +3672,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -3670,7 +3686,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetFDInfoResp"
                 },
                 "msg": {
@@ -3685,7 +3700,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -3700,7 +3714,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -3715,7 +3728,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateItem"
                 },
                 "msg": {
@@ -3730,7 +3742,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -3745,7 +3756,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -3760,7 +3770,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.LsEdgeInferencesResp"
                 },
                 "msg": {
@@ -3830,7 +3839,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3984,7 +3992,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "dataset": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -4019,7 +4026,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "fdinfo": {
-                    "type": "object",
                     "$ref": "#/definitions/models.FDInfo"
                 }
             }
@@ -4198,7 +4204,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -4332,7 +4337,6 @@ var doc = `{
                     }
                 },
                 "evaluation": {
-                    "type": "object",
                     "$ref": "#/definitions/services.Evaluation"
                 },
                 "indicator": {
@@ -4383,7 +4387,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "model": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
@@ -4395,7 +4398,6 @@ var doc = `{
                     "type": "boolean"
                 },
                 "versionInfo": {
-                    "type": "object",
                     "$ref": "#/definitions/models.VersionInfoSet"
                 },
                 "versionLogs": {
@@ -4403,59 +4405,6 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.VersionInfoSet"
                     }
-                }
-            }
-        },
-        "routers.lsDatasetsReq": {
-            "type": "object",
-            "properties": {
-                "isTranslated": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "string"
-                },
-                "orderBy": {
-                    "type": "string"
-                },
-                "pageNum": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "routers.lsModelsetsReq": {
-            "type": "object",
-            "properties": {
-                "isAdvance": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "string"
-                },
-                "orderBy": {
-                    "type": "string"
-                },
-                "pageNum": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "all",
-                    "type": "string"
                 }
             }
         },

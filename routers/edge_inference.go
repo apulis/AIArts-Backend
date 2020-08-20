@@ -17,6 +17,11 @@ func AddGroupEdgeInference(r *gin.Engine) {
 	group.GET("/fdinfo", wrapper(getFDInfo))
 	group.POST("/fdinfo", wrapper(setFDInfo))
 	group.POST("/push/:jobId", wrapper(pushToFD))
+	group.DELETE("/:jobId", wrapper(deleteEdgeInference))
+}
+
+type edgeInferenceId struct {
+	ID string `uri:"jobId" binding:"required"`
 }
 
 type createEdgeInferenceReq struct {
@@ -196,4 +201,24 @@ func pushToFD(c *gin.Context) error {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
+}
+
+// @Summary delete edge_inference by jobId
+// @Produce  json
+// @Param jobId path string true "job id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/edge_inferences/:jobId [delete]
+func deleteEdgeInference(c *gin.Context) error {
+	var jobId edgeInferenceId
+	err := c.ShouldBindUri(&jobId)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	resp, err := services.DeleteJob(jobId.ID)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, resp)
 }

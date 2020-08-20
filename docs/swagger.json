@@ -1346,6 +1346,43 @@
                 }
             }
         },
+        "/ai_arts/api/edge_inferences/:jobId": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete edge_inference by jobId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "job id",
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/edge_inferences/conversion_types": {
             "get": {
                 "produces": [
@@ -2823,7 +2860,6 @@
                     "type": "string"
                 },
                 "jobParams": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobParams"
                 },
                 "jobStatus": {
@@ -2874,14 +2910,12 @@
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2910,7 +2944,6 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3086,7 +3119,6 @@
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3103,7 +3135,6 @@
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3145,7 +3176,6 @@
                 },
                 "params": {
                     "description": "omitempty 值为空，不编码",
-                    "type": "object",
                     "$ref": "#/definitions/models.ParamsItem"
                 },
                 "precision": {
@@ -3162,7 +3192,6 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
@@ -3177,6 +3206,9 @@
         "models.NodeStatus": {
             "type": "object",
             "properties": {
+                "deviceStr": {
+                    "type": "string"
+                },
                 "gpuType": {
                     "type": "string"
                 },
@@ -3242,11 +3274,9 @@
             "type": "object",
             "properties": {
                 "metaData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateMeta"
                 },
                 "params": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3255,7 +3285,6 @@
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3274,7 +3303,6 @@
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 }
             }
@@ -3377,20 +3405,23 @@
             }
         },
         "models.UnixTime": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
         },
         "models.VersionInfoSet": {
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3400,7 +3431,6 @@
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3440,7 +3470,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -3455,7 +3484,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -3470,7 +3498,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateEdgeInferenceResp"
                 },
                 "msg": {
@@ -3485,7 +3512,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTemplateRsp"
                 },
                 "msg": {
@@ -3500,7 +3526,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -3515,7 +3540,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -3530,7 +3554,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTemplateRsp"
                 },
                 "msg": {
@@ -3545,7 +3568,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -3560,7 +3582,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTemplateRsp"
                 },
                 "msg": {
@@ -3575,7 +3596,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -3590,7 +3610,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -3605,7 +3624,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.ConversionTypes"
                 },
                 "msg": {
@@ -3620,7 +3638,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -3635,7 +3652,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -3650,7 +3666,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetFDInfoResp"
                 },
                 "msg": {
@@ -3665,7 +3680,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -3680,7 +3694,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -3695,7 +3708,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateItem"
                 },
                 "msg": {
@@ -3710,7 +3722,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -3725,7 +3736,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -3740,7 +3750,6 @@
                     "type": "integer"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/routers.LsEdgeInferencesResp"
                 },
                 "msg": {
@@ -3810,7 +3819,6 @@
                     "type": "integer"
                 },
                 "templateData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3964,7 +3972,6 @@
             "type": "object",
             "properties": {
                 "dataset": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -3999,7 +4006,6 @@
             "type": "object",
             "properties": {
                 "fdinfo": {
-                    "type": "object",
                     "$ref": "#/definitions/models.FDInfo"
                 }
             }
@@ -4178,7 +4184,6 @@
                     "type": "integer"
                 },
                 "templateData": {
-                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -4312,7 +4317,6 @@
                     }
                 },
                 "evaluation": {
-                    "type": "object",
                     "$ref": "#/definitions/services.Evaluation"
                 },
                 "indicator": {
@@ -4363,7 +4367,6 @@
             "type": "object",
             "properties": {
                 "model": {
-                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
@@ -4375,7 +4378,6 @@
                     "type": "boolean"
                 },
                 "versionInfo": {
-                    "type": "object",
                     "$ref": "#/definitions/models.VersionInfoSet"
                 },
                 "versionLogs": {
@@ -4383,59 +4385,6 @@
                     "items": {
                         "$ref": "#/definitions/models.VersionInfoSet"
                     }
-                }
-            }
-        },
-        "routers.lsDatasetsReq": {
-            "type": "object",
-            "properties": {
-                "isTranslated": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "string"
-                },
-                "orderBy": {
-                    "type": "string"
-                },
-                "pageNum": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "routers.lsModelsetsReq": {
-            "type": "object",
-            "properties": {
-                "isAdvance": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "string"
-                },
-                "orderBy": {
-                    "type": "string"
-                },
-                "pageNum": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "all",
-                    "type": "string"
                 }
             }
         },
