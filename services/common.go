@@ -1,11 +1,15 @@
 package services
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/levigross/grequests"
+	"strconv"
 )
 
 var db = database.Db
@@ -52,4 +56,16 @@ func GetJobSummary(userName, jobType string) (map[string]int, error) {
 	}
 
 	return summary, nil
+}
+
+func GetResources(userName string) (interface{}, error) {
+	BackendUrl = configs.Config.Infer.BackendUrl
+	resp, err := grequests.Get(BackendUrl+"/apis/PostInferenceJob?userName="+userName, nil)
+	if resp.StatusCode != 200 {
+		logger.Error("response code is ", resp.StatusCode, resp.String())
+		return "", errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
+	}
+	var resources interface{}
+	json.Unmarshal(resp.Bytes(), &resources)
+	return resources, err
 }
