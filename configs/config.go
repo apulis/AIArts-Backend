@@ -38,9 +38,11 @@ type DbConfig struct {
 }
 
 type FileConfig struct {
-	DatasetDir string
-	ModelDir   string
-	SizeLimit  int
+	DatasetDir         string
+	ModelDir           string
+	SizeLimit          int
+	CleanBeforeSeconds int64
+	CleanEverySeconds  int64
 }
 
 type AnnotationConfig struct {
@@ -68,4 +70,10 @@ func init() {
 	}
 
 	viper.Unmarshal(&Config)
+	if Config.File.CleanBeforeSeconds <= 0 {
+		Config.File.CleanBeforeSeconds = 86400
+	}
+	if Config.File.CleanEverySeconds <= 0 {
+		Config.File.CleanEverySeconds = 600
+	}
 }

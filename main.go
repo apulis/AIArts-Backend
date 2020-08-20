@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +29,9 @@ func main() {
 		Handler: router,
 	}
 
+	go taskCleanTmpFiles(configs.Config.File.DatasetDir, configs.Config.File.CleanEverySeconds)
+	go taskCleanTmpFiles(configs.Config.File.ModelDir, configs.Config.File.CleanEverySeconds)
+
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -51,4 +55,37 @@ func main() {
 	}
 
 	log.Println("Server exiting")
+}
+
+func taskCleanTmpFiles(dir string, seconds int64) {
+	for {
+		cleanTmpFiles(dir)
+		time.Sleep(time.Duration(seconds) * time.Second)
+	}
+}
+
+func cleanTmpFiles(dir string) {
+	tmpDir := dir + "/tmp"
+	logger.Info("Checking dir: ", tmpDir)
+
+	_, err := os.Stat(tmpDir)
+	if err != nil {
+		err = os.MkdirAll(tmpDir, os.ModeDir|os.ModePerm)
+		if err != nil {
+			logger.Info("Creating dir error: ", err.Error())
+		}
+	}
+
+	reader, err := ioutil.ReadDir(tmpDir)
+	if err != nil {
+		logger.Error("Read dir error: ", err.Error())
+	}
+	for _, fi := range reader {
+		logger.Info("Checking file: ", tmpDir, fi.Name())
+		duration := time.Now().Sub(fi.ModTime())
+		if duration.Seconds() > float64(configs.Config.File.CleanBeforeSeconds) {
+			logger.Info("Removing file: ", fi.Name())
+			os.RemoveAll(tmpDir + fi.Name())
+		}
+	}
 }
