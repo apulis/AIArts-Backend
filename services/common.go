@@ -60,7 +60,7 @@ func GetJobSummary(userName, jobType string) (map[string]int, error) {
 
 func GetResources(userName string) (interface{}, error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Get(BackendUrl+"/apis/getAllDevice?userName="+userName, nil)
+	resp, err := grequests.Get(BackendUrl+"/apis/GetAllDevice?userName="+userName, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return "", errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
