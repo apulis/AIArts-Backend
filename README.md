@@ -42,3 +42,41 @@ Backend for AIArts.
 ### 部署
 * 公用数据集存放路径`/dlwsdata/storage/dataset/storage`
 * 私有数据集存放路径`/dlwsdata/work/user/storage`
+* 更新并push至harbor
+
+  `sudo vim /etc/hosts`
+  
+   增加 10.31.3.211 harbor.sigsus.cn
+ 
+  ```shell 
+  sudo vim /etc/docker/daemon.json
+  ```
+    ```
+  {
+    "registry-mirrors": [],
+    "insecure-registries": [
+     "https://harbor.sigsus.cn:8443"
+    ],
+    "debug": true,
+    "experimental": false
+    }
+  ```
+* 重启docker并登陆(需要进入 https://10.31.3.211:8443 注册)
+  ```shell 
+  sudo systemctl  restart docker 
+  sudo docker login harbor.sigsus.cn:8443
+  ```
+ * 重启docker并登陆(需要进入 https://10.31.3.211:8443 注册)
+   ```shell 
+   sudo systemctl  restart docker 
+   sudo docker login harbor.sigsus.cn:8443
+   ```
+ * 开始推送到harbor
+    ```shell 
+    cd deployment
+    ./build2harbor.sh
+    ```
+
+
+
+     
