@@ -924,6 +924,9 @@ definitions:
     type: object
   routers.createEdgeInferenceReq:
     properties:
+      conversionArgs:
+        additionalProperties: true
+        type: object
       conversionType:
         type: string
       inputPath:
@@ -933,6 +936,7 @@ definitions:
       outputPath:
         type: string
     required:
+    - conversionArgs
     - conversionType
     - inputPath
     - jobName

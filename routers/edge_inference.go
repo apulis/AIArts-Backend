@@ -25,10 +25,11 @@ type edgeInferenceId struct {
 }
 
 type createEdgeInferenceReq struct {
-	JobName        string `json:"jobName" binding:"required"`
-	InputPath      string `json:"inputPath" binding:"required"`
-	OutputPath     string `json:"outputPath" binding:"required"`
-	ConversionType string `json:"conversionType" binding:"required"`
+	JobName        string                 `json:"jobName" binding:"required"`
+	InputPath      string                 `json:"inputPath" binding:"required"`
+	OutputPath     string                 `json:"outputPath" binding:"required"`
+	ConversionType string                 `json:"conversionType" binding:"required"`
+	ConversionArgs map[string]interface{} `json:"conversionArgs" binding:"required"`
 }
 
 type setFDInfoReq struct {
@@ -123,7 +124,7 @@ func createEdgeInference(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username)
+	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username, req.ConversionArgs)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}

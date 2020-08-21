@@ -4236,12 +4236,17 @@ var doc = `{
         "routers.createEdgeInferenceReq": {
             "type": "object",
             "required": [
+                "conversionArgs",
                 "conversionType",
                 "inputPath",
                 "jobName",
                 "outputPath"
             ],
             "properties": {
+                "conversionArgs": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "conversionType": {
                     "type": "string"
                 },
