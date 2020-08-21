@@ -17,13 +17,19 @@ func AddGroupEdgeInference(r *gin.Engine) {
 	group.GET("/fdinfo", wrapper(getFDInfo))
 	group.POST("/fdinfo", wrapper(setFDInfo))
 	group.POST("/push/:jobId", wrapper(pushToFD))
+	group.DELETE("/:jobId", wrapper(deleteEdgeInference))
+}
+
+type edgeInferenceId struct {
+	ID string `uri:"jobId" binding:"required"`
 }
 
 type createEdgeInferenceReq struct {
-	JobName        string `json:"jobName" binding:"required"`
-	InputPath      string `json:"inputPath" binding:"required"`
-	OutputPath     string `json:"outputPath" binding:"required"`
-	ConversionType string `json:"conversionType" binding:"required"`
+	JobName        string                 `json:"jobName" binding:"required"`
+	InputPath      string                 `json:"inputPath" binding:"required"`
+	OutputPath     string                 `json:"outputPath" binding:"required"`
+	ConversionType string                 `json:"conversionType" binding:"required"`
+	ConversionArgs map[string]interface{} `json:"conversionArgs" binding:"required"`
 }
 
 type setFDInfoReq struct {
@@ -118,7 +124,7 @@ func createEdgeInference(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username)
+	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username, req.ConversionArgs)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
@@ -196,4 +202,24 @@ func pushToFD(c *gin.Context) error {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
+}
+
+// @Summary delete edge_inference by jobId
+// @Produce  json
+// @Param jobId path string true "job id"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/edge_inferences/:jobId [delete]
+func deleteEdgeInference(c *gin.Context) error {
+	var jobId edgeInferenceId
+	err := c.ShouldBindUri(&jobId)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	resp, err := services.DeleteJob(jobId.ID)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, resp)
 }

@@ -51,7 +51,7 @@ func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, jobStatus,
 	return res, resp.Total, err
 }
 
-func CreateEdgeInference(jobName, inputPath, outputPath, convType, userName string) (string, error) {
+func CreateEdgeInference(jobName, inputPath, outputPath, convType, userName string, convArgs map[string]interface{}) (string, error) {
 	url := fmt.Sprintf("%s/PostModelConversionJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -61,6 +61,7 @@ func CreateEdgeInference(jobName, inputPath, outputPath, convType, userName stri
 	params["outputPath"] = outputPath
 	params["conversionType"] = convType
 	params["vcName"] = models.DefaultVcName
+	params["conversionArgs"] = convArgs
 
 	var res models.ConversionJobId
 	err := DoRequest(url, "POST", nil, params, &res)

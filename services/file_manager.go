@@ -7,16 +7,18 @@ import (
 	"compress/gzip"
 	"errors"
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 const (
@@ -97,6 +99,7 @@ func GetDatasetTempPath(filetype string) (string, error) {
 	datasetTempPath := fmt.Sprintf("%s/%d%s", datasetTempDir, time.Now().UnixNano(), filetype)
 	return datasetTempPath, nil
 }
+
 func GetModelTempPath(filetype string) (string, error) {
 	fileConf := configs.Config.File
 	modelTempDir := fileConf.ModelDir + "/tmp"
@@ -118,7 +121,15 @@ func CompressFile(path string) (string, error) {
 	}
 	dirName := filepath.Dir(path)
 	fileName := fileInfo.Name()
-	targetPath := dirName + "/" + fileName + ".tar.gz"
+	tmpDir := dirName + "/../tmp/"
+	_, err = os.Stat(tmpDir)
+	if err != nil {
+		err = os.MkdirAll(tmpDir, os.ModeDir|os.ModePerm)
+		if err != nil {
+			return "", err
+		}
+	}
+	targetPath := tmpDir + fileName + strconv.FormatInt(time.Now().Unix(), 10) + ".tar.gz"
 
 	var buf bytes.Buffer
 	gzipWriter := gzip.NewWriter(&buf)
@@ -130,6 +141,7 @@ func CompressFile(path string) (string, error) {
 			return err
 		}
 		header.Name = strings.TrimPrefix(filepath.ToSlash(file), dirName)
+		header.Format = tar.FormatGNU
 		if err := tarWriter.WriteHeader(header); err != nil {
 			return err
 		}
@@ -178,7 +190,8 @@ func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
 	}
 	return datasetStoragePath
 }
-func GenerateModelStoragePath(dir , username string) string {
+
+func GenerateModelStoragePath(dir, username string) string {
 	var datasetStoragePath string
 	datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
 	//直接使用前端上传的path
@@ -190,6 +203,7 @@ func GenerateModelStoragePath(dir , username string) string {
 	}
 	return datasetStoragePath
 }
+
 func ExtractFile(fromPath, filetype, datasetStoragePath string) (string, error) {
 	_, err := os.Stat(datasetStoragePath)
 	if err != nil {
@@ -253,6 +267,7 @@ func extractZip(fromPath, toPath string) error {
 
 	return nil
 }
+
 func extractTar(fromPath, toPath string) error {
 	fileReader, err := os.Open(fromPath)
 	if err != nil {
@@ -268,7 +283,7 @@ func extractTar(fromPath, toPath string) error {
 		if err != nil {
 			return err
 		}
-		path := filepath.Join(toPath, head.Name)
+		path := filepath.Join(toPath, transformEncode(head.Name))
 		fileInfo := head.FileInfo()
 		switch head.Typeflag {
 
@@ -316,7 +331,7 @@ func extractTarGz(fromPath, toPath string) error {
 		if err != nil {
 			return err
 		}
-		path := filepath.Join(toPath, head.Name)
+		path := filepath.Join(toPath, transformEncode(head.Name))
 		fileInfo := head.FileInfo()
 		switch head.Typeflag {
 

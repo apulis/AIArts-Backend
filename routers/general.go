@@ -12,9 +12,10 @@ func AddGroupGeneral(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/common")
 
 	group.Use(Auth())
-
 	group.GET("/resource", wrapper(getResource))
+	group.GET("/resources", wrapper(getResources))
 	group.GET("/job/summary", wrapper(getJobSummary))
+	group.DELETE("/DeleteJob", wrapper(DeleteJob))
 }
 
 type GetResourceReq struct {
@@ -105,6 +106,24 @@ func getResource(c *gin.Context) error {
 
 	rsp.CodePathPrefix = "/home/" + userName + "/"
 	return SuccessResp(c, rsp)
+}
+
+// @Summary get available resource
+// @Produce  json
+// @Success 200 {object} APISuccessRespGetResource "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/common/resource [get]
+func getResources(c *gin.Context) error {
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+	Resources, err := services.GetResources(userName)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, gin.H{"resources": Resources})
 }
 
 // @Summary get job summary
