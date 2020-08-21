@@ -12,10 +12,10 @@ func AddGroupGeneral(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/common")
 
 	group.Use(Auth())
-
 	group.GET("/resource", wrapper(getResource))
 	group.GET("/resources", wrapper(getResources))
 	group.GET("/job/summary", wrapper(getJobSummary))
+	group.DELETE("/DeleteJob", wrapper(DeleteJob))
 }
 
 type GetResourceReq struct {
