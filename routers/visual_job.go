@@ -12,7 +12,7 @@ func AddGroupVisualJob(r *gin.Engine) {
 
 	group.POST("/", wrapper(createVisualJob))
 	group.GET("/list", wrapper(getVisualJobList))
-	group.GET("/:jobId/enpoints", wrapper(getEndpoints))
+	group.GET("/enpoints", wrapper(getEndpoints))
 	group.DELETE("/", wrapper(deleteVisualJob))
 	group.PUT("/:id", wrapper(switchVisualJobStatus)) //
 }
