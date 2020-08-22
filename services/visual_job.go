@@ -147,8 +147,29 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 	return nil, appRspData
 }
 
-func StopVisualJob(userName string, jobId int) {
+func StopVisualJob(userName string, jobId int) error {
+	targetJob, err := models.GetVisualJobById(jobId)
+	if err != nil {
+		fmt.Printf("get job detail err[%+v]\n", err)
+		return err
+	}
+	backgroundJobId := targetJob.RelateJobId
+	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, backgroundJobId)
+	params := make(map[string]interface{})
 
+	job := &models.Job{}
+	err = DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		fmt.Printf("delete backgournd job err[%+v]\n", err)
+		return err
+	}
+	targetJob.Status = "paused"
+	err = models.UpdateVisualJob(&targetJob)
+	if err != nil {
+		fmt.Printf("update visual job info fail: [%+v]\n", err)
+		return err
+	}
+	return nil
 }
 
 func renewStatusInfo(userName string) error {
