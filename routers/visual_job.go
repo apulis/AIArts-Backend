@@ -14,7 +14,7 @@ func AddGroupVisualJob(r *gin.Engine) {
 	group.GET("/list", wrapper(getVisualJobList))
 	group.GET("/enpoints", wrapper(getEndpoints))
 	group.DELETE("/", wrapper(deleteVisualJob))
-	group.PUT("/:id", wrapper(switchVisualJobStatus)) //
+	group.PUT("/", wrapper(switchVisualJobStatus)) //
 }
 
 type CreateVisualJobReq struct {
@@ -52,6 +52,15 @@ type GetRndpointsReq struct {
 }
 type GetRndpointsRsq struct {
 	Path string `json:path`
+}
+
+type SwitchVisualJobStatusReq struct {
+	JobId  int    `json:id`
+	Status string `json:status`
+}
+
+type DeleteJobReq struct {
+	JobId int `json:id`
 }
 
 // @Summary create visual job
@@ -117,7 +126,7 @@ func getEndpoints(c *gin.Context) error {
 	userName := getUsername(c)
 	path, err := services.GetEndpointsPath(userName, req.JobId)
 	if err != nil {
-		return ParameterError(err.Error())
+		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	rsp := GetRndpointsRsq{
 		Path: path,
@@ -126,9 +135,39 @@ func getEndpoints(c *gin.Context) error {
 }
 
 func deleteVisualJob(c *gin.Context) error {
-	return nil
+	var req DeleteJobReq
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	userName := getUsername(c)
+	err = services.DeleteVisualJob(userName, req.JobId)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
 }
 
 func switchVisualJobStatus(c *gin.Context) error {
-	return nil
+	var req SwitchVisualJobStatusReq
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+	userName := getUsername(c)
+	if req.Status == "stop" {
+		err = services.StopVisualJob(userName, req.JobId)
+		if err != nil {
+			return AppError(APP_ERROR_CODE, err.Error())
+		}
+	}
+	if req.Status == "running" {
+		err = services.ContinueVisualJob(userName, req.JobId)
+		if err != nil {
+			return AppError(APP_ERROR_CODE, err.Error())
+		}
+	}
+	data := gin.H{}
+	return SuccessResp(c, data)
 }

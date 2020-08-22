@@ -68,3 +68,7 @@ func UpdateVisualJob(job *VisualJob) error {
 	}
 	return nil
 }
+
+func DeleteVisualJob(job *VisualJob) error {
+	return db.Delete(&job).Error
+}
