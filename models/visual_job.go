@@ -2,12 +2,12 @@ package models
 
 type VisualJob struct {
 	Id          int    `json:"id"`
-	UserName    string `json:"username"`
+	UserName    string `gorm: "userName" json:"username"`
 	Name        string `json:"name"`
 	Status      string `json:status`
-	LogPath     string `json:"logPath"`
-	Description string `json:"description"`
-	RelateJobId string `json:relateJobId`
+	LogPath     string `gorm: "logPath" json:"logPath"`
+	Description string `gorm:"type:text" json:"description"`
+	RelateJobId string `gorm: "relateJobId" json:relateJobId`
 	CreateTime  string `json:"createTime"`
 }
 
@@ -35,7 +35,7 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 
 func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, orderBy string, status string, jobName string, order string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("userName =?", userName).Limit(pageSize).Offset((pageNum - 1) * pageSize)
+	temp := db.Where("user_name =?", userName).Limit(pageSize).Offset((pageNum - 1) * pageSize)
 	if orderBy != "" && order != "" {
 		temp = temp.Order(orderBy + " " + order)
 	}
@@ -54,7 +54,7 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, orde
 
 func GetVisualJobsSumCount() (int, error) {
 	var count int
-	res := db.Table("visualJob").Count(&count)
+	res := db.Table("visual_jobs").Count(&count)
 	if res.Error != nil {
 		return 0, res.Error
 	}

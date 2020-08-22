@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
@@ -34,8 +35,8 @@ type GetVisualJobListReq struct {
 
 type GetVisualJobListRsq struct {
 	Templates    []VisualJobListRspUnit `json:Templates`
-	totalJobsNum int                    `json:total`
-	totalPages   int                    `json:totalPages`
+	TotalJobsNum int                    `json:total`
+	TotalPages   int                    `json:totalPages`
 }
 
 type VisualJobListRspUnit struct {
@@ -82,9 +83,9 @@ func getVisualJobList(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	username := getUsername(c)
+	userName := getUsername(c)
 
-	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(username, req.PageNum, req.PageSize, req.OrderBy, req.Status, req.JobName, req.Order)
+	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(userName, req.PageNum, req.PageSize, req.OrderBy, req.Status, req.JobName, req.Order)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -100,10 +101,11 @@ func getVisualJobList(c *gin.Context) error {
 		}
 		visualJobListRspUnitArray = append(visualJobListRspUnitArray, newVisualJobListRspUnit)
 	}
+	fmt.Printf("%d",totalJobsNum)
 	rsp := GetVisualJobListRsq{
 		Templates:    visualJobListRspUnitArray,
-		totalJobsNum: totalJobsNum,
-		totalPages:   totalPagesNum,
+		TotalJobsNum: totalJobsNum,
+		TotalPages:   totalPagesNum,
 	}
 	return SuccessResp(c, rsp)
 }
