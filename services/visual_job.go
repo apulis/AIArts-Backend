@@ -40,7 +40,7 @@ func GetAllVisualJobInfo(userName string, pageNum int, pageSize int, orderBy str
 		return nil, 0, 0, err
 	}
 	//step2. get job info and return
-	jobList, err := models.GetAllVisualJobByArguments(userName, pageNum, pageSize, status, jobName, orderBy, order)
+	jobList, err := models.GetAllVisualJobByArguments(userName, pageNum, pageSize, status, jobName, order, orderBy)
 	if err != nil {
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
