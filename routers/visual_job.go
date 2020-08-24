@@ -30,7 +30,7 @@ type GetVisualJobListReq struct {
 	PageSize int    `form:"pageSize"`
 	OrderBy  string `form:"orderBy"`
 	Status   string `form:"status"`
-	JobName  string `form:"JobName"`
+	JobName  string `form:"jobName"`
 	Order    string `form:"order"`
 }
 
