@@ -20,7 +20,7 @@ func AddGroupVisualJob(r *gin.Engine) {
 }
 
 type CreateVisualJobReq struct {
-	JobName           string `json:"jobname"`
+	JobName           string `json:"jobName"`
 	TensorboardLogDir string `json:"tensorboardLogDir"`
 	Description       string `json:"description"`
 }
