@@ -99,7 +99,7 @@ func getVisualJobList(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	visualJobListRspUnitArray := make([]VisualJobListRspUnit, len(visualJobList))
+	var visualJobListRspUnitArray []VisualJobListRspUnit
 	for _, visualJob := range visualJobList {
 		newVisualJobListRspUnit := VisualJobListRspUnit{
 			Id:                visualJob.ID,
