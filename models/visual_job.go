@@ -38,16 +38,19 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 	return visualJob, nil
 }
 
-func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, orderBy string, status string, jobName string, order string) ([]VisualJob, error) {
+func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, status string, jobName string, order string, orderBy string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("user_name =?", userName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
+	temp := db.Where("user_name =?", userName)
 	if orderBy != "" && order != "" {
+		fmt.Println("search order %s",order)
 		temp = temp.Order(orderBy + " " + order)
 	}
 	if jobName != "" {
-		temp = temp.Where("jobName LIKE ?", jobName+"%")
+		fmt.Println("search jobName %s",jobName)
+		temp = temp.Where("name LIKE ?", jobName+"%")
 	}
 	if status != "" {
+		fmt.Println("search status %s",status)
 		temp = temp.Where("status =?", status)
 	}
 	res := temp.Find(&visualJobList)
