@@ -185,6 +185,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["jobType"] = models.JobTypeVisualJob
 
 	params["image"] = ConvertImage("apulistech/visualjob:1.0")
+	fmt.Println(ConvertImage("apulistech/visualjob:1.0"))
 	params["gpuType"] = "nvidia_gpu_amd64"
 	params["resourcegpu"] = 0
 
