@@ -52,7 +52,7 @@ type VisualJobListRspUnit struct {
 type GetEndpointsReq struct {
 	JobId int `json:"id"`
 }
-type GetRndpointsRsq struct {
+type GetEndpointsRsq struct {
 	Path string `json:"path"`
 }
 
@@ -135,7 +135,7 @@ func getVisualJobList(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/visual/endpoints [get]
 func getEndpoints(c *gin.Context) error {
-	var req GetRndpointsReq
+	var req GetEndpointsReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
