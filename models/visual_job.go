@@ -3,17 +3,18 @@ package models
 import (
 	"fmt"
 )
+
 type VisualJob struct {
-	ID        int       `gorm:"primary_key" json:"id"`
-	CreatedAt UnixTime  `json:"createdAt"`
-	UpdatedAt UnixTime  `json:"updatedAt"`
-	DeletedAt *UnixTime `json:"deletedAt"`
-	UserName    string `gorm: "userName" json:"username"`
-	Name        string `json:"name"`
-	Status      string `json:status`
-	LogPath     string `gorm: "logPath" json:"logPath"`
-	Description string `gorm:"type:text" json:"description"`
-	RelateJobId string `gorm: "relateJobId" json:relateJobId`
+	ID          int       `gorm:"primary_key" json:"id"`
+	CreatedAt   UnixTime  `json:"createdAt"`
+	UpdatedAt   UnixTime  `json:"updatedAt"`
+	DeletedAt   *UnixTime `json:"deletedAt"`
+	UserName    string    `gorm: "userName" json:"username"`
+	Name        string    `json:"name"`
+	Status      string    `json:status`
+	LogPath     string    `gorm: "logPath" json:"logPath"`
+	Description string    `gorm:"type:text" json:"description"`
+	RelateJobId string    `gorm: "relateJobId" json:relateJobId`
 }
 
 func CreateVisualJob(visualJob VisualJob) error {
@@ -22,7 +23,7 @@ func CreateVisualJob(visualJob VisualJob) error {
 
 func GetVisualJobBackroundJobId(visualJobId int) (string, error) {
 	var visualJob VisualJob
-	res := db.First(&visualJob,visualJob)
+	res := db.First(&visualJob, visualJob)
 	if res.Error != nil {
 		return "", res.Error
 	}
@@ -31,7 +32,7 @@ func GetVisualJobBackroundJobId(visualJobId int) (string, error) {
 
 func GetVisualJobById(Id int) (VisualJob, error) {
 	var visualJob VisualJob
-	res := db.First(&visualJob,Id)
+	res := db.First(&visualJob, Id)
 	if res.Error != nil {
 		return visualJob, res.Error
 	}
@@ -42,15 +43,15 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 	var visualJobList []VisualJob
 	temp := db.Where("user_name =?", userName)
 	if orderBy != "" && order != "" {
-		fmt.Println("search order %s",order)
+		fmt.Println("search order %s", order)
 		temp = temp.Order(orderBy + " " + order)
 	}
 	if jobName != "" {
-		fmt.Println("search jobName %s",jobName)
+		fmt.Println("search jobName %s", jobName)
 		temp = temp.Where("name LIKE ?", jobName+"%")
 	}
-	if status != "" {
-		fmt.Println("search status %s",status)
+	if status != "" && status != "all" { // frontend developer told me they can't delete "all" option
+		fmt.Println("search status %s", status)
 		temp = temp.Where("status =?", status)
 	}
 	res := temp.Find(&visualJobList)
@@ -60,24 +61,24 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 	return visualJobList, nil
 }
 
-func GetVisualJobsSumCount(userName string ) (int, error) {
+func GetVisualJobsSumCount(userName string) (int, error) {
 	var count int
-	res := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?",userName).Count(&count)
+	res := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?", userName).Count(&count)
 	if res.Error != nil {
 		return 0, res.Error
 	}
 	return count, nil
 }
 
-func GetVisualJobCountByArguments(userName string, status string, jobName string)(int, error){
+func GetVisualJobCountByArguments(userName string, status string, jobName string) (int, error) {
 	var count int
-	temp := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?",userName)
+	temp := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?", userName)
 	if jobName != "" {
-		fmt.Println("search jobName %s",jobName)
+		fmt.Println("search jobName %s", jobName)
 		temp = temp.Where("name LIKE ?", jobName+"%")
 	}
 	if status != "" {
-		fmt.Println("search status %s",status)
+		fmt.Println("search status %s", status)
 		temp = temp.Where("status =?", status)
 	}
 	res := temp.Count(&count)
