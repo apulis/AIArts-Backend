@@ -77,7 +77,7 @@ func GetVisualJobCountByArguments(userName string, status string, jobName string
 		fmt.Println("search jobName %s", jobName)
 		temp = temp.Where("name LIKE ?", jobName+"%")
 	}
-	if status != "" {
+	if status != "" && status != "all" { // frontend developer told me they can't delete "all" option
 		fmt.Println("search status %s", status)
 		temp = temp.Where("status =?", status)
 	}
