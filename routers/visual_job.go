@@ -187,7 +187,7 @@ func switchVisualJobStatus(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	userName := getUsername(c)
-	if req.Status == "stop" {
+	if req.Status == "pause" {
 		err = services.StopVisualJob(userName, req.JobId)
 		if err != nil {
 			return AppError(APP_ERROR_CODE, err.Error())
