@@ -160,17 +160,17 @@ func DeleteVisualJob(userName string, jobId int) error {
 		fmt.Printf("get job detail err[%+v]\n", err)
 		return err
 	}
+	err = models.DeleteVisualJob(&job)
+	if err != nil {
+		fmt.Printf("delete visual job record error :[%+v]\n", err)
+		return err
+	}
 	if job.Status != "paused" {
 		err := StopVisualJob(userName, jobId)
 		if err != nil {
 			fmt.Printf("stop job error :[%+v]\n", err)
 			return err
 		}
-	}
-	err = models.DeleteVisualJob(&job)
-	if err != nil {
-		fmt.Printf("delete visual job record error :[%+v]\n", err)
-		return err
 	}
 	return nil
 }
