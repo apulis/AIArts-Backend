@@ -20,18 +20,18 @@ func AddGroupVisualJob(r *gin.Engine) {
 }
 
 type CreateVisualJobReq struct {
-	JobName           string `json:"jobName"`
-	TensorboardLogDir string `json:"tensorboardLogDir"`
-	Description       string `json:"description"`
+	JobName           string `form:"jobName"`
+	TensorboardLogDir string `form:"tensorboardLogDir"`
+	Description       string `form:"description"`
 }
 
 type GetVisualJobListReq struct {
-	PageNum  int    `json:"pageNum"`
-	PageSize int    `json:"pageSize"`
-	OrderBy  string `json:"orderBy"`
-	Status   string `json:"status"`
-	JobName  string `json:"JobName"`
-	Order    string `json:"order"`
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize"`
+	OrderBy  string `form:"orderBy"`
+	Status   string `form:"status"`
+	JobName  string `form:"JobName"`
+	Order    string `form:"order"`
 }
 
 type GetVisualJobListRsq struct {
@@ -50,19 +50,19 @@ type VisualJobListRspUnit struct {
 }
 
 type GetEndpointsReq struct {
-	JobId int `json:"id"`
+	JobId int `form:"id"`
 }
 type GetEndpointsRsq struct {
 	Path string `json:"path"`
 }
 
 type SwitchVisualJobStatusReq struct {
-	JobId  int    `json:"id"`
-	Status string `json:"status"`
+	JobId  int    `form:"id"`
+	Status string `form:"status"`
 }
 
 type DeleteJobReq struct {
-	JobId int `json:"id" binding:"required"`
+	JobId int `form:"id" binding:"required"`
 }
 
 // @Summary create visual job
@@ -74,7 +74,7 @@ type DeleteJobReq struct {
 // @Router /ai_arts/api/visual [post]
 func createVisualJob(c *gin.Context) error {
 	var req CreateVisualJobReq
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -96,7 +96,7 @@ func createVisualJob(c *gin.Context) error {
 // @Router /ai_arts/api/visual/list [get]
 func getVisualJobList(c *gin.Context) error {
 	var req GetVisualJobListReq
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -136,7 +136,7 @@ func getVisualJobList(c *gin.Context) error {
 // @Router /ai_arts/api/visual/endpoints [get]
 func getEndpoints(c *gin.Context) error {
 	var req GetEndpointsReq
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -160,7 +160,7 @@ func getEndpoints(c *gin.Context) error {
 // @Router /ai_arts/api/visual/ [delete]
 func deleteVisualJob(c *gin.Context) error {
 	var req DeleteJobReq
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -182,7 +182,7 @@ func deleteVisualJob(c *gin.Context) error {
 // @Router /ai_arts/api/visual/ [put]
 func switchVisualJobStatus(c *gin.Context) error {
 	var req SwitchVisualJobStatusReq
-	err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
