@@ -69,6 +69,24 @@ func GetVisualJobsSumCount(userName string ) (int, error) {
 	return count, nil
 }
 
+func GetVisualJobCountByArguments(userName string, status string, jobName string)(int, error){
+	var count int
+	temp := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?",userName)
+	if jobName != "" {
+		fmt.Println("search jobName %s",jobName)
+		temp = temp.Where("name LIKE ?", jobName+"%")
+	}
+	if status != "" {
+		fmt.Println("search status %s",status)
+		temp = temp.Where("status =?", status)
+	}
+	res := temp.Count(&count)
+	if res.Error != nil {
+		return count, res.Error
+	}
+	return count, nil
+}
+
 func UpdateVisualJob(job *VisualJob) error {
 	res := db.Save(job)
 	if res.Error != nil {
