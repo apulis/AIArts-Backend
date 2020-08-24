@@ -19,7 +19,7 @@ func CreateVisualJob(userName string, jobName string, logdir string, description
 	visualJob := models.VisualJob{
 		UserName:    userName,
 		Name:        jobName,
-		Status:      "pending",
+		Status:      "scheduling",
 		LogPath:     logdir,
 		Description: description,
 		RelateJobId: relateJobId,
@@ -140,7 +140,7 @@ func ContinueVisualJob(userName string, jobId int) error {
 		return err
 	}
 	targetJob.RelateJobId = relateJobId
-	targetJob.Status = "pending"
+	targetJob.Status = "scheduling"
 	err = models.UpdateVisualJob(&targetJob)
 	if err != nil {
 		fmt.Printf("update visual job info failed: [%+v]\n", err)
@@ -242,7 +242,7 @@ func renewStatusInfo(userName string) error {
 	}
 	for _, job := range visualJobList {
 		backgroundJobId := job.RelateJobId
-		if backgroundJobId == "" {
+		if job.Status == "paused" {
 			continue
 		}
 		url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, backgroundJobId)

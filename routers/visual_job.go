@@ -14,7 +14,7 @@ func AddGroupVisualJob(r *gin.Engine) {
 
 	group.POST("/", wrapper(createVisualJob))
 	group.GET("/list", wrapper(getVisualJobList))
-	group.GET("/enpoints", wrapper(getEndpoints))
+	group.GET("/endpoints", wrapper(getEndpoints))
 	group.DELETE("/", wrapper(deleteVisualJob))
 	group.PUT("/", wrapper(switchVisualJobStatus)) //
 }
@@ -49,7 +49,7 @@ type VisualJobListRspUnit struct {
 	Description       string `json:"description"`
 }
 
-type GetRndpointsReq struct {
+type GetEndpointsReq struct {
 	JobId int `json:"id"`
 }
 type GetRndpointsRsq struct {
@@ -68,7 +68,7 @@ type DeleteJobReq struct {
 // @Summary create visual job
 // @Produce json
 // @Param param body CreateVisualJobReq true "params"
-// @Success 200 {object} APISuccessRespCreateTraining "success"
+// @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/visual [post]
@@ -87,6 +87,13 @@ func createVisualJob(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
+// @Summary get visual job List
+// @Produce json
+// @Param param body GetVisualJobListReq true "params"
+// @Success 200 {object} GetVisualJobListRsq "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/visual/list [get]
 func getVisualJobList(c *gin.Context) error {
 	var req GetVisualJobListReq
 	err := c.ShouldBindJSON(&req)
@@ -120,6 +127,13 @@ func getVisualJobList(c *gin.Context) error {
 	return SuccessResp(c, rsp)
 }
 
+// @Summary get visual job endpoints address
+// @Produce json
+// @Param param body GetEndpointsReq true "params"
+// @Success 200 {object} GetEndpointsRsq "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/visual/endpoints [get]
 func getEndpoints(c *gin.Context) error {
 	var req GetRndpointsReq
 	err := c.ShouldBindJSON(&req)
@@ -131,12 +145,19 @@ func getEndpoints(c *gin.Context) error {
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	rsp := GetRndpointsRsq{
+	rsp := GetEndpointsRsq{
 		Path: path,
 	}
 	return SuccessResp(c, rsp)
 }
 
+// @Summary delete visual job
+// @Produce json
+// @Param param body DeleteJobReq true "params"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/visual/ [delete]
 func deleteVisualJob(c *gin.Context) error {
 	var req DeleteJobReq
 	err := c.ShouldBindJSON(&req)
@@ -152,6 +173,13 @@ func deleteVisualJob(c *gin.Context) error {
 	return SuccessResp(c, data)
 }
 
+// @Summary switch job status
+// @Produce json
+// @Param param body SwitchVisualJobStatusReq true "params"
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/visual/ [put]
 func switchVisualJobStatus(c *gin.Context) error {
 	var req SwitchVisualJobStatusReq
 	err := c.ShouldBindJSON(&req)
