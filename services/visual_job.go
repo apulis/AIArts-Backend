@@ -45,7 +45,7 @@ func GetAllVisualJobInfo(userName string, pageNum int, pageSize int, orderBy str
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalJobsNum, err := models.GetVisualJobsSumCount(userName)
+	totalJobsNum, err := models.GetVisualJobCountByArguments(userName,status,jobName)
 	if err != nil {
 		fmt.Printf("get job list count err[%+v]\n", err)
 		return nil, 0, 0, err
