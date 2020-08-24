@@ -60,9 +60,9 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 	return visualJobList, nil
 }
 
-func GetVisualJobsSumCount() (int, error) {
+func GetVisualJobsSumCount(userName string ) (int, error) {
 	var count int
-	res := db.Table("visual_jobs").Where("deleted_at is NULL").Count(&count)
+	res := db.Table("visual_jobs").Where("deleted_at is NULL").Where("userName = ?",userName).Count(&count)
 	if res.Error != nil {
 		return 0, res.Error
 	}
