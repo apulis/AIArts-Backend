@@ -3,6 +3,7 @@ package routers
 import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/services"
+	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,49 +20,49 @@ func AddGroupVisualJob(r *gin.Engine) {
 }
 
 type CreateVisualJobReq struct {
-	JobName           string `json:jobname`
-	TensorboardLogDir string `json:tensorboardLogDir`
-	Description       string `json:description`
+	JobName           string `json:"jobname"`
+	TensorboardLogDir string `json:"tensorboardLogDir"`
+	Description       string `json:"description"`
 }
 
 type GetVisualJobListReq struct {
-	PageNum  int    `json:pageNum`
-	PageSize int    `json:pageSize`
-	OrderBy  string `json:orderBy`
-	Status   string `json:status`
-	JobName  string `json:JobName`
-	Order    string `json:order`
+	PageNum  int    `json:"pageNum"`
+	PageSize int    `json:"pageSize"`
+	OrderBy  string `json:"orderBy"`
+	Status   string `json:"status"`
+	JobName  string `json:"JobName"`
+	Order    string `json:"order"`
 }
 
 type GetVisualJobListRsq struct {
-	Templates    []VisualJobListRspUnit `json:Templates`
-	TotalJobsNum int                    `json:total`
-	TotalPages   int                    `json:totalPages`
+	Templates    []VisualJobListRspUnit `json:"Templates"`
+	TotalJobsNum int                    `json:"total"`
+	TotalPages   int                    `json:"totalPages"`
 }
 
 type VisualJobListRspUnit struct {
-	Id                int    `json:id`
-	JobName           string `json:jobName`
-	Status            string `json:status`
-	CreateTime        string `json:createTime`
-	TensorboardLogDir string `json:TensorboardLogDir`
-	Description       string `json:description`
+	Id                int    `json:"id"`
+	JobName           string `json:"jobName"`
+	Status            string `json:"status"`
+	CreateTime        models.UnixTime `json:"createTime"`
+	TensorboardLogDir string `json:"TensorboardLogDir"`
+	Description       string `json:"description"`
 }
 
 type GetRndpointsReq struct {
-	JobId int `json:id`
+	JobId int `json:"id"`
 }
 type GetRndpointsRsq struct {
-	Path string `json:path`
+	Path string `json:"path"`
 }
 
 type SwitchVisualJobStatusReq struct {
-	JobId  int    `json:id`
-	Status string `json:status`
+	JobId  int    `json:"id"`
+	Status string `json:"status"`
 }
 
 type DeleteJobReq struct {
-	JobId int `json:id`
+	JobId int `json:"id" binding:"required"`
 }
 
 // @Summary create visual job
@@ -101,10 +102,10 @@ func getVisualJobList(c *gin.Context) error {
 	visualJobListRspUnitArray := make([]VisualJobListRspUnit, len(visualJobList))
 	for _, visualJob := range visualJobList {
 		newVisualJobListRspUnit := VisualJobListRspUnit{
-			Id:                visualJob.Id,
+			Id:                visualJob.ID,
 			JobName:           visualJob.Name,
 			Status:            visualJob.Status,
-			CreateTime:        visualJob.CreateTime,
+			CreateTime:        visualJob.CreatedAt,
 			TensorboardLogDir: visualJob.LogPath,
 			Description:       visualJob.Description,
 		}

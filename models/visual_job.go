@@ -1,14 +1,19 @@
 package models
 
+import (
+	"fmt"
+)
 type VisualJob struct {
-	Id          int    `json:"id"`
+	ID        int       `gorm:"primary_key" json:"id"`
+	CreatedAt UnixTime  `json:"createdAt"`
+	UpdatedAt UnixTime  `json:"updatedAt"`
+	DeletedAt *UnixTime `json:"deletedAt"`
 	UserName    string `gorm: "userName" json:"username"`
 	Name        string `json:"name"`
 	Status      string `json:status`
 	LogPath     string `gorm: "logPath" json:"logPath"`
 	Description string `gorm:"type:text" json:"description"`
 	RelateJobId string `gorm: "relateJobId" json:relateJobId`
-	CreateTime  string `json:"createTime"`
 }
 
 func CreateVisualJob(visualJob VisualJob) error {
@@ -17,7 +22,7 @@ func CreateVisualJob(visualJob VisualJob) error {
 
 func GetVisualJobBackroundJobId(visualJobId int) (string, error) {
 	var visualJob VisualJob
-	res := db.Where("id = ?", visualJobId).Find(&visualJob)
+	res := db.First(&visualJob,visualJob)
 	if res.Error != nil {
 		return "", res.Error
 	}
@@ -26,7 +31,7 @@ func GetVisualJobBackroundJobId(visualJobId int) (string, error) {
 
 func GetVisualJobById(Id int) (VisualJob, error) {
 	var visualJob VisualJob
-	res := db.Where("id = ?", Id).Find(&visualJob)
+	res := db.First(&visualJob,Id)
 	if res.Error != nil {
 		return visualJob, res.Error
 	}
@@ -35,7 +40,7 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 
 func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, orderBy string, status string, jobName string, order string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("user_name =?", userName).Limit(pageSize).Offset((pageNum - 1) * pageSize)
+	temp := db.Where("user_name =?", userName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
 	if orderBy != "" && order != "" {
 		temp = temp.Order(orderBy + " " + order)
 	}
@@ -54,7 +59,7 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, orde
 
 func GetVisualJobsSumCount() (int, error) {
 	var count int
-	res := db.Table("visual_jobs").Count(&count)
+	res := db.Table("visual_jobs").Where("deleted_at is NULL").Count(&count)
 	if res.Error != nil {
 		return 0, res.Error
 	}

@@ -165,7 +165,7 @@ func DeleteVisualJob(userName string, jobId int) error {
 		fmt.Printf("delete visual job record error :[%+v]\n", err)
 		return err
 	}
-	if job.Status != "paused" {
+	if job.Status == "running" {
 		err := StopVisualJob(userName, jobId)
 		if err != nil {
 			fmt.Printf("stop job error :[%+v]\n", err)
@@ -214,7 +214,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	id := &models.JobId{}
 	err := DoRequest(url, "POST", nil, params, id)
 	if err != nil {
-		fmt.Printf("create codeEnv err[%+v]\n", err)
+		fmt.Printf("post dlts err[%+v]\n", err)
 		return "", err
 	}
 	//step2. create endpoints
