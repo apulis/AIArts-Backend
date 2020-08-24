@@ -26,6 +26,7 @@ func init() {
 	createTableIfNotExists(Modelset{})
 	createTableIfNotExists(VersionInfoSet{})
 	createTableIfNotExists(Templates{})
+	createTableIfNotExists(VisualJob{})
 
 	initVersionInfoTable()
 }
@@ -122,6 +123,7 @@ const (
 	JobTypeArtsTraining   string = "artsTraining"   // 供电局项目：模型训练
 	JobTypeArtsEvaluation string = "artsEvaluation" // 供电局项目：模型评估
 	JobTypeCodeEnv        string = "codeEnv"        // 供电局项目：代码环境
+	JobTypeVisualJob      string = "visualjob"      //供电局项目：可视化作业
 	JobStatusAll          string = "all"
 )
 
@@ -236,6 +238,7 @@ type JobLog struct {
 type CreateEndpointsReq struct {
 	Endpoints []string `json:"endpoints"`
 	JobId     string   `json:"jobId"`
+	Arguments string   `json:arguments` //启动endpoints的时候可能添加的命令行参数，在完成可视化作业需求时，因为需要更改tensorboard log路径是增加参数
 }
 
 // 返回值
