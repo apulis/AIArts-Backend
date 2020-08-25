@@ -63,6 +63,10 @@ type GetTrainingRsp struct {
 	models.Training
 }
 
+type GetLogReq struct {
+	PageNum int `form:"pageNum" json:"pageNum"`
+}
+
 // @Summary get all trainings
 // @Produce  json
 // @Param pageNum query int true "page number"
@@ -210,9 +214,14 @@ func getLog(c *gin.Context) error {
 
 	var id models.UriJobId
 	var jobLog *models.JobLog
+	var req GetLogReq
 
 	err := c.ShouldBindUri(&id)
 	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
@@ -221,7 +230,7 @@ func getLog(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	jobLog, err = services.GetTrainingLog(userName, id.Id)
+	jobLog, err = services.GetTrainingLog(userName, id.Id, req.PageNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

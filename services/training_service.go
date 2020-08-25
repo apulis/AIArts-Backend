@@ -175,16 +175,26 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	return training, nil
 }
 
-func GetTrainingLog(userName, id string) (*models.JobLog, error) {
+func GetTrainingLog(userName, id string, pageNum int) (*models.JobLog, error) {
 
-	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s&page=%d", configs.Config.DltsUrl, userName, id, pageNum)
 	jobLog := &models.JobLog{}
 
-	err := DoRequest(url, "GET", nil, nil, jobLog)
+	jobLogFromDlts := &struct {
+		Cursor  string `json:"cursor,omitempty"`
+		Log     string `json:"log,omitempty"`
+		MaxPage int    `json:"max_page"`
+	}{}
+
+	err := DoRequest(url, "GET", nil, nil, jobLogFromDlts)
 	if err != nil {
 		fmt.Printf("create training err[%+v]\n", err)
 		return nil, err
 	}
+
+	jobLog.Cursor = jobLogFromDlts.Cursor
+	jobLog.Log = jobLogFromDlts.Log
+	jobLog.MaxPage = jobLogFromDlts.MaxPage
 
 	return jobLog, nil
 }

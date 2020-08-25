@@ -230,8 +230,9 @@ type TemplateId struct {
 }
 
 type JobLog struct {
-	Cursor string `json:"cursor,omitempty"`
-	Log    string `json:"log,omitempty"`
+	Cursor  string `json:"cursor,omitempty"`
+	Log     string `json:"log,omitempty"`
+	MaxPage int    `json:"maxPage"`
 }
 
 // 创建endpoint
