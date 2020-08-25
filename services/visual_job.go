@@ -45,7 +45,7 @@ func GetAllVisualJobInfo(userName string, pageNum int, pageSize int, orderBy str
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalJobsNum, err := models.GetVisualJobCountByArguments(userName,status,jobName)
+	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, status, jobName)
 	if err != nil {
 		fmt.Printf("get job list count err[%+v]\n", err)
 		return nil, 0, 0, err
@@ -121,6 +121,11 @@ func StopVisualJob(userName string, jobId int) error {
 	targetJob.Status = "paused"
 	targetJob.RelateJobId = ""
 	err = models.UpdateVisualJob(&targetJob)
+	if err != nil {
+		fmt.Printf("kill backgournd job err[%+v]\n", err)
+		return err
+	}
+	_, err = DeleteJob(backgroundJobId)
 	if err != nil {
 		fmt.Printf("update visual job info fail: [%+v]\n", err)
 		return err
