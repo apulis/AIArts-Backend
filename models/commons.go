@@ -238,7 +238,7 @@ type JobLog struct {
 type CreateEndpointsReq struct {
 	Endpoints []string `json:"endpoints"`
 	JobId     string   `json:"jobId"`
-	Arguments string   `json:arguments` //启动endpoints的时候可能添加的命令行参数，在完成可视化作业需求时，因为需要更改tensorboard log路径是增加参数
+	Arguments string   `json:"arguments"` //启动endpoints的时候可能添加的命令行参数，在完成可视化作业需求时，因为需要更改tensorboard log路径是增加参数
 }
 
 // 返回值
