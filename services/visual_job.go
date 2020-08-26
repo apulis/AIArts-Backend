@@ -230,7 +230,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 
 	req.Endpoints = append(req.Endpoints, "tensorboard")
 	req.JobId = id.Id
-	req.Arguments = "{ 'tensorboard_log_dir': '" + logdir + "' }"
+	req.Arguments = "{ \"tensorboard_log_dir\" : \"" + logdir + "\"S }"
 
 	err = DoRequest(url, "POST", nil, req, ret)
 	if err != nil {
