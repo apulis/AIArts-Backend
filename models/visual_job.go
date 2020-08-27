@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 )
 
 type VisualJob struct {
@@ -51,6 +52,8 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 	}
 	if jobName != "" {
 		fmt.Println("search jobName %s", jobName)
+		strings.Replace(jobName, "_", "\\_", -1)
+		strings.Replace(jobName, "%", "\\%", -1)
 		temp = temp.Where("name LIKE ?", "%"+jobName+"%")
 	}
 	if status != "" && status != "all" { // frontend developer told me they can't delete "all" option
