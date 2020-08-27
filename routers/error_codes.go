@@ -1,4 +1,3 @@
-
 package routers
 
 const (
@@ -35,7 +34,6 @@ const (
 	//创建评估训练任务出错
 	CREATE_EVALUATION_FAILED_CODE = 30701
 
-
 	// user auth
 	NO_USRNAME = 30101
 
@@ -53,8 +51,9 @@ const (
 	ALREADY_UPGRADING_CODE         = 30503
 
 	// edge inference
-	FDINFO_NOT_SET   = 30601
-	FDINFO_SET_ERROR = 30602
+	FDINFO_NOT_SET     = 30601
+	FDINFO_SET_ERROR   = 30602
+	FD_PUSH_ERROR_CODE = 30603
 
 	REMOTE_SERVE_ERROR_CODE = 40000
 )
