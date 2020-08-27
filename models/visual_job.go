@@ -51,7 +51,7 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 	}
 	if jobName != "" {
 		fmt.Println("search jobName %s", jobName)
-		temp = temp.Where("name LIKE ?", jobName+"%")
+		temp = temp.Where("name LIKE ?", "%"+jobName+"%")
 	}
 	if status != "" && status != "all" { // frontend developer told me they can't delete "all" option
 		fmt.Println("search status %s", status)
