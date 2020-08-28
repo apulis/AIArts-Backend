@@ -97,12 +97,12 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = training.JobTrainingType // "RegularJob"
 	params["preemptionAllowed"] = false
-	params["workPath"] = ""
+	params["workPath"] = "./"
 
 	params["enableworkpath"] = true
 	params["enabledatapath"] = true
 	params["enablejobpath"] = true
-	params["jobPath"] = "job"
+	params["jobPath"] = "./"
 
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
