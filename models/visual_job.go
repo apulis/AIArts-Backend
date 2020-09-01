@@ -49,6 +49,8 @@ func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, stat
 			orderBy = "created_at"
 		}
 		temp = temp.Order(orderBy + " " + order)
+	} else {
+		temp = temp.Order("created_at desc")
 	}
 	if jobName != "" {
 		fmt.Println("search jobName %s", jobName)
