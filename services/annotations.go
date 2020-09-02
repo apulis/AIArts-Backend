@@ -43,12 +43,12 @@ func DeleteProject(projectId string) error {
 	datasets, _, err := GetDatasets(projectId, queryStringParameters)
 	logger.Info(datasets)
 	for _, dataset := range datasets {
-		logger.Info(dataset.DataSetId, dataset.DataSetBindId, strconv.Itoa(dataset.DataSetBindId), (string)(dataset.DataSetBindId))
+		logger.Info(dataset.DataSetId, "111", dataset.DataSetBindId, string(dataset.DataSetBindId))
 		ro2 := &grequests.RequestOptions{
 			JSON:    map[string]string{"platform": "label", "id": dataset.DataSetId},
 			Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 		}
-		resp2, _ := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+(string)(dataset.DataSetBindId)+"/unbind", ro2)
+		resp2, _ := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+string(dataset.DataSetBindId)+"/unbind", ro2)
 		if resp2.StatusCode != 200 {
 			logger.Error("response code is ", resp2.StatusCode, resp2.String())
 			return errors.New("response code: " + (strconv.Itoa(resp2.StatusCode)) + ",detail: " + resp2.String())
