@@ -41,6 +41,7 @@ func DeleteProject(projectId string) error {
 	var queryStringParameters models.QueryStringParameters
 	queryStringParameters.Size = 9999
 	datasets, _, err := GetDatasets(projectId, queryStringParameters)
+	logger.Info(datasets)
 	for _, dataset := range datasets {
 		ro2 := &grequests.RequestOptions{
 			JSON:    map[string]string{"platform": "label", "id": dataset.DataSetId},
