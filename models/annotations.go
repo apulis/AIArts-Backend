@@ -20,7 +20,7 @@ type DataSet struct {
 	Info           string  `json:"info"`
 	Type           string  `json:"type"`
 	Labels         []Label `json:"labels"`
-	DataSetBindId  int     `json:"dataSetBindId"`
+	DataSetBindId  string  `json:"dataSetBindId"`
 	DataSetPath    string  `json:"dataSetPath"`
 	ConvertStatus  string  `json:"convertStatus"`
 	ConvertOutPath string  `json:"convertOutPath"`
