@@ -49,6 +49,7 @@ func DeleteProject(projectId string) error {
 	var queryStringParameters models.QueryStringParameters
 	datasets, _, err := GetDatasets(projectId, queryStringParameters)
 	for _, dataset := range datasets {
+		logger.Info("++++++++++++,", dataset)
 		ro2 := &grequests.RequestOptions{
 			JSON:    map[string]string{"platform": "label", "id": dataset.DataSetId},
 			Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
