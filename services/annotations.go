@@ -44,6 +44,8 @@ func DeleteProject(projectId string) error {
 	logger.Info(datasets)
 	for _, dataset := range datasets {
 		logger.Info(dataset.DataSetId, "111", dataset.DataSetBindId, string(dataset.DataSetBindId))
+		logger.Info(dataset.DataSetBindId)
+		logger.Info(string(dataset.DataSetBindId))
 		ro2 := &grequests.RequestOptions{
 			JSON:    map[string]string{"platform": "label", "id": dataset.DataSetId},
 			Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
