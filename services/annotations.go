@@ -38,14 +38,6 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 
 func DeleteProject(projectId string) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
-	ro := &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
-	}
-	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
-	if resp.StatusCode != 200 {
-		logger.Error("response code is ", resp.StatusCode, resp.String())
-		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
-	}
 	var queryStringParameters models.QueryStringParameters
 	queryStringParameters.Size = 9999
 	datasets, _, err := GetDatasets(projectId, queryStringParameters)
@@ -55,10 +47,18 @@ func DeleteProject(projectId string) error {
 			Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 		}
 		resp2, _ := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/unbind", ro2)
-		if resp.StatusCode != 200 {
+		if resp2.StatusCode != 200 {
 			logger.Error("response code is ", resp2.StatusCode, resp2.String())
-			return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
+			return errors.New("response code: " + (strconv.Itoa(resp2.StatusCode)) + ",detail: " + resp2.String())
 		}
+	}
+	ro := &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
+	}
+	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId, ro)
+	if resp.StatusCode != 200 {
+		logger.Error("response code is ", resp.StatusCode, resp.String())
+		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
 	}
 	return err
 }
