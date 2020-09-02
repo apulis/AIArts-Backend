@@ -105,6 +105,7 @@ func GetDatasets(projectId string, queryStringParameters models.QueryStringParam
 	if queryStringParameters.OrderBy != "" {
 		requrl += "&order=" + queryStringParameters.Order
 	}
+	logger.Info(requrl)
 	resp, err := grequests.Get(requrl, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
