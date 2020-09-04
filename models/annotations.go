@@ -63,7 +63,7 @@ type UpdateDataSet struct {
 	Name          string  `json:"name"`
 	Info          string  `json:"info"`
 	Type          string  `json:"type"`
-	DataSetBindId int     `json:"dataSetBindId"`
+	DataSetBindId string  `json:"dataSetBindId"`
 	DataSetPath   string  `json:"dataSetPath"`
 	Labels        []Label `json:"labels"`
 	IsPrivate     bool    `json:"isPrivate"`
