@@ -157,7 +157,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 
 	training.Id = job.JobId
 	training.Name = job.JobName
-	training.Engine = job.JobParams.Image
+	training.Engine = UnConvertImage(job.JobParams.Image)
 	training.DeviceNum = job.JobParams.Resourcegpu
 	training.DeviceType = job.JobParams.GpuType
 	training.Status = job.JobStatus

@@ -156,7 +156,7 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	}
 	evaluation.Id = job.JobId
 	evaluation.Name = job.JobName
-	evaluation.Engine = job.JobParams.Image
+	evaluation.Engine = UnConvertImage(job.JobParams.Image)
 	evaluation.DeviceNum = job.JobParams.Resourcegpu
 	evaluation.DeviceType = job.JobParams.GpuType
 	evaluation.Status = job.JobStatus
