@@ -104,3 +104,15 @@ func ConvertImage(image string) string {
 
 	return imageName
 }
+
+// 如果配置了私有仓库，则删除掉
+func UnConvertImage(image string) string {
+	imageName := strings.TrimSpace(image)
+	if len(configs.Config.PrivateRegistry) > 0 {
+		// 如果带私有仓库前缀
+		if strings.HasPrefix(imageName, configs.Config.PrivateRegistry) {
+			imageName = strings.ReplaceAll(imageName, configs.Config.PrivateRegistry, "")
+		}
+	}
+	return imageName
+}
