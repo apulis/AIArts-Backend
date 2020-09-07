@@ -20,7 +20,7 @@ type DataSet struct {
 	Info           string  `json:"info"`
 	Type           string  `json:"type"`
 	Labels         []Label `json:"labels"`
-	DataSetBindId  string  `json:"dataSetBindId"`
+	DataSetBindId  int     `json:"dataSetBindId"`
 	DataSetPath    string  `json:"dataSetPath"`
 	ConvertStatus  string  `json:"convertStatus"`
 	ConvertOutPath string  `json:"convertOutPath"`
@@ -50,7 +50,7 @@ type AddDatasetReq struct {
 type DeleteDatasetReq struct {
 	Successful    string
 	Msg           string
-	DataSetBindId string `json:"dataSetBindId"`
+	DataSetBindId int `json:"dataSetBindId"`
 }
 
 type DatasetReq struct {
@@ -63,7 +63,7 @@ type UpdateDataSet struct {
 	Name          string  `json:"name"`
 	Info          string  `json:"info"`
 	Type          string  `json:"type"`
-	DataSetBindId string  `json:"dataSetBindId"`
+	DataSetBindId int     `json:"dataSetBindId"`
 	DataSetPath   string  `json:"dataSetPath"`
 	Labels        []Label `json:"labels"`
 	IsPrivate     bool    `json:"isPrivate"`
