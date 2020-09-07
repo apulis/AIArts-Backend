@@ -48,6 +48,7 @@ func DeleteProject(projectId string) error {
 		}
 		logger.Info(dataset.DataSetBindId)
 		logger.Info(strconv.Itoa(dataset.DataSetBindId))
+		logger.Info("http://127.0.0.1:" + strconv.Itoa(configs.Config.Port) + "/ai_arts/api/datasets/" + strconv.Itoa(dataset.DataSetBindId) + "/unbind")
 		resp2, _ := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/unbind", ro2)
 		if resp2.StatusCode != 200 {
 			logger.Error("response code is ", resp2.StatusCode, resp2.String())
