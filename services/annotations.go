@@ -38,6 +38,23 @@ func GetProjects(queryStringParameters models.QueryStringParameters) ([]models.P
 
 func DeleteProject(projectId string) error {
 	BackendUrl = configs.Config.Anno.BackendUrl
+	var queryStringParameters models.QueryStringParameters
+	queryStringParameters.Size = 9999
+	datasets, _, err := GetDatasets(projectId, queryStringParameters)
+	for _, dataset := range datasets {
+		ro2 := &grequests.RequestOptions{
+			JSON:    map[string]string{"platform": "label", "id": dataset.DataSetId},
+			Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
+		}
+		logger.Info(dataset.DataSetBindId)
+		logger.Info(strconv.Itoa(dataset.DataSetBindId))
+		logger.Info("http://127.0.0.1:" + strconv.Itoa(configs.Config.Port) + "/ai_arts/api/datasets/" + strconv.Itoa(dataset.DataSetBindId) + "/unbind")
+		resp2, _ := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(dataset.DataSetBindId)+"/unbind", ro2)
+		if resp2.StatusCode != 200 {
+			logger.Error("response code is ", resp2.StatusCode, resp2.String())
+			return errors.New("response code: " + (strconv.Itoa(resp2.StatusCode)) + ",detail: " + resp2.String())
+		}
+	}
 	ro := &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
@@ -90,6 +107,7 @@ func GetDatasets(projectId string, queryStringParameters models.QueryStringParam
 	if queryStringParameters.OrderBy != "" {
 		requrl += "&order=" + queryStringParameters.Order
 	}
+	logger.Info(requrl)
 	resp, err := grequests.Get(requrl, ro)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
@@ -173,7 +191,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 		JSON:    map[string]string{"platform": "label", "id": dataSetId},
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
-	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+datasetRes.DataSetBindId+"/unbind", ro2)
+	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(datasetRes.DataSetBindId)+"/unbind", ro2)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
 		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())

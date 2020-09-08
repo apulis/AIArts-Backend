@@ -97,12 +97,12 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = training.JobTrainingType // "RegularJob"
 	params["preemptionAllowed"] = false
-	params["workPath"] = ""
+	params["workPath"] = "./"
 
 	params["enableworkpath"] = true
 	params["enabledatapath"] = true
 	params["enablejobpath"] = true
-	params["jobPath"] = "job"
+	params["jobPath"] = "./"
 
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
@@ -157,7 +157,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 
 	training.Id = job.JobId
 	training.Name = job.JobName
-	training.Engine = job.JobParams.Image
+	training.Engine = UnConvertImage(job.JobParams.Image)
 	training.DeviceNum = job.JobParams.Resourcegpu
 	training.DeviceType = job.JobParams.GpuType
 	training.Status = job.JobStatus

@@ -50,7 +50,7 @@ type AddDatasetReq struct {
 type DeleteDatasetReq struct {
 	Successful    string
 	Msg           string
-	DataSetBindId string `json:"dataSetBindId"`
+	DataSetBindId int `json:"dataSetBindId"`
 }
 
 type DatasetReq struct {

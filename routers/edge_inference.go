@@ -199,7 +199,7 @@ func pushToFD(c *gin.Context) error {
 	}
 	err = services.PushToFD(req.JobId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(FD_PUSH_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 )
 
 type VisualJob struct {
@@ -41,17 +42,21 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 
 func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, status string, jobName string, order string, orderBy string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("user_name =?", userName)
+	temp := db.Where("user_name =?", userName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
 	if orderBy != "" && order != "" {
 		fmt.Println("search order %s", order)
 		if orderBy == "createTime" {
 			orderBy = "created_at"
 		}
 		temp = temp.Order(orderBy + " " + order)
+	} else {
+		temp = temp.Order("created_at desc")
 	}
 	if jobName != "" {
 		fmt.Println("search jobName %s", jobName)
-		temp = temp.Where("name LIKE ?", jobName+"%")
+		strings.Replace(jobName, "_", "\\_", -1)
+		strings.Replace(jobName, "%", "\\%", -1)
+		temp = temp.Where("name LIKE ?", "%"+jobName+"%")
 	}
 	if status != "" && status != "all" { // frontend developer told me they can't delete "all" option
 		fmt.Println("search status %s", status)
