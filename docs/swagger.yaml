@@ -36,6 +36,7 @@ definitions:
         type: string
       jobParams:
         $ref: '#/definitions/models.JobParams'
+        type: object
       jobStatus:
         type: string
       jobTime:
@@ -71,10 +72,12 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
@@ -94,6 +97,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -128,6 +132,8 @@ definitions:
         type: string
       log:
         type: string
+      maxPage:
+        type: integer
     type: object
   models.JobParams:
     properties:
@@ -209,6 +215,7 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       dataFormat:
@@ -220,6 +227,7 @@ definitions:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       deviceNum:
@@ -249,6 +257,7 @@ definitions:
       params:
         $ref: '#/definitions/models.ParamsItem'
         description: omitempty 值为空，不编码
+        type: object
       precision:
         type: string
       size:
@@ -260,6 +269,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       use:
         description: 模型类型 图像分类
         type: string
@@ -314,13 +324,16 @@ definitions:
     properties:
       metaData:
         $ref: '#/definitions/models.TemplateMeta'
+        type: object
       params:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
     type: object
   models.TemplateMeta:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       id:
@@ -333,6 +346,7 @@ definitions:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
     type: object
   models.TemplateParams:
     properties:
@@ -399,24 +413,24 @@ definitions:
         type: string
     type: object
   models.UnixTime:
-    properties:
-      time.Time:
-        type: string
     type: object
   models.VersionInfoSet:
     properties:
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
         type: integer
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -442,6 +456,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -451,6 +466,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -460,6 +476,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateEdgeInferenceResp'
+        type: object
       msg:
         type: string
     type: object
@@ -469,6 +486,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -478,6 +496,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.CreateTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -487,6 +506,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteCodeEnvRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -496,6 +516,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -505,6 +526,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.DeleteTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -514,6 +536,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTemplateRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -523,6 +546,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetAllTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -532,6 +556,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.EndpointWrapper'
+        type: object
       msg:
         type: string
     type: object
@@ -541,6 +566,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.ConversionTypes'
+        type: object
       msg:
         type: string
     type: object
@@ -550,6 +576,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetResp'
+        type: object
       msg:
         type: string
     type: object
@@ -559,6 +586,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetDatasetsResp'
+        type: object
       msg:
         type: string
     type: object
@@ -568,6 +596,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetFDInfoResp'
+        type: object
       msg:
         type: string
     type: object
@@ -577,6 +606,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetModelsetsResp'
+        type: object
       msg:
         type: string
     type: object
@@ -586,6 +616,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetResourceRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -595,6 +626,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.TemplateItem'
+        type: object
       msg:
         type: string
     type: object
@@ -604,6 +636,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.GetTrainingRsp'
+        type: object
       msg:
         type: string
     type: object
@@ -613,6 +646,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/models.JobLog'
+        type: object
       msg:
         type: string
     type: object
@@ -622,6 +656,7 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/routers.LsEdgeInferencesResp'
+        type: object
       msg:
         type: string
     type: object
@@ -667,6 +702,7 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
     type: object
   routers.CreateTemplateRsp:
     properties:
@@ -715,7 +751,23 @@ definitions:
       id:
         type: string
     type: object
+  routers.CreateVisualJobReq:
+    properties:
+      description:
+        type: string
+      jobName:
+        type: string
+      tensorboardLogDir:
+        type: string
+    type: object
   routers.DeleteCodeEnvRsp:
+    type: object
+  routers.DeleteJobReq:
+    properties:
+      jobId:
+        type: integer
+    required:
+    - jobId
     type: object
   routers.DeleteTemplateReq:
     properties:
@@ -766,6 +818,7 @@ definitions:
     properties:
       dataset:
         $ref: '#/definitions/models.Dataset'
+        type: object
     type: object
   routers.GetDatasetsResp:
     properties:
@@ -784,10 +837,21 @@ definitions:
       totalPage:
         type: integer
     type: object
+  routers.GetEndpointsReq:
+    properties:
+      jobId:
+        type: integer
+    type: object
+  routers.GetEndpointsRsq:
+    properties:
+      path:
+        type: string
+    type: object
   routers.GetFDInfoResp:
     properties:
       fdinfo:
         $ref: '#/definitions/models.FDInfo'
+        type: object
     type: object
   routers.GetJobSummaryReq:
     properties:
@@ -879,6 +943,32 @@ definitions:
       status:
         type: string
     type: object
+  routers.GetVisualJobListReq:
+    properties:
+      jobName:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.GetVisualJobListRsq:
+    properties:
+      Templates:
+        items:
+          $ref: '#/definitions/routers.VisualJobListRspUnit'
+        type: array
+      total:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
   routers.LsEdgeInferencesResp:
     properties:
       edgeInferences:
@@ -894,6 +984,13 @@ definitions:
       totalPage:
         type: integer
     type: object
+  routers.SwitchVisualJobStatusReq:
+    properties:
+      jobId:
+        type: integer
+      status:
+        type: string
+    type: object
   routers.UpdateTemplateReq:
     properties:
       id:
@@ -904,6 +1001,23 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
+        type: object
+    type: object
+  routers.VisualJobListRspUnit:
+    properties:
+      TensorboardLogDir:
+        type: string
+      createTime:
+        $ref: '#/definitions/models.UnixTime'
+        type: object
+      description:
+        type: string
+      id:
+        type: integer
+      jobName:
+        type: string
+      status:
+        type: string
     type: object
   routers.createDatasetReq:
     properties:
@@ -1000,6 +1114,7 @@ definitions:
         type: object
       evaluation:
         $ref: '#/definitions/services.Evaluation'
+        type: object
       indicator:
         additionalProperties:
           type: string
@@ -1032,6 +1147,7 @@ definitions:
     properties:
       model:
         $ref: '#/definitions/models.Modelset'
+        type: object
     type: object
   routers.getVersionInfoResp:
     properties:
@@ -1039,10 +1155,48 @@ definitions:
         type: boolean
       versionInfo:
         $ref: '#/definitions/models.VersionInfoSet'
+        type: object
       versionLogs:
         items:
           $ref: '#/definitions/models.VersionInfoSet'
         type: array
+    type: object
+  routers.lsDatasetsReq:
+    properties:
+      isTranslated:
+        type: boolean
+      name:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.lsModelsetsReq:
+    properties:
+      isAdvance:
+        type: boolean
+      name:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+      use:
+        description: all
+        type: string
     type: object
   routers.setFDInfoReq:
     properties:
@@ -2469,9 +2623,12 @@ paths:
       - in: query
         name: pageSize
         type: integer
+      - in: query
+        name: status
+        type: string
       - description: all
         in: query
-        name: status
+        name: use
         type: string
       produces:
       - application/json
@@ -2922,4 +3079,128 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get local upgrade process
+  /ai_arts/api/visual:
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateVisualJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create visual job
+  /ai_arts/api/visual/:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete visual job
+    put:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.SwitchVisualJobStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: switch job status
+  /ai_arts/api/visual/endpoints:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetEndpointsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetEndpointsRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job endpoints address
+  /ai_arts/api/visual/list:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetVisualJobListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetVisualJobListRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job List
 swagger: "2.0"

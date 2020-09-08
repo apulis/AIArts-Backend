@@ -25,6 +25,10 @@ type Evaluation struct {
 	DatasetName string            `json:"datasetName"`
 	Status      string            `json:"status"`
 	CreateTime  string            `json:"createTime"`
+	NumPs           int    `json:"numPs"`
+	NumPsWorker     int    `json:"numPsWorker"`
+	Desc        string            `json:"desc"`
+	JobTrainingType string `json:"jobTrainingType"`
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
@@ -75,6 +79,8 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
+	params["numworker"] = evaluation.NumPs
+	params["numps"] = evaluation.NumPsWorker
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName
 	id := &models.JobId{}

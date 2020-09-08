@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Input",
+    "children": [
+      {
+        "coco": [
+          {
+            "key": "class_num",
+            "type": "disabled",
+            "value": 80
+          }
+        ]
+      },
+      {
+        "voc": [
+          {
+            "key": "class_num",
+            "type": "disabled",
+            "value": 20
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Backbone",
+    "children": [
+      {
+        "ResNet": [
+          {
+            "key": "depth",
+            "type": "select",
+            "value": [
+              50,
+              101
+            ]
+          }
+        ]
+      },
+      {
+        "RegNet": [
+          {
+            "key": "depth",
+            "type": "select",
+            "value": [
+              50,
+              101
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Backbone",
+    "children": [
+      {
+        "FPN": [
+          {}
+        ]
+      },
+      {
+        "BFP": [
+          {}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Polling",
+    "children": [
+      {
+        "Average": [
+          {}
+        ]
+      },
+      {
+        "Max": [
+          {}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Optimizer",
+    "children": [
+      {
+        "SGD": [
+          {
+            "key": "learning_rate",
+            "type": "number",
+            "value": 0.001
+          }
+        ]
+      },
+      {
+        "ADAM": [
+          {
+            "key": "learning_rate",
+            "type": "number",
+            "value": 0.001
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Output",
+    "children": [
+      {
+        "output": [
+          {
+            "key": "work_dir",
+            "type": "string",
+            "value": 0.001
+          },
+          {
+            "key": "warmup_iters",
+            "type": "number",
+            "value": 500
+          },
+          {
+            "key": "warmup_ratio",
+            "type": "number",
+            "value": 0.001
+          },
+          {
+            "key": "total_epochs",
+            "type": "number",
+            "value": 100
+          }
+        ]
+      }
+    ]
+  }
+]
+

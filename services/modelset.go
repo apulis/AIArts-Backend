@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/tidwall/gjson"
 )
 
 const (
@@ -22,13 +23,15 @@ type CreateEvaluationReq struct {
 	CodePath    string            `json:"codePath"`
 	Name        string            `json:"name"`
 	Params      map[string]string `json:"params"`
+	NumPs       int               `json:"numPs"`
+	NumPsWorker int               `json:"numPsWorker"`
 }
 
-func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, username string) ([]models.Modelset, int, error) {
+func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
 	limit := count
-	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, username)
+	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, use, username)
 }
 
 func CreateModelset(name, description, creator, version, jobId, codePath, paramPath string, isAdvance bool,
@@ -120,4 +123,158 @@ func DeleteModelset(id int) error {
 	//	return err
 	//}
 	return models.DeleteModelset(&modelset)
+}
+func GetPanel(use int, username string) (interface{}, error) {
+	datasets, _, err := ListDatasets(1, 999, "created_at", "desc", "", "all", true, username)
+
+	if err != nil {
+		return "", err
+	}
+	datasetNames := "["
+	for _, v := range datasets {
+		datasetNames += `"` + v.Name + `",`
+	}
+	datasetNames += "]"
+	jsonString := fmt.Sprintf(`[
+  {
+    "name": "Input",
+    "children": [
+      {
+        "coco": [
+          {
+            "key": "class_num",
+            "type": "disabled",
+            "value": 80
+          }
+        ]
+      },
+      {
+        "voc": [
+          {
+            "key": "class_num",
+            "type": "disabled",
+            "value": 20
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Backbone",
+    "children": [
+      {
+        "ResNet": [
+          {
+            "key": "depth",
+            "type": "select",
+            "value": [
+              50,
+              101
+            ]
+          }
+        ]
+      },
+      {
+        "RegNet": [
+          {
+            "key": "depth",
+            "type": "select",
+            "value": [
+              50,
+              101
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Backbone",
+    "children": [
+      {
+        "FPN": [
+          {}
+        ]
+      },
+      {
+        "BFP": [
+          {}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Polling",
+    "children": [
+      {
+        "Average": [
+          {}
+        ]
+      },
+      {
+        "Max": [
+          {}
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Optimizer",
+    "children": [
+      {
+        "SGD": [
+          {
+            "key": "learning_rate",
+            "type": "number",
+            "value": 0.001
+          }
+        ]
+      },
+      {
+        "ADAM": [
+          {
+            "key": "learning_rate",
+            "type": "number",
+            "value": 0.001
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Output",
+    "children": [
+      {
+        "output": [
+          {
+            "key": "work_dir",
+            "type": "string",
+            "value": 0.001
+          },
+          {
+            "key": "warmup_iters",
+            "type": "number",
+            "value": 500
+          },
+          {
+            "key": "warmup_ratio",
+            "type": "number",
+            "value": 0.001
+          },
+          {
+            "key": "total_epochs",
+            "type": "number",
+            "value": 100
+          }
+        ]
+      }
+    ]
+  }
+]
+`, datasetNames, datasetNames)
+	if use == 0 {
+		jsondata := gjson.Parse(jsonString)
+		return jsondata.Value(), nil
+	}
+	return "", nil
 }

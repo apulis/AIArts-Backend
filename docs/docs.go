@@ -2133,8 +2133,13 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "all",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "all",
+                        "name": "use",
                         "in": "query"
                     }
                 ],
@@ -2824,6 +2829,199 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/ai_arts/api/visual": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create visual job",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.CreateVisualJobReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "switch job status",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.SwitchVisualJobStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete visual job",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.DeleteJobReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/endpoints": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get visual job endpoints address",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetEndpointsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetEndpointsRsq"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get visual job List",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetVisualJobListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetVisualJobListRsq"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2880,6 +3078,7 @@ var doc = `{
                     "type": "string"
                 },
                 "jobParams": {
+                    "type": "object",
                     "$ref": "#/definitions/models.JobParams"
                 },
                 "jobStatus": {
@@ -2930,12 +3129,14 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -2964,6 +3165,7 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3018,6 +3220,9 @@ var doc = `{
                 },
                 "log": {
                     "type": "string"
+                },
+                "maxPage": {
+                    "type": "integer"
                 }
             }
         },
@@ -3139,6 +3344,7 @@ var doc = `{
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3155,6 +3361,7 @@ var doc = `{
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3196,6 +3403,7 @@ var doc = `{
                 },
                 "params": {
                     "description": "omitempty 值为空，不编码",
+                    "type": "object",
                     "$ref": "#/definitions/models.ParamsItem"
                 },
                 "precision": {
@@ -3212,6 +3420,7 @@ var doc = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "use": {
@@ -3294,9 +3503,11 @@ var doc = `{
             "type": "object",
             "properties": {
                 "metaData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateMeta"
                 },
                 "params": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3305,6 +3516,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
@@ -3323,6 +3535,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 }
             }
@@ -3425,23 +3638,20 @@ var doc = `{
             }
         },
         "models.UnixTime": {
-            "type": "object",
-            "properties": {
-                "time.Time": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "models.VersionInfoSet": {
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "creator": {
                     "type": "string"
                 },
                 "deletedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
@@ -3451,6 +3661,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "updatedAt": {
+                    "type": "object",
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "version": {
@@ -3490,6 +3701,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllCodeEnvRsp"
                 },
                 "msg": {
@@ -3504,6 +3716,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateCodeEnvRsp"
                 },
                 "msg": {
@@ -3518,6 +3731,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateEdgeInferenceResp"
                 },
                 "msg": {
@@ -3532,6 +3746,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTemplateRsp"
                 },
                 "msg": {
@@ -3546,6 +3761,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.CreateTrainingRsp"
                 },
                 "msg": {
@@ -3560,6 +3776,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteCodeEnvRsp"
                 },
                 "msg": {
@@ -3574,6 +3791,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTemplateRsp"
                 },
                 "msg": {
@@ -3588,6 +3806,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.DeleteTrainingRsp"
                 },
                 "msg": {
@@ -3602,6 +3821,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTemplateRsp"
                 },
                 "msg": {
@@ -3616,6 +3836,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetAllTrainingRsp"
                 },
                 "msg": {
@@ -3630,6 +3851,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.EndpointWrapper"
                 },
                 "msg": {
@@ -3644,6 +3866,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.ConversionTypes"
                 },
                 "msg": {
@@ -3658,6 +3881,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetResp"
                 },
                 "msg": {
@@ -3672,6 +3896,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetDatasetsResp"
                 },
                 "msg": {
@@ -3686,6 +3911,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetFDInfoResp"
                 },
                 "msg": {
@@ -3700,6 +3926,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetModelsetsResp"
                 },
                 "msg": {
@@ -3714,6 +3941,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetResourceRsp"
                 },
                 "msg": {
@@ -3728,6 +3956,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateItem"
                 },
                 "msg": {
@@ -3742,6 +3971,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.GetTrainingRsp"
                 },
                 "msg": {
@@ -3756,6 +3986,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/models.JobLog"
                 },
                 "msg": {
@@ -3770,6 +4001,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/routers.LsEdgeInferencesResp"
                 },
                 "msg": {
@@ -3839,6 +4071,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
                 }
             }
@@ -3915,8 +4148,33 @@ var doc = `{
                 }
             }
         },
+        "routers.CreateVisualJobReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "tensorboardLogDir": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.DeleteCodeEnvRsp": {
             "type": "object"
+        },
+        "routers.DeleteJobReq": {
+            "type": "object",
+            "required": [
+                "jobId"
+            ],
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                }
+            }
         },
         "routers.DeleteTemplateReq": {
             "type": "object",
@@ -3992,6 +4250,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "dataset": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Dataset"
                 }
             }
@@ -4022,10 +4281,27 @@ var doc = `{
                 }
             }
         },
+        "routers.GetEndpointsReq": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "routers.GetEndpointsRsq": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.GetFDInfoResp": {
             "type": "object",
             "properties": {
                 "fdinfo": {
+                    "type": "object",
                     "$ref": "#/definitions/models.FDInfo"
                 }
             }
@@ -4168,6 +4444,46 @@ var doc = `{
                 }
             }
         },
+        "routers.GetVisualJobListReq": {
+            "type": "object",
+            "properties": {
+                "jobName": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.GetVisualJobListRsq": {
+            "type": "object",
+            "properties": {
+                "Templates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/routers.VisualJobListRspUnit"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
         "routers.LsEdgeInferencesResp": {
             "type": "object",
             "properties": {
@@ -4191,6 +4507,17 @@ var doc = `{
                 }
             }
         },
+        "routers.SwitchVisualJobStatusReq": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.UpdateTemplateReq": {
             "type": "object",
             "properties": {
@@ -4204,7 +4531,32 @@ var doc = `{
                     "type": "integer"
                 },
                 "templateData": {
+                    "type": "object",
                     "$ref": "#/definitions/models.TemplateParams"
+                }
+            }
+        },
+        "routers.VisualJobListRspUnit": {
+            "type": "object",
+            "properties": {
+                "TensorboardLogDir": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -4342,6 +4694,7 @@ var doc = `{
                     }
                 },
                 "evaluation": {
+                    "type": "object",
                     "$ref": "#/definitions/services.Evaluation"
                 },
                 "indicator": {
@@ -4392,6 +4745,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "model": {
+                    "type": "object",
                     "$ref": "#/definitions/models.Modelset"
                 }
             }
@@ -4403,6 +4757,7 @@ var doc = `{
                     "type": "boolean"
                 },
                 "versionInfo": {
+                    "type": "object",
                     "$ref": "#/definitions/models.VersionInfoSet"
                 },
                 "versionLogs": {
@@ -4410,6 +4765,62 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.VersionInfoSet"
                     }
+                }
+            }
+        },
+        "routers.lsDatasetsReq": {
+            "type": "object",
+            "properties": {
+                "isTranslated": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.lsModelsetsReq": {
+            "type": "object",
+            "properties": {
+                "isAdvance": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "use": {
+                    "description": "all",
+                    "type": "string"
                 }
             }
         },
