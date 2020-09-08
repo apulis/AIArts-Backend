@@ -22,6 +22,9 @@ func AddGroupModel(r *gin.Engine) {
 type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
+type modelsetUse struct {
+	USE string `uri:"id" binding:"required"`
+}
 
 type createEvaluationResp struct {
 	EvaluationId string `json:"jobId"`
@@ -32,7 +35,7 @@ type lsModelsetsReq struct {
 	PageSize int    `form:"pageSize,default=10"`
 	Name     string `form:"name"`
 	//all
-	Use       string `json:"use"`
+	Use       string `form:"use"`
 	Status    string `form:"status"`
 	IsAdvance bool   `form:"isAdvance"`
 	OrderBy   string `form:"orderBy,default=created_at"`
@@ -128,8 +131,8 @@ func lsModelsets(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id [get]
 func getPanel(c *gin.Context) error {
-	var id int
-	err := c.ShouldBindUri(&id)
+	var use modelsetUse
+	err := c.ShouldBindUri(&use)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -138,12 +141,11 @@ func getPanel(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	panel, err := services.GetPanel(id,username)
+	panel, err := services.GetPanel(use.USE,username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := gin.H{"panel": panel}
-	return SuccessResp(c, data)
+	return SuccessResp(c, panel)
 }
 
 // @Summary get model by id
@@ -202,7 +204,6 @@ func createModelset(c *gin.Context) error {
 	}
 	//如果是可视化建模平台直接创建
 	if strings.Index(req.Use, "Avisualis") != 1 {
-		req.StartupFile="/data/premodel/code/ApulisVision/tools/train"
 		training := models.Training{
 			Id:          req.JobId,
 			Name:        req.Name,

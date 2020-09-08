@@ -9,7 +9,7 @@ import (
 func AddGroupDataset(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/datasets")
 	group.Use(Auth())
-	group.GET("/", wrapper(lsDatasets))
+	group.GET("/", wrapper(LsDatasets))
 	group.GET("/:id", wrapper(getDataset))
 	group.POST("/", wrapper(createDataset))
 	group.POST("/:id", wrapper(updateDataset))
@@ -69,7 +69,7 @@ type GetDatasetsResp struct {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [get]
-func lsDatasets(c *gin.Context) error {
+func LsDatasets(c *gin.Context) error {
 	models.GinContext{Context: c}.SaveToken()
 	var req lsDatasetsReq
 	err := c.ShouldBindQuery(&req)
@@ -91,37 +91,8 @@ func lsDatasets(c *gin.Context) error {
 	}
 
 	if req.IsTranslated {
-		var annoDatasets []models.DataSet
-		queryStringParameters := models.QueryStringParametersV2{
-			PageNum:  req.PageNum,
-			PageSize: req.PageSize,
-			OrderBy:  req.OrderBy,
-			Order:    req.Order,
-		}
-		annoDatasets, _, err := services.ListAllDatasets(queryStringParameters)
-		if err != nil {
-			message = "label image platform is error"
-			//return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
-		} else {
-			for _, v := range annoDatasets {
-				if v.ConvertStatus == "finished" {
-					dataset := models.Dataset{
-						Name:        v.Name,
-						Description: v.Info,
-						Path:        v.ConvertOutPath,
-						Status:      v.Name,
-						//是否是公开数据集
-						IsPrivate:    v.IsPrivate,
-						IsTranslated: true,
-					}
-					datasets = append(datasets, dataset)
-					total += 1
-
-				}
-			}
-		}
+		message, total, datasets = services.AppendAnnoDataset(datasets, total, req.PageNum, req.PageSize, req.OrderBy, req.Order)
 	}
-
 
 	data := GetDatasetsResp{
 		Datasets:  datasets,

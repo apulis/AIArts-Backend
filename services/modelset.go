@@ -2,8 +2,8 @@ package services
 
 import (
 	"fmt"
+	"github.com/Jeffail/gabs/v2"
 	"github.com/apulis/AIArtsBackend/models"
-	"github.com/tidwall/gjson"
 )
 
 const (
@@ -124,157 +124,43 @@ func DeleteModelset(id int) error {
 	//}
 	return models.DeleteModelset(&modelset)
 }
-func GetPanel(use int, username string) (interface{}, error) {
-	datasets, _, err := ListDatasets(1, 999, "created_at", "desc", "", "all", true, username)
-
+func GetPanel(use, username string) (interface{}, error) {
+	//获取可用的数据集
+	datasets, total, err := ListDatasets(1, 999, "created_at", "desc", "", "all", true, username)
+	_, _, datasets = AppendAnnoDataset(datasets, total, 1, 999, "created_at", "desc")
 	if err != nil {
 		return "", err
 	}
-	datasetNames := "["
-	for _, v := range datasets {
-		datasetNames += `"` + v.Name + `",`
+	//分类获取panel
+	var modelset models.Modelset
+	if use == "Avisualis_Classfication" {
+		modelset, err = GetModelset(10001)
+	} else if use == "Avisualis_ObjectDetection" {
+		modelset, err = GetModelset(10001)
+	} else if use == "Avisualis_SemanticSegmentation" {
+		modelset, err = GetModelset(10002)
 	}
-	datasetNames += "]"
-	jsonString := fmt.Sprintf(`[
-  {
-    "name": "Input",
-    "children": [
-      {
-        "coco": [
-          {
-            "key": "class_num",
-            "type": "disabled",
-            "value": 80
-          }
-        ]
-      },
-      {
-        "voc": [
-          {
-            "key": "class_num",
-            "type": "disabled",
-            "value": 20
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Backbone",
-    "children": [
-      {
-        "ResNet": [
-          {
-            "key": "depth",
-            "type": "select",
-            "value": [
-              50,
-              101
-            ]
-          }
-        ]
-      },
-      {
-        "RegNet": [
-          {
-            "key": "depth",
-            "type": "select",
-            "value": [
-              50,
-              101
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Backbone",
-    "children": [
-      {
-        "FPN": [
-          {}
-        ]
-      },
-      {
-        "BFP": [
-          {}
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Polling",
-    "children": [
-      {
-        "Average": [
-          {}
-        ]
-      },
-      {
-        "Max": [
-          {}
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Optimizer",
-    "children": [
-      {
-        "SGD": [
-          {
-            "key": "learning_rate",
-            "type": "number",
-            "value": 0.001
-          }
-        ]
-      },
-      {
-        "ADAM": [
-          {
-            "key": "learning_rate",
-            "type": "number",
-            "value": 0.001
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Output",
-    "children": [
-      {
-        "output": [
-          {
-            "key": "work_dir",
-            "type": "string",
-            "value": 0.001
-          },
-          {
-            "key": "warmup_iters",
-            "type": "number",
-            "value": 500
-          },
-          {
-            "key": "warmup_ratio",
-            "type": "number",
-            "value": 0.001
-          },
-          {
-            "key": "total_epochs",
-            "type": "number",
-            "value": 100
-          }
-        ]
-      }
-    ]
-  }
-]
-`, datasetNames, datasetNames)
-	if use == 0 {
-		jsondata := gjson.Parse(jsonString)
-		return jsondata.Value(), nil
+	panelJson, err := gabs.ParseJSON([]byte(modelset.Description))
+	//生成panel节点
+	input := gabs.New()
+	children := gabs.New()
+	for _, dataset := range datasets {
+		config := gabs.New()
+		config.Set(dataset.Path, "key")
+		config.Set("disabled", "type")
+		config.Set("./", "value")
+		children.ArrayAppend(config, dataset.Name)
 	}
-	return "", nil
+	input.Set("Input", "name")
+	input.ArrayAppend(children, "children")
+	panelJson.S("panel").SetIndex(input, 0)
+
+	//加入启动训练任务所需要的节点
+	panelJson.Set("CodePath", "name")
+	panelJson.Set("Engine", "name")
+	panelJson.Set("StartupFile", "name")
+	if err != nil {
+		return "", err
+	}
+	return panelJson.Data(), nil
 }

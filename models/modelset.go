@@ -63,7 +63,9 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
 	if use != "" {
-		whereQueryStr += "and use like '%" + use + "%' "
+		whereQueryStr += "and `use` like '" + use + "%' "
+	} else {
+		whereQueryStr += "and `use` not like 'Avisualis%' "
 	}
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
