@@ -128,6 +128,8 @@ definitions:
         type: string
       log:
         type: string
+      maxPage:
+        type: integer
     type: object
   models.JobParams:
     properties:
@@ -308,6 +310,31 @@ definitions:
       userName:
         type: string
       vcName:
+        type: string
+    type: object
+  models.SavedImage:
+    properties:
+      containerId:
+        type: string
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      imageId:
+        type: string
+      isPrivate:
+        type: boolean
+      name:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
         type: string
     type: object
   models.TemplateItem:
@@ -715,7 +742,23 @@ definitions:
       id:
         type: string
     type: object
+  routers.CreateVisualJobReq:
+    properties:
+      description:
+        type: string
+      jobName:
+        type: string
+      tensorboardLogDir:
+        type: string
+    type: object
   routers.DeleteCodeEnvRsp:
+    type: object
+  routers.DeleteJobReq:
+    properties:
+      jobId:
+        type: integer
+    required:
+    - jobId
     type: object
   routers.DeleteTemplateReq:
     properties:
@@ -784,6 +827,16 @@ definitions:
       totalPage:
         type: integer
     type: object
+  routers.GetEndpointsReq:
+    properties:
+      jobId:
+        type: integer
+    type: object
+  routers.GetEndpointsRsq:
+    properties:
+      path:
+        type: string
+    type: object
   routers.GetFDInfoResp:
     properties:
       fdinfo:
@@ -832,6 +885,26 @@ definitions:
           $ref: '#/definitions/models.NodeStatus'
         type: array
     type: object
+  routers.GetSavedImageResp:
+    properties:
+      savedImages:
+        $ref: '#/definitions/models.SavedImage'
+    type: object
+  routers.GetSavedImagesResp:
+    properties:
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      savedImages:
+        items:
+          $ref: '#/definitions/models.SavedImage'
+        type: array
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
   routers.GetTemplateReq:
     properties:
       id:
@@ -879,6 +952,32 @@ definitions:
       status:
         type: string
     type: object
+  routers.GetVisualJobListReq:
+    properties:
+      jobName:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.GetVisualJobListRsq:
+    properties:
+      Templates:
+        items:
+          $ref: '#/definitions/routers.VisualJobListRspUnit'
+        type: array
+      total:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
   routers.LsEdgeInferencesResp:
     properties:
       edgeInferences:
@@ -894,6 +993,13 @@ definitions:
       totalPage:
         type: integer
     type: object
+  routers.SwitchVisualJobStatusReq:
+    properties:
+      jobId:
+        type: integer
+      status:
+        type: string
+    type: object
   routers.UpdateTemplateReq:
     properties:
       id:
@@ -904,6 +1010,21 @@ definitions:
         type: integer
       templateData:
         $ref: '#/definitions/models.TemplateParams'
+    type: object
+  routers.VisualJobListRspUnit:
+    properties:
+      TensorboardLogDir:
+        type: string
+      createTime:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      jobName:
+        type: string
+      status:
+        type: string
     type: object
   routers.createDatasetReq:
     properties:
@@ -991,6 +1112,22 @@ definitions:
     required:
     - name
     - paramPath
+    type: object
+  routers.createSavedImageReq:
+    properties:
+      description:
+        type: string
+      isPrivate:
+        type: boolean
+      jobId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+    required:
+    - name
+    - version
     type: object
   routers.getEvaluationResp:
     properties:
@@ -2583,6 +2720,134 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
+  /ai_arts/api/saved_images:
+    get:
+      parameters:
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImagesResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved_images by id
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.createSavedImageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create saved_image
+  /ai_arts/api/saved_images/:id:
+    delete:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete saved_image by id
+    get:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImageResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved image by id
+    post:
+      parameters:
+      - description: saved_image description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update saved_image
   /ai_arts/api/templates:
     get:
       parameters:
@@ -2922,4 +3187,128 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: get local upgrade process
+  /ai_arts/api/visual:
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateVisualJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create visual job
+  /ai_arts/api/visual/:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete visual job
+    put:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.SwitchVisualJobStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: switch job status
+  /ai_arts/api/visual/endpoints:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetEndpointsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetEndpointsRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job endpoints address
+  /ai_arts/api/visual/list:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetVisualJobListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetVisualJobListRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job List
 swagger: "2.0"

@@ -2304,6 +2304,205 @@ var doc = `{
                 }
             }
         },
+        "/ai_arts/api/saved_images": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get saved_images by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetSavedImagesResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create saved_image",
+                "parameters": [
+                    {
+                        "description": "json body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.createSavedImageReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/saved_images/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get saved image by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "saved image id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetSavedImageResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update saved_image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "saved_image description",
+                        "name": "description",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete saved_image by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "saved image id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
         "/ai_arts/api/templates": {
             "get": {
                 "produces": [
@@ -2824,6 +3023,199 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/ai_arts/api/visual": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "create visual job",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.CreateVisualJobReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "switch job status",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.SwitchVisualJobStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete visual job",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.DeleteJobReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/endpoints": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get visual job endpoints address",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetEndpointsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetEndpointsRsq"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/visual/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get visual job List",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetVisualJobListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.GetVisualJobListRsq"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3018,6 +3410,9 @@ var doc = `{
                 },
                 "log": {
                     "type": "string"
+                },
+                "maxPage": {
+                    "type": "integer"
                 }
             }
         },
@@ -3286,6 +3681,44 @@ var doc = `{
                     "type": "string"
                 },
                 "vcName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SavedImage": {
+            "type": "object",
+            "properties": {
+                "containerId": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imageId": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -3915,8 +4348,33 @@ var doc = `{
                 }
             }
         },
+        "routers.CreateVisualJobReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "tensorboardLogDir": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.DeleteCodeEnvRsp": {
             "type": "object"
+        },
+        "routers.DeleteJobReq": {
+            "type": "object",
+            "required": [
+                "jobId"
+            ],
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                }
+            }
         },
         "routers.DeleteTemplateReq": {
             "type": "object",
@@ -4022,6 +4480,22 @@ var doc = `{
                 }
             }
         },
+        "routers.GetEndpointsReq": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "routers.GetEndpointsRsq": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.GetFDInfoResp": {
             "type": "object",
             "properties": {
@@ -4093,6 +4567,37 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.NodeStatus"
                     }
+                }
+            }
+        },
+        "routers.GetSavedImageResp": {
+            "type": "object",
+            "properties": {
+                "savedImages": {
+                    "$ref": "#/definitions/models.SavedImage"
+                }
+            }
+        },
+        "routers.GetSavedImagesResp": {
+            "type": "object",
+            "properties": {
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "savedImages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SavedImage"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
+                    "type": "integer"
                 }
             }
         },
@@ -4168,6 +4673,46 @@ var doc = `{
                 }
             }
         },
+        "routers.GetVisualJobListReq": {
+            "type": "object",
+            "properties": {
+                "jobName": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.GetVisualJobListRsq": {
+            "type": "object",
+            "properties": {
+                "Templates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/routers.VisualJobListRspUnit"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
         "routers.LsEdgeInferencesResp": {
             "type": "object",
             "properties": {
@@ -4191,6 +4736,17 @@ var doc = `{
                 }
             }
         },
+        "routers.SwitchVisualJobStatusReq": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "routers.UpdateTemplateReq": {
             "type": "object",
             "properties": {
@@ -4205,6 +4761,29 @@ var doc = `{
                 },
                 "templateData": {
                     "$ref": "#/definitions/models.TemplateParams"
+                }
+            }
+        },
+        "routers.VisualJobListRspUnit": {
+            "type": "object",
+            "properties": {
+                "TensorboardLogDir": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "$ref": "#/definitions/models.UnixTime"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -4328,6 +4907,30 @@ var doc = `{
                     "type": "string"
                 },
                 "use": {
+                    "type": "string"
+                }
+            }
+        },
+        "routers.createSavedImageReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "version"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "boolean"
+                },
+                "jobId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
