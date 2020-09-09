@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"encoding/json"
+	"github.com/Jeffail/gabs/v2"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -66,12 +68,22 @@ type createModelsetReq struct {
 	StartupFile string `json:"startupFile"`
 
 	//用于可视化建模平台直接启动训练任务
-	NumPs       int    `json:"numPs"`
-	NumPsWorker int    `json:"numPsWorker"`
-	DeviceType  string `json:"deviceType"`
-	DeviceNum   int    `json:"deviceNum"`
+	NumPs       int             `json:"numPs"`
+	NumPsWorker int             `json:"numPsWorker"`
+	DeviceType  string          `json:"deviceType"`
+	DeviceNum   int             `json:"deviceNum"`
+	Nodes       []AvisualisNode `json:"nodes"`
+	Edges       []AvisualisEdge `json:"edges"`
 }
-
+type AvisualisEdge struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
+}
+type AvisualisNode struct {
+	ID     string      `json:"id"`
+	Name   string      `json:"name"`
+	Config interface{} `json:"config"`
+}
 type updateModelsetReq struct {
 	Description string `json:"description" binding:"required"`
 }
@@ -137,11 +149,11 @@ func getPanel(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	//username := getUsername(c)
-	username:="admin"
+	username := "admin"
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	panel, err := services.GetPanel(use.USE,username)
+	panel, err := services.GetPanel(use.USE, username)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -182,7 +194,6 @@ func createModelset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-
 	//如果上传模型文件检查模型文件是否存在
 	if req.CodePath != "" {
 		err = services.CheckPathExists(req.CodePath)
@@ -202,8 +213,21 @@ func createModelset(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	//如果是可视化建模平台直接创建
+
+
 	if strings.Index(req.Use, "Avisualis") != 1 {
+		//存储节点数据
+		nodesBytes, _ := json.Marshal(req.Nodes)
+		nodesParse, _ := gabs.ParseJSON(nodesBytes)
+		edgesBytes, _ := json.Marshal(req.Edges)
+		edgesParse, _ := gabs.ParseJSON(edgesBytes)
+
+		req.Params = make(map[string]string)
+		req.Params["nodes"] = nodesParse.String()
+		req.Params["edges"] = edgesParse.String()
+		//params["edges"]=req.Edges
+		//如果是可视化建模平台直接创建
+
 		training := models.Training{
 			Id:          req.JobId,
 			Name:        req.Name,

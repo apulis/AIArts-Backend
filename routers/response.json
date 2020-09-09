@@ -1,0 +1,140 @@
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "codePath": "/data/premodel/code/ApulisVision/",
+    "engine": "apulistech/apulisvision",
+    "panel": [
+      {
+        "children": [
+          {
+            "cifar10": [
+              {
+                "key": "datasetPath",
+                "type": "disabled",
+                "value": "/data/dataset/storage/cifar10/"
+              }
+            ],
+            "dog-vs-cat": [
+              {
+                "key": "datasetPath",
+                "type": "disabled",
+                "value": "/data/dataset/storage/dog-vs-cat/"
+              }
+            ],
+            "mnist": [
+              {
+                "key": "datasetPath",
+                "type": "disabled",
+                "value": "/data/dataset/storage/mnist/"
+              }
+            ]
+          }
+        ],
+        "name": "Input"
+      },
+      {
+        "children": [
+          {
+            "ResNet": [
+              {
+                "key": "depth",
+                "type": "select",
+                "value": [
+                  50,
+                  101,
+                  152
+                ]
+              }
+            ]
+          },
+          {
+            "ResNeXt": [
+              {
+                "key": "depth",
+                "type": "select",
+                "value": [
+                  50,
+                  101,
+                  152
+                ]
+              }
+            ]
+          },
+          {
+            "SEResNet": [
+              {
+                "key": "depth",
+                "type": "select",
+                "value": [
+                  50,
+                  101
+                ]
+              }
+            ]
+          }
+        ],
+        "name": "Backbone"
+      },
+      {
+        "children": [
+          {
+            "AdaptiveAvgMaxPool2d": [
+              {}
+            ]
+          },
+          {
+            "AdaptiveCatAvgMaxPool2d": []
+          },
+          {
+            "GlobalAveragePooling": []
+          }
+        ],
+        "name": "Neck"
+      },
+      {
+        "children": [
+          {
+            "SGD": [
+              {
+                "key": "learning_rate",
+                "type": "number",
+                "value": 0.001
+              }
+            ]
+          },
+          {
+            "ADAM": [
+              {
+                "key": "learning_rate",
+                "type": "number",
+                "value": 0.001
+              }
+            ]
+          }
+        ],
+        "name": "Optimizer"
+      },
+      {
+        "children": [
+          {
+            "output": [
+              {
+                "key": "work_dir",
+                "type": "string",
+                "value": "./work_dir"
+              },
+              {
+                "key": "total_epochs",
+                "type": "number",
+                "value": 100
+              }
+            ]
+          }
+        ],
+        "name": "Output"
+      }
+    ],
+    "startupFile": "/data/premodel/code/ApulisVision/tools/train_cls.py"
+  }
+}

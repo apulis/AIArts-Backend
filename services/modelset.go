@@ -77,6 +77,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		job, _ := GetTraining(creator, jobId)
 		var paramItem models.ParamsItem
 		paramItem = job.Params
+
 		if job != nil {
 			modelset.OutputPath = job.OutputPath
 			modelset.CodePath = job.CodePath
@@ -105,6 +106,9 @@ func UpdateModelset(id int, description string) error {
 func GetModelset(id int) (models.Modelset, error) {
 	return models.GetModelsetById(id)
 }
+func GetModelsetByName(name string) (models.Modelset, error) {
+	return models.GetModelsetByName(name)
+}
 
 func DeleteModelset(id int) error {
 	modelset, err := models.GetModelsetById(id)
@@ -132,23 +136,17 @@ func GetPanel(use, username string) (interface{}, error) {
 		return "", err
 	}
 	//分类获取panel
-	var modelset models.Modelset
-	if use == "Avisualis_Classfication" {
-		modelset, err = GetModelset(10001)
-	} else if use == "Avisualis_ObjectDetection" {
-		modelset, err = GetModelset(10001)
-	} else if use == "Avisualis_SemanticSegmentation" {
-		modelset, err = GetModelset(10002)
-	}
-	panelJson, err := gabs.ParseJSON([]byte(modelset.Description))
+	modelset, err := GetModelsetByName(use)
+	panelJson := gabs.New()
+	panelJson, _ = gabs.ParseJSON([]byte(modelset.Description))
 	//生成panel节点
 	input := gabs.New()
 	children := gabs.New()
 	for _, dataset := range datasets {
 		config := gabs.New()
-		config.Set(dataset.Path, "key")
+		config.Set("datasetPath", "key")
 		config.Set("disabled", "type")
-		config.Set("./", "value")
+		config.Set(dataset.Path, "value")
 		children.ArrayAppend(config, dataset.Name)
 	}
 	input.Set("Input", "name")
@@ -156,9 +154,9 @@ func GetPanel(use, username string) (interface{}, error) {
 	panelJson.S("panel").SetIndex(input, 0)
 
 	//加入启动训练任务所需要的节点
-	panelJson.Set("CodePath", "name")
-	panelJson.Set("Engine", "name")
-	panelJson.Set("StartupFile", "name")
+	panelJson.Set(modelset.CodePath, "codePath")
+	panelJson.Set(modelset.Engine, "engine")
+	panelJson.Set(modelset.StartupFile, "startupFile")
 	if err != nil {
 		return "", err
 	}

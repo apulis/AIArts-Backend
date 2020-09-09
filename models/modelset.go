@@ -87,6 +87,15 @@ func GetModelsetById(id int) (Modelset, error) {
 	}
 	return modelset, nil
 }
+func GetModelsetByName(name string) (Modelset, error) {
+	var modelset Modelset
+	whereQueryStr := fmt.Sprintf(" name = '%s' ", name)
+	res := db.Where(whereQueryStr).Find(&modelset)
+	if res.Error != nil {
+		return modelset, res.Error
+	}
+	return modelset, nil
+}
 
 func CreateModelset(modelset Modelset) error {
 	return db.Create(&modelset).Error
