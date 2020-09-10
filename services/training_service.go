@@ -70,8 +70,16 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	if configs.Config.InteractiveModeJob {
 		params["cmd"] = "sleep infinity" // use StartupFile, params instead
 	} else {
-
-		params["cmd"] = "python " + training.StartupFile
+		fileType, err := CheckStartFileType(training.StartupFile)
+		if fileType == FILETYPE_PYTHON {
+			params["cmd"] = "python " + training.StartupFile
+		} else if fileType == FILETYPE_SHELL {
+			params["cmd"] = "bash " + training.StartupFile
+		}
+		if err != nil {
+			fmt.Printf("startupfile is invalid[%+v]\n", err)
+			return "", err
+		}
 		for k, v := range training.Params {
 			if len(k) > 0 && len(v) > 0 {
 				params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
