@@ -324,6 +324,8 @@ definitions:
         $ref: '#/definitions/models.UnixTime'
       description:
         type: string
+      fullName:
+        type: string
       id:
         type: integer
       imageId:
@@ -2720,7 +2722,31 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
-  /ai_arts/api/saved_images:
+  /ai_arts/api/saved_images/:id:
+    delete:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete saved_image by id
+  /ai_arts/api/saved_imgs:
     get:
       parameters:
       - in: query
@@ -2778,30 +2804,7 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: create saved_image
-  /ai_arts/api/saved_images/:id:
-    delete:
-      parameters:
-      - description: saved image id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: success
-          schema:
-            $ref: '#/definitions/routers.APISuccessResp'
-        "400":
-          description: error
-          schema:
-            $ref: '#/definitions/routers.APIException'
-        "404":
-          description: not found
-          schema:
-            $ref: '#/definitions/routers.APIException'
-      summary: delete saved_image by id
+  /ai_arts/api/saved_imgs/:id:
     get:
       parameters:
       - description: saved image id

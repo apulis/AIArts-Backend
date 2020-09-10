@@ -31,7 +31,8 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 	name = trimImageName(name)
 	version = trimImageName(version)
 	imageName := configs.Config.PrivateRegistry + trimImageName(username) + name + ":" + version
-	cmd := "sudo docker commit " + containerId + imageName
+	cmd := "sudo docker commit " + containerId + " " + imageName
+	logger.Info("Running command: ", cmd)
 	res, err := runSShCmd(hostIp, cmd)
 	if err != nil {
 		logger.Error("Run ssh command result: ", res)
@@ -40,6 +41,7 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 
 	// 执行docker push
 	cmd = "sudo docker push " + imageName
+	logger.Info("Running command: ", cmd)
 	res, err = runSShCmd(hostIp, cmd)
 	if err != nil {
 		logger.Error("Run ssh command result: ", res)
@@ -54,8 +56,8 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 		Creator:     username,
 		FullName:    imageName,
 		IsPrivate:   isPrivate,
-		ContaindrId: containerId,
-		ImageId:     imageId,
+		ContaindrId: containerId[0:10],
+		ImageId:     imageId[0:10],
 	}
 
 	return models.CreateSavedImage(savedImage)

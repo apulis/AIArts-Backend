@@ -11,7 +11,7 @@ func AddGroupSavedImage(r *gin.Engine) {
 	group.Use(Auth())
 	group.GET("/", wrapper(lsSavedImages))
 	group.GET("/:id", wrapper(getSavedImage))
-	group.POST("/", wrapper(updateSavedImage))
+	group.POST("/", wrapper(createSavedImage))
 	group.POST("/:id", wrapper(updateSavedImage))
 	group.DELETE("/:id", wrapper(deleteSavedImage))
 }
@@ -58,7 +58,7 @@ type GetSavedImagesResp struct {
 // @Success 200 {object} GetSavedImagesResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/saved_images [get]
+// @Router /ai_arts/api/saved_imgs [get]
 func lsSavedImages(c *gin.Context) error {
 	var req lsSavedImagesReq
 	err := c.ShouldBindQuery(&req)
@@ -92,7 +92,7 @@ func lsSavedImages(c *gin.Context) error {
 // @Success 200 {object} GetSavedImageResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/saved_images/:id [get]
+// @Router /ai_arts/api/saved_imgs/:id [get]
 func getSavedImage(c *gin.Context) error {
 	var id savedImageId
 	err := c.ShouldBindUri(&id)
@@ -113,7 +113,7 @@ func getSavedImage(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/saved_images [post]
+// @Router /ai_arts/api/saved_imgs [post]
 func createSavedImage(c *gin.Context) error {
 	var req createSavedImageReq
 	err := c.ShouldBind(&req)
@@ -140,7 +140,7 @@ func createSavedImage(c *gin.Context) error {
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/saved_images/:id [post]
+// @Router /ai_arts/api/saved_imgs/:id [post]
 func updateSavedImage(c *gin.Context) error {
 	var id savedImageId
 	err := c.ShouldBindUri(&id)

@@ -2304,7 +2304,44 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/saved_images": {
+        "/ai_arts/api/saved_images/:id": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete saved_image by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "saved image id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APISuccessResp"
+                        }
+                    },
+                    "400": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/routers.APIException"
+                        }
+                    }
+                }
+            }
+        },
+        "/ai_arts/api/saved_imgs": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2396,7 +2433,7 @@ var doc = `{
                 }
             }
         },
-        "/ai_arts/api/saved_images/:id": {
+        "/ai_arts/api/saved_imgs/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2442,41 +2479,6 @@ var doc = `{
                         "type": "string",
                         "description": "saved_image description",
                         "name": "description",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APISuccessResp"
-                        }
-                    },
-                    "400": {
-                        "description": "error",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    },
-                    "404": {
-                        "description": "not found",
-                        "schema": {
-                            "$ref": "#/definitions/routers.APIException"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "delete saved_image by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "saved image id",
-                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -3701,6 +3703,9 @@ var doc = `{
                     "$ref": "#/definitions/models.UnixTime"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "fullName": {
                     "type": "string"
                 },
                 "id": {
