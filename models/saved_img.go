@@ -12,6 +12,7 @@ type SavedImage struct {
 	Version     string `gorm:"not null" json:"version"`
 	Description string `gorm:"type:text" json:"description"`
 	Creator     string `gorm:"not null" json:"creator"`
+	FullName    string `gorm:"not null" json:"fullName"`
 
 	IsPrivate   bool   `gorm:"not null" json:"isPrivate"`
 	ContaindrId string `gorm:"not null" json:"containerId"`

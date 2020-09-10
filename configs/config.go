@@ -19,6 +19,7 @@ type ProjectConfig struct {
 	Image              map[string][]string
 	InteractiveModeJob bool
 	PrivateRegistry    string
+	Imagesave          ImageSaveConfig
 }
 
 type LogConfig struct {
@@ -55,6 +56,13 @@ type InferenceConfig struct {
 type AuthConfig struct {
 	Url string
 	Key string
+}
+
+type ImageSaveConfig struct {
+	K8sconf string
+	Sshkey  string
+	Sshuser string
+	Sshport string
 }
 
 var Config ProjectConfig

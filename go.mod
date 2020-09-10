@@ -16,6 +16,7 @@ require (
 	github.com/go-openapi/swag v0.19.9 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gorilla/sessions v1.2.0 // indirect
+	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/gorm v1.9.14
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mailru/easyjson v0.7.1 // indirect
@@ -35,10 +36,16 @@ require (
 	github.com/urfave/cli v1.22.4 // indirect
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200723000907-a7c6fd066f6d // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0
+	k8s.io/api v0.19.1 // indirect
+	k8s.io/apimachinery v0.19.1
+	k8s.io/client-go v0.19.0
+	k8s.io/klog v1.0.0 // indirect
+	k8s.io/utils v0.0.0-20200821003339-5e75c0163111 // indirect
 )

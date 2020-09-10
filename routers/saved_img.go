@@ -121,7 +121,12 @@ func createSavedImage(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	err = services.CreateSavedImage(req.Name, req.Version, req.Description, req.JobId, req.IsPrivate)
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err = services.CreateSavedImage(req.Name, req.Version, req.Description, req.JobId, username, req.IsPrivate)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
