@@ -143,6 +143,7 @@ func AddDataset(c *gin.Context) error {
 	var dataset models.UpdateDataSet
 	projectId := c.Param("projectId")
 	err := c.ShouldBind(&dataset)
+	logger.Info(dataset)
 	if err != nil {
 		return ParameterError(err.Error())
 	}

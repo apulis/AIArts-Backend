@@ -25,9 +25,12 @@ const (
 	FILETYPE_TAR_GZ = ".tar.gz"
 	FILETYPE_TAR    = ".tar"
 	FILETYPE_ZIP    = ".zip"
+	FILETYPE_SHELL  = ".sh"
+	FILETYPE_PYTHON = ".py"
 )
 
 var FILETYPES_SUPPORTED = []string{FILETYPE_TAR_GZ, FILETYPE_TAR, FILETYPE_ZIP}
+var STARTFILETYPES_SUPPORTED = []string{FILETYPE_SHELL, FILETYPE_PYTHON}
 
 //解析zip包中的中文名称，utf8编码转为gb解决中文乱码
 func transformEncode(fileName string) string {

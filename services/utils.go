@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+
+
 func doRequest(url, method string, headers map[string]string, rawBody interface{}) ([]byte, error) {
 
 	var body io.Reader = nil
@@ -89,7 +91,6 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 
 // 如果配置了私有仓库，则添加私有仓库前缀
 func ConvertImage(image string) string {
-
 	imageName := strings.TrimSpace(image)
 	if len(configs.Config.PrivateRegistry) > 0 {
 		// 不带私有仓库前缀
@@ -101,7 +102,6 @@ func ConvertImage(image string) string {
 			}
 		}
 	}
-
 	return imageName
 }
 
@@ -115,4 +115,15 @@ func UnConvertImage(image string) string {
 		}
 	}
 	return imageName
+}
+
+//获取启动文件的类型sh或者python
+func CheckStartFileType(filename string) (string, error) {
+	for _, filetype := range STARTFILETYPES_SUPPORTED {
+		if strings.HasSuffix(filename, filetype) {
+			return filetype, nil
+		}
+	}
+	logger.Info("StartFile type not supported: ", filename)
+	return "", errors.New("StartFile type not supported")
 }

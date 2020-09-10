@@ -320,6 +320,31 @@ definitions:
       vcName:
         type: string
     type: object
+  models.SavedImage:
+    properties:
+      containerId:
+        type: string
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      imageId:
+        type: string
+      isPrivate:
+        type: boolean
+      name:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
+        type: string
+    type: object
   models.TemplateItem:
     properties:
       metaData:
@@ -896,6 +921,26 @@ definitions:
           $ref: '#/definitions/models.NodeStatus'
         type: array
     type: object
+  routers.GetSavedImageResp:
+    properties:
+      savedImages:
+        $ref: '#/definitions/models.SavedImage'
+    type: object
+  routers.GetSavedImagesResp:
+    properties:
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      savedImages:
+        items:
+          $ref: '#/definitions/models.SavedImage'
+        type: array
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
   routers.GetTemplateReq:
     properties:
       id:
@@ -1019,6 +1064,21 @@ definitions:
       status:
         type: string
     type: object
+  routers.VisualJobListRspUnit:
+    properties:
+      TensorboardLogDir:
+        type: string
+      createTime:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      jobName:
+        type: string
+      status:
+        type: string
+    type: object
   routers.createDatasetReq:
     properties:
       description:
@@ -1105,6 +1165,22 @@ definitions:
     required:
     - name
     - paramPath
+    type: object
+  routers.createSavedImageReq:
+    properties:
+      description:
+        type: string
+      isPrivate:
+        type: boolean
+      jobId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+    required:
+    - name
+    - version
     type: object
   routers.getEvaluationResp:
     properties:
@@ -2740,6 +2816,134 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
+  /ai_arts/api/saved_images:
+    get:
+      parameters:
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImagesResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved_images by id
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.createSavedImageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create saved_image
+  /ai_arts/api/saved_images/:id:
+    delete:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete saved_image by id
+    get:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImageResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved image by id
+    post:
+      parameters:
+      - description: saved_image description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update saved_image
   /ai_arts/api/templates:
     get:
       parameters:
