@@ -30,8 +30,9 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 	// 执行docker commit
 	name = trimImageName(name)
 	version = trimImageName(version)
-	imageName := configs.Config.PrivateRegistry + trimImageName(username) + name + ":" + version
-	cmd := "sudo docker commit " + containerId + " " + imageName
+	imageName := trimImageName(username) + "_" + name + ":" + version
+	fullName := configs.Config.PrivateRegistry + imageName
+	cmd := "sudo docker commit " + containerId + " " + fullName
 	logger.Info("Running docker-commit command: ", cmd)
 	res, err := runSShCmd(hostIp, cmd)
 	logger.Info("Run ssh command docker-commit result: ", res)
@@ -40,7 +41,7 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 	}
 
 	// 执行docker push
-	cmd = "sudo docker push " + imageName
+	cmd = "sudo docker push " + fullName
 	logger.Info("Running docker-push command: ", cmd)
 	res, err = runSShCmd(hostIp, cmd)
 	logger.Info("Run ssh command docker-push result: ", res)
