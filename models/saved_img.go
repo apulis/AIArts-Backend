@@ -28,8 +28,8 @@ func ListSavedImages(offset, limit int, orderBy, order, name, username string) (
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 
 	if name != "" {
-		whereQueryStr += "and name like '%" + name + "%' "
-		orQueryStr += "and name like '%" + name + "%'"
+		whereQueryStr += "and full_name like '%" + name + "%' "
+		orQueryStr += "and full_name like '%" + name + "%'"
 	}
 
 	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Or(orQueryStr).Find(&savedImages)
@@ -38,6 +38,17 @@ func ListSavedImages(offset, limit int, orderBy, order, name, username string) (
 	}
 	db.Model(&SavedImage{}).Where(whereQueryStr).Or(orQueryStr).Count(&total)
 	return savedImages, total, nil
+}
+
+func ListSavedImageByName(fullName string) ([]SavedImage, error) {
+	var savedImages []SavedImage
+
+	whereQueryStr := fmt.Sprintf("full_name = '%s' ", fullName)
+	res := db.Where(whereQueryStr).Find(&savedImages)
+	if res.Error != nil {
+		return savedImages, res.Error
+	}
+	return savedImages, nil
 }
 
 func GetSavedImage(id int) (SavedImage, error) {
