@@ -30,7 +30,7 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 	// 执行docker commit
 	name = trimImageName(name)
 	version = trimImageName(version)
-	imageName := trimImageName(username) + name + ":" + version
+	imageName := trimImageName(username) + "_" + name + ":" + version
 	fullName := configs.Config.PrivateRegistry + imageName
 	cmd := "sudo docker commit " + containerId + " " + fullName
 	logger.Info("Running docker-commit command: ", cmd)
