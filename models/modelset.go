@@ -64,6 +64,7 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 	}
 	if use != "" {
 		whereQueryStr += "and `use` like '" + use + "%' "
+
 	} else {
 		whereQueryStr += "and `use` not like 'Avisualis%' "
 	}

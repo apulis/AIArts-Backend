@@ -326,10 +326,12 @@ definitions:
         type: string
       createdAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       creator:
         type: string
       deletedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       description:
         type: string
       id:
@@ -342,6 +344,7 @@ definitions:
         type: string
       updatedAt:
         $ref: '#/definitions/models.UnixTime'
+        type: object
       version:
         type: string
     type: object
@@ -685,6 +688,24 @@ definitions:
       msg:
         type: string
     type: object
+  routers.AvisualisEdge:
+    properties:
+      source:
+        type: string
+      target:
+        type: string
+    type: object
+  routers.AvisualisNode:
+    properties:
+      config:
+        type: object
+      id:
+        type: string
+      idx:
+        type: integer
+      name:
+        type: string
+    type: object
   routers.CreateCodeEnvReq:
     properties:
       codePath:
@@ -925,6 +946,7 @@ definitions:
     properties:
       savedImages:
         $ref: '#/definitions/models.SavedImage'
+        type: object
     type: object
   routers.GetSavedImagesResp:
     properties:
@@ -1064,21 +1086,6 @@ definitions:
       status:
         type: string
     type: object
-  routers.VisualJobListRspUnit:
-    properties:
-      TensorboardLogDir:
-        type: string
-      createTime:
-        $ref: '#/definitions/models.UnixTime'
-      description:
-        type: string
-      id:
-        type: integer
-      jobName:
-        type: string
-      status:
-        type: string
-    type: object
   routers.createDatasetReq:
     properties:
       description:
@@ -1123,6 +1130,10 @@ definitions:
     type: object
   routers.createModelsetReq:
     properties:
+      arguments:
+        items:
+          $ref: '#/definitions/routers.AvisualisNode'
+        type: array
       codePath:
         type: string
       dataFormat:
@@ -1133,14 +1144,33 @@ definitions:
         type: string
       description:
         type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      edges:
+        items:
+          $ref: '#/definitions/routers.AvisualisEdge'
+        type: array
       engine:
         type: string
       isAdvance:
         type: boolean
       jobId:
         type: string
+      jobTrainingType:
+        description: 用于可视化建模平台直接启动训练任务
+        type: string
       name:
         type: string
+      nodes:
+        items:
+          $ref: '#/definitions/routers.AvisualisNode'
+        type: array
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
       outputPath:
         description: |-
           指定的模型参数路径
@@ -1164,7 +1194,6 @@ definitions:
         type: string
     required:
     - name
-    - paramPath
     type: object
   routers.createSavedImageReq:
     properties:
@@ -1274,6 +1303,26 @@ definitions:
         description: all
         type: string
     type: object
+  routers.lsSavedImagesReq:
+    properties:
+      name:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+    type: object
+  routers.modelsetUse:
+    properties:
+      use:
+        type: string
+    required:
+    - use
+    type: object
   routers.setFDInfoReq:
     properties:
       password:
@@ -1295,6 +1344,8 @@ definitions:
       datasetName:
         type: string
       datasetPath:
+        type: string
+      desc:
         type: string
       deviceNum:
         type: integer
@@ -2724,7 +2775,7 @@ paths:
       summary: get model by id
     post:
       parameters:
-      - description: json body
+      - description: jsonbody
         in: body
         name: body
         required: true
@@ -2816,6 +2867,29 @@ paths:
           schema:
             $ref: '#/definitions/routers.APIException'
       summary: update model
+  /ai_arts/api/models/:id/panel:
+    get:
+      parameters:
+      - in: query
+        name: use
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Avisualis_Classfication-Avisualis_ObjectDetection-Avisualis_SemanticSegmentation
+          schema:
+            $ref: '#/definitions/routers.getModelsetResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visualis panel
   /ai_arts/api/saved_images:
     get:
       parameters:

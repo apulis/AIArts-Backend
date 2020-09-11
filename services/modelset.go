@@ -77,7 +77,6 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		job, _ := GetTraining(creator, jobId)
 		var paramItem models.ParamsItem
 		paramItem = job.Params
-
 		if job != nil {
 			modelset.OutputPath = job.OutputPath
 			modelset.CodePath = job.CodePath
@@ -137,26 +136,28 @@ func GetPanel(use, username string) (interface{}, error) {
 	}
 	//分类获取panel
 	modelset, err := GetModelsetByName(use)
-	panelJson := gabs.New()
-	panelJson, _ = gabs.ParseJSON([]byte(modelset.Description))
+	panelJson, err := gabs.ParseJSON([]byte(modelset.Description))
+	if err != nil {
+		return "", err
+	}
 	//生成panel节点
 	input := gabs.New()
 	children := gabs.New()
 	for _, dataset := range datasets {
 		config := gabs.New()
-		config.Set("datasetPath", "key")
-		config.Set("disabled", "type")
-		config.Set(dataset.Path, "value")
-		children.ArrayAppend(config, dataset.Name)
+		_, _ = config.Set("data_path", "key")
+		_, _ = config.Set("disabled", "type")
+		_, _ = config.Set(dataset.Path, "value")
+		_ = children.ArrayAppend(config, dataset.Name)
 	}
-	input.Set("Input", "name")
-	input.ArrayAppend(children, "children")
-	panelJson.S("panel").SetIndex(input, 0)
+	_, _ = input.Set("Input", "name")
+	_ = input.ArrayAppend(children, "children")
+	_, _ = panelJson.S("panel").SetIndex(input, 0)
 
 	//加入启动训练任务所需要的节点
-	panelJson.Set(modelset.CodePath, "codePath")
-	panelJson.Set(modelset.Engine, "engine")
-	panelJson.Set(modelset.StartupFile, "startupFile")
+	_, _ = panelJson.Set(modelset.CodePath, "codePath")
+	_, _ = panelJson.Set(modelset.Engine, "engine")
+	_, _ = panelJson.Set(modelset.StartupFile, "startupFile")
 	if err != nil {
 		return "", err
 	}

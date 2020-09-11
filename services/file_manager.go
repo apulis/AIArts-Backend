@@ -27,6 +27,8 @@ const (
 	FILETYPE_ZIP    = ".zip"
 	FILETYPE_SHELL  = ".sh"
 	FILETYPE_PYTHON = ".py"
+	FILETYPE_JSON = ".json"
+
 )
 
 var FILETYPES_SUPPORTED = []string{FILETYPE_TAR_GZ, FILETYPE_TAR, FILETYPE_ZIP}
