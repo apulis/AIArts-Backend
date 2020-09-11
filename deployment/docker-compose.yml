@@ -8,6 +8,8 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - /root/AIArtsBackend/config.yaml:/root/config.yaml
+      - /etc/kubernetes/admin.conf:/root/.kube/config
+      - /home/dlwsadmin/.ssh:/root/.ssh
+      - ../config.yaml:/root/config.yaml
       - /dlwsdata/storage/:/data/
       - /dlwsdata/work/:/home/
