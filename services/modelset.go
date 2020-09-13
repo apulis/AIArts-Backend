@@ -57,6 +57,7 @@ type AvisualisNode struct {
 	IDX    int         `json:"idx"`
 	Config interface{} `json:"config"`
 }
+
 func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]models.Modelset, int, error) {
 
 	offset := count * (page - 1)
@@ -65,7 +66,7 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 }
 
 func CreateModelset(name, description, creator, version, jobId, codePath, paramPath string, isAdvance bool,
-	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile string) error {
+	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, deviceType string, deviceNum int) error {
 
 	//只能创建非预置模型
 	modelset := models.Modelset{
@@ -78,6 +79,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
 	}
+	//只能创建Avisualis模型
 	if use != "" {
 		var paramItem models.ParamsItem
 		paramItem = params
@@ -100,6 +102,8 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 			Precision:   precision,
 			OutputPath:  outputPath,
 			StartupFile: startupFile,
+			DeviceType:  deviceType,
+			DeviceNum:   deviceNum,
 		}
 	}
 	//获取训练作业输出模型的类型 job

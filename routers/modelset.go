@@ -41,10 +41,6 @@ type lsModelsetsReq struct {
 	Order     string `form:"order,default=desc"`
 }
 
-type updateModelsetReq struct {
-	Description string `json:"description" binding:"required"`
-}
-
 type getModelsetResp struct {
 	Model models.Modelset `json:"model"`
 }
@@ -161,15 +157,15 @@ func createModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	//如果上传模型文件检查模型文件是否存在
+	////如果上传模型文件检查路径是否存在
 	//if req.CodePath != "" {
 	//	err = services.CheckPathExists(req.CodePath)
 	//	if err != nil {
 	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	//	}
 	//}
+	////检查模型参数文件是否存在
 	//if req.ParamPath != "" {
-	//	//检查模型参数文件是否存在
 	//	err = services.CheckPathExists(req.ParamPath)
 	//	if err != nil {
 	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
@@ -188,7 +184,7 @@ func createModelset(c *gin.Context) error {
 		}
 	}
 	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile)
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile,req.DeviceType,req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -214,12 +210,17 @@ func updateModelset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	username := getUsername(c)
+	if req.JobId != "" {
+		req.JobTrainingType = models.TrainingTypeRegular
+		job, _ := services.GetTraining(username, req.JobId)
+		req.JobTrainingType = job.JobTrainingType
+		_ = services.DeleteTraining(username, req.JobId)
+	}
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
-	username := getUsername(c)
 	if req.Use != "" {
-
 		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err

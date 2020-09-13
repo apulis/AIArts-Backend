@@ -94,25 +94,26 @@ func createEvaluation(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	//检查数据集文件是否存在
-	if req.DatasetPath != "" {
-		err = services.CheckPathExists(req.DatasetPath)
-		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-		}
-	}
-
-	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.CodePath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
-	//检查输出路径是否存在自动去创建
-	//err = services.CheckPathExists(req.OutputPath)
+	////检查数据集文件是否存在
+	//if req.DatasetPath != "" {
+	//	err = services.CheckPathExists(req.DatasetPath)
+	//	if err != nil {
+	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//	}
+	//}
+	//
+	////检查模型参数文件是否存在
+	//err = services.CheckPathExists(req.CodePath)
 	//if err != nil {
 	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	//}
-	//
+
+	////检查输出路径是否存在自动去创建
+	////err = services.CheckPathExists(req.OutputPath)
+	////if err != nil {
+	////	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	////}
+	////
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())

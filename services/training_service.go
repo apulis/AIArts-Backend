@@ -170,6 +170,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.DeviceType = job.JobParams.GpuType
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
+	training.JobTrainingType = job.JobParams.Jobtrainingtype
 
 	training.Params = nil
 	training.CodePath = job.JobParams.CodePath
