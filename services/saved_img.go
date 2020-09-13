@@ -14,10 +14,10 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func ListSavedImages(page, count int, orderBy, order, name, username string) ([]models.SavedImage, int, error) {
+func ListSavedImages(page, count int, orderBy, order, imageName, username string) ([]models.SavedImage, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListSavedImages(offset, limit, orderBy, order, name, username)
+	return models.ListSavedImages(offset, limit, orderBy, order, imageName, username)
 }
 
 func CreateSavedImage(name, version, description, jobId, username string, isPrivate bool) error {
@@ -60,6 +60,15 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 		IsPrivate:   isPrivate,
 		ContaindrId: containerId[0:10],
 		ImageId:     imageId[0:10],
+	}
+
+	// 删除重名镜像
+	dupicatedImgs, err := models.ListSavedImageByName(imageName)
+	if err != nil {
+		return err
+	}
+	for _, img := range dupicatedImgs {
+		models.DeleteSavedImage(&img)
 	}
 
 	return models.CreateSavedImage(savedImage)
