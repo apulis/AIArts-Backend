@@ -145,7 +145,7 @@ func getModelset(c *gin.Context) error {
 
 // @Summary create model
 // @Produce  json
-// @Param body body CreateModelsetReq true "jsonbody"
+// @Param body body services.CreateModelsetReq true "jsonbody"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
