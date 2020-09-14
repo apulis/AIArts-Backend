@@ -127,7 +127,19 @@ func createTraining(c *gin.Context) error {
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
+	//检查数据集文件是否存在
+	if req.DatasetPath != "" {
+		err = services.CheckPathExists(req.DatasetPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
 
+	//检查模型启动文件是否存在
+	err = services.CheckPathExists(req.StartupFile)
+	if err != nil {
+		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	}
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
