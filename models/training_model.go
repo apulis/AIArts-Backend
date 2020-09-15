@@ -17,6 +17,7 @@ type Training struct {
 	Params      map[string]string `json:"params"`
 	Desc        string            `json:"desc"`
 	Status      string            `json:"status"`
+	VisualPath string            `json:"visualPath"`
 	CreateTime  string            `json:"createTime"`
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`

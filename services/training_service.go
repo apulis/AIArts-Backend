@@ -53,7 +53,10 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 }
 
 func CreateTraining(userName string, training models.Training) (string, error) {
-
+	//params中加入visualpath
+	if training.VisualPath != "" {
+		training.Params["visualPath"] = training.VisualPath
+	}
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 

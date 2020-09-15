@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type Modelset struct {
@@ -39,6 +40,8 @@ type Modelset struct {
 	OutputPath string `json:"outputPath"`
 	//启动文件路径
 	StartupFile string `json:"startupFile"`
+	//模型路径
+	VisualPath string `json:"visualPath"`
 	//评估训练任务id
 	EvaluationId string `json:"evaluationId"`
 	// 评估设备类型
@@ -62,9 +65,8 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 	if status != "" {
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
-	if use != "" {
+	if strings.HasPrefix(use,`Avisualis`) {
 		whereQueryStr += "and `use` like '" + use + "%' "
-
 	} else {
 		whereQueryStr += "and `use` not like 'Avisualis%' "
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/Jeffail/gabs/v2"
 	"github.com/apulis/AIArtsBackend/models"
 	"os"
+	"strings"
 )
 
 const (
@@ -35,6 +36,7 @@ type CreateModelsetReq struct {
 	OutputPath string `json:"outputPath"`
 	//启动文件路径
 	StartupFile string `json:"startupFile"`
+	VisualPath  string `json:"visualPath"`
 
 	//用于可视化建模平台直接启动训练任务
 	JobTrainingType string          `json:"jobTrainingType"`
@@ -66,7 +68,7 @@ func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name,
 }
 
 func CreateModelset(name, description, creator, version, jobId, codePath, paramPath string, isAdvance bool,
-	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, deviceType string, deviceNum int) error {
+	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, deviceType, visualPath string, deviceNum int) error {
 
 	//只能创建非预置模型
 	modelset := models.Modelset{
@@ -78,9 +80,10 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		Status:      MODELSET_STATUS_NORMAL,
 		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
+		VisualPath:  visualPath,
 	}
 	//只能创建Avisualis模型
-	if use != "" {
+	if strings.HasPrefix(use, `Avisualis`) {
 		var paramItem models.ParamsItem
 		paramItem = params
 		modelset = models.Modelset{
@@ -118,6 +121,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 			modelset.StartupFile = job.StartupFile
 			modelset.Params = &paramItem
 			modelset.Engine = job.Engine
+			modelset.VisualPath = job.Params["visualPath"]
 		} else {
 			return fmt.Errorf("the job id is invaild")
 		}
@@ -128,7 +132,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 }
 
 func UpdateModelset(id int, name, description, version, jobId, codePath, paramPath,
-	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile string) error {
+	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, visualPath string) error {
 	modelset, err := models.GetModelsetById(id)
 	if err != nil {
 		return err
@@ -143,6 +147,7 @@ func UpdateModelset(id int, name, description, version, jobId, codePath, paramPa
 	modelset.Params = &paramItem
 	modelset.Name = name
 	modelset.Version = version
+	modelset.Engine = engine
 	modelset.JobId = jobId
 	modelset.ParamPath = paramPath
 	modelset.Use = use
@@ -150,7 +155,7 @@ func UpdateModelset(id int, name, description, version, jobId, codePath, paramPa
 	modelset.DataFormat = dataFormat
 	modelset.DatasetName = datasetName
 	modelset.Precision = precision
-
+	modelset.VisualPath = visualPath
 	return models.UpdateModelset(&modelset)
 }
 
@@ -179,41 +184,50 @@ func DeleteModelset(id int) error {
 	//}
 	return models.DeleteModelset(&modelset)
 }
-func GetPanel(use, username string) (interface{}, error) {
+func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, error) {
 	//获取可用的数据集
 	datasets, total, err := ListDatasets(1, 999, "created_at", "desc", "", "all", true, username)
 	_, _, datasets = AppendAnnoDataset(datasets, total, 1, 999, "created_at", "desc")
 	if err != nil {
-		return "", err
+		return modelset, err
 	}
 	//分类获取panel
-	modelset, err := GetModelsetByName(use)
-	panelJson, err := gabs.ParseJSON([]byte(modelset.Description))
+	paramString, _ := json.Marshal(modelset.Params)
+	paramJson, err := gabs.ParseJSON(paramString)
 	if err != nil {
-		return "", err
+		return modelset, err
 	}
-	//生成panel节点
+	//去掉\保证可以解析
+	panelString := paramJson.S("panel").String()
+	panelString = strings.TrimPrefix(panelString, `"`)
+	panelString = strings.TrimSuffix(panelString, `"`)
+	panelString = strings.ReplaceAll(panelString, `\`, ``)
+	panelJson, err := gabs.ParseJSON([]byte(panelString))
+
+	//生成input节点，并插入数据集
 	input := gabs.New()
 	for _, dataset := range datasets {
 		config := gabs.New()
 		children := gabs.New()
-		_, _ = config.Set("data_path", "key")
-		_, _ = config.Set("disabled", "type")
-		_, _ = config.Set(dataset.Path, "value")
+		_, err = config.Set("data_path", "key")
+		_, err = config.Set("disabled", "type")
+		_, err = config.Set(dataset.Path, "value")
 		_ = children.ArrayAppend(config, dataset.Name)
 		_ = input.ArrayAppend(children, "children")
 	}
-	_, _ = input.Set("Input", "name")
-	_, _ = panelJson.S("panel").SetIndex(input, 0)
+	_, err = input.Set("Input", "name")
+	_, err = panelJson.SetIndex(input, 0)
 
-	//加入启动训练任务所需要的节点
-	_, _ = panelJson.Set(modelset.CodePath, "codePath")
-	_, _ = panelJson.Set(modelset.Engine, "engine")
-	_, _ = panelJson.Set(modelset.StartupFile, "startupFile")
+	//加入修改好后的panel
+	_, err = paramJson.Set(panelJson.String(), "panel")
+	var params models.ParamsItem
+	err = json.Unmarshal([]byte(paramJson.String()), &params)
+	modelset.Params = &params
+
 	if err != nil {
-		return "", err
+		return modelset, err
 	}
-	return panelJson.Data(), nil
+	return modelset, nil
 }
 
 func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {

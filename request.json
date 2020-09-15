@@ -1,133 +1,39 @@
 {
-  "panel": [
-    {},
-    {
-      "name": "Backbone",
-      "children": [
-        {
-          "ResNet": [
-            {
-              "key": "depth",
-              "type": "select",
-              "value": 50,
-              "options": [
-                50,
-                101,
-                152
-              ]
-            }
-          ]
-        },
-        {
-          "ResNeXt": [
-            {
-              "key": "depth",
-              "type": "select",
-              "value": 50,
-              "options": [
-                50,
-                101,
-                152
-              ]
-            }
-          ]
-        },
-        {
-          "SEResNet": [
-            {
-              "key": "depth",
-              "type": "select",
-              "value": 50,
-              "options": [
-                50,
-                101,
-                152
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Neck",
-      "children": [
-        {
-          "AdaptiveAvgMaxPool2d": []
-        },
-        {
-          "AdaptiveCatAvgMaxPool2d": []
-        },
-        {
-          "GlobalAveragePooling": []
-        }
-      ]
-    },
-    {
-      "name": "Head",
-      "children": [
-        {
-          "LinearClsHead": [
-            {
-              "key": "num_classes",
-              "type": "number",
-              "value": 100,
-              "options":
-            },
-            {
-              "key": "topk",
-              "type": "string",
-              "value": "1,5"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Optimizer",
-      "children": [
-        {
-          "SGD": [
-            {
-              "key": "learning_rate",
-              "type": "number",
-              "value": 0.001
-            }
-          ]
-        },
-        {
-          "ADAM": [
-            {
-              "key": "learning_rate",
-              "type": "number",
-              "value": 0.001
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Output",
-      "children": [
-        {
-          "runtime": [
-            {
-              "key": "work_dir",
-              "type": "string",
-              "value": "./work_dir"
-            },
-            {
-              "key": "batch_size",
-              "type": "number",
-              "value": 4
-            },
-            {
-              "key": "total_epochs",
-              "type": "number",
-              "value": 100
-            }
-          ]
-        }
-      ]
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "model": {
+      "id": 31,
+      "createdAt": 1600137116000,
+      "updatedAt": 1600137116000,
+      "deletedAt": null,
+      "name": "test123",
+      "description": "111",
+      "creator": "admin",
+      "version": "0.0.1",
+      "status": "normal",
+      "size": 0,
+      "use": "Avisualis_Classfication",
+      "jobId": "cd853b36-72f6-4311-a721-2b579d20f4df",
+      "dataFormat": "",
+      "datasetName": "",
+      "datasetPath": "/data/dataset/storage/1600078328240",
+      "params": {
+        "edges": "[{\"source\":\"Input-ant-vs-bee\",\"target\":\"Backbone-ResNet\"},{\"source\":\"Backbone-ResNet\",\"target\":\"Neck-AdaptiveAvgMaxPool2d\"},{\"source\":\"Neck-AdaptiveAvgMaxPool2d\",\"target\":\"Head-LinearClsHead\"},{\"source\":\"Head-LinearClsHead\",\"target\":\"Optimizer-SGD\"},{\"source\":\"Optimizer-SGD\",\"target\":\"Output-runtime\"}]",
+        "nodes": "[{\"id\":\"Input\",\"name\":\"ant-vs-bee\",\"idx\":0,\"config\":[{\"key\":\"data_path\",\"type\":\"disabled\",\"value\":\"/data/dataset/storage/1600078328240\"}]},{\"id\":\"Backbone\",\"name\":\"ResNet\",\"idx\":1,\"config\":[{\"key\":\"depth\",\"options\":[50,101,152],\"type\":\"select\",\"value\":50}]},{\"id\":\"Neck\",\"name\":\"AdaptiveAvgMaxPool2d\",\"idx\":2,\"config\":[]},{\"id\":\"Head\",\"name\":\"LinearClsHead\",\"idx\":3,\"config\":[{\"key\":\"num_classes\",\"type\":\"number\",\"value\":2}]},{\"id\":\"Optimizer\",\"name\":\"SGD\",\"idx\":4,\"config\":[{\"key\":\"learning_rate\",\"type\":\"number\",\"value\":0.001}]},{\"id\":\"Output\",\"name\":\"runtime\",\"idx\":5,\"config\":[{\"key\":\"work_dir\",\"type\":\"string\",\"value\":\"/home/admin/work_dir\"},{\"key\":\"batch_size\",\"type\":\"number\",\"value\":8},{\"key\":\"total_epochs\",\"type\":\"number\",\"value\":6}]}]",
+        "panel": "[{},{ \"name\": \"Backbone\", \"children\": [{\"ResNet\": [ {\"key\": \"depth\",\"type\": \"select\",\"value\": 50,\"options\": [50,101,152] }]},{\"ResNeXt\": [ {\"key\": \"depth\",\"type\": \"select\",\"value\": 50,\"options\": [50,101,152] }]},{\"SEResNet\": [ {\"key\": \"depth\",\"type\": \"select\",\"value\": 50,\"options\": [50,101,152] }]} ]},{ \"name\": \"Neck\", \"children\": [{\"AdaptiveAvgMaxPool2d\": []},{\"AdaptiveCatAvgMaxPool2d\": []},{\"GlobalAveragePooling\": []} ]},{ \"name\": \"Head\", \"children\": [{\"LinearClsHead\": [ {\"key\": \"num_classes\",\"type\": \"number\",\"value\": 2 }]} ]},{ \"name\": \"Optimizer\", \"children\": [{\"SGD\": [ {\"key\": \"learning_rate\",\"type\": \"number\",\"value\": 0.001 }]},{\"ADAM\": [ {\"key\": \"learning_rate\",\"type\": \"number\",\"value\": 0.001 }]} ]},{ \"name\": \"Output\", \"children\": [{\"runtime\": [ {\"key\": \"work_dir\",\"type\": \"string\",\"value\": \"/home/admin/work_dir\" }, {\"key\": \"batch_size\",\"type\": \"number\",\"value\": 8 }, {\"key\": \"total_epochs\",\"type\": \"number\",\"value\": 6 }]} ]}\n ]",
+        "pipeline_config": "/data/premodel/code/ApulisVision/panel.json"
+      },
+      "engine": "apulistech/apulisvision",
+      "precision": "",
+      "isAdvance": false,
+      "codePath": "/data/premodel/code/ApulisVision/",
+      "paramPath": "/home/admin/work_dir",
+      "outputPath": "/home/admin/work_dir",
+      "startupFile": "/data/premodel/code/ApulisVision/tools/train_cls.py",
+      "evaluationId": "",
+      "deviceType": "nvidia_gpu_amd64",
+      "deviceNum": 1
     }
-  ]
+  }
 }
