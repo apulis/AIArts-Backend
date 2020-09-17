@@ -232,11 +232,9 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	return modelset, nil
 }
 
-func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {
-
+func CreateAvisualisTraining(req CreateModelsetReq, username string) (string, error) {
 	//存储节点json
 	nodesBytes, _ := json.Marshal(req.Nodes)
-	edgesBytes, _ := json.Marshal(req.Edges)
 
 	//去掉nodes没用的节点并存入json
 	pipelineConfigPath, err := GetModelTempPath(FILETYPE_JSON)
@@ -248,9 +246,9 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	defer f.Close()
 
 	//把数据传入params后端算法只需要pipeline_config
-	req.Params["pipeline_config"] = pipelineConfigPath
-
-	req.Params["pipeline_config"] = "/data/premodel/code/ApulisVision/panel.json"
+	trainParams := make(map[string]string)
+	trainParams["pipeline_config"] = pipelineConfigPath
+	//trainParams["pipeline_config"] = "/data/premodel/code/ApulisVision/panel.json"
 
 	//baseconfig待定，
 	//req.Params["config"] = req.CodePath
@@ -263,7 +261,7 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 		StartupFile:     req.StartupFile,
 		OutputPath:      req.OutputPath,
 		DatasetPath:     req.DatasetPath,
-		Params:          req.Params,
+		Params:          trainParams,
 		Desc:            req.Description,
 		NumPs:           req.NumPs,
 		NumPsWorker:     req.NumPsWorker,
@@ -274,12 +272,8 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//启动训练作业
 	jobId, err := CreateTraining(username, training)
 	if err != nil {
-		return req, err
+		return jobId, err
 	}
-	req.JobId = jobId
 	//nodes和edges只用存储然后传给前端
-	req.Params["nodes"] = string(nodesBytes)
-	req.Params["edges"] = string(edgesBytes)
-
-	return req, nil
+	return jobId, nil
 }
