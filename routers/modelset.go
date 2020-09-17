@@ -40,7 +40,6 @@ type lsModelsetsReq struct {
 
 type getModelsetResp struct {
 	Model    models.Modelset  `json:"model"`
-	Datasets []models.Dataset `json:"datasets"`
 }
 
 type GetModelsetsResp struct {
@@ -120,6 +119,14 @@ func getModelset(c *gin.Context) error {
 	//插入数据集面板
 	if strings.HasPrefix(modelset.Use, `Avisualis`) {
 		modelset, err = services.GeneratePanel(modelset, username)
+		if err != nil {
+			return err
+		}
+		//如果有Jobid
+		//if modelset.JobId != "" {
+		//	//获取新的training
+		//	training, _ := services.GetTraining(username, modelset.JobId)
+		//}
 	}
 	data := getModelsetResp{Model: modelset}
 	return SuccessResp(c, data)
@@ -166,7 +173,7 @@ func createModelset(c *gin.Context) error {
 		}
 	}
 	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath, req.DeviceType, req.DeviceNum)
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile,  req.DeviceType,req.VisualPath, req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -196,19 +203,18 @@ func updateModelset(c *gin.Context) error {
 
 	//更新Avisualis任务
 	if strings.HasPrefix(req.Use, `Avisualis`) {
+		if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
+			return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+		}
 		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err
 		}
 		if req.JobId != "" {
-			req.JobTrainingType = models.TrainingTypeRegular
-			job, _ := services.GetTraining(username, req.JobId)
-			req.JobTrainingType = job.JobTrainingType
+			//重启新的training
 			_ = services.DeleteTraining(username, req.JobId)
 		}
-		if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
-			return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
-		}
+
 	}
 	err = services.UpdateModelset(id.ID, req.Name, req.Description, "0.0.1", req.JobId, req.CodePath, req.ParamPath,
 		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath)

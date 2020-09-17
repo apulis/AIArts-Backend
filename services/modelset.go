@@ -82,6 +82,7 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
 		VisualPath:  visualPath,
+
 	}
 	//只能创建Avisualis模型
 	if strings.HasPrefix(use, `Avisualis`) {
@@ -247,7 +248,6 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	defer f.Close()
 
 	//把数据传入params后端算法只需要pipeline_config
-	req.Params = make(map[string]string)
 	req.Params["pipeline_config"] = pipelineConfigPath
 
 	req.Params["pipeline_config"] = "/data/premodel/code/ApulisVision/panel.json"
@@ -280,7 +280,6 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//nodes和edges只用存储然后传给前端
 	req.Params["nodes"] = string(nodesBytes)
 	req.Params["edges"] = string(edgesBytes)
-	req.Params["panel"] = req.Panel
 
 	return req, nil
 }
