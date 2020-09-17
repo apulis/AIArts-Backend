@@ -39,7 +39,8 @@ type lsModelsetsReq struct {
 }
 
 type getModelsetResp struct {
-	Model    models.Modelset  `json:"model"`
+	Model    models.Modelset `json:"model"`
+	Training models.Training `json:"training"`
 }
 
 type GetModelsetsResp struct {
@@ -105,6 +106,7 @@ func lsModelsets(c *gin.Context) error {
 func getModelset(c *gin.Context) error {
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
+	var training *models.Training
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -123,12 +125,14 @@ func getModelset(c *gin.Context) error {
 			return err
 		}
 		//如果有Jobid
-		//if modelset.JobId != "" {
-		//	//获取新的training
-		//	training, _ := services.GetTraining(username, modelset.JobId)
-		//}
+		if modelset.JobId != "" {
+			//获取新的training
+			training, _ = services.GetTraining(username, modelset.JobId)
+			data := getModelsetResp{Model: modelset, Training: *training}
+			return SuccessResp(c, data)
+		}
 	}
-	data := getModelsetResp{Model: modelset}
+	data := getModelsetResp{Model: modelset, Training: *training}
 	return SuccessResp(c, data)
 }
 
@@ -173,7 +177,7 @@ func createModelset(c *gin.Context) error {
 		}
 	}
 	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile,  req.DeviceType,req.VisualPath, req.DeviceNum)
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.DeviceType, req.VisualPath, req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
