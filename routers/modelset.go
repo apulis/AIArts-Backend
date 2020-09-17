@@ -73,7 +73,7 @@ func lsModelsets(c *gin.Context) error {
 	}
 
 	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.IsAdvance, req.Name, req.Status, req.Use, username)
-	if strings.HasPrefix(req.Use,`Avisualis`) {
+	if strings.HasPrefix(req.Use, `Avisualis`) {
 		for i := 0; i < len(modelsets); i++ {
 			training, err := services.GetTraining(username, modelsets[i].JobId)
 			if err != nil {
@@ -118,7 +118,9 @@ func getModelset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 	//插入数据集面板
-	modelset, err = services.GeneratePanel(modelset, username)
+	if strings.HasPrefix(modelset.Use, `Avisualis`) {
+		modelset, err = services.GeneratePanel(modelset, username)
+	}
 	data := getModelsetResp{Model: modelset}
 	return SuccessResp(c, data)
 }
@@ -157,14 +159,14 @@ func createModelset(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	if strings.HasPrefix(req.Use,`Avisualis`) {
+	if strings.HasPrefix(req.Use, `Avisualis`) {
 		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err
 		}
 	}
 	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile,req.VisualPath, req.DeviceType, req.DeviceNum)
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath, req.DeviceType, req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -193,7 +195,7 @@ func updateModelset(c *gin.Context) error {
 	username := getUsername(c)
 
 	//更新Avisualis任务
-	if strings.HasPrefix(req.Use,`Avisualis`) {
+	if strings.HasPrefix(req.Use, `Avisualis`) {
 		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err
@@ -209,7 +211,7 @@ func updateModelset(c *gin.Context) error {
 		}
 	}
 	err = services.UpdateModelset(id.ID, req.Name, req.Description, "0.0.1", req.JobId, req.CodePath, req.ParamPath,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile,req.VisualPath)
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

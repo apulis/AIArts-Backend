@@ -45,8 +45,9 @@ type CreateModelsetReq struct {
 	DeviceType      string          `json:"deviceType"`
 	DeviceNum       int             `json:"deviceNum"`
 	Nodes           []AvisualisNode `json:"nodes"`
-	Arguments       []AvisualisNode `json:"arguments"`
 	Edges           []AvisualisEdge `json:"edges"`
+	Panel           string `json:"panel"`
+
 }
 
 type AvisualisEdge struct {
@@ -279,6 +280,7 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//nodes和edges只用存储然后传给前端
 	req.Params["nodes"] = string(nodesBytes)
 	req.Params["edges"] = string(edgesBytes)
+	req.Params["panel"] = req.Panel
 
 	return req, nil
 }
