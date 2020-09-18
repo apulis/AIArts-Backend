@@ -151,19 +151,19 @@ func createModelset(c *gin.Context) error {
 	}
 
 	//如果上传模型文件检查路径是否存在
-	//if req.CodePath != "" {
-	//	err = services.CheckPathExists(req.CodePath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
-	////检查模型参数文件是否存在
-	//if req.ParamPath != "" {
-	//	err = services.CheckPathExists(req.ParamPath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
+	if req.CodePath != "" {
+		err = services.CheckPathExists(req.CodePath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
+	//检查模型参数文件是否存在
+	if req.ParamPath != "" {
+		err = services.CheckPathExists(req.ParamPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
 
 	username := getUsername(c)
 	if len(username) == 0 {
