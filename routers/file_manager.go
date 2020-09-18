@@ -74,7 +74,7 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
 	}
 	if isPrivate=="false"{
-		os.Chmod(unzippedPath,777)
+		_ = os.Chmod(unzippedPath, os.ModePerm)
 	}
 	return SuccessResp(c, UploadFileResp{Path: unzippedPath})
 }
