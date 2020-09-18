@@ -232,9 +232,10 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	return modelset, nil
 }
 
-func CreateAvisualisTraining(req CreateModelsetReq, username string) (string, error) {
+func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {
 	//存储节点json
 	nodesBytes, _ := json.Marshal(req.Nodes)
+	edgesBytes, _ := json.Marshal(req.Edges)
 
 	//去掉nodes没用的节点并存入json
 	pipelineConfigPath, err := GetModelTempPath(FILETYPE_JSON)
@@ -271,9 +272,13 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (string, er
 	}
 	//启动训练作业
 	jobId, err := CreateTraining(username, training)
+	//panel不用变
+	req.JobId=jobId
+	req.Params["nodes"]=string(nodesBytes)
+	req.Params["edges"]=string(edgesBytes)
 	if err != nil {
-		return jobId, err
+		return req, err
 	}
 	//nodes和edges只用存储然后传给前端
-	return jobId, nil
+	return req, nil
 }

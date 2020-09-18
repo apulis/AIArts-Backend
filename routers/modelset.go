@@ -39,7 +39,7 @@ type lsModelsetsReq struct {
 }
 
 type getModelsetResp struct {
-	Model    models.Modelset `json:"model"`
+	Model    models.Modelset  `json:"model"`
 	Training *models.Training `json:"training"`
 }
 
@@ -151,19 +151,19 @@ func createModelset(c *gin.Context) error {
 	}
 
 	//如果上传模型文件检查路径是否存在
-	if req.CodePath != "" {
-		err = services.CheckPathExists(req.CodePath)
-		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-		}
-	}
-	//检查模型参数文件是否存在
-	if req.ParamPath != "" {
-		err = services.CheckPathExists(req.ParamPath)
-		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-		}
-	}
+	//if req.CodePath != "" {
+	//	err = services.CheckPathExists(req.CodePath)
+	//	if err != nil {
+	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//	}
+	//}
+	////检查模型参数文件是否存在
+	//if req.ParamPath != "" {
+	//	err = services.CheckPathExists(req.ParamPath)
+	//	if err != nil {
+	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//	}
+	//}
 
 	username := getUsername(c)
 	if len(username) == 0 {
@@ -171,8 +171,7 @@ func createModelset(c *gin.Context) error {
 	}
 
 	if strings.HasPrefix(req.Use, `Avisualis`) {
-		jobId, err := services.CreateAvisualisTraining(req, username)
-		req.JobId = jobId
+		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err
 		}
@@ -215,11 +214,11 @@ func updateModelset(c *gin.Context) error {
 			//重启新的training
 			_ = services.DeleteTraining(username, req.JobId)
 		}
-		jobId, err := services.CreateAvisualisTraining(req, username)
+		//更新节点的parma配置节点
+		req, err = services.CreateAvisualisTraining(req, username)
 		if err != nil {
 			return err
 		}
-		req.JobId = jobId
 	}
 	err = services.UpdateModelset(id.ID, req.Name, req.Description, "0.0.1", req.JobId, req.CodePath, req.ParamPath,
 		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath)
