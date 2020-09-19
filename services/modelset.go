@@ -46,8 +46,7 @@ type CreateModelsetReq struct {
 	DeviceNum       int             `json:"deviceNum"`
 	Nodes           []AvisualisNode `json:"nodes"`
 	Edges           []AvisualisEdge `json:"edges"`
-	Panel           string `json:"panel"`
-
+	Panel           string          `json:"panel"`
 }
 
 type AvisualisEdge struct {
@@ -82,7 +81,6 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 		IsAdvance:   isAdvance,
 		ParamPath:   paramPath,
 		VisualPath:  visualPath,
-
 	}
 	//只能创建Avisualis模型
 	if strings.HasPrefix(use, `Avisualis`) {
@@ -246,23 +244,20 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	_, err = f.Write(nodesBytes)
 	defer f.Close()
 
-	//把数据传入params后端算法只需要pipeline_config
-	trainParams := make(map[string]string)
-	trainParams["pipeline_config"] = pipelineConfigPath
-	//trainParams["pipeline_config"] = "/data/premodel/code/ApulisVision/panel.json"
-
+	//把数据传入params后端算法只需要pipeline_config_path
 	//baseconfig待定，
 	//req.Params["config"] = req.CodePath
-
 	training := models.Training{
-		Id:              req.JobId,
-		Name:            req.Name,
-		Engine:          req.Engine,
-		CodePath:        req.CodePath,
-		StartupFile:     req.StartupFile,
-		OutputPath:      req.OutputPath,
-		DatasetPath:     req.DatasetPath,
-		Params:          trainParams,
+		Id:          req.JobId,
+		Name:        req.Name,
+		Engine:      req.Engine,
+		CodePath:    req.CodePath,
+		StartupFile: req.StartupFile,
+		OutputPath:  req.OutputPath,
+		DatasetPath: req.DatasetPath,
+		Params: map[string]string{
+			"pipeline_config": pipelineConfigPath,
+		},
 		Desc:            req.Description,
 		NumPs:           req.NumPs,
 		NumPsWorker:     req.NumPsWorker,
@@ -273,9 +268,10 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//启动训练作业
 	jobId, err := CreateTraining(username, training)
 	//panel不用变
-	req.JobId=jobId
-	req.Params["nodes"]=string(nodesBytes)
-	req.Params["edges"]=string(edgesBytes)
+	req.JobId = jobId
+	req.Params["nodes"] = pipelineConfigPath
+	req.Params["nodes"] = string(nodesBytes)
+	req.Params["edges"] = string(edgesBytes)
 	if err != nil {
 		return req, err
 	}
