@@ -269,7 +269,7 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	jobId, err := CreateTraining(username, training)
 	//panel不用变
 	req.JobId = jobId
-	req.Params["nodes"] = pipelineConfigPath
+	req.Params["pipeline_config"] = pipelineConfigPath
 	req.Params["nodes"] = string(nodesBytes)
 	req.Params["edges"] = string(edgesBytes)
 	if err != nil {
