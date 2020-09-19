@@ -25,6 +25,7 @@ type Evaluation struct {
 	DatasetName string            `json:"datasetName"`
 	Status      string            `json:"status"`
 	CreateTime  string            `json:"createTime"`
+	Desc        string            `json:"desc"`
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
@@ -41,7 +42,16 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum
 	params["cmd"] = "" // use StartupFile, params instead
-	params["cmd"] = "python " + evaluation.StartupFile
+	fileType, err := CheckStartFileType(evaluation.StartupFile)
+	if fileType == FILETYPE_PYTHON {
+		params["cmd"] = "python " + evaluation.StartupFile
+	} else if fileType == FILETYPE_SHELL {
+		params["cmd"] = "bash " + evaluation.StartupFile
+	}
+	if err != nil {
+		fmt.Printf("startupfile is invalid[%+v]\n", err)
+		return "", err
+	}
 	if len(evaluation.DatasetPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --data_path " + evaluation.DatasetPath
 	}
@@ -78,7 +88,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName
 	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	err = DoRequest(url, "POST", nil, params, id)
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return "", err
@@ -190,13 +200,13 @@ func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
 	return jobLog, nil
 }
 
-func GetRegexpLog(log string) (map[string]string,map[string]string) {
+func GetRegexpLog(log string) (map[string]string, map[string]string) {
 	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")
 	recall_5_reg, _ := regexp.Compile("Recall_5\\[(.*?)\\]")
 	recall_reg, _ := regexp.Compile("Recall\\[(.*?)\\]")
 	precision_reg, _ := regexp.Compile("Precision\\[(.*?)\\]")
 	indicator := map[string]string{}
-	confusion:= map[string]string{}
+	confusion := map[string]string{}
 	if len(recall_reg.FindStringSubmatch(log)) > 1 {
 		indicator["Recall"] = recall_reg.FindStringSubmatch(log)[1]
 	}
@@ -321,6 +331,5 @@ func GetRegexpLog(log string) (map[string]string,map[string]string) {
 		indicator["Accuracy"] = acc_mxnet_reg.FindStringSubmatch(log)[1]
 	}
 
-
-	return indicator,confusion
+	return indicator, confusion
 }

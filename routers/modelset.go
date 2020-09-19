@@ -4,6 +4,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 func AddGroupModel(r *gin.Engine) {
@@ -20,51 +21,26 @@ func AddGroupModel(r *gin.Engine) {
 type modelsetId struct {
 	ID int `uri:"id" binding:"required"`
 }
+
 type createEvaluationResp struct {
 	EvaluationId string `json:"jobId"`
 }
 
 type lsModelsetsReq struct {
-	PageNum   int    `form:"pageNum"`
-	PageSize  int    `form:"pageSize,default=10"`
-	Name      string `form:"name"`
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize,default=10"`
+	Name     string `form:"name"`
 	//all
+	Use       string `form:"use"`
 	Status    string `form:"status"`
 	IsAdvance bool   `form:"isAdvance"`
 	OrderBy   string `form:"orderBy,default=created_at"`
 	Order     string `form:"order,default=desc"`
 }
 
-type createModelsetReq struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" `
-	JobId       string `json:"jobId"`
-	CodePath   string `json:"codePath"`
-	ParamPath   string `json:"paramPath" binding:"required"`
-	IsAdvance bool   `json:"isAdvance,default=false"`
-
-	Use   string `json:"use"`
-	Size   int64 `json:"size"`
-	DataFormat  string `json:"dataFormat"`
-	DatasetName string `json:"datasetName"`
-	DatasetPath string `json:"datasetPath"`
-	//omitempty 值为空，不编码
-	Params  map[string]string `json:"params"`
-	Engine string         `json:"engine"`
-	Precision  string         `json:"precision"`
-	//指定的模型参数路径
-	// 输出文件路径
-	OutputPath string `json:"outputPath"`
-	//启动文件路径
-	StartupFile string `json:"startupFile"`
-}
-
-type updateModelsetReq struct {
-	Description string `json:"description" binding:"required"`
-}
-
 type getModelsetResp struct {
-	Model models.Modelset `json:"model"`
+	Model    models.Modelset  `json:"model"`
+	Training *models.Training `json:"training"`
 }
 
 type GetModelsetsResp struct {
@@ -95,7 +71,17 @@ func lsModelsets(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.IsAdvance, req.Name, req.Status, username)
+
+	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.IsAdvance, req.Name, req.Status, req.Use, username)
+	if strings.HasPrefix(req.Use, `Avisualis`) {
+		for i := 0; i < len(modelsets); i++ {
+			training, err := services.GetTraining(username, modelsets[i].JobId)
+			if err != nil {
+				return AppError(FAILED_START_TRAINING, err.Error())
+			}
+			modelsets[i].Status = training.Status
+		}
+	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -120,49 +106,78 @@ func lsModelsets(c *gin.Context) error {
 func getModelset(c *gin.Context) error {
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
+	var training *models.Training
 	if err != nil {
 		return ParameterError(err.Error())
+	}
+	username := getUsername(c)
+	if len(username) == 0 {
+		return AppError(NO_USRNAME, "no username")
 	}
 	modelset, err := services.GetModelset(id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
-	data := getModelsetResp{Model: modelset}
+	//插入数据集面板
+	if strings.HasPrefix(modelset.Use, `Avisualis`) {
+		modelset, err = services.GeneratePanel(modelset, username)
+		if err != nil {
+			return err
+		}
+		//如果有Jobid
+		if modelset.JobId != "" {
+			//获取新的training
+			training, _ = services.GetTraining(username, modelset.JobId)
+			data := getModelsetResp{Model: modelset, Training: training}
+			return SuccessResp(c, data)
+		}
+	}
+	data := getModelsetResp{Model: modelset, Training: training}
 	return SuccessResp(c, data)
 }
 
 // @Summary create model
 // @Produce  json
-// @Param body body createModelsetReq true "json body"
+// @Param body body services.CreateModelsetReq true "jsonbody"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [post]
 func createModelset(c *gin.Context) error {
-	var req createModelsetReq
+	var req services.CreateModelsetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	//如果上传模型文件检查模型文件是否存在
+
+	//如果上传模型文件检查路径是否存在
 	if req.CodePath != "" {
 		err = services.CheckPathExists(req.CodePath)
 		if err != nil {
 			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
-	//检查模型参数文件是否存在
-	err = services.CheckPathExists(req.ParamPath)
-	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	}
+	//检查模型参数文件是否存在，avisualis不检测是否存在
+	//if req.ParamPath != "" {
+	//	err = services.CheckPathExists(req.ParamPath)
+	//	if err != nil {
+	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+	//	}
+	//}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath,req.IsAdvance,
-		req.Use,req.Size,req.DataFormat,req.DatasetName,req.DatasetPath,req.Params,req.Engine,req.Precision,req.OutputPath,req.StartupFile)
+	if strings.HasPrefix(req.Use, `Avisualis`) {
+		req, err = services.CreateAvisualisTraining(req, username)
+		if err != nil {
+			return err
+		}
+	}
+	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.DeviceType, req.VisualPath, req.DeviceNum)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -183,12 +198,30 @@ func updateModelset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	var req updateModelsetReq
+	var req services.CreateModelsetReq
 	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	err = services.UpdateModelset(id.ID, req.Description)
+	username := getUsername(c)
+
+	//更新Avisualis任务
+	if strings.HasPrefix(req.Use, `Avisualis`) {
+		if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
+			return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+		}
+		if req.JobId != "" {
+			//重启新的training
+			_ = services.DeleteTraining(username, req.JobId)
+		}
+		//更新节点的parma配置节点
+		req, err = services.CreateAvisualisTraining(req, username)
+		if err != nil {
+			return err
+		}
+	}
+	err = services.UpdateModelset(id.ID, req.Name, req.Description, "0.0.1", req.JobId, req.CodePath, req.ParamPath,
+		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

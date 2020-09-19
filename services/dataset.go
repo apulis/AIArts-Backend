@@ -22,6 +22,38 @@ func ListDatasetsByName(page, count int, name, username string) ([]models.Datase
 	limit := count
 	return models.ListDataSetsByName(offset, limit, name, username)
 }
+func AppendAnnoDataset(datasets []models.Dataset,total,pageNum, pageSize int, orderBy, order string)(string,int,[]models.Dataset){
+	var annoDatasets []models.DataSet
+	queryStringParameters := models.QueryStringParametersV2{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		OrderBy:  orderBy,
+		Order:    order,
+	}
+	annoDatasets, _, err := ListAllDatasets(queryStringParameters)
+	message := "success"
+	if err != nil {
+		message = "label image platform is error"
+		//return AppError(FAILED_FETCH_ANNOTATION_CODE, "label plantform is error")
+	} else {
+		for _, v := range annoDatasets {
+			if v.ConvertStatus == "finished" {
+				dataset := models.Dataset{
+					Name:        v.Name,
+					Description: v.Info,
+					Path:        v.ConvertOutPath,
+					Status:      v.Name,
+					//是否是公开数据集
+					IsPrivate:    v.IsPrivate,
+					IsTranslated: true,
+				}
+				datasets = append(datasets, dataset)
+				total += 1
+			}
+		}
+	}
+	return message,total,datasets
+}
 func CreateDataset(name, description, creator, version, path string, isPrivate bool,isTranslated bool) error {
 	size, err := GetDirSize(path)
 	if err != nil {

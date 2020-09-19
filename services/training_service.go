@@ -53,7 +53,10 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 }
 
 func CreateTraining(userName string, training models.Training) (string, error) {
-
+	//params中加入visualpath
+	if training.VisualPath != "" {
+		training.Params["visualPath"] = training.VisualPath
+	}
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -70,8 +73,16 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	if configs.Config.InteractiveModeJob {
 		params["cmd"] = "sleep infinity" // use StartupFile, params instead
 	} else {
-
-		params["cmd"] = "python " + training.StartupFile
+		fileType, err := CheckStartFileType(training.StartupFile)
+		if fileType == FILETYPE_PYTHON {
+			params["cmd"] = "python " + training.StartupFile
+		} else if fileType == FILETYPE_SHELL {
+			params["cmd"] = "bash " + training.StartupFile
+		}
+		if err != nil {
+			fmt.Printf("startupfile is invalid[%+v]\n", err)
+			return "", err
+		}
 		for k, v := range training.Params {
 			if len(k) > 0 && len(v) > 0 {
 				params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
@@ -162,6 +173,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.DeviceType = job.JobParams.GpuType
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
+	training.JobTrainingType = job.JobParams.Jobtrainingtype
 
 	training.Params = nil
 	training.CodePath = job.JobParams.CodePath

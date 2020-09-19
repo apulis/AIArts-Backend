@@ -29,4 +29,9 @@ auth:
   url: "http://sandbox2-master.sigsus.cn:52080/custom-user-dashboard-backend/auth/currentUser"
   key: "Sign key for JWT"
 
+imagesave:
+  k8sconf: /root/.kube/config
+  sshkey: /root/.ssh/id_rsa
+  sshuser: dlwsadmin
+
 DltsUrl: http://219.133.167.42:52009/apis

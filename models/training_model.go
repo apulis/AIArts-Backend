@@ -17,6 +17,7 @@ type Training struct {
 	Params      map[string]string `json:"params"`
 	Desc        string            `json:"desc"`
 	Status      string            `json:"status"`
+	VisualPath string            `json:"visualPath"`
 	CreateTime  string            `json:"createTime"`
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`
@@ -36,9 +37,9 @@ func ValidHomePath(userName, path string) bool {
 
 func (t *Training) ValidatePathByUser(userName string) (bool, string) {
 
-	if !strings.HasSuffix(t.StartupFile, ".py") {
-		return false, "启动文件非python"
-	}
+	//if !strings.HasSuffix(t.StartupFile, ".py") {
+	//	return false, "启动文件非python"
+	//}
 
 	//if !ValidHomePath(userName, t.StartupFile) {
 	//	return false, "启动文件路径错误"

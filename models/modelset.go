@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type Modelset struct {
@@ -20,17 +21,17 @@ type Modelset struct {
 	Status      string `json:"status"`
 	Size        int64  `gorm:"type bigint(20)" json:"size"`
 	//模型类型 图像分类
-	Use         string `json:"use"`
-	JobId       string `json:"jobId"`
-	DataFormat  string `json:"dataFormat"`
+	Use        string `json:"use"`
+	JobId      string `json:"jobId"`
+	DataFormat string `json:"dataFormat"`
 	//Dataset     string `json:"dataset"`
 	DatasetName string `json:"datasetName"`
 	DatasetPath string `json:"datasetPath"`
 	//omitempty 值为空，不编码
-	Params  *ParamsItem `gorm:"type:text" json:"params"`
-	Engine string         `json:"engine"`
-	Precision  string         `json:"precision"`
-	IsAdvance  bool           `json:"isAdvance"`
+	Params    *ParamsItem `gorm:"type:text" json:"params"`
+	Engine    string      `json:"engine"`
+	Precision string      `json:"precision"`
+	IsAdvance bool        `json:"isAdvance"`
 	//模型路径
 	CodePath string `json:"codePath"`
 	//指定的模型参数路径
@@ -39,17 +40,18 @@ type Modelset struct {
 	OutputPath string `json:"outputPath"`
 	//启动文件路径
 	StartupFile string `json:"startupFile"`
+	//模型路径
+	VisualPath string `json:"visualPath"`
 	//评估训练任务id
 	EvaluationId string `json:"evaluationId"`
 	// 评估设备类型
 	DeviceType string `json:"deviceType"`
-	DeviceNum int `json:"deviceNum"`
-
+	DeviceNum  int    `json:"deviceNum"`
 }
 
 type ParamsItem map[string]string
 
-func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, name, status, username string) ([]Modelset, int, error) {
+func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]Modelset, int, error) {
 	var modelsets []Modelset
 	total := 0
 
@@ -58,12 +60,16 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 		whereQueryStr = fmt.Sprintf(" is_advance = 1 ")
 	}
 	if name != "" {
-		whereQueryStr +=  "and name like '%"+ name + "%' "
+		whereQueryStr += "and name like '%" + name + "%' "
 	}
 	if status != "" {
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
-
+	if strings.HasPrefix(use,`Avisualis`) {
+		whereQueryStr += "and `use` like '" + use + "%' "
+	} else {
+		whereQueryStr += "and `use` not like 'Avisualis%' "
+	}
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
@@ -79,6 +85,15 @@ func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, nam
 func GetModelsetById(id int) (Modelset, error) {
 	modelset := Modelset{ID: id}
 	res := db.First(&modelset)
+	if res.Error != nil {
+		return modelset, res.Error
+	}
+	return modelset, nil
+}
+func GetModelsetByName(name string) (Modelset, error) {
+	var modelset Modelset
+	whereQueryStr := fmt.Sprintf(" name = '%s' ", name)
+	res := db.Where(whereQueryStr).Find(&modelset)
 	if res.Error != nil {
 		return modelset, res.Error
 	}
