@@ -27,8 +27,7 @@ const (
 	FILETYPE_ZIP    = ".zip"
 	FILETYPE_SHELL  = ".sh"
 	FILETYPE_PYTHON = ".py"
-	FILETYPE_JSON = ".json"
-
+	FILETYPE_JSON   = ".json"
 )
 
 var FILETYPES_SUPPORTED = []string{FILETYPE_TAR_GZ, FILETYPE_TAR, FILETYPE_ZIP}
@@ -259,14 +258,18 @@ func extractZip(fromPath, toPath string) error {
 		}
 		defer fileReader.Close()
 
-		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
-		if err != nil {
-			return err
-		}
-		defer targetFile.Close()
+		if _, err = os.Stat(path); os.IsNotExist(err) {
+			logger.Error("Ignored not existed file: ", path)
+		} else {
+			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+			if err != nil {
+				return err
+			}
+			defer targetFile.Close()
 
-		if _, err := io.Copy(targetFile, fileReader); err != nil {
-			return err
+			if _, err := io.Copy(targetFile, fileReader); err != nil {
+				return err
+			}
 		}
 	}
 
