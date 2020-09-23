@@ -1,0 +1,3375 @@
+definitions:
+  models.CodeEnvItem:
+    properties:
+      JupyterUrl:
+        type: string
+      codePath:
+        type: string
+      createTime:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    required:
+    - engine
+    - name
+    - status
+    type: object
+  models.ConversionJob:
+    properties:
+      inputPath:
+        type: string
+      jobId:
+        type: string
+      jobName:
+        type: string
+      jobParams:
+        $ref: '#/definitions/models.JobParams'
+      jobStatus:
+        type: string
+      jobTime:
+        type: string
+      jobType:
+        type: string
+      modelconversionStatus:
+        type: string
+      modelconversionType:
+        type: string
+      outputPath:
+        type: string
+      priority:
+        type: integer
+      userName:
+        type: string
+      vcName:
+        type: string
+    type: object
+  models.ConversionTypes:
+    properties:
+      conversionTypes:
+        items:
+          type: string
+        type: array
+    type: object
+  models.Dataset:
+    properties:
+      binds:
+        description: |-
+          存储绑定信息
+          plantform#id*plantform_id
+        type: string
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      isPrivate:
+        description: 是否是公开数据集
+        type: boolean
+      isTranslated:
+        type: boolean
+      name:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
+        type: string
+    type: object
+  models.DeviceItem:
+    properties:
+      avail:
+        type: integer
+      deviceType:
+        type: string
+    type: object
+  models.EndpointWrapper:
+    properties:
+      accessPoint:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  models.FDInfo:
+    properties:
+      password:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    type: object
+  models.JobLog:
+    properties:
+      cursor:
+        type: string
+      log:
+        type: string
+      maxPage:
+        type: integer
+    type: object
+  models.JobParams:
+    properties:
+      cmd:
+        type: string
+      codePath:
+        type: string
+      containerUserId:
+        type: integer
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      enabledatapath:
+        type: boolean
+      enablejobpath:
+        type: boolean
+      enableworkpath:
+        type: boolean
+      env:
+        items:
+          type: string
+        type: array
+      familyToken:
+        type: string
+      gpuType:
+        type: string
+      hostNetwork:
+        type: boolean
+      image:
+        type: string
+      interactivePorts:
+        type: boolean
+      isParent:
+        type: integer
+      isPrivileged:
+        type: boolean
+      jobId:
+        type: string
+      jobName:
+        type: string
+      jobPath:
+        type: string
+      jobType:
+        type: string
+      jobtrainingtype:
+        type: string
+      numps:
+        type: integer
+      numpsworker:
+        type: integer
+      outputPath:
+        type: string
+      preemptionAllowed:
+        type: boolean
+      resourcegpu:
+        type: integer
+      scriptParams:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      team:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      vcName:
+        type: string
+      workPath:
+        type: string
+    type: object
+  models.Modelset:
+    properties:
+      codePath:
+        description: 模型路径
+        type: string
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      dataFormat:
+        type: string
+      datasetName:
+        description: Dataset     string `json:"dataset"`
+        type: string
+      datasetPath:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        description: 评估设备类型
+        type: string
+      engine:
+        type: string
+      evaluationId:
+        description: 评估训练任务id
+        type: string
+      id:
+        type: integer
+      isAdvance:
+        type: boolean
+      jobId:
+        type: string
+      name:
+        type: string
+      outputPath:
+        description: 输出文件路径
+        type: string
+      paramPath:
+        description: 指定的模型参数路径
+        type: string
+      params:
+        $ref: '#/definitions/models.ParamsItem'
+        description: omitempty 值为空，不编码
+      precision:
+        type: string
+      size:
+        type: integer
+      startupFile:
+        description: 启动文件路径
+        type: string
+      status:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      use:
+        description: 模型类型 图像分类
+        type: string
+      version:
+        type: string
+      visualPath:
+        description: 模型路径
+        type: string
+    type: object
+  models.NodeStatus:
+    properties:
+      deviceStr:
+        type: string
+      gpu_allocatable:
+        additionalProperties:
+          type: integer
+        type: object
+      gpu_capacity:
+        additionalProperties:
+          type: integer
+        type: object
+      gpuType:
+        type: string
+    type: object
+  models.ParamsItem:
+    additionalProperties:
+      type: string
+    type: object
+  models.PostInference:
+    properties:
+      desc:
+        type: string
+      device:
+        type: string
+      framework:
+        type: string
+      gpuType:
+        type: string
+      image:
+        type: string
+      jobName:
+        type: string
+      model_base_path:
+        type: string
+      resourcegpu:
+        type: integer
+      userId:
+        type: string
+      userName:
+        type: string
+      vcName:
+        type: string
+      version:
+        type: string
+    type: object
+  models.SavedImage:
+    properties:
+      containerId:
+        type: string
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: integer
+      imageId:
+        type: string
+      isPrivate:
+        type: boolean
+      name:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
+        type: string
+    type: object
+  models.TemplateItem:
+    properties:
+      metaData:
+        $ref: '#/definitions/models.TemplateMeta'
+      params:
+        $ref: '#/definitions/models.TemplateParams'
+    type: object
+  models.TemplateMeta:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      id:
+        type: integer
+      jobType:
+        type: string
+      name:
+        type: string
+      scope:
+        type: integer
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+    type: object
+  models.TemplateParams:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      name:
+        type: string
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+    type: object
+  models.Training:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      jobTrainingType:
+        type: string
+      name:
+        type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
+      visualPath:
+        type: string
+    type: object
+  models.UnixTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  models.VersionInfoSet:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.UnixTime'
+      creator:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        $ref: '#/definitions/models.UnixTime'
+      version:
+        type: string
+    type: object
+  routers.APIException:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  routers.APISuccessResp:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespAllGetCodeEnv:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetAllCodeEnvRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespCreateCodeEnv:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.CreateCodeEnvRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespCreateEdgeInference:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.CreateEdgeInferenceResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespCreateTemplate:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.CreateTemplateRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespCreateTraining:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.CreateTrainingRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespDeleteCodeEnv:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.DeleteCodeEnvRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespDeleteTemplate:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.DeleteTemplateRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespDeleteTraining:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.DeleteTrainingRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetAllTemplate:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetAllTemplateRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetAllTraining:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetAllTrainingRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetCodeEnvJupyter:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.EndpointWrapper'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetConvTypes:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.ConversionTypes'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetDataset:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetDatasets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetDatasetsResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetFDInfo:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetFDInfoResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetModelsets:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetModelsetsResp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetResource:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetResourceRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetTemplate:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.TemplateItem'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetTraining:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.GetTrainingRsp'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespGetTrainingLog:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/models.JobLog'
+      msg:
+        type: string
+    type: object
+  routers.APISuccessRespLsEdgeInferences:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/routers.LsEdgeInferencesResp'
+      msg:
+        type: string
+    type: object
+  routers.CreateCodeEnvReq:
+    properties:
+      codePath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      jobTrainingType:
+        type: string
+      name:
+        type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
+    required:
+    - engine
+    - name
+    type: object
+  routers.CreateCodeEnvRsp:
+    properties:
+      id:
+        type: string
+    type: object
+  routers.CreateEdgeInferenceResp:
+    properties:
+      jobId:
+        type: string
+    type: object
+  routers.CreateTemplateReq:
+    properties:
+      jobType:
+        type: string
+      scope:
+        type: integer
+      templateData:
+        $ref: '#/definitions/models.TemplateParams'
+    type: object
+  routers.CreateTemplateRsp:
+    properties:
+      id:
+        type: integer
+    type: object
+  routers.CreateTrainingReq:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      jobTrainingType:
+        type: string
+      name:
+        type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
+      visualPath:
+        type: string
+    type: object
+  routers.CreateTrainingRsp:
+    properties:
+      id:
+        type: string
+    type: object
+  routers.CreateVisualJobReq:
+    properties:
+      description:
+        type: string
+      jobName:
+        type: string
+      tensorboardLogDir:
+        type: string
+    type: object
+  routers.DeleteCodeEnvRsp:
+    type: object
+  routers.DeleteJobReq:
+    properties:
+      jobId:
+        type: integer
+    required:
+    - jobId
+    type: object
+  routers.DeleteTemplateReq:
+    properties:
+      id:
+        type: integer
+    type: object
+  routers.DeleteTemplateRsp:
+    type: object
+  routers.DeleteTrainingReq:
+    properties:
+      id:
+        type: string
+    type: object
+  routers.DeleteTrainingRsp:
+    type: object
+  routers.GetAllCodeEnvRsp:
+    properties:
+      CodeEnvs:
+        items:
+          $ref: '#/definitions/models.CodeEnvItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  routers.GetAllTemplateRsp:
+    properties:
+      Templates:
+        items:
+          $ref: '#/definitions/models.TemplateItem'
+        type: array
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.GetAllTrainingRsp:
+    properties:
+      Trainings:
+        items:
+          $ref: '#/definitions/models.Training'
+        type: array
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.GetDatasetResp:
+    properties:
+      dataset:
+        $ref: '#/definitions/models.Dataset'
+    type: object
+  routers.GetDatasetsResp:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/models.Dataset'
+        type: array
+      message:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.GetEndpointsReq:
+    properties:
+      jobId:
+        type: integer
+    type: object
+  routers.GetEndpointsRsq:
+    properties:
+      path:
+        type: string
+    type: object
+  routers.GetFDInfoResp:
+    properties:
+      fdinfo:
+        $ref: '#/definitions/models.FDInfo'
+    type: object
+  routers.GetJobSummaryReq:
+    properties:
+      jobType:
+        type: string
+    type: object
+  routers.GetModelsetsResp:
+    properties:
+      models:
+        items:
+          $ref: '#/definitions/models.Modelset'
+        type: array
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.GetResourceRsp:
+    properties:
+      aiFrameworks:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      codePathPrefix:
+        type: string
+      deviceList:
+        items:
+          $ref: '#/definitions/models.DeviceItem'
+        type: array
+      nodeCountByDeviceType:
+        additionalProperties:
+          type: integer
+        type: object
+      nodeInfo:
+        items:
+          $ref: '#/definitions/models.NodeStatus'
+        type: array
+    type: object
+  routers.GetSavedImageResp:
+    properties:
+      savedImages:
+        $ref: '#/definitions/models.SavedImage'
+    type: object
+  routers.GetSavedImagesResp:
+    properties:
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      savedImages:
+        items:
+          $ref: '#/definitions/models.SavedImage'
+        type: array
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.GetTemplateReq:
+    properties:
+      id:
+        type: integer
+    type: object
+  routers.GetTrainingReq:
+    properties:
+      id:
+        type: string
+    type: object
+  routers.GetTrainingRsp:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      jobTrainingType:
+        type: string
+      name:
+        type: string
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
+      outputPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
+      visualPath:
+        type: string
+    type: object
+  routers.GetVisualJobListReq:
+    properties:
+      jobName:
+        type: string
+      order:
+        type: string
+      orderBy:
+        type: string
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.GetVisualJobListRsq:
+    properties:
+      Templates:
+        items:
+          $ref: '#/definitions/routers.VisualJobListRspUnit'
+        type: array
+      total:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  routers.LsEdgeInferencesResp:
+    properties:
+      edgeInferences:
+        items:
+          $ref: '#/definitions/models.ConversionJob'
+        type: array
+      pageNum:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
+  routers.SwitchVisualJobStatusReq:
+    properties:
+      jobId:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.UpdateTemplateReq:
+    properties:
+      id:
+        type: integer
+      jobType:
+        type: string
+      scope:
+        type: integer
+      templateData:
+        $ref: '#/definitions/models.TemplateParams'
+    type: object
+  routers.VisualJobListRspUnit:
+    properties:
+      TensorboardLogDir:
+        type: string
+      createTime:
+        $ref: '#/definitions/models.UnixTime'
+      description:
+        type: string
+      id:
+        type: integer
+      jobName:
+        type: string
+      status:
+        type: string
+    type: object
+  routers.createDatasetReq:
+    properties:
+      description:
+        type: string
+      isPrivate:
+        type: boolean
+      isTranslated:
+        type: boolean
+      name:
+        type: string
+      path:
+        type: string
+    required:
+    - description
+    - name
+    - path
+    type: object
+  routers.createEdgeInferenceReq:
+    properties:
+      conversionArgs:
+        additionalProperties: true
+        type: object
+      conversionType:
+        type: string
+      inputPath:
+        type: string
+      jobName:
+        type: string
+      outputPath:
+        type: string
+    required:
+    - conversionArgs
+    - conversionType
+    - inputPath
+    - jobName
+    - outputPath
+    type: object
+  routers.createEvaluationResp:
+    properties:
+      jobId:
+        type: string
+    type: object
+  routers.createSavedImageReq:
+    properties:
+      description:
+        type: string
+      isPrivate:
+        type: boolean
+      jobId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+    required:
+    - name
+    - version
+    type: object
+  routers.getEvaluationResp:
+    properties:
+      confusion:
+        additionalProperties:
+          type: string
+        type: object
+      evaluation:
+        $ref: '#/definitions/services.Evaluation'
+      indicator:
+        additionalProperties:
+          type: string
+        type: object
+      log:
+        type: string
+    type: object
+  routers.getLocalEnvResp:
+    properties:
+      canUpgrade:
+        type: boolean
+      isLower:
+        type: boolean
+    type: object
+  routers.getLocalUpgradeLogResp:
+    properties:
+      logString:
+        type: string
+      status:
+        type: string
+    type: object
+  routers.getLocalUpgradeProgressResp:
+    properties:
+      percent:
+        type: integer
+      status:
+        type: string
+    type: object
+  routers.getModelsetResp:
+    properties:
+      model:
+        $ref: '#/definitions/models.Modelset'
+      training:
+        $ref: '#/definitions/models.Training'
+    type: object
+  routers.getVersionInfoResp:
+    properties:
+      isUpgrading:
+        type: boolean
+      versionInfo:
+        $ref: '#/definitions/models.VersionInfoSet'
+      versionLogs:
+        items:
+          $ref: '#/definitions/models.VersionInfoSet'
+        type: array
+    type: object
+  routers.setFDInfoReq:
+    properties:
+      password:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  services.AvisualisEdge:
+    properties:
+      source:
+        type: string
+      target:
+        type: string
+    type: object
+  services.AvisualisNode:
+    properties:
+      config:
+        type: object
+      id:
+        type: string
+      idx:
+        type: integer
+      name:
+        type: string
+    type: object
+  services.CreateModelsetReq:
+    properties:
+      codePath:
+        type: string
+      dataFormat:
+        type: string
+      datasetName:
+        type: string
+      datasetPath:
+        type: string
+      description:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      edges:
+        items:
+          $ref: '#/definitions/services.AvisualisEdge'
+        type: array
+      engine:
+        type: string
+      isAdvance:
+        type: boolean
+      jobId:
+        type: string
+      jobTrainingType:
+        description: 用于可视化建模平台直接启动训练任务
+        type: string
+      name:
+        type: string
+      nodes:
+        items:
+          $ref: '#/definitions/services.AvisualisNode'
+        type: array
+      numPs:
+        type: integer
+      numPsWorker:
+        type: integer
+      outputPath:
+        description: |-
+          指定的模型参数路径
+          输出文件路径
+        type: string
+      panel:
+        type: string
+      paramPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        description: omitempty 值为空，不编码
+        type: object
+      precision:
+        type: string
+      size:
+        type: integer
+      startupFile:
+        description: 启动文件路径
+        type: string
+      use:
+        type: string
+      visualPath:
+        type: string
+    required:
+    - name
+    type: object
+  services.Evaluation:
+    properties:
+      codePath:
+        type: string
+      createTime:
+        type: string
+      datasetName:
+        type: string
+      datasetPath:
+        type: string
+      desc:
+        type: string
+      deviceNum:
+        type: integer
+      deviceType:
+        type: string
+      engine:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      outputPath:
+        type: string
+      paramPath:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      startupFile:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /ai_arts/api/annotations/datasets:
+    get:
+      description: list all datasets for user
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list all datasets for user
+  /ai_arts/api/annotations/projects:
+    get:
+      description: get projects of data-platform
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: select by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list projects
+    post:
+      description: add project of data-platform
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: add project
+  /ai_arts/api/annotations/projects/:projectId:
+    delete:
+      description: delete project of data-platform
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: delete project
+    patch:
+      description: update project of data-platform
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: update projects
+  /ai_arts/api/annotations/projects/:projectId/datasets:
+    delete:
+      description: delete dataset info for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: body
+        name: dataSetId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: delete dataset
+    get:
+      description: list datasets of data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: select by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list datasets
+    post:
+      description: add dataset for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: add dataset
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId:
+    get:
+      description: get dataset info for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset info
+    patch:
+      description: update dataset info for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: update dataset info
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertDataFormat:
+    post:
+      description: convert a dataset to specific format
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: dataset type,like image
+        in: body
+        name: type
+        required: true
+        schema:
+          type: string
+      - description: convert to specific format
+        in: body
+        name: target
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: convert a dataset to specific format
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/ConvertSupportFormat:
+    get:
+      description: current support convert's specific format
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: current support convert's specific format
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks:
+    get:
+      description: get dataset tasks for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset tasks
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId:
+    get:
+      description: get dataset one task detail for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: current task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset one task detail
+    post:
+      description: commit label data to one task
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: current task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: commit label data to one task
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/labels:
+    get:
+      description: get dataset all labels
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset all labels
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId:
+    get:
+      description: get dataset next task id for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: current task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset next task id
+  /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId:
+    get:
+      description: get dataset previous task id for data-platform project
+      parameters:
+      - description: project id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: dataSet id
+        in: path
+        name: dataSetId
+        required: true
+        type: string
+      - description: current task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get dataset previous task id
+  /ai_arts/api/codes:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: job status. get all jobs if it is all
+        in: query
+        name: status
+        required: true
+        type: string
+      - description: the keyword of search
+        in: query
+        name: searchWord
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespAllGetCodeEnv'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get all codes
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateCodeEnvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateCodeEnv'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create CodeEnv
+  /ai_arts/api/codes/:id:
+    delete:
+      parameters:
+      - description: codeEnv id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespDeleteCodeEnv'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete CodeEnv
+  /ai_arts/api/codes/:id/jupyter:
+    get:
+      parameters:
+      - description: code id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetCodeEnvJupyter'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get CodeEnv jupyter path
+  /ai_arts/api/codes/upload:
+    post:
+      parameters:
+      - description: upload file key 'data'
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateCodeEnv'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upload code
+  /ai_arts/api/common/job/summary:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetJobSummaryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetResource'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get job summary
+  /ai_arts/api/common/resource:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetResource'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get available resource
+  /ai_arts/api/datasets:
+    get:
+      parameters:
+      - in: query
+        name: isTranslated
+        type: boolean
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetDatasets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list datasets
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.createDatasetReq'
+      - description: dataset description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      - description: dataset storage path
+        in: body
+        name: path
+        required: true
+        schema:
+          type: string
+      - description: dataset name
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: dataset auth
+        in: body
+        name: IsPrivate
+        schema:
+          type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create dataset
+  /ai_arts/api/datasets/:id:
+    delete:
+      parameters:
+      - description: dataset id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "30010":
+          description: dataset is still using
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete dataset by id
+    get:
+      parameters:
+      - description: dataset id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetDataset'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get dataset by id
+    post:
+      parameters:
+      - description: dataset description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update dataset
+  /ai_arts/api/datasets/:id/bind:
+    post:
+      parameters:
+      - description: bind platform's name
+        in: body
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: bind platform's id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: bind dataset
+  /ai_arts/api/datasets/:id/unbind:
+    post:
+      parameters:
+      - description: bind platform's name
+        in: body
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: bind platform's id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: unbind dataset
+  /ai_arts/api/edge_inferences:
+    get:
+      parameters:
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: job name
+        in: query
+        name: jobName
+        type: string
+      - description: model conversion type
+        in: query
+        name: modelconversionType
+        type: string
+      - description: order by item
+        in: query
+        name: orderBy
+        type: string
+      - description: desc or asc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespLsEdgeInferences'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get dataset by id
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.createEdgeInferenceReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateEdgeInference'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update dataset
+  /ai_arts/api/edge_inferences/:jobId:
+    delete:
+      parameters:
+      - description: job id
+        in: path
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete edge_inference by jobId
+  /ai_arts/api/edge_inferences/conversion_types:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetConvTypes'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get dataset by id
+  /ai_arts/api/edge_inferences/fdinfo:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetFDInfo'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "500":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get dataset by id
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.setFDInfoReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update dataset
+  /ai_arts/api/edge_inferences/push/:jobId:
+    post:
+      parameters:
+      - description: job id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update dataset
+  /ai_arts/api/evaluations:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: the keyword of search
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: the keyword of search
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetModelsets'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: list evaluations
+    post:
+      parameters:
+      - description: name:model name ， datasetName ：dataset name
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/services.Evaluation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.createEvaluationResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create Evaluation
+  /ai_arts/api/evaluations/:id:
+    delete:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete evaluation by id
+    get:
+      parameters:
+      - description: evaluation id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success indicator:{"accuary":"0.001"},confusion
+          schema:
+            $ref: '#/definitions/routers.getEvaluationResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get evaluation by id
+  /ai_arts/api/files/download/dataset/:id:
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: download dataset by id
+  /ai_arts/api/files/download/model/:id:
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success  download the code path dir
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: download model by id
+  /ai_arts/api/files/upload/model:
+    post:
+      parameters:
+      - description: upload file key 'data'
+        in: query
+        name: data
+        required: true
+        type: string
+      - description: upload file directory 'dir'
+        in: query
+        name: dir
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upload model file, not implemented yet
+  /ai_arts/api/inferences/DeleteJob:
+    delete:
+      description: delete a inference job
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: Delete a inference job
+  /ai_arts/api/inferences/GetAllDevice:
+    get:
+      description: get all device type detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get all device type detail
+  /ai_arts/api/inferences/GetAllSupportInference:
+    get:
+      description: list inference jobs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get all support inference framework\device
+  /ai_arts/api/inferences/GetJobDetail:
+    get:
+      description: get inference job detail
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get inference job detail
+  /ai_arts/api/inferences/GetJobLog:
+    get:
+      description: get inference job log
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get inference job log
+  /ai_arts/api/inferences/GetJobStatus:
+    get:
+      description: get inference job status
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: get inference job status
+  /ai_arts/api/inferences/Infer:
+    post:
+      description: Infer a picture using a running inference job
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      - description: picture upload to infer
+        in: body
+        name: image
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: Infer a picture using a running inference job
+  /ai_arts/api/inferences/KillJob:
+    get:
+      description: kill a running inference job
+      parameters:
+      - description: 'inference job Id '
+        in: query
+        name: jobId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: kill a running inference job
+  /ai_arts/api/inferences/ListInferenceJob:
+    get:
+      description: list inference jobs
+      parameters:
+      - description: which virtual cluster
+        in: query
+        name: vcName
+        type: string
+      - description: page number, from 1
+        in: query
+        name: pageNum
+        type: integer
+      - description: count per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: search name
+        in: query
+        name: name
+        type: string
+      - description: search status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: list inference jobs
+  /ai_arts/api/inferences/PostInferenceJob:
+    post:
+      description: submit a inference job
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostInference'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+      summary: submit a inference job
+  /ai_arts/api/models:
+    get:
+      parameters:
+      - in: query
+        name: isAdvance
+        type: boolean
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      - description: all
+        in: query
+        name: use
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getModelsetResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get model by id
+    post:
+      parameters:
+      - description: jsonbody
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/services.CreateModelsetReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create model
+  /ai_arts/api/models/:id:
+    delete:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete model by id
+    get:
+      parameters:
+      - description: model id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getModelsetResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get model by id
+    post:
+      parameters:
+      - description: model description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update model
+  /ai_arts/api/saved_images/:id:
+    delete:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete saved_image by id
+  /ai_arts/api/saved_imgs:
+    get:
+      parameters:
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: orderBy
+        type: string
+      - in: query
+        name: pageNum
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImagesResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved_images by id
+    post:
+      parameters:
+      - description: json body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/routers.createSavedImageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create saved_image
+  /ai_arts/api/saved_imgs/:id:
+    get:
+      parameters:
+      - description: saved image id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetSavedImageResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get saved image by id
+    post:
+      parameters:
+      - description: saved_image description
+        in: path
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: update saved_image
+  /ai_arts/api/templates:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 'training module: artsTraining, code module: codeEnv'
+        in: query
+        name: jobType
+        required: true
+        type: string
+      - description: 'public: 1, private: 2'
+        in: query
+        name: scope
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetAllTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get all templates
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create template
+  /ai_arts/api/templates/:id:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespDeleteTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete one template
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetTemplateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetTemplate'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get specific template
+  /ai_arts/api/trainings:
+    get:
+      parameters:
+      - description: page number
+        in: query
+        name: pageNum
+        required: true
+        type: integer
+      - description: size per page
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: job status. get all jobs if it is all
+        in: query
+        name: status
+        required: true
+        type: string
+      - description: the keyword of search
+        in: query
+        name: searchWord
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetAllTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get all trainings
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateTrainingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespCreateTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create Training
+  /ai_arts/api/trainings/:id:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteTrainingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespDeleteTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete one training
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetTrainingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetTraining'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get specific training
+  /ai_arts/api/trainings/:id/log:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetTrainingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessRespGetTrainingLog'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get specific training
+  /ai_arts/api/version/env/local:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.getLocalEnvResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get local upgrade environment info
+  /ai_arts/api/version/info:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.getVersionInfoResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get version infomation
+  /ai_arts/api/version/upgrade/local:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: upgrade through local package
+  /ai_arts/api/version/upgradeLog:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.getLocalUpgradeLogResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get local upgrade log
+  /ai_arts/api/version/upgradeProgress:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routers.getLocalUpgradeProgressResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get local upgrade process
+  /ai_arts/api/visual:
+    post:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.CreateVisualJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: create visual job
+  /ai_arts/api/visual/:
+    delete:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.DeleteJobReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: delete visual job
+    put:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.SwitchVisualJobStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.APISuccessResp'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: switch job status
+  /ai_arts/api/visual/endpoints:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetEndpointsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetEndpointsRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job endpoints address
+  /ai_arts/api/visual/list:
+    get:
+      parameters:
+      - description: params
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/routers.GetVisualJobListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/routers.GetVisualJobListRsq'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/routers.APIException'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/routers.APIException'
+      summary: get visual job List
+swagger: "2.0"

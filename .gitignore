@@ -7,5 +7,3 @@ __pycache__
 venv
 *.sql
 *.json
-docs/docs.go
-docs/swagger.yaml
