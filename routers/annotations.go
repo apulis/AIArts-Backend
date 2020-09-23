@@ -25,6 +25,7 @@ func AddGroupAnnotation(r *gin.Engine) {
 	group.DELETE("/projects/:projectId/datasets", wrapper(RemoveDataSet))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks", wrapper(GetTasks))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId", wrapper(GetNextTask))
+	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/suffix/:taskId", wrapper(GetTaskSuffix))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/previous/:taskId", wrapper(GetPreviousTask))
 	group.GET("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(GetOneTask))
 	group.POST("/projects/:projectId/datasets/:dataSetId/tasks/annotations/:taskId", wrapper(PostOneTask))
@@ -256,6 +257,26 @@ func GetNextTask(c *gin.Context) error {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"next": nextTask})
+}
+
+// @Summary get dataset suffix
+// @Description get dataset suffix
+// @Produce  json
+// @Param projectId path string true "project id"
+// @Param dataSetId path string true "dataSet id"
+// @Param taskId path string true "current task id"
+// @Success 200 {object} APISuccessResp "success"
+// @Router /ai_arts/api/annotations/projects/:projectId/datasets/:dataSetId/tasks/next/:taskId [get]
+func GetTaskSuffix(c *gin.Context) error {
+	models.GinContext{Context: c}.SaveToken()
+	projectId := c.Param("projectId")
+	dataSetId := c.Param("dataSetId")
+	taskId := c.Param("taskId")
+	suffix, err := services.GetTaskSuffix(projectId, dataSetId, taskId)
+	if err != nil {
+		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+	}
+	return SuccessResp(c, gin.H{"suffix": suffix})
 }
 
 // @Summary get dataset previous task id
