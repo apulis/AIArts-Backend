@@ -119,7 +119,7 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
-	params["numworker"] = training.NumPs
+	params["numpsworker"] = training.NumPs
 	params["numps"] = training.NumPsWorker
 
 	params["vcName"] = models.DefaultVcName
