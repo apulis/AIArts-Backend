@@ -229,6 +229,21 @@ func GetNextTask(projectId string, dataSetId string, taskId string) (interface{}
 	return nextTask.Next, err
 }
 
+func GetTaskSuffix(projectId string, dataSetId string, taskId string) (interface{}, error) {
+	BackendUrl = configs.Config.Anno.BackendUrl
+	ro := &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
+	}
+	resp, err := grequests.Get(BackendUrl+"/api/projects/"+projectId+"/datasets/"+dataSetId+"/tasks/suffix/"+taskId, ro)
+	if resp.StatusCode != 200 {
+		logger.Error("response code is ", resp.StatusCode, resp.String())
+		return "", errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
+	}
+	var suffixTask models.SuffixTask
+	json.Unmarshal(resp.Bytes(), &suffixTask)
+	return suffixTask.Suffix, err
+}
+
 func GetPreviousTask(projectId string, dataSetId string, taskId string) (interface{}, error) {
 	BackendUrl = configs.Config.Anno.BackendUrl
 	ro := &grequests.RequestOptions{

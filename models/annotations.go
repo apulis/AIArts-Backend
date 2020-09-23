@@ -95,6 +95,12 @@ type NextTask struct {
 	Next       interface{} `json:"next"`
 }
 
+type SuffixTask struct {
+	Successful string
+	Msg        string
+	Suffix     interface{} `json:"suffix"`
+}
+
 type PreviousTask struct {
 	Successful string
 	Msg        string
