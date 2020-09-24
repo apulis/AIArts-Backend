@@ -199,6 +199,7 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	}
 	//去掉\保证可以解析
 	panelString := paramJson.S("panel").String()
+	fmt.Println(panelString)
 	panelString = strings.TrimPrefix(panelString, `"`)
 	panelString = strings.TrimSuffix(panelString, `"`)
 	panelString = strings.ReplaceAll(panelString, `\`, ``)
@@ -208,18 +209,21 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	input := gabs.New()
 	for _, dataset := range datasets {
 		config := gabs.New()
-		children := gabs.New()
+		item:= gabs.New()
 		_, err = config.Set("data_path", "key")
 		_, err = config.Set("disabled", "type")
 		_, err = config.Set(dataset.Path, "value")
-		_ = children.ArrayAppend(config, dataset.Name)
-		_ = input.ArrayAppend(children, "children")
+
+		_ = item.ArrayAppend(config, "config")
+		_, err = item.Set(dataset.Name,  "name")
+		_ = input.ArrayAppend(item, "children")
 	}
 	_, err = input.Set("Input", "name")
 	_, err = panelJson.SetIndex(input, 0)
 
 	//加入修改好后的panel
 	_, err = paramJson.Set(panelJson.String(), "panel")
+	fmt.Println(panelJson.String())
 	var params models.ParamsItem
 	err = json.Unmarshal([]byte(paramJson.String()), &params)
 	modelset.Params = &params
