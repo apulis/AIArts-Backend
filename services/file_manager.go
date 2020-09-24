@@ -258,18 +258,17 @@ func extractZip(fromPath, toPath string) error {
 		}
 		defer fileReader.Close()
 
-		if _, err = os.Stat(path); os.IsNotExist(err) {
-			logger.Error("Ignored not existed file: ", path)
-		} else {
-			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
-			if err != nil {
+		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+		defer targetFile.Close()
+		if err != nil {
+			if os.IsNotExist(err) {
+				logger.Error("Ignored not existed file: ", path)
+				return nil
+			} else {
 				return err
 			}
-			defer targetFile.Close()
-
-			if _, err := io.Copy(targetFile, fileReader); err != nil {
-				return err
-			}
+		} else if _, err := io.Copy(targetFile, fileReader); err != nil {
+			return err
 		}
 	}
 
