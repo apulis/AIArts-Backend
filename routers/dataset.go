@@ -143,7 +143,7 @@ func createDataset(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	//因为会上传到home目录下
+	//检测路径
 	//err = services.CheckDatasetPathValid(req.Path)
 	//if err != nil {
 	//	return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
@@ -155,6 +155,11 @@ func createDataset(c *gin.Context) error {
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
+	}
+	//判断数据集是否与该用户之前的数据集或者公有数据集同名，
+	isExist, err := services.DatasetIsExist(req.Name, username)
+	if isExist {
+		return AppError(DATASET_IS_EXISTED, "this dataset name is existed")
 	}
 	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
 	if err != nil {

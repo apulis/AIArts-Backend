@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"github.com/jinzhu/gorm"
 
 	"github.com/apulis/AIArtsBackend/models"
 )
@@ -12,17 +13,17 @@ const (
 	DATASET_STATUS_DELETING = "deleting"
 )
 
-func ListDatasets(page, count int, orderBy, order, name, status string,isTranslated bool , username string) ([]models.Dataset, int, error) {
+func ListDatasets(page, count int, orderBy, order, name, status string, isTranslated bool, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
-	return models.ListDatasets(offset, limit, orderBy, order, name, status,isTranslated, username)
+	return models.ListDatasets(offset, limit, orderBy, order, name, status, isTranslated, username)
 }
 func ListDatasetsByName(page, count int, name, username string) ([]models.Dataset, int, error) {
 	offset := count * (page - 1)
 	limit := count
 	return models.ListDataSetsByName(offset, limit, name, username)
 }
-func AppendAnnoDataset(datasets []models.Dataset,total,pageNum, pageSize int, orderBy, order string)(string,int,[]models.Dataset){
+func AppendAnnoDataset(datasets []models.Dataset, total, pageNum, pageSize int, orderBy, order string) (string, int, []models.Dataset) {
 	var annoDatasets []models.DataSet
 	queryStringParameters := models.QueryStringParametersV2{
 		PageNum:  pageNum,
@@ -52,23 +53,23 @@ func AppendAnnoDataset(datasets []models.Dataset,total,pageNum, pageSize int, or
 			}
 		}
 	}
-	return message,total,datasets
+	return message, total, datasets
 }
-func CreateDataset(name, description, creator, version, path string, isPrivate bool,isTranslated bool) error {
+func CreateDataset(name, description, creator, version, path string, isPrivate bool, isTranslated bool) error {
 	size, err := GetDirSize(path)
 	if err != nil {
 		return err
 	}
 	dataset := models.Dataset{
-		Name:        name,
-		Description: description,
-		Creator:     creator,
-		Version:     version,
-		Path:        path,
-		Size:        size,
-		IsPrivate:   isPrivate,
-		IsTranslated:   isTranslated,
-		Status:      DATASET_STATUS_NORMAL,
+		Name:         name,
+		Description:  description,
+		Creator:      creator,
+		Version:      version,
+		Path:         path,
+		Size:         size,
+		IsPrivate:    isPrivate,
+		IsTranslated: isTranslated,
+		Status:       DATASET_STATUS_NORMAL,
 	}
 	return models.CreateDataset(dataset)
 }
@@ -85,7 +86,14 @@ func UpdateDataset(id int, description string) error {
 func GetDataset(id int) (models.Dataset, error) {
 	return models.GetDatasetById(id)
 }
-
+func DatasetIsExist(name, username string) (bool, error) {
+	err := models.DatasetIsExist(name, username)
+	//同名不存在
+	if err == gorm.ErrRecordNotFound {
+		return false, nil
+	}
+	return true, nil
+}
 func DeleteDataset(id int) error {
 	dataset, err := models.GetDatasetById(id)
 	if err != nil {

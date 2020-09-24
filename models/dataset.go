@@ -69,6 +69,15 @@ func GetDatasetById(id int) (Dataset, error) {
 	}
 	return dataset, nil
 }
+func DatasetIsExist(name, username string) error {
+	var dataset Dataset
+	whereQueryStr := fmt.Sprintf(" name = '%s' and (creator = '%s' or is_private = 0 ) ", name, username)
+	res := db.Where(whereQueryStr).Find(&dataset)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}
 func ListDataSetsByName(offset, limit int, name, username string) ([]Dataset, int, error) {
 	var datasets []Dataset
 	total := 0

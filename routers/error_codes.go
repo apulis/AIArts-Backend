@@ -27,9 +27,9 @@ const (
 	UPLOAD_TEMPDIR_FULL_CODE = 30009
 	//无法删除正在使用的数据集
 	DATASET_IS_STILL_USE_CODE = 30010
-	// dataset
-	//访问标注平台获取数据集出错
-	FAILED_FETCH_ANNOTATION_CODE = 30011
+	//已经存在同名的数据集
+	DATASET_IS_EXISTED = 30012
+
 	// modelset
 	//创建评估训练任务出错
 	CREATE_EVALUATION_FAILED_CODE = 30701
