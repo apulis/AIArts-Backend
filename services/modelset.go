@@ -39,14 +39,14 @@ type CreateModelsetReq struct {
 	VisualPath  string `json:"visualPath"`
 
 	//用于可视化建模平台直接启动训练任务
-	JobTrainingType string          `json:"jobTrainingType"`
-	NumPs           int             `json:"numPs"`
-	NumPsWorker     int             `json:"numPsWorker"`
-	DeviceType      string          `json:"deviceType"`
-	DeviceNum       int             `json:"deviceNum"`
-	Nodes           []AvisualisNode `json:"nodes"`
-	Edges           []AvisualisEdge `json:"edges"`
-	Panel           string          `json:"panel"`
+	JobTrainingType string            `json:"jobTrainingType"`
+	NumPs           int               `json:"numPs"`
+	NumPsWorker     int               `json:"numPsWorker"`
+	DeviceType      string            `json:"deviceType"`
+	DeviceNum       int               `json:"deviceNum"`
+	Nodes           []AvisualisNode   `json:"nodes"`
+	Edges           []AvisualisEdge   `json:"edges"`
+	Combos          []AvisualisCombos `json:"combos"`
 }
 
 type AvisualisEdge struct {
@@ -54,10 +54,17 @@ type AvisualisEdge struct {
 	Target string `json:"target"`
 }
 type AvisualisNode struct {
-	ID     string      `json:"id"`
-	Name   string      `json:"name"`
-	IDX    int         `json:"idx"`
-	Config interface{} `json:"config"`
+	ID      string      `json:"id"`
+	Name    string      `json:"name"`
+	TreeIdx int         `json:"treeIdx"`
+	Config  interface{} `json:"config"`
+	ComboId string      `json:"comboId"`
+}
+type AvisualisCombos struct {
+	ID           string      `json:"id"`
+	Label        string      `json:"label"`
+	ParentId     string      `json:"parentId"`
+	AnchorPoints interface{} `json:"anchorPoints"`
 }
 
 func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]models.Modelset, int, error) {
@@ -209,13 +216,13 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	input := gabs.New()
 	for _, dataset := range datasets {
 		config := gabs.New()
-		item:= gabs.New()
+		item := gabs.New()
 		_, err = config.Set("data_path", "key")
 		_, err = config.Set("disabled", "type")
 		_, err = config.Set(dataset.Path, "value")
 
 		_ = item.ArrayAppend(config, "config")
-		_, err = item.Set(dataset.Name,  "name")
+		_, err = item.Set(dataset.Name, "name")
 		_ = input.ArrayAppend(item, "children")
 	}
 	_, err = input.Set("Input", "name")
@@ -236,16 +243,17 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 
 func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {
 	//存储节点json
-	nodesBytes, _ := json.Marshal(req.Nodes)
-	edgesBytes, _ := json.Marshal(req.Edges)
-
+	//nodesBytes, _ := json.Marshal(req.Nodes)
+	//edgesBytes, _ := json.Marshal(req.Edges)
+	//combosBytes, _ := json.Marshal(req.Combos)
+	nodesBytes, _ :=req.Params["nodes"]
 	//去掉nodes没用的节点并存入json
 	pipelineConfigPath, err := GetModelTempPath(FILETYPE_JSON)
 	f, err := os.OpenFile(pipelineConfigPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		fmt.Println(pipelineConfigPath + "failed to created")
 	}
-	_, err = f.Write(nodesBytes)
+	_, err = f.Write([]byte(nodesBytes))
 	defer f.Close()
 
 	//把数据传入params后端算法只需要pipeline_config_path
@@ -274,11 +282,12 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//panel不用变
 	req.JobId = jobId
 	req.Params["pipeline_config"] = pipelineConfigPath
-	req.Params["nodes"] = string(nodesBytes)
-	req.Params["edges"] = string(edgesBytes)
+	//req.Params["nodes"] = string(nodesBytes)
+	//req.Params["combos"] = string(combosBytes)
+	//req.Params["edges"] = string(edgesBytes)
 	if err != nil {
 		return req, err
 	}
-	//nodes和edges只用存储然后传给前端
+	//nodes和edges,combos只用存储然后传给前端
 	return req, nil
 }

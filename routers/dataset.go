@@ -144,10 +144,10 @@ func createDataset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	//检测路径
-	//err = services.CheckDatasetPathValid(req.Path)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
-	//}
+	err = services.CheckDatasetPathValid(req.Path)
+	if err != nil {
+		return AppError(FILEPATH_NOT_VALID_CODE, err.Error())
+	}
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
