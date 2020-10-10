@@ -44,9 +44,7 @@ type CreateModelsetReq struct {
 	NumPsWorker     int               `json:"numPsWorker"`
 	DeviceType      string            `json:"deviceType"`
 	DeviceNum       int               `json:"deviceNum"`
-	Nodes           []AvisualisNode   `json:"nodes"`
-	Edges           []AvisualisEdge   `json:"edges"`
-	Combos          []AvisualisCombos `json:"combos"`
+
 }
 
 type AvisualisEdge struct {
@@ -243,9 +241,6 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 
 func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {
 	//存储节点json
-	//nodesBytes, _ := json.Marshal(req.Nodes)
-	//edgesBytes, _ := json.Marshal(req.Edges)
-	//combosBytes, _ := json.Marshal(req.Combos)
 	nodesBytes, _ :=req.Params["nodes"]
 	//去掉nodes没用的节点并存入json
 	pipelineConfigPath, err := GetModelTempPath(FILETYPE_JSON)
@@ -282,9 +277,6 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 	//panel不用变
 	req.JobId = jobId
 	req.Params["pipeline_config"] = pipelineConfigPath
-	//req.Params["nodes"] = string(nodesBytes)
-	//req.Params["combos"] = string(combosBytes)
-	//req.Params["edges"] = string(edgesBytes)
 	if err != nil {
 		return req, err
 	}
