@@ -36,7 +36,6 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
-
 	params["image"] = ConvertImage(evaluation.Engine)
 	params["gpuType"] = evaluation.DeviceType
 	params["resourcegpu"] = evaluation.DeviceNum
@@ -66,7 +65,6 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 		}
 	}
-
 	logger.Info(fmt.Sprintf("evaluation : %s", params["cmd"]))
 	params["startupFile"] = evaluation.StartupFile
 	params["datasetPath"] = evaluation.DatasetPath
@@ -186,6 +184,7 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 		evaluation.ParamPath = paramPath
 	}
 	evaluation.Params = job.JobParams.ScriptParams
+	evaluation.Params = nil
 	return evaluation, nil
 }
 
