@@ -180,7 +180,6 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
 	resp, err := grequests.Delete(BackendUrl+"/api/projects/"+projectId+"/datasets", ro)
-	logger.Info("request to delete dataset quota done", resp.StatusCode, resp.String())
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
@@ -193,6 +192,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 		Headers: map[string]string{"Authorization": "Bearer " + configs.Config.Token},
 	}
 	resp2, err := grequests.Post("http://127.0.0.1:"+strconv.Itoa(configs.Config.Port)+"/ai_arts/api/datasets/"+strconv.Itoa(datasetRes.DataSetBindId)+"/unbind", ro2)
+	logger.Info("request to delete dataset quota done", resp2.StatusCode, resp2.String())
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp2.StatusCode, resp2.String())
 		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
