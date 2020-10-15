@@ -184,6 +184,7 @@ func RemoveDataSet(projectId string, dataSetId string) error {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
 	}
+	logger.Info("databindid is", resp.String())
 	// delete bind dataset record
 	var datasetRes models.DeleteDatasetReq
 	json.Unmarshal(resp.Bytes(), &datasetRes)
