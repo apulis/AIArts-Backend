@@ -184,7 +184,6 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 		evaluation.ParamPath = paramPath
 	}
 	evaluation.Params = job.JobParams.ScriptParams
-	evaluation.Params = nil
 	return evaluation, nil
 }
 
