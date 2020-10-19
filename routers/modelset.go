@@ -157,13 +157,13 @@ func createModelset(c *gin.Context) error {
 			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
-	////检查模型参数文件是否存在，avisualis不检测是否存在
-	//if req.ParamPath != "" && strings.HasPrefix(req.Use, `Avisualis`) {
-	//	err = services.CheckPathExists(req.ParamPath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
+	//avisualis不检测参数路径是否存在
+	if req.ParamPath != "" && !strings.HasPrefix(req.Use, `Avisualis`) {
+		err = services.CheckPathExists(req.ParamPath)
+		if err != nil {
+			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		}
+	}
 
 	username := getUsername(c)
 	if len(username) == 0 {
