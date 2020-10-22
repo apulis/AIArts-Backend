@@ -29,10 +29,8 @@ type Evaluation struct {
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
-
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
-
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
@@ -51,6 +49,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 		fmt.Printf("startupfile is invalid[%+v]\n", err)
 		return "", err
 	}
+
 	if len(evaluation.DatasetPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --data_path " + evaluation.DatasetPath
 	}
@@ -61,7 +60,10 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 		params["cmd"] = params["cmd"].(string) + " --checkpoint_path  " + evaluation.ParamPath
 	}
 	for k, v := range evaluation.Params {
-		if len(k) > 0 && len(v) > 0 {
+		if k == "sudo" {
+			//添加sudo权限
+			params["cmd"] = "sudo " + v + " " + params["cmd"].(string)
+		} else if len(k) > 0 && len(v) > 0 {
 			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 		}
 	}
