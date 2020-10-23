@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/Jeffail/gabs/v2 v2.6.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
+	github.com/crewjam/saml v0.4.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/sessions v0.0.3

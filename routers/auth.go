@@ -1,12 +1,13 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/crewjam/saml/samlsp"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 )
 
 type Claim struct {
@@ -34,11 +35,21 @@ func parseToken(token string) (*Claim, error) {
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		auth := c.Request.Header.Get("Authorization")
-		if len(auth) == 0 {
+		r := c.Request
+
+		auth := r.Header.Get("Authorization")
+		samlSession, err := samlValidator.Session.GetSession(r)
+
+		if len(auth) == 0 && (samlSession == nil || err == samlsp.ErrNoSession) {
 			c.Abort()
 			c.JSON(http.StatusUnauthorized, UnAuthorizedError("Cannot authorize"))
-		} else {
+			c.Next()
+
+			return
+		}
+
+		// 1. judge authentication token
+		if len(auth) > 0 {
 			auth = strings.Fields(auth)[1]
 
 			// Check token
@@ -55,6 +66,8 @@ func Auth() gin.HandlerFunc {
 				c.Set("userName", claim.UserName)
 				c.Set("userId", claim.Uid)
 			}
+		} else {
+			r = r.WithContext(samlsp.ContextWithSession(r.Context(), samlSession))
 		}
 
 		c.Next()
