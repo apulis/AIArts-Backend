@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/services"
@@ -19,10 +20,10 @@ import (
 var (
 	openSaml      = false
 	samlValidator *samlsp.Middleware
+	authConfig    = configs.Config.Auth
 )
 
 func initSamlValidator() error {
-	authConfig    := configs.Config.Auth
 	if len(authConfig.SamlIdpMetadataURL) == 0 {
 		return nil
 	}
@@ -67,7 +68,6 @@ func initSamlValidator() error {
 }
 
 func loginSuccess(w http.ResponseWriter, r *http.Request) {
-	authConfig    := configs.Config.Auth
 	logger.Info("user login by saml way")
 
 	s := samlsp.SessionFromContext(r.Context())
@@ -87,19 +87,44 @@ func loginSuccess(w http.ResponseWriter, r *http.Request) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	tokenStr, _ := token.SignedString([]byte(authConfig.Key))
-	services.CreateSamlUser(tokenStr, map[string]interface{}{
+	if err := services.CreateSamlUser(tokenStr, map[string]interface{}{
 		"openId":   data["uid"],
 		"userName": data["userName"],
-	})
+	}); err != nil {
+		resp := map[string]interface{}{"code": -1, "msg": "save new saml user error"}
+		bResp, _ := json.Marshal(resp)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(bResp)
+		return
+	}
 
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func getSamlUser(w http.ResponseWriter, r *http.Request)  {
+	s := samlsp.SessionFromContext(r.Context())
+	if s == nil {
+		fmt.Println("session is nil")
+	}
+	sa, _ := s.(samlsp.SessionWithAttributes)
+
+	data := services.ExtractSamlAttrs(sa.GetAttributes())
+	resp := map[string]interface{}{
+		"code":           0,
+		"userName":       data["userName"],
+		"permissionList": []string{"AI_ARTS_ALL"},
+	}
+	bResp, _ := json.Marshal(resp)
+	logger.Info("saml user:", string(bResp))
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(bResp)
 }
 
 func AddSamlInterface(r *gin.Engine) {
 	g := r.Group("/ai_arts/")
 
 	g.Any("/saml/*action", gin.WrapH(samlValidator))
-
-	app := samlValidator.RequireAccount(http.HandlerFunc(loginSuccess))
-	g.GET("/saml_login", gin.WrapH(app))
+	g.GET("/saml_login", gin.WrapH(samlValidator.RequireAccount(http.HandlerFunc(loginSuccess))))
+	g.GET("/saml_role", gin.WrapH(samlValidator.RequireAccount(http.HandlerFunc(getSamlUser))))
 }
