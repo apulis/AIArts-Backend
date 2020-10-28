@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/Jeffail/gabs/v2 v2.6.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/crewjam/saml v0.4.2
+	github.com/crewjam/saml v0.0.0-00010101000000-000000000000
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/sessions v0.0.3
@@ -38,3 +38,5 @@ require (
 	k8s.io/client-go v0.19.0
 	k8s.io/utils v0.0.0-20200821003339-5e75c0163111 // indirect
 )
+
+replace github.com/crewjam/saml => github.com/apulis/saml v0.4.3-0.20201026095950-84556b93e766

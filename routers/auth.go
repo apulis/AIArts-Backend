@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/services"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,7 @@ func Auth() gin.HandlerFunc {
 		auth := r.Header.Get("Authorization")
 		samlSession, err := samlValidator.Session.GetSession(r)
 
-		if len(auth) == 0 && (samlSession == nil || err == samlsp.ErrNoSession) {
+		if len(auth) == 0 && (openSaml && err == samlsp.ErrNoSession) {
 			c.Abort()
 			c.JSON(http.StatusUnauthorized, UnAuthorizedError("Cannot authorize"))
 			c.Next()
@@ -58,6 +59,7 @@ func Auth() gin.HandlerFunc {
 				c.Abort()
 				c.JSON(http.StatusUnauthorized, UnAuthorizedError(err.Error()))
 			} else {
+				// TODO expiration has been detected in parseToken actually, why do it again
 				if time.Now().Unix() > claim.ExpiresAt {
 					c.Abort()
 					c.JSON(http.StatusUnauthorized, UnAuthorizedError("Token expired"))
@@ -66,8 +68,14 @@ func Auth() gin.HandlerFunc {
 				c.Set("userName", claim.UserName)
 				c.Set("userId", claim.Uid)
 			}
-		} else {
+		} else if openSaml {
 			r = r.WithContext(samlsp.ContextWithSession(r.Context(), samlSession))
+
+			sa, _ := samlSession.(samlsp.SessionWithAttributes)
+			claim := services.ExtractSamlAttrs(sa.GetAttributes())
+			c.Set("uid", claim["uid"])
+			c.Set("userName", claim["userName"])
+			c.Set("userId", claim["userId"])
 		}
 
 		c.Next()
