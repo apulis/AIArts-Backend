@@ -49,7 +49,14 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 		fmt.Printf("startupfile is invalid[%+v]\n", err)
 		return "", err
 	}
-
+	for k, v := range evaluation.Params {
+		if k == "sudo" {
+			//添加sudo权限
+			params["cmd"] = "sudo " + v + " " + params["cmd"].(string)
+		} else if len(k) > 0 && len(v) > 0 {
+			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
+		}
+	}
 	if len(evaluation.DatasetPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --data_path " + evaluation.DatasetPath
 	}
@@ -58,14 +65,6 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	}
 	if len(evaluation.ParamPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --checkpoint_path  " + evaluation.ParamPath
-	}
-	for k, v := range evaluation.Params {
-		if k == "sudo" {
-			//添加sudo权限
-			params["cmd"] = "sudo " + v + " " + params["cmd"].(string)
-		} else if len(k) > 0 && len(v) > 0 {
-			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
-		}
 	}
 	logger.Info(fmt.Sprintf("evaluation : %s", params["cmd"]))
 	params["startupFile"] = evaluation.StartupFile
