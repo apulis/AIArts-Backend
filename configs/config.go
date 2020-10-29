@@ -7,7 +7,6 @@ import (
 )
 
 type ProjectConfig struct {
-	RootUrl            string
 	Port               int
 	Log                LogConfig
 	Db                 DbConfig
@@ -58,6 +57,7 @@ type AuthConfig struct {
 	Url                string
 	Key                string
 	SamlIdpMetadataURL string
+	SamlRootUrl        string
 	SamlPrivateKey     string
 	SamlCertificate    string
 }

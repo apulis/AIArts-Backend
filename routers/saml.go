@@ -46,7 +46,7 @@ func initSamlValidator() error {
 		return err
 	}
 
-	rootURL, err := url.Parse(fmt.Sprintf("%s:%d", configs.Config.RootUrl, configs.Config.Port))
+	rootURL, err := url.Parse(fmt.Sprintf("%s:%d", authConfig.SamlRootUrl, configs.Config.Port))
 	if err != nil {
 		return err
 	}

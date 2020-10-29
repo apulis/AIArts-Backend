@@ -30,6 +30,7 @@ openssl创建密钥对
 增加volumeMounts设置:
 >volumeMounts:
    ......
+
    - mountPath: /root/saml-certs
       name: saml-secret
 
@@ -39,21 +40,19 @@ auth section需要增加saml的相关配置，通知auth服务url需要配置
 > auth:
   	url: http://{{cnf["kube-vip"]}}:80
    	key: "Sign key for JWT"
+   	samlRootUrl: {{ cnf["saml_root_url"] }}
    	samlIdpMetadataURL: {{cnf["saml_idp_metadata_url"]}}
    	samlPrivateKey: /root/saml-certs/tls.key
    	samlCertificate: /root/saml-certs/tls.crt
 
 其中samlIdpMetadataURL的值需要在Auth0的配置获取，详细见[](## 3. Auth0 IDP 参数设置)
-根section 需要增加rootUrl配置，用于IDP获取metadata和acs服务接口。
+根section 需要增加samlRootUrl配置，用于IDP获取metadata和acs服务接口。
 **注意:** *rootUrl需要根据实际环境配置，需要是EndUser(例如浏览器等)能直接访问的地址*
-
-> rootUrl: {{cnf["root_url"]}}
-
 sp这边会跟据rootUrl生成几个地址，保证这几个地址能访问到：
 
->${rootUrl}/saml/metadata
+>${samlRootUrl}/saml/metadata
 >
->${rootUrl}/saml/acs
+>${samlRootUrl}/saml/acs
 
 ## 2. AIArts Frontend设置（by xianjie）
 
