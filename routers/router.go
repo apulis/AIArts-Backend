@@ -20,7 +20,9 @@ func NewRouter() *gin.Engine {
 	}
 	r := gin.New()
 
-	AddSamlInterface(r)
+	if openSaml {
+		AddSamlInterface(r)
+	}
 
 	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
 
