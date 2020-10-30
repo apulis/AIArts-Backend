@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -19,6 +20,10 @@ func AddGroupEvaluation(r *gin.Engine) {
 type getEvaluationReq struct {
 	ID string `uri:"id" binding:"required"`
 }
+type getLogReq struct {
+	PageNum int `form:"pageNum" json:"pageNum"`
+}
+
 type getEvaluationsReq struct {
 	PageNum  int    `form:"pageNum" json:"pageNum"`
 	PageSize int    `form:"pageSize" json:"pageSize"`
@@ -35,11 +40,12 @@ type getEvaluationsResp struct {
 	PageNum     int                    `json:"pageNum"`
 	PageSize    int                    `json:"pageSize"`
 }
+
 type getEvaluationResp struct {
-	Evaluation services.Evaluation `json:"evaluation"`
-	Log        string              `json:"log"`
-	Indicator  map[string]string   `json:"indicator"`
-	Confusion  map[string]string   `json:"confusion"`
+	Evaluation *services.Evaluation `json:"evaluation"`
+	Log        *models.JobLog       `json:"log"`
+	Indicator  map[string]string    `json:"indicator"`
+	Confusion  map[string]string    `json:"confusion"`
 }
 
 // @Summary list evaluations
@@ -154,6 +160,11 @@ func getEvaluation(c *gin.Context) error {
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+	var logReq getLogReq
+	err = c.ShouldBindQuery(&logReq)
+	if err != nil {
+		return ParameterError(err.Error())
+	}
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
@@ -162,15 +173,15 @@ func getEvaluation(c *gin.Context) error {
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
-	log, err := services.GetEvaluationLog(username, id.ID,9999)
+	log, err := services.GetEvaluationLog(username, id.ID, logReq.PageNum)
 	logResp := ""
 	if log != nil {
 		logResp = log.Log
 	}
 	indicator, confusion := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
-		Evaluation: *job,
-		Log:        logResp,
+		Evaluation: job,
+		Log:        log,
 		Indicator:  indicator,
 		Confusion:  confusion,
 	}
