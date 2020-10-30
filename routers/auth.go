@@ -39,13 +39,22 @@ func Auth() gin.HandlerFunc {
 		r := c.Request
 
 		auth := r.Header.Get("Authorization")
-		samlSession, err := samlValidator.Session.GetSession(r)
 
-		if len(auth) == 0 && (openSaml && err == samlsp.ErrNoSession) {
+		tokenEmpty, samlEmpty := false, false
+		if len(auth) == 0 {
+			tokenEmpty = true
+		}
+		if openSaml {
+			_, err := samlValidator.Session.GetSession(r)
+			if err == samlsp.ErrNoSession {
+				samlEmpty = true
+			}
+		}
+
+		if tokenEmpty && samlEmpty {
 			c.Abort()
 			c.JSON(http.StatusUnauthorized, UnAuthorizedError("Cannot authorize"))
 			c.Next()
-
 			return
 		}
 
@@ -69,9 +78,10 @@ func Auth() gin.HandlerFunc {
 				c.Set("userId", claim.Uid)
 			}
 		} else if openSaml {
+			samlSession, _ := samlValidator.Session.GetSession(r)
 			r = r.WithContext(samlsp.ContextWithSession(r.Context(), samlSession))
-
 			sa, _ := samlSession.(samlsp.SessionWithAttributes)
+
 			claim := services.ExtractSamlAttrs(sa.GetAttributes())
 			c.Set("uid", claim["uid"])
 			c.Set("userName", claim["userName"])
