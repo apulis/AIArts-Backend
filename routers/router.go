@@ -14,7 +14,15 @@ import (
 var logger = loggers.Log
 
 func NewRouter() *gin.Engine {
+	if err := initSamlValidator(); err != nil {
+		logger.Fatalf("initialize saml middleware occurs error: %s", err.Error())
+		return nil
+	}
 	r := gin.New()
+
+	if openSaml {
+		AddSamlInterface(r)
+	}
 
 	r.GET("/swagger/*any", ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER"))
 
