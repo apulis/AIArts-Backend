@@ -182,6 +182,21 @@ func DeleteVisualJob(userName string, jobId int) error {
 
 func createBackgroundJob(userName string, jobName string, logdir string, description string) (string, error) {
 	//step1. create a job
+	// * get cluster availuable gpu type, and randomly select one to run visual job
+	requestClusterStatusURL := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
+	vcInfo := &models.VcInfo{}
+
+	err := DoRequest(requestClusterStatusURL, "GET", nil, nil, vcInfo)
+	if err != nil {
+		fmt.Printf("visual job process get cluster status err[%+v]\n", err)
+		return "", err
+	}
+	var selectNodeDevice string
+	for key := range vcInfo.DeviceCapacity {
+		selectNodeDevice = key
+		break
+	}
+	// create one job
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -191,7 +206,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 
 	params["image"] = ConvertImage("apulistech/visualjob:1.0")
 	fmt.Println(ConvertImage("apulistech/visualjob:1.0"))
-	params["gpuType"] = "nvidia_gpu_amd64"
+	params["gpuType"] = selectNodeDevice
 	params["resourcegpu"] = 0
 
 	params["codePath"] = logdir
@@ -218,7 +233,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["team"] = models.DefaultVcName
 
 	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	err = DoRequest(url, "POST", nil, params, id)
 	if err != nil {
 		fmt.Printf("post dlts err[%+v]\n", err)
 		return "", err
