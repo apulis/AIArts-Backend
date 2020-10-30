@@ -162,7 +162,7 @@ func getEvaluation(c *gin.Context) error {
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
-	log, err := services.GetEvaluationLog(username, id.ID)
+	log, err := services.GetEvaluationLog(username, id.ID,9999)
 	logResp := ""
 	if log != nil {
 		logResp = log.Log
