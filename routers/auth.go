@@ -40,14 +40,13 @@ func Auth() gin.HandlerFunc {
 
 		auth := r.Header.Get("Authorization")
 
-		tokenEmpty, samlEmpty := false, false
-		if len(auth) == 0 {
-			tokenEmpty = true
+		tokenEmpty, samlEmpty := true, true
+		if len(auth) > 0 {
+			tokenEmpty = false
 		}
 		if openSaml {
-			_, err := samlValidator.Session.GetSession(r)
-			if err == samlsp.ErrNoSession {
-				samlEmpty = true
+			if s, _ := samlValidator.Session.GetSession(r); s != nil {
+				samlEmpty = false
 			}
 		}
 
