@@ -53,11 +53,9 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 }
 
 func CreateTraining(userName string, training models.Training) (string, error) {
-	//params中加入visualpath
-	training.Params["visualPath"] = training.VisualPath
+
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
-
 	params["userName"] = userName
 	params["jobName"] = training.Name
 	params["jobType"] = models.JobTypeArtsTraining
@@ -82,14 +80,21 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 			return "", err
 		}
 		for k, v := range training.Params {
-			if len(k) > 0 && len(v) > 0 {
+			if k == "sudo" {
+				//添加sudo权限
+				params["cmd"] = "sudo " + v + " " + params["cmd"].(string)
+			} else if len(k) > 0 && len(v) > 0 {
 				params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
 			}
+
 		}
 		if len(training.DatasetPath) > 0 {
 			params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
 		}
-
+		//params中加入visualpath
+		if len(training.VisualPath) > 0 {
+			training.Params["visualPath"] = training.VisualPath
+		}
 		if len(training.OutputPath) > 0 {
 			params["cmd"] = params["cmd"].(string) + " --output_path " + training.OutputPath
 		}

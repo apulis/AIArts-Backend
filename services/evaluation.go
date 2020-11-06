@@ -29,10 +29,8 @@ type Evaluation struct {
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
-
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
-
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
@@ -51,6 +49,14 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 		fmt.Printf("startupfile is invalid[%+v]\n", err)
 		return "", err
 	}
+	for k, v := range evaluation.Params {
+		if k == "sudo" {
+			//添加sudo权限
+			params["cmd"] = "sudo " + v + " " + params["cmd"].(string)
+		} else if len(k) > 0 && len(v) > 0 {
+			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
+		}
+	}
 	if len(evaluation.DatasetPath) > 0 {
 		params["cmd"] = params["cmd"].(string) + " --data_path " + evaluation.DatasetPath
 	}
@@ -58,13 +64,9 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 		params["cmd"] = params["cmd"].(string) + " --output_path " + evaluation.OutputPath
 	}
 	if len(evaluation.ParamPath) > 0 {
-		params["cmd"] = params["cmd"].(string) + " --checkpoint_path  " + evaluation.ParamPath
+		params["cmd"] = params["cmd"].(string) + " --checkpoint_path " + evaluation.ParamPath
 	}
-	for k, v := range evaluation.Params {
-		if len(k) > 0 && len(v) > 0 {
-			params["cmd"] = params["cmd"].(string) + " --" + k + " " + v + " "
-		}
-	}
+
 	logger.Info(fmt.Sprintf("evaluation : %s", params["cmd"]))
 	params["startupFile"] = evaluation.StartupFile
 	params["datasetPath"] = evaluation.DatasetPath
@@ -75,11 +77,11 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
-	params["workPath"] = ""
+	params["workPath"] = "./"
 	params["enableworkpath"] = true
 	params["enabledatapath"] = true
 	params["enablejobpath"] = true
-	params["jobPath"] = "job"
+	params["jobPath"] = "./"
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
@@ -187,16 +189,29 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	return evaluation, nil
 }
 
-func GetEvaluationLog(userName, id string) (*models.JobLog, error) {
-	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+func GetEvaluationLog(userName, id string, pageNum int) (*models.JobLog, error) {
+	url := fmt.Sprintf("%s/GetJobLog?userName=%s&jobId=%s&page=%d", configs.Config.DltsUrl, userName, id, pageNum)
 	jobLog := &models.JobLog{}
-	err := DoRequest(url, "GET", nil, nil, jobLog)
+
+	jobLogFromDlts := &struct {
+		Cursor  string `json:"cursor,omitempty"`
+		Log     string `json:"log,omitempty"`
+		MaxPage int    `json:"max_page"`
+	}{}
+
+	err := DoRequest(url, "GET", nil, nil, jobLogFromDlts)
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return nil, err
 	}
+
+	jobLog.Cursor = jobLogFromDlts.Cursor
+	jobLog.Log = jobLogFromDlts.Log
+	jobLog.MaxPage = jobLogFromDlts.MaxPage
+
 	return jobLog, nil
 }
+
 
 func GetRegexpLog(log string) (map[string]string, map[string]string) {
 	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")

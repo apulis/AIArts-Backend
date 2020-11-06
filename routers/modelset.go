@@ -243,6 +243,12 @@ func deleteModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	err = services.DeleteModelset(id.ID)
+	username := getUsername(c)
+	//删除可视化建模同时删除停止任务
+	model, _ :=services.GetModelset(id.ID)
+	if strings.HasPrefix(model.Use, `Avisualis`) {
+		_ = services.DeleteTraining(username, model.JobId)
+	}
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

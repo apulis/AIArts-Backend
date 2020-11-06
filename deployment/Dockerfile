@@ -15,6 +15,7 @@ FROM golang:1.13.7-alpine3.11
 
 ENV GOPROXY https://goproxy.io
 ENV GO111MODULE on
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk --no-cache add git pkgconfig build-base
 RUN mkdir -p /go/src/apulis/AIArtsBackend

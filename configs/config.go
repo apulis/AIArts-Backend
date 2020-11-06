@@ -55,8 +55,12 @@ type InferenceConfig struct {
 }
 
 type AuthConfig struct {
-	Url string
-	Key string
+	Url                string
+	Key                string
+	SamlIdpMetadataURL string
+	SamlRootUrl        string
+	SamlPrivateKey     string
+	SamlCertificate    string
 }
 
 type ImageSaveConfig struct {

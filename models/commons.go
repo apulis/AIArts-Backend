@@ -216,8 +216,9 @@ type NodeStatus struct {
 
 // 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
-	DeviceAvail map[string]int `json:"gpu_avaliable"`
-	Nodes       []*NodeStatus  `json:"node_status"`
+	DeviceAvail    map[string]int `json:"gpu_avaliable"`
+	DeviceCapacity map[string]int `json:"gpu_capacity"`
+	Nodes          []*NodeStatus  `json:"node_status"`
 }
 
 // 接口：apis/GetAllDevice?userName=
