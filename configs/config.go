@@ -20,6 +20,7 @@ type ProjectConfig struct {
 	InteractiveModeJob bool
 	PrivateRegistry    string
 	Imagesave          ImageSaveConfig
+	TrackingUrl        string
 }
 
 type LogConfig struct {

@@ -29,7 +29,13 @@ func init() {
 	createTableIfNotExists(VisualJob{})
 	createTableIfNotExists(SavedImage{})
 
+	createTableIfNotExists(ExpProject{})
+	createTableIfNotExists(Experiment{})
+
+	db.Model(&Experiment{}).AddForeignKey("project_id", "exp_projects(id)", "RESTRICT", "RESTRICT")
+
 	initVersionInfoTable()
+
 }
 
 //驼峰转下划线形式
@@ -62,6 +68,7 @@ func (t UnixTime) MarshalJSON() ([]byte, error) {
 	microSec := t.Unix() * 1000
 	return []byte(strconv.FormatInt(microSec, 10)), nil
 }
+
 
 func (t UnixTime) Value() (driver.Value, error) {
 	var zeroTime time.Time
