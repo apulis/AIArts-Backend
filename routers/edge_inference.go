@@ -95,7 +95,7 @@ func lsEdgeInferences(c *gin.Context) error {
 
 // @Summary update dataset
 // @Produce  json
-// @Param body body createEdgeInferenceReq true "json body"
+// @Param body body string true "json body"
 // @Success 200 {object} APISuccessRespCreateEdgeInference "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
