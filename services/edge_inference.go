@@ -10,30 +10,39 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, jobStatus, convStatus, orderBy, order string) ([]models.ConversionJob, int, error) {
-	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d", configs.Config.DltsUrl, models.DefaultVcName, user, pageNum, pageSize)
+func LsEdgeInferences(user string, req models.LsEdgeInferencesReq) ([]models.ConversionJob, int, error) {
+
+	url := fmt.Sprintf("%s/ListModelConversionJob?vcName=%s&jobOwner=%s&num=%d&size=%d",
+		configs.Config.DltsUrl, req.VCName, user, req.PageNum, req.PageSize)
+
 	//urlencode改为%20
-	if jobName != "" {
-		url = url + fmt.Sprintf("&jobName=%s", urllib.PathEscape(jobName))
+	if req.JobName != "" {
+		url = url + fmt.Sprintf("&jobName=%s", urllib.PathEscape(req.JobName))
 	}
-	if convType != "" {
-		url = url + fmt.Sprintf("&convType=%s", convType)
+
+	if req.ModelConversionType != "" {
+		url = url + fmt.Sprintf("&convType=%s", req.ModelConversionType)
 	}
-	if orderBy != "" {
-		url = url + fmt.Sprintf("&orderBy=%s", orderBy)
+
+	if req.OrderBy != "" {
+		url = url + fmt.Sprintf("&orderBy=%s", req.OrderBy)
 	}
-	if order != "" {
-		url = url + fmt.Sprintf("&order=%s", order)
+
+	if req.Order != "" {
+		url = url + fmt.Sprintf("&order=%s", req.Order)
 	}
-	if jobStatus != "" {
-		url = url + fmt.Sprintf("&jobStatus=%s", urllib.PathEscape(jobStatus))
+
+	if req.JobStatus != "" {
+		url = url + fmt.Sprintf("&jobStatus=%s", urllib.PathEscape(req.JobStatus))
 	}
-	if convStatus != "" {
-		url = url + fmt.Sprintf("&convStatus=%s", urllib.PathEscape(convStatus))
+
+	if req.ModelConversionStatus != "" {
+		url = url + fmt.Sprintf("&convStatus=%s", urllib.PathEscape(req.ModelConversionStatus))
 	}
 
 	var resp models.ConversionList
 	var res []models.ConversionJob
+
 	err := DoRequest(url, "GET", nil, nil, &resp)
 	if err != nil {
 		return res, 0, err
@@ -52,27 +61,33 @@ func LsEdgeInferences(pageNum, pageSize int, user, jobName, convType, jobStatus,
 	return res, resp.Total, err
 }
 
-func CreateEdgeInference(jobName, inputPath, outputPath, convType, userName string, convArgs map[string]interface{}) (string, error) {
+func CreateEdgeInference(userName string, req models.CreateEdgeInferenceReq)  (string, error) {
+
 	url := fmt.Sprintf("%s/PostModelConversionJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
 	params["userName"] = userName
-	params["jobName"] = jobName
-	params["inputPath"] = inputPath
-	params["outputPath"] = outputPath
-	params["conversionType"] = convType
-	params["vcName"] = models.DefaultVcName
-	params["conversionArgs"] = convArgs
+	params["jobName"] = req.JobName
+	params["inputPath"] = req.InputPath
+	params["outputPath"] = req.OutputPath
+	params["conversionType"] = req.ConversionType
+	params["vcName"] = req.VCName
+	params["conversionArgs"] = req.ConversionArgs
+
 	baseImageName := "apulistech/atc:0.0.1"
-	if strings.HasPrefix(convType, "arm64") {
+	if strings.HasPrefix(req.ConversionType, "arm64") {
+
 		params["gpuType"] = "huawei_npu_arm64"
 		params["image"] = baseImageName + "-arm64"
 	}else{
+
 		params["gpuType"] = "nvidia_gpu_amd64"
 		params["image"] = baseImageName + "-arm64"
 	}
+
 	params["image"] = ConvertImage(params["image"].(string)) // give image name a harbor prefix
 	var res models.ConversionJobId
+
 	err := DoRequest(url, "POST", nil, params, &res)
 	if err != nil {
 		return "", err

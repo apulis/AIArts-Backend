@@ -24,14 +24,6 @@ type edgeInferenceId struct {
 	ID string `uri:"jobId" binding:"required"`
 }
 
-type createEdgeInferenceReq struct {
-	JobName        string                 `json:"jobName" binding:"required"`
-	InputPath      string                 `json:"inputPath" binding:"required"`
-	OutputPath     string                 `json:"outputPath" binding:"required"`
-	ConversionType string                 `json:"conversionType" binding:"required"`
-	ConversionArgs map[string]interface{} `json:"conversionArgs" binding:"required"`
-}
-
 type setFDInfoReq struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -40,17 +32,6 @@ type setFDInfoReq struct {
 
 type pushToFDReq struct {
 	JobId string `uri:"jobId" binding:"required"`
-}
-
-type lsEdgeInferencesReq struct {
-	PageNum               int    `form:"pageNum,default=1"`
-	PageSize              int    `form:"pageSize,default=10"`
-	JobName               string `form:"jobName"`
-	ModelConversionType   string `form:"modelconversionType"`
-	OrderBy               string `form:"orderBy"`
-	Order                 string `form:"order,default=desc" binding:"oneof=desc asc"`
-	JobStatus             string `form:"jobStatus"`
-	ModelConversionStatus string `form:"modelconversionStatus"`
 }
 
 type GetFDInfoResp struct {
@@ -82,7 +63,7 @@ type CreateEdgeInferenceResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/edge_inferences [get]
 func lsEdgeInferences(c *gin.Context) error {
-	var req lsEdgeInferencesReq
+	var req models.LsEdgeInferencesReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
@@ -91,7 +72,12 @@ func lsEdgeInferences(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	conversionList, total, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.JobStatus, req.ModelConversionStatus, req.OrderBy, req.Order)
+
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
+
+	conversionList, total, err := services.LsEdgeInferences(username, req)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
@@ -115,19 +101,23 @@ func lsEdgeInferences(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/edge_inferences [post]
 func createEdgeInference(c *gin.Context) error {
-	var req createEdgeInferenceReq
+
+	var req models.CreateEdgeInferenceReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username, req.ConversionArgs)
+
+	jobId, err := services.CreateEdgeInference(username, req)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
+
 	return SuccessResp(c, CreateEdgeInferenceResp{JobId: jobId})
 }
 

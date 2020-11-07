@@ -24,15 +24,6 @@ type getLogReq struct {
 	PageNum int `form:"pageNum" json:"pageNum"`
 }
 
-type getEvaluationsReq struct {
-	PageNum  int    `form:"pageNum" json:"pageNum"`
-	PageSize int    `form:"pageSize" json:"pageSize"`
-	Status   string `form:"status" json:"status"`
-	Search   string `form:"search" json:"search"`
-	OrderBy  string `form:"orderBy" json:"orderBy"`
-	Order    string `form:"order" json:"order"`
-}
-
 type getEvaluationsResp struct {
 	Evaluations []*services.Evaluation `json:"evaluations"`
 	Total       int                    `json:"total"`
@@ -59,20 +50,27 @@ type getEvaluationResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations [get]
 func lsEvaluations(c *gin.Context) error {
-	var req getEvaluationsReq
+
+	var req models.GetEvaluationsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	evaluations, total, totalPage, err := services.GetEvaluations(username, req.PageNum, req.PageSize,
-		req.Status, req.Search, req.OrderBy, req.Order)
+
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
+	evaluations, total, totalPage, err := services.GetEvaluations(username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
+
 	data := getEvaluationsResp{
 		Evaluations: evaluations,
 		Total:       total,
@@ -101,29 +99,6 @@ func createEvaluation(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	//检查数据集文件是否存在
-	//if req.DatasetPath != "" {
-	//	err = services.CheckPathExists(req.DatasetPath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
-	//检查模型参数文件是否存在
-	//err = services.CheckPathExists(req.CodePath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//检查启动文件是否存在
-	//err = services.CheckPathExists(req.StartupFile)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//检查输出路径是否存在自动去创建
-	//err = services.CheckPathExists(req.OutputPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//
 
 	//如果是avisualis只添加pipeline
 	if strings.Index(strings.ToLower(req.Engine), "apulisvision") != -1 {
@@ -135,6 +110,11 @@ func createEvaluation(c *gin.Context) error {
 		}
 		req.Params = newParam
 	}
+
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())

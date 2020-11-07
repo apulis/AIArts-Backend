@@ -26,11 +26,14 @@ type Evaluation struct {
 	Status      string            `json:"status"`
 	CreateTime  string            `json:"createTime"`
 	Desc        string            `json:"desc"`
+	VCName      string            `json:"vcName"`
 }
 
 func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
+
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
+
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
@@ -39,6 +42,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum
 	params["cmd"] = "" // use StartupFile, params instead
+
 	fileType, err := CheckStartFileType(evaluation.StartupFile)
 	if fileType == FILETYPE_PYTHON {
 		params["cmd"] = "python " + evaluation.StartupFile
@@ -85,23 +89,26 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["hostNetwork"] = false
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
+	params["vcName"] = evaluation.VCName
+	params["team"] = evaluation.VCName
+
 	id := &models.JobId{}
 	err = DoRequest(url, "POST", nil, params, id)
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return "", err
 	}
+
 	return id.Id, nil
 }
 
-func GetEvaluations(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*Evaluation, int, int, error) {
+func GetEvaluations(userName string, req models.GetEvaluationsReq)  ([]*Evaluation, int, int, error) {
+
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
+		configs.Config.DltsUrl, userName, userName, req.VCName,
 		models.JobTypeArtsEvaluation,
-		page, size, jobStatus, url.PathEscape(searchWord),
-		orderBy, order)
+		req.PageNum, req.PageSize, req.Status, url.PathEscape(req.Search),
+		req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -126,14 +133,15 @@ func GetEvaluations(userName string, page, size int, jobStatus, searchWord, orde
 			Params:      nil,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
+			VCName:      v.VcName,
 			DatasetName: v.JobParams.Desc,
 		})
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / page
+	totalPages := totalJobs / req.PageSize
 
-	if (totalJobs % page) != 0 {
+	if (totalJobs % req.PageSize) != 0 {
 		totalPages += 1
 	}
 
@@ -171,10 +179,13 @@ func GetEvaluation(userName, id string) (*Evaluation, error) {
 	evaluation.DeviceType = job.JobParams.GpuType
 	evaluation.Status = job.JobStatus
 	evaluation.CreateTime = job.JobTime
+	evaluation.VCName = job.VcName
+
 	evaluation.CodePath = job.JobParams.CodePath
 	evaluation.StartupFile = job.JobParams.StartupFile
 	evaluation.OutputPath = job.JobParams.OutputPath
 	evaluation.DatasetPath = job.JobParams.DatasetPath
+
 	//解析desc为数据集名称^模型文件名称
 	descSplit := strings.Split(job.JobParams.Desc, "^")
 	if len(descSplit) > 1 {

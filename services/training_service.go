@@ -7,13 +7,14 @@ import (
 	urllib "net/url"
 )
 
-func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
+func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Training, int, int, error) {
+
 	//把传输过来的searchword空格改为%20urlencode
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
-		models.JobTypeArtsTraining,
-		page, size, jobStatus, urllib.PathEscape(searchWord),
-		orderBy, order)
+				configs.Config.DltsUrl, userName, userName, req.VCName,
+				models.JobTypeArtsTraining,
+				req.PageNum, req.PageSize, req.JobStatus, urllib.PathEscape(req.SearchWord),
+				req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -43,9 +44,9 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / size
+	totalPages := totalJobs / req.PageSize
 
-	if (totalJobs % size) != 0 {
+	if (totalJobs % req.PageSize) != 0 {
 		totalPages += 1
 	}
 
@@ -124,8 +125,8 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["numpsworker"] = training.NumPs
 	params["numps"] = training.NumPsWorker
 
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
+	params["vcName"] = training.VCName
+	params["team"] = training.VCName
 
 	id := &models.JobId{}
 	err := DoRequest(url, "POST", nil, params, id)
@@ -176,6 +177,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
 	training.JobTrainingType = job.JobParams.Jobtrainingtype
+	training.VCName = job.VcName
 
 	training.Params = nil
 	training.CodePath = job.JobParams.CodePath

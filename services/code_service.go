@@ -24,13 +24,13 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.CodeEnvItem, int, int, error) {
+func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error){
 
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
-		models.JobTypeCodeEnv,
-		page, size, jobStatus, url.QueryEscape(searchWord),
-		orderBy, order)
+				configs.Config.DltsUrl, userName, userName, req.VCName,
+				models.JobTypeCodeEnv,
+				req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
+				req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -55,9 +55,9 @@ func GetAllCodeEnv(userName string, page, size int, jobStatus, searchWord, order
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / size
+	totalPages := totalJobs / req.PageSize
 
-	if (totalJobs % size) != 0 {
+	if (totalJobs % req.PageSize) != 0 {
 		totalPages += 1
 	}
 
@@ -104,8 +104,8 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["numpsworker"] = codeEnv.NumPsWorker
 	params["numps"] = codeEnv.NumPs
 
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
+	params["vcName"] = codeEnv.VCName
+	params["team"] = codeEnv.VCName
 
 	id := &models.JobId{}
 	err := DoRequest(url, "POST", nil, params, id)

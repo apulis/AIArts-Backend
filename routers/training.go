@@ -25,15 +25,6 @@ type GetAllTrainingReq struct {
 	SearchWord string `json:"searchWord"`
 }
 
-type GetAllJobsReq struct {
-	PageNum    int    `form:"pageNum" json:"pageNum"`
-	PageSize   int    `form:"pageSize" json:"pageSize"`
-	JobStatus  string `form:"status" json:"status"`
-	SearchWord string `form:"searchWord" json:"searchWord"`
-	OrderBy    string `form:"orderBy" json:"orderBy"`
-	Order      string `form:"order" json:"order"`
-}
-
 type GetAllTrainingRsp struct {
 	Trainings []*models.Training `json:"Trainings"`
 	Total     int                `json:"total"`
@@ -79,7 +70,7 @@ type GetLogReq struct {
 // @Router /ai_arts/api/trainings [get]
 func getAllTraining(c *gin.Context) error {
 
-	var req GetAllJobsReq
+	var req models.GetAllJobsReq
 	var err error
 
 	if err = c.Bind(&req); err != nil {
@@ -91,8 +82,12 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize,
-		req.JobStatus, req.SearchWord, req.OrderBy, req.Order)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
+
+	sets, total, totalPage, err := services.GetAllTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -127,6 +122,7 @@ func createTraining(c *gin.Context) error {
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
+
 	//检查数据集文件是否存在
 	if req.DatasetPath != "" {
 		err = services.CheckPathExists(req.DatasetPath)
@@ -143,10 +139,11 @@ func createTraining(c *gin.Context) error {
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
-	//不校验home目录
-	//if valid, msg := req.ValidatePathByUser(userName); !valid {
-	//	return AppError(INVALID_CODE_PATH, msg)
-	//}
+
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
 
 	id, err = services.CreateTraining(userName, req)
 	if err != nil {

@@ -36,9 +36,11 @@ func PostInferenceJob(c *gin.Context) error {
 	err := c.ShouldBind(&params)
 	params.UserName = getUsername(c)
 	params.UserId = getUserId(c)
+
 	if params.VcName == "" {
 		params.VcName = "platform"
 	}
+	
 	if err != nil {
 		return ParameterError(err.Error())
 	}

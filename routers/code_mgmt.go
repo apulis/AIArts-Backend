@@ -57,7 +57,7 @@ type CodeEnvId struct {
 // @Router /ai_arts/api/codes [get]
 func getAllCodeEnv(c *gin.Context) error {
 
-	var req GetAllJobsReq
+	var req models.GetAllJobsReq
 	var err error
 
 	if err = c.Bind(&req); err != nil {
@@ -69,8 +69,12 @@ func getAllCodeEnv(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize,
-		req.JobStatus, req.SearchWord, req.OrderBy, req.Order)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
+
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -104,6 +108,11 @@ func createCodeEnv(c *gin.Context) error {
 	userName := getUsername(c)
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
+	}
+
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
 	}
 
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
