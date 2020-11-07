@@ -89,6 +89,18 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 	return nil
 }
 
+func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
+
+	rspData, err := doRequest(url, "GET", headers, rawBody)
+	if err != nil {
+		return err, ""
+	}
+
+	logger.Info(url)
+	return nil, string(rspData)
+}
+
+
 // 如果配置了私有仓库，则添加私有仓库前缀
 func ConvertImage(image string) string {
 	imageName := strings.TrimSpace(image)

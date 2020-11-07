@@ -217,6 +217,7 @@ type VcInfo struct {
 // 接口：apis/GetAllDevice?userName=
 type DeviceItem2 struct {
 	DeviceStr string `json:"deviceStr"`
+	Capacity  int    `json:"capacity"`
 }
 
 type JobId struct {
@@ -279,3 +280,19 @@ var UPGRADE_CONFIG_FILE = "version.yaml"
  */
 var Upgrade_Progress = -1
 var Log_Line_Point = 0
+
+// VC资源项
+type VCItem struct {
+	VCName     *string		`form:"vcName"  json:"vcName"`
+	Quota      *string		`form:"Quota" json:"quota"`
+	Metadata   *string		`form:"Metadata" json:"metadata"`
+	UserNum		int 		`json:"userNum"`
+}
+
+// 分页请求
+type Paging struct {
+	PageNum    int		`form:"pageNum" json:"pageNum"`
+	PageSize   int		`form:"pageSize" json:"pageSize"`
+	Keyword    string	`form:"keyword" json:"keyword"`
+}
+

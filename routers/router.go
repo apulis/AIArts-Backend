@@ -53,6 +53,7 @@ func NewRouter() *gin.Engine {
 	AddGroupEdgeInference(r)
 	AddGroupVisualJob(r)
 	AddGroupSavedImage(r)
+	AddGroupVC(r)
 
 	return r
 }
