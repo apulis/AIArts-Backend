@@ -1,9 +1,12 @@
 package services
 
 import (
-	_ "github.com/apulis/AIArtsBackend/configs"
+	"errors"
+	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type CommQueryParams struct {
@@ -12,8 +15,11 @@ type CommQueryParams struct {
 	Limit   uint     `form:"pageSize"`
 	OrderBy string   `form:"orderBy" `
 	Order   string   `form:"order" `
+	Name    string   `form:"name"`
 	All     uint     `form:"all"`
 }
+
+var ai_arts_experiment_name_prefix="ai_arts_"
 
 func (s *CommQueryParams) SetQueryParams(c *gin.Context) {
 	 c.ShouldBind(s)
@@ -27,13 +33,13 @@ func (s *CommQueryParams) SetQueryParams(c *gin.Context) {
      	s.Order=""
 	 }
 	 //@todo: check for order by ???
-	 s.OrderBy=""
+	 //s.OrderBy=""
 
 }
 
 func ListExpProjects(queryParam CommQueryParams, username string) ([]models.ExpProject, uint, error) {
 	return models.ListAllExpProjects(queryParam.Offset, queryParam.Limit, queryParam.All,
-		queryParam.OrderBy, queryParam.Order)
+		queryParam.Name,queryParam.OrderBy, queryParam.Order)
 }
 
 func CreateExpProject(project* models.ExpProject) error {
@@ -65,7 +71,7 @@ func MarkExpProject(id uint64, hide bool) error {
 
 func ListExperiments(queryParam CommQueryParams, projectID uint64) ([]models.Experiment, uint, error) {
 	return models.ListAllExperiments(uint(projectID), queryParam.Offset, queryParam.Limit, queryParam.All,
-		queryParam.OrderBy, queryParam.Order)
+		queryParam.Name, queryParam.OrderBy, queryParam.Order)
 }
 
 func CreateExperiment(experiment*models.Experiment)error{
@@ -93,4 +99,134 @@ func MarkExperiment(id uint64, hide bool) error {
 
 func  QueryExperiment(id uint64,experiment*models.Experiment)error{
 	return models.QueryExperiment(uint(id),experiment)
+}
+
+func getMlflowExperimentName(experiment_id uint64) string{
+	 return fmt.Sprintf("%s%d",ai_arts_experiment_name_prefix,experiment_id)
+}
+
+
+type MlflowMetric struct{
+     Key       string   `json:"key"`
+     Value     float64  `json:"value"`
+	 Timestamp int64    `json:"timestamp,string"`
+     Step      int64    `json:"step,string"`
+}
+type RunTag struct{
+	 Key   string       `json:"key"`
+	 Value string       `json:"value"`
+}
+
+type MlflowRunInfo struct{
+	RunId        string   `json:"run_id"`
+    ExperimentId string   `json:"experiment_id"`
+	Status       string    `json:"status"`
+	StartTime    int64     `json:"start_time,string"`
+	EndTime      int64     `json:"end_time,string"`
+	ArtifactUri    string   `json:"artifact_uri"`
+	LifecycleStage string   `json:"lifecycle_stage"`
+}
+type MlflowRunData struct{
+	Metrics []MlflowMetric   `json:"metrics"`
+	Params  []RunTag         `json:"params"`
+	Tags    []RunTag         `json:"tags"`
+}
+
+type MlflowRun struct{
+	Info  MlflowRunInfo    `json:"info"`
+	Data  MlflowRunData    `json:"data"`
+}
+
+type MlflowRunResp struct{
+	ErrorCode string  `json:"error_code"`
+	Message   string  `json:"message"`
+	Run MlflowRun     `json:"run"`
+}
+
+type MlflowExperiment struct{
+	ExperimentID  string       `json:"experiment_id"`
+	Name          string       `json:"name"`
+	ArtifactLocation string    `json:"artifact_location"`
+	LifecycleStage   string    `json:"lifecycle_stage"`
+	LastUpdateTime   int64     `json:"last_update_time,string"`
+	CreationTime     int64     `json:"creation_time,string"`
+	Tags             []RunTag  `json:"tags"`
+}
+
+type MlflowInfoExperimentResp struct{
+	ErrorCode  string   `json:"error_code"`
+	Message    string   `json:"message"`
+	Experiment MlflowExperiment `json:"experiment"`
+}
+
+func getMlflowExperiment(experimentID uint64) (*MlflowExperiment,error){
+	url := fmt.Sprintf("%s/experiments/get-by-name?experiment_name=%s",configs.Config.TrackingUrl,getMlflowExperimentName(experimentID))
+	experimentResp := MlflowInfoExperimentResp{}
+    err := DoRequest2(url,"GET",nil,nil,&experimentResp)
+    if err != nil {
+		if experimentResp.ErrorCode == "RESOURCE_DOES_NOT_EXIST"{// supress not found error
+			return nil,nil
+		}
+		return nil,err
+	}
+    return &experimentResp.Experiment,err
+}
+func createMlflowExperiment(experimentID uint64) (string,error){
+	url := fmt.Sprintf("%s/experiments/create",configs.Config.TrackingUrl)
+	Resp := make(map[string]interface{})
+	type stCreateRequest struct{
+		Name string `json:"name"`
+	}
+	err := DoRequest2(url,"POST",nil,stCreateRequest{
+		Name:getMlflowExperimentName(experimentID),
+	},&Resp)
+	if err != nil{
+		return "",err
+	}
+	id := Resp["experiment_id"].(string)
+	if len(id) == 0{
+		return "" , errors.New("Create mlflow experiment ID failed !")
+	}
+	return id,nil
+}
+func createMlflowRun(mlflow_exp_id string)(*MlflowRun,error){
+	url := fmt.Sprintf("%s/runs/create",configs.Config.TrackingUrl)
+	Request := map[string]interface{}{
+		"experiment_id" : mlflow_exp_id,
+		"start_time"    : time.Now().UnixNano()/1e6,
+
+	}
+	runResp := MlflowRunResp{}
+	err := DoRequest(url,"POST",nil,Request,&runResp)
+	if err != nil{
+		return nil,err
+	}
+	return &runResp.Run,err
+}
+
+//  sync with mlflow to ensure specified experiment exists and allocate a run id
+func  StartMlflowRun(experimentID uint64) (interface{},error){
+
+	experimentPtr,err := getMlflowExperiment(experimentID)
+	if err != nil {
+         return nil,err
+	}
+	if experimentPtr == nil {//create if not exists
+		id,err := createMlflowExperiment(experimentID)
+		if err != nil{
+			return nil,err
+		}
+		experimentPtr=&MlflowExperiment{ExperimentID: id}
+	}
+	run,err := createMlflowRun(experimentPtr.ExperimentID)
+	return run,err
+}
+func QueryMlflowRun(runID string) (interface{},error){
+	url := fmt.Sprintf("%s/runs/get?run_id=%s",configs.Config.TrackingUrl,runID)
+	runResp := MlflowRunResp{}
+	err := DoRequest2(url,"GET",nil,nil,&runResp)
+	if err != nil {
+		return nil,err
+	}
+	return &runResp.Run,nil
 }

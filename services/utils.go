@@ -89,6 +89,19 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 	return nil
 }
 
+func DoRequest2(url, method string, headers map[string]string, rawBody interface{}, output interface{}) error {
+
+	rspData, err := doRequest(url, method, headers, rawBody)
+	var resp_err error = nil
+	if len(rspData) > 0 {
+		resp_err = json.Unmarshal(rspData, output)
+	}
+	if resp_err != nil {
+		return resp_err
+	}
+	return err
+}
+
 // 如果配置了私有仓库，则添加私有仓库前缀
 func ConvertImage(image string) string {
 	imageName := strings.TrimSpace(image)

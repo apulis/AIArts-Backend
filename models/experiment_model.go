@@ -112,30 +112,44 @@ func wrapDBOpUpdate(db * gorm.DB , changes int64 ) error{
 	return nil
 }
 
-func ListAllExpProjects(offset, limit, isAll uint, orderBy, order string) ([]ExpProject, uint, error) {
+func checkUserOrderBy(orderBy,order string) func (*gorm.DB) *gorm.DB{
+
+	 return func(db*gorm.DB)*gorm.DB{
+	 	 if len(orderBy) > 0 {
+	 	 	return db.Order( fmt.Sprintf("%s %s",CamelToCase(orderBy),order) )
+		 }
+		 return db
+	 }
+}
+func checkFilterName(name string)func (*gorm.DB)*gorm.DB{
+	 return func(db*gorm.DB)*gorm.DB{
+	 	if len(name) > 0 {
+	 		return db.Where("name like ? ","%"+name+"%")
+		}
+		return db
+	 }
+}
+func checkUnScope(isAll uint) func(*gorm.DB)*gorm.DB{
+	 return func(db*gorm.DB)*gorm.DB{
+	 	if isAll != 0{
+	 		return db.Unscoped()
+		}
+		return db
+	 }
+}
+
+func ListAllExpProjects(offset, limit, isAll uint, name,orderBy, order string) ([]ExpProject, uint, error) {
 
 	var datasets []ExpProject
 	var total uint
-	var orderQueryStr string
-	if len(orderBy) != 0 {
-		orderQueryStr=fmt.Sprintf("order by %s %s ", CamelToCase(orderBy), order)
-	}
-	var res *gorm.DB
-	if isAll == 0 {
-		res = db.Offset(offset).Limit(limit).Order(orderQueryStr).Select(list_projects_fields).Find(&datasets)
-		if res.Error != nil {
-			return datasets, total, res.Error
-		}
-		db.Model(&ExpProject{}).Count(&total)
-	}else{
-        res = db.Unscoped().Offset(offset).Limit(limit).Order(orderQueryStr).Select(list_projects_fields).Find(&datasets)
-		if res.Error != nil {
-			return datasets, total, res.Error
-		}
-		db.Unscoped().Model(&ExpProject{}).Count(&total)
+
+	err := db.Scopes(checkUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
+		    Offset(offset).Limit(limit).Select(list_projects_fields).Find(&datasets).Error
+	if err == nil{
+		err = db.Model(&ExpProject{}).Scopes(checkUnScope(isAll),checkFilterName(name)).Count(&total).Error
 	}
 
-	return datasets, total, nil
+	return datasets,total,err
 }
 
 func CreateExpProject(project *ExpProject) error {
@@ -166,32 +180,20 @@ func RestoreExpProject(id uint)error{
     return wrapDBOpUpdate(db.Unscoped().Model(&ExpProject{ID:id}).Update("deleted_at",nil),1)
 }
 
-func ListAllExperiments(projectID ,offset, limit, isAll uint, orderBy, order string) ([]Experiment, uint, error) {
+func ListAllExperiments(projectID ,offset, limit, isAll uint,name, orderBy, order string) ([]Experiment, uint, error) {
 
 	var datasets []Experiment
 	var total uint
-	var orderQueryStr string
-	if len(orderBy) != 0 {
-		orderQueryStr=fmt.Sprintf("order by %s %s ", CamelToCase(orderBy), order)
-	}
-	var res *gorm.DB
-	if isAll == 0 {
-		res = db.Debug().Offset(offset).Limit(limit).Order(orderQueryStr).Select(list_experiments_fields).
-			Find(&datasets,"project_id=?",projectID)
-		if res.Error != nil {
-			return datasets, total, res.Error
-		}
-		db.Model(&Experiment{}).Where("project_id=?",projectID).Count(&total)
-	}else{
-		res = db.Unscoped().Offset(offset).Limit(limit).Order(orderQueryStr).Select(list_experiments_fields).
-			Find(&datasets,"project_id=?",projectID)
-		if res.Error != nil {
-			return datasets, total, res.Error
-		}
-		db.Unscoped().Model(&Experiment{}).Where("project_id=?",projectID).Count(&total)
+
+	err := db.Scopes(checkUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
+		         Offset(offset).Limit(limit).Select(list_experiments_fields).
+		        Where("project_id=?",projectID).Find(&datasets).Error
+	if err == nil{
+		err = db.Model(&Experiment{}).Scopes(checkUnScope(isAll),checkFilterName(name)).
+			    Where("project_id=?",projectID).Count(&total).Error
 	}
 
-	return datasets, total, nil
+	return datasets,total,err
 }
 func CreateExperiment(experiment *Experiment) error {
 	return db.Create(experiment).Error

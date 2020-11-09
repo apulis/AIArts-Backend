@@ -15,7 +15,9 @@ import (
 //AddGroupExperimentMgr
 func AddGroupExperimentMgr(r *gin.Engine) {
 
-	group := r.Group("/ai_arts/api/projects")
+	api_prefix := "/ai_arts/api"   //
+
+	group := r.Group(api_prefix + "/projects")
 	//group.Use(Auth())
 
 	group.GET("/", wrapper(getAllExpProjects))
@@ -24,7 +26,7 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 	group.POST("/",wrapper(createExpProject))
 	group.POST("/:id", wrapper(postExpProject))
 
-	group = r.Group("/ai_arts/api/experiments")
+	group = r.Group(api_prefix+ "/experiments")
 	//group.Use(Auth())
 
 	group.GET("/", wrapper(getAllExperiments))
@@ -33,6 +35,9 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 	group.POST("/", wrapper(createExperiment))
 	group.POST("/:id", wrapper(postExperiment))
 
+	group = r.Group("/ai_arts/api/runs")
+	//group.Use(Auth())
+	group.GET("/:id",wrapper(getExperimentRun))
 
 }
 
@@ -161,6 +166,9 @@ func postExperiment(c *gin.Context) error {
 		return doRespWith(c,services.MarkExperiment(id, true),nil)
 	case "restore":
 		return doRespWith(c,services.MarkExperiment(id, false),nil)
+	case "run":
+		data,err := services.StartMlflowRun(id)
+		return doRespWith(c,err,data)
 	default:
 		return AppError(APP_ERROR_CODE, "Unsupport action !!!")
 	}
@@ -199,4 +207,10 @@ func createExperiment(c*gin.Context)error{
 	experiment.ProjectID=uint(projectID)
 	err = services.CreateExperiment(&experiment)
 	return doRespWith(c,err,gin.H{ "id":experiment.ID	})
+}
+
+func getExperimentRun(c*gin.Context)error{
+    id := c.Param("id")
+    data,err := services.QueryMlflowRun(id)
+    return doRespWith(c,err,data)
 }
