@@ -19,6 +19,7 @@ func AddGroupGeneral(r *gin.Engine) {
 }
 
 type GetResourceReq struct {
+	VCName string `form:"vcName" json:"vcName"`
 }
 
 type GetResourceRsp struct {
@@ -63,12 +64,24 @@ func getUserId(c *gin.Context) string {
 // @Router /ai_arts/api/common/resource [get]
 func getResource(c *gin.Context) error {
 
+	var req GetResourceReq
+	var err error
+
+	if err = c.ShouldBindQuery(&req); err != nil {
+		return ParameterError(err.Error())
+	}
+
 	userName := getUsername(c)
 	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	vcInfo, err := services.GetResource(userName)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
+	vcInfo, err := services.GetResource(userName, req.VCName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

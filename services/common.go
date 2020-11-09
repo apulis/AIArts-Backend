@@ -15,9 +15,9 @@ import (
 var db = database.Db
 var logger = loggers.Log
 
-func GetResource(userName string) (*models.VcInfo, error) {
+func GetResource(userName, vcName string) (*models.VcInfo, error) {
 
-	url := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
+	url := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, vcName)
 	vcInfo := &models.VcInfo{}
 
 	err := DoRequest(url, "GET", nil, nil, vcInfo)
