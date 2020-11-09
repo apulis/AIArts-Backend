@@ -131,7 +131,9 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 		// 计算剩余数据
 		for k, _ := range(devices) {
 			if _, ok := alloc[k]; ok {
-				unallocated[k] += unallocated[k] + alloc[k]
+				if _, totalOk := total[k]; totalOk {
+					unallocated[k] += total[k] - alloc[k]
+				}
 			}
 		}
 
