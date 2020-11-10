@@ -101,8 +101,9 @@ func initVersionInfoTable() {
 
 // 以下结构体用于api/common
 type DeviceItem struct {
-	DeviceType string `json:"deviceType"`
-	Avail      int    `json:"avail"`
+	DeviceType string `json:"deviceType"`		// 计算设备类型
+	Avail      int    `json:"avail"`            // VC下该设备类型的可用数量
+	UserQuota  int    `json:"userQuota"`        // VC下该设备类型的用户配额，相当于用户在VC下的最大可占用数量
 }
 
 type NodeInfo struct {
@@ -212,6 +213,7 @@ type VcInfo struct {
 	DeviceAvail    map[string]int `json:"gpu_avaliable"`
 	DeviceCapacity map[string]int `json:"gpu_capacity"`
 	Nodes          []*NodeStatus  `json:"node_status"`
+	Quota		   string 		  `json:"quota"`
 }
 
 // 接口：apis/GetAllDevice?userName=
