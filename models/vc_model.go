@@ -8,7 +8,7 @@ const (
 	VC_OPTYPE_GET
 
 	VC_STATISTIC_JOB     int = 1
-	VC_STATISTIC_UNALLOC     	= 2
+	VC_STATISTIC_VC_CONFIG     	= 2
 	VC_STATISTIC_USER_UNUSED    = 3
 )
 
@@ -41,5 +41,6 @@ type VCStatisticReq struct {
 type VCStatisticRsp struct {
 	JobCount	        int 				`json:"jobCount"`
 	UnallocatedDevice   map[string]int 		`json:"unallocatedDevice"`   // 未分配给VC的设备
-	UserUnusedDevice    map[string]int 		`json:"userUnusedDevice"`    // 用户配额下的未使用设备
+	UserQuota   	    map[string]map[string]int 	`json:"userQuota"`  		 // 每个VC的用户计算设备配额
+	UserUnusedDevice    map[string]int 				`json:"userUnusedDevice"`    // 用户配额下的未使用设备
 }

@@ -84,13 +84,17 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 				err = err2
 			}
 		}
-	} else if req.Type == models.VC_STATISTIC_UNALLOC {
+	} else if req.Type == models.VC_STATISTIC_VC_CONFIG {
 
+		// 返回：
+		// 1. 未分配给VC的计算设备数
+		// 2. 每个VC下的用户配额数量
 		url = fmt.Sprintf("%s/GetAllDevice?userName=%s", configs.Config.DltsUrl, userName)
 
 		devices := make(map[string]models.DeviceItem2)
 		unallocated := make(map[string]int)
 		alloc := make(map[string]int)
+		userQuota := make(map[string]map[string]int)
 
 		err = DoRequest(url, "GET", nil, nil, &devices)
 		if err != nil {
@@ -120,8 +124,10 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 				if len(*(v.Quota)) > 0 {
 					err = json.Unmarshal([]byte(*(v.Quota)), &quota)
 					if err == nil {
+						userQuota[*(v.VCName)] = make(map[string]int)
 						for deviceStr, num := range(quota) {
 							alloc[deviceStr] += num
+							userQuota[*(v.VCName)][deviceStr] = num
 						}
 					}
 				}
@@ -139,6 +145,7 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 
 		return &models.VCStatisticRsp{
 			UnallocatedDevice: unallocated,
+			UserQuota: userQuota,
 		}, nil
 
 	} else if req.Type == models.VC_STATISTIC_USER_UNUSED {
