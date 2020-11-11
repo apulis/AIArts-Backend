@@ -174,11 +174,16 @@ func getEvaluation(c *gin.Context) error {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	log, err := services.GetEvaluationLog(username, id.ID, logReq.PageNum)
-	logResp := ""
+	// 请求最后一页日志以获取评估指标
+	var maxPageLog *models.JobLog
+	var indicator map[string]string
+	var confusion map[string]string
 	if log != nil {
-		logResp = log.Log
+		maxPageLog, err = services.GetEvaluationLog(username, id.ID, log.MaxPage)
+		if maxPageLog != nil {
+			indicator, confusion = services.GetRegexpLog(maxPageLog.Log)
+		}
 	}
-	indicator, confusion := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
 		Evaluation: job,
 		Log:        log,
