@@ -232,12 +232,13 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName
 
-	id := &models.JobId{}
+	id := &models.CreateJobReq{}
 	err = DoRequest(url, "POST", nil, params, id)
 	if err != nil {
 		fmt.Printf("post dlts err[%+v]\n", err)
 		return "", err
 	}
+
 	//step2. create endpoints
 	url = fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id.Id)
 	req := &models.CreateEndpointsReq{}

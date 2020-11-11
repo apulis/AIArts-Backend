@@ -115,7 +115,7 @@ func createEvaluation(c *gin.Context) error {
 		req.VCName = models.DefaultVcName
 	}
 
-	jobId, err := services.CreateEvaluation(username, req)
+	jobId, err := services.CreateEvaluation(c, username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}

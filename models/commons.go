@@ -222,8 +222,10 @@ type DeviceItem2 struct {
 	Capacity  int    `json:"capacity"`
 }
 
-type JobId struct {
-	Id string `json:"jobId"`
+type CreateJobReq struct {
+	Id string 		`json:"jobId"`
+	Code int 		`json:"code"`
+	Msg string 		`json:"error"`
 }
 
 type UriJobId struct {

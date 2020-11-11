@@ -157,6 +157,7 @@ func createModelset(c *gin.Context) error {
 			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
+
 	//avisualis不检测参数路径是否存在
 	if req.ParamPath != "" && !strings.HasPrefix(req.Use, `Avisualis`) {
 		err = services.CheckPathExists(req.ParamPath)
@@ -171,7 +172,7 @@ func createModelset(c *gin.Context) error {
 	}
 
 	if strings.HasPrefix(req.Use, `Avisualis`) && !req.IsAdvance {
-		req, err = services.CreateAvisualisTraining(req, username)
+		req, err = services.CreateAvisualisTraining(c, req, username)
 		if err != nil {
 			return err
 		}
@@ -215,7 +216,7 @@ func updateModelset(c *gin.Context) error {
 			_ = services.DeleteTraining(username, req.JobId)
 		}
 		//更新节点的parma配置节点
-		req, err = services.CreateAvisualisTraining(req, username)
+		req, err = services.CreateAvisualisTraining(c, req, username)
 		if err != nil {
 			return err
 		}

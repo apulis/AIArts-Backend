@@ -119,7 +119,7 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
 
-	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
+	id, err = services.CreateCodeEnv(c, userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

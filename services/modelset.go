@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Jeffail/gabs/v2"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 	"os"
 	"strings"
 )
@@ -239,7 +240,7 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	return modelset, nil
 }
 
-func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateModelsetReq, error) {
+func CreateAvisualisTraining(c *gin.Context, req CreateModelsetReq, username string) (CreateModelsetReq, error) {
 	//存储节点json
 	nodesBytes, _ :=req.Params["nodes"]
 	//去掉nodes没用的节点并存入json
@@ -273,7 +274,7 @@ func CreateAvisualisTraining(req CreateModelsetReq, username string) (CreateMode
 		JobTrainingType: req.JobTrainingType,
 	}
 	//启动训练作业
-	jobId, err := CreateTraining(username, training)
+	jobId, err := CreateTraining(c, username, training)
 	//panel不用变
 	req.JobId = jobId
 	req.Params["pipeline_config"] = pipelineConfigPath

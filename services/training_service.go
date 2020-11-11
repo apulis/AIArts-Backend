@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 	urllib "net/url"
 )
 
@@ -53,7 +54,7 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 	return trainings, totalJobs, totalPages, nil
 }
 
-func CreateTraining(userName string, training models.Training) (string, error) {
+func CreateTraining(c *gin.Context, userName string, training models.Training) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
@@ -128,12 +129,22 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["vcName"] = training.VCName
 	params["team"] = training.VCName
 
-	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	header := make(map[string]string)
+	if value := c.GetHeader("Authorization"); len(value) != 0 {
+		header["Authorization"] = value
+	}
+
+	id := &models.CreateJobReq{}
+	err := DoRequest(url, "POST", header, params, id)
 
 	if err != nil {
 		fmt.Printf("create training err[%+v]\n", err)
 		return "", err
+	}
+
+	if id.Code != 0 && len(id.Msg) != 0 {
+		fmt.Printf("create codeEnv err[%+v]\n", id.Msg)
+		return "", fmt.Errorf("%s", id.Msg)
 	}
 
 	return id.Id, nil

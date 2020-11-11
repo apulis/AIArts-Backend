@@ -145,7 +145,7 @@ func createTraining(c *gin.Context) error {
 		req.VCName = "platform"
 	}
 
-	id, err = services.CreateTraining(userName, req)
+	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

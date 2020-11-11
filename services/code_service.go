@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/url"
 	"strings"
@@ -64,7 +65,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 	return codes, totalJobs, totalPages, nil
 }
 
-func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error) {
+func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
@@ -107,12 +108,21 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["vcName"] = codeEnv.VCName
 	params["team"] = codeEnv.VCName
 
-	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	id := &models.CreateJobReq{}
+	header := make(map[string]string)
+	if value := c.GetHeader("Authorization"); len(value) != 0 {
+		header["Authorization"] = value
+	}
 
+	err := DoRequest(url, "POST", header, params, id)
 	if err != nil {
 		fmt.Printf("create codeEnv err[%+v]\n", err)
 		return "", err
+	}
+
+	if id.Code != 0 && len(id.Msg) != 0 {
+		fmt.Printf("create codeEnv err[%+v]\n", id.Msg)
+		return "", fmt.Errorf("%s", id.Msg)
 	}
 
 	// create endpoints
