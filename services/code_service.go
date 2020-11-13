@@ -131,6 +131,7 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	ret := &models.CreateEndpointsRsp{}
 
 	req.Endpoints = append(req.Endpoints, "ipython")
+	req.Endpoints = append(req.Endpoints, "ssh")
 	req.JobId = id.Id
 
 	err = DoRequest(url, "POST", nil, req, ret)
@@ -186,4 +187,21 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	return nil, appRspData
+}
+
+
+func GetEndpoints(userName, id string) (error, interface{}) {
+
+	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+	fmt.Println(url)
+
+	var rspData interface{}
+	err := DoRequest(url, "GET", nil, nil, &rspData)
+
+	if err != nil {
+		fmt.Printf("get endpoints path err[%+v]\n", err)
+		return err, nil
+	}
+
+	return nil, rspData
 }

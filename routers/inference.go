@@ -67,11 +67,13 @@ func ListInferenceJob(c *gin.Context) error {
 	if vcName == "" {
 		vcName = "platform"
 	}
+
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
 	logger.Info(queryStringParameters)
+
 	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {
 		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())

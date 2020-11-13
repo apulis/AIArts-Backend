@@ -16,6 +16,7 @@ func AddGroupCode(r *gin.Engine) {
 	group.POST("/", wrapper(createCodeEnv))
 	group.DELETE("/:id", wrapper(delCodeEnv))
 	group.GET("/:id/jupyter", wrapper(getJupyterPath))
+	group.GET("/:id/endpoints", wrapper(getCodeEnvEndpoints))
 	group.POST("/upload", wrapper(uploadCode))
 }
 
@@ -175,6 +176,35 @@ func getJupyterPath(c *gin.Context) error {
 	}
 
 	err, rspData = services.GetJupyterPath(userName, id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, rspData)
+}
+
+// @Summary get CodeEnv endpoints
+// @Produce  json
+// @Param id query string true "code id"
+// @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/:id/endpoints [get]
+func getCodeEnvEndpoints(c *gin.Context) error {
+
+	var err error
+	var id string
+	var rspData interface{}
+
+	id = c.Param("id")
+	fmt.Println(id)
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err, rspData = services.GetEndpoints(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
