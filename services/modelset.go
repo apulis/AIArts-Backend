@@ -15,39 +15,6 @@ const (
 	MODELSET_STATUS_DELETING = "deleting"
 )
 
-type CreateModelsetReq struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" `
-	JobId       string `json:"jobId"`
-	CodePath    string `json:"codePath"`
-	ParamPath   string `json:"paramPath"`
-	IsAdvance   bool   `json:"isAdvance,default=false"`
-
-	Use         string `json:"use"`
-	Size        int64  `json:"size"`
-	DataFormat  string `json:"dataFormat"`
-	DatasetName string `json:"datasetName"`
-	DatasetPath string `json:"datasetPath"`
-	//omitempty 值为空，不编码
-	Params    map[string]string `json:"params"`
-	Engine    string            `json:"engine"`
-	Precision string            `json:"precision"`
-	//指定的模型参数路径
-	// 输出文件路径
-	OutputPath string `json:"outputPath"`
-	//启动文件路径
-	StartupFile string `json:"startupFile"`
-	VisualPath  string `json:"visualPath"`
-
-	//用于可视化建模平台直接启动训练任务
-	JobTrainingType string            `json:"jobTrainingType"`
-	NumPs           int               `json:"numPs"`
-	NumPsWorker     int               `json:"numPsWorker"`
-	DeviceType      string            `json:"deviceType"`
-	DeviceNum       int               `json:"deviceNum"`
-
-}
-
 type AvisualisEdge struct {
 	Source string `json:"source"`
 	Target string `json:"target"`
@@ -66,60 +33,66 @@ type AvisualisCombos struct {
 	AnchorPoints interface{} `json:"anchorPoints"`
 }
 
-func ListModelSets(page, count int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]models.Modelset, int, error) {
+func ListModelSets(username string, req models.LsModelsetsReq) ([]models.Modelset, int, error) {
 
-	offset := count * (page - 1)
-	limit := count
-	return models.ListModelSets(offset, limit, orderBy, order, isAdvance, name, status, use, username)
+	offset := req.PageSize * (req.PageNum - 1)
+	limit := req.PageSize
+
+	return models.ListModelSets(username, offset, limit, req.OrderBy,
+		req.Order, req.IsAdvance, req.Name, req.Status, req.Use)
 }
 
-func CreateModelset(name, description, creator, version, jobId, codePath, paramPath string, isAdvance bool,
-	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, deviceType, visualPath string, deviceNum int) error {
+func CreateModelset(username, version string, req models.CreateModelsetReq) error {
 
 	//只能创建非预置模型
 	modelset := models.Modelset{
-		Name:        name,
-		Description: description,
-		Creator:     creator,
+		Name:        req.Name,
+		Description: req.Description,
+		Creator:     username,
 		Version:     version,
-		JobId:       jobId,
+		JobId:       req.JobId,
 		Status:      MODELSET_STATUS_NORMAL,
-		IsAdvance:   isAdvance,
-		ParamPath:   paramPath,
-		VisualPath:  visualPath,
+		IsAdvance:   req.IsAdvance,
+		ParamPath:   req.ParamPath,
+		VisualPath:  req.VisualPath,
+		//VCName:      req.VCName,
 	}
+
 	//只能创建Avisualis模型
-	if strings.HasPrefix(use, `Avisualis`) {
+	if strings.HasPrefix(req.Use, `Avisualis`) {
 		var paramItem models.ParamsItem
-		paramItem = params
+		paramItem = req.Params
 		modelset = models.Modelset{
-			Name:        name,
-			Description: description,
-			Creator:     creator,
+			Name:        req.Name,
+			Description: req.Description,
+			Creator:     username,
 			Version:     version,
-			JobId:       jobId,
+			JobId:       req.JobId,
 			Status:      MODELSET_STATUS_NORMAL,
-			IsAdvance:   isAdvance,
-			ParamPath:   paramPath,
-			Use:         use,
-			Size:        size,
-			DataFormat:  dataFormat,
-			DatasetPath: datasetPath,
-			DatasetName: datasetName,
+			IsAdvance:   req.IsAdvance,
+			ParamPath:   req.ParamPath,
+			Use:         req.Use,
+			Size:        req.Size,
+			DataFormat:  req.DataFormat,
+			DatasetPath: req.DatasetPath,
+			DatasetName: req.DatasetName,
 			Params:      &paramItem,
-			Engine:      engine,
-			Precision:   precision,
-			OutputPath:  outputPath,
-			StartupFile: startupFile,
-			DeviceType:  deviceType,
-			DeviceNum:   deviceNum,
+			Engine:      req.Engine,
+			Precision:   req.Precision,
+			OutputPath:  req.OutputPath,
+			StartupFile: req.StartupFile,
+			DeviceType:  req.DeviceType,
+			DeviceNum:   req.DeviceNum,
+			//VCName:      req.VCName,
 		}
 	}
 	//获取训练作业输出模型的类型 job
-	if codePath == "" {
-		job, _ := GetTraining(creator, jobId)
+	if req.CodePath == "" {
+		job, _ := GetTraining(username, req.JobId)
+
 		var paramItem models.ParamsItem
 		paramItem = job.Params
+
 		if job != nil {
 			modelset.OutputPath = job.OutputPath
 			modelset.CodePath = job.CodePath
@@ -128,40 +101,46 @@ func CreateModelset(name, description, creator, version, jobId, codePath, paramP
 			modelset.Params = &paramItem
 			modelset.Engine = job.Engine
 			modelset.VisualPath = job.Params["visualPath"]
+			//modelset.VCName = job.VCName
 		} else {
 			return fmt.Errorf("the job id is invaild")
 		}
 	} else {
-		modelset.CodePath = codePath
+		modelset.CodePath = req.CodePath
 	}
+
 	return models.CreateModelset(modelset)
 }
 
-func UpdateModelset(id int, name, description, version, jobId, codePath, paramPath,
-	use string, size int64, dataFormat, datasetName, datasetPath string, params map[string]string, engine, precision, outputPath, startupFile, visualPath string) error {
-	modelset, err := models.GetModelsetById(id)
+func UpdateModelset(ID int, version string, req models.CreateModelsetReq)  error {
+
+    modelset, err := models.GetModelsetById(ID)
 	if err != nil {
 		return err
 	}
+
 	var paramItem models.ParamsItem
-	paramItem = params
-	modelset.Description = description
-	modelset.OutputPath = outputPath
-	modelset.CodePath = codePath
-	modelset.DatasetPath = datasetPath
-	modelset.StartupFile = startupFile
+
+	paramItem = req.Params
+	modelset.Description = req.Description
+	modelset.OutputPath = req.OutputPath
+	modelset.CodePath = req.CodePath
+	modelset.DatasetPath = req.DatasetPath
+	modelset.StartupFile = req.StartupFile
 	modelset.Params = &paramItem
-	modelset.Name = name
+	modelset.Name = req.Name
 	modelset.Version = version
-	modelset.Engine = engine
-	modelset.JobId = jobId
-	modelset.ParamPath = paramPath
-	modelset.Use = use
-	modelset.Size = size
-	modelset.DataFormat = dataFormat
-	modelset.DatasetName = datasetName
-	modelset.Precision = precision
-	modelset.VisualPath = visualPath
+	modelset.Engine = req.Engine
+	modelset.JobId = req.JobId
+	modelset.ParamPath = req.ParamPath
+	modelset.Use = req.Use
+	modelset.Size = req.Size
+	modelset.DataFormat = req.DataFormat
+	modelset.DatasetName = req.DatasetName
+	modelset.Precision = req.Precision
+	modelset.VisualPath = req.VisualPath
+	//modelset.VCName = req.VCName
+
 	return models.UpdateModelset(&modelset)
 }
 
@@ -240,15 +219,18 @@ func GeneratePanel(modelset models.Modelset, username string) (models.Modelset, 
 	return modelset, nil
 }
 
-func CreateAvisualisTraining(c *gin.Context, req CreateModelsetReq, username string) (CreateModelsetReq, error) {
+func CreateAvisualisTraining(c *gin.Context, req models.CreateModelsetReq, username string) (models.CreateModelsetReq, error) {
+
 	//存储节点json
 	nodesBytes, _ :=req.Params["nodes"]
+
 	//去掉nodes没用的节点并存入json
 	pipelineConfigPath, err := GetModelTempPath(FILETYPE_JSON)
 	f, err := os.OpenFile(pipelineConfigPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		fmt.Println(pipelineConfigPath + "failed to created")
 	}
+
 	_, err = f.Write([]byte(nodesBytes))
 	defer f.Close()
 
@@ -273,6 +255,7 @@ func CreateAvisualisTraining(c *gin.Context, req CreateModelsetReq, username str
 		DeviceNum:       req.DeviceNum,
 		JobTrainingType: req.JobTrainingType,
 	}
+
 	//启动训练作业
 	jobId, err := CreateTraining(c, username, training)
 	//panel不用变
@@ -281,6 +264,7 @@ func CreateAvisualisTraining(c *gin.Context, req CreateModelsetReq, username str
 	if err != nil {
 		return req, err
 	}
+
 	//nodes和edges,combos只用存储然后传给前端
 	return req, nil
 }

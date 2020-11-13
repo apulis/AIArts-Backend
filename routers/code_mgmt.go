@@ -112,7 +112,7 @@ func createCodeEnv(c *gin.Context) error {
 
 	// 兼容老代码
 	if req.VCName == "" {
-		req.VCName = "platform"
+		req.VCName = models.DefaultVcName
 	}
 
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {

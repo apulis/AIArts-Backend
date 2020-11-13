@@ -32,29 +32,33 @@ func CreateVisualJob(userName string, jobName string, logdir string, description
 	return nil
 }
 
-func GetAllVisualJobInfo(userName string, pageNum int, pageSize int, orderBy string, status string, jobName string, order string) ([]models.VisualJob, int, int, error) {
+func GetAllVisualJobInfo(userName string, req models.GetVisualJobListReq) ([]models.VisualJob, int, int, error) {
+
 	//step1. renew all visual job status
 	err := renewStatusInfo(userName)
 	if err != nil {
 		fmt.Printf("job status renew fail : err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
+
 	//step2. get job info and return
-	jobList, err := models.GetAllVisualJobByArguments(userName, pageNum, pageSize, status, jobName, order, orderBy)
+	jobList, err := models.GetAllVisualJobByArguments(userName, req.PageNum, req.PageSize, req.Status, req.JobName, req.Order, req.OrderBy)
 	if err != nil {
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, status, jobName)
+
+	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, req.Status, req.JobName)
 	if err != nil {
 		fmt.Printf("get job list count err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalPages := totalJobsNum / pageSize
 
-	if (totalJobsNum % pageSize) != 0 {
+	totalPages := totalJobsNum / req.PageSize
+	if (totalJobsNum % req.PageSize) != 0 {
 		totalPages += 1
 	}
+
 	return jobList, totalJobsNum, totalPages, nil
 }
 

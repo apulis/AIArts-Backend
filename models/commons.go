@@ -214,6 +214,12 @@ type VcInfo struct {
 	DeviceCapacity map[string]int `json:"gpu_capacity"`
 	Nodes          []*NodeStatus  `json:"node_status"`
 	Quota		   string 		  `json:"quota"`
+	Metadata       string 		  `json:"metadata"`
+}
+
+// 获取metadata数据
+type UserQuota struct {
+	Quota 		   int `json:"user_quota"`
 }
 
 // 接口：apis/GetAllDevice?userName=

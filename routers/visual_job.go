@@ -25,15 +25,6 @@ type CreateVisualJobReq struct {
 	Description       string `form:"description"`
 }
 
-type GetVisualJobListReq struct {
-	PageNum  int    `form:"pageNum"`
-	PageSize int    `form:"pageSize"`
-	OrderBy  string `form:"orderBy"`
-	Status   string `form:"status"`
-	JobName  string `form:"jobName"`
-	Order    string `form:"order"`
-}
-
 type GetVisualJobListRsq struct {
 	Templates    []VisualJobListRspUnit `json:"Templates"`
 	TotalJobsNum int                    `json:"total"`
@@ -95,17 +86,24 @@ func createVisualJob(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/visual/list [get]
 func getVisualJobList(c *gin.Context) error {
-	var req GetVisualJobListReq
+
+	var req models.GetVisualJobListReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	userName := getUsername(c)
 
-	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(userName, req.PageNum, req.PageSize, req.OrderBy, req.Status, req.JobName, req.Order)
+	userName := getUsername(c)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
+	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(userName, req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	var visualJobListRspUnitArray []VisualJobListRspUnit
 	for _, visualJob := range visualJobList {
 		newVisualJobListRspUnit := VisualJobListRspUnit{

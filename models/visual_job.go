@@ -18,6 +18,17 @@ type VisualJob struct {
 	RelateJobId string    `gorm: "relateJobId" json:relateJobId`
 }
 
+type GetVisualJobListReq struct {
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize"`
+	OrderBy  string `form:"orderBy"`
+	Status   string `form:"status"`
+	JobName  string `form:"jobName"`
+	Order    string `form:"order"`
+	VCName   string `form:"vcName"`
+}
+
+
 func CreateVisualJob(visualJob VisualJob) error {
 	return db.Create(&visualJob).Error
 }
