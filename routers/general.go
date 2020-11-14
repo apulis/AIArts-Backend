@@ -33,6 +33,7 @@ type GetResourceRsp struct {
 
 type GetJobSummaryReq struct {
 	JobType string `form:"jobType" json:"jobType"`
+	VCName  string `form:"vcName" json:"vcName"`
 }
 
 func getUsername(c *gin.Context) string {
@@ -194,11 +195,15 @@ func getJobSummary(c *gin.Context) error {
 	var err error
 	var req GetJobSummaryReq
 
+	if len(req.VCName) == 0 {
+		req.VCName = models.DefaultVcName
+	}
+
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
-	summary, err := services.GetJobSummary(userName, req.JobType)
+	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

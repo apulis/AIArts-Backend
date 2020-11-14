@@ -190,18 +190,34 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 }
 
 
-func GetEndpoints(userName, id string) (error, interface{}) {
+func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
 
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	fmt.Println(url)
 
-	var rspData interface{}
-	err := DoRequest(url, "GET", nil, nil, &rspData)
+	var endpoints interface{}
+	var rspData = &models.EndpointsRsp{
 
-	if err != nil {
+	}
+
+	// 获取endpoints信息
+	err := DoRequest(url, "GET", nil, nil, &endpoints)
+	if err == nil {
+		rspData.EndpointsInfo = endpoints
+	} else {
 		fmt.Printf("get endpoints path err[%+v]\n", err)
 		return err, nil
 	}
 
+	// 获取ssh身份信息
+	// 1. 获取任务信息：workPath
+	// 2. 获取挂载路径信息
+	jobInfo, err2 := GetDltsJobV2(userName, id)
+	if err2 != nil {
+		fmt.Printf("get GetDltsJobV2 err[%+v]\n", err)
+		return err, nil
+	}
+
+	rspData.IdentityFile = fmt.Sprintf("/dlwsdata/work/%s/.ssh/id_rsa", jobInfo.JobParams.WorkPath)
 	return nil, rspData
 }

@@ -26,3 +26,8 @@ type CreateCodeEnv struct {
 	NumPs           int    `json:"numPs"`
 	NumPsWorker     int    `json:"numPsWorker"`
 }
+
+type EndpointsRsp struct {
+	IdentityFile  string 		`json:"identityFile"`
+	EndpointsInfo interface{} 	`json:"endpointsInfo"`
+}

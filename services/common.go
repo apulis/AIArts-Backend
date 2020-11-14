@@ -44,9 +44,11 @@ func GetResource(userName, vcName string) (*models.VcInfo, error) {
 	return vcInfo, nil
 }
 
-func GetJobSummary(userName, jobType string) (map[string]int, error) {
-	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s", configs.Config.DltsUrl, userName, jobType)
+func GetJobSummary(userName, jobType, vcName string) (map[string]int, error) {
+
+	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s&vcName=%s", configs.Config.DltsUrl, userName, jobType, vcName)
 	summary := make(map[string]int)
+
 	err := DoRequest(url, "GET", nil, nil, &summary)
 	if err != nil {
 		fmt.Printf("get job summary err[%+v]\n", err)
@@ -66,4 +68,20 @@ func GetResources(userName string) (interface{}, error) {
 	var resources interface{}
 	json.Unmarshal(resp.Bytes(), &resources)
 	return resources, err
+}
+
+func GetDltsJobV2(userName, jobId string) (*models.Job, error) {
+
+	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, jobId)
+
+	params := make(map[string]interface{})
+	job := &models.Job{}
+
+	err := DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		fmt.Printf("GetDltsJobV2 err[%+v]\n", err)
+		return nil, err
+	}
+
+	return job, nil
 }
