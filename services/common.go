@@ -10,6 +10,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
 	"strconv"
+	"strings"
 )
 
 var db = database.Db
@@ -47,7 +48,9 @@ func GetResource(userName, vcName string) (*models.VcInfo, error) {
 func GetJobSummary(userName, jobType, vcName string) (map[string]int, error) {
 
 	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s&vcName=%s", configs.Config.DltsUrl, userName, jobType, vcName)
+
 	summary := make(map[string]int)
+	convert_summary := make(map[string]int)
 
 	err := DoRequest(url, "GET", nil, nil, &summary)
 	if err != nil {
@@ -55,7 +58,11 @@ func GetJobSummary(userName, jobType, vcName string) (map[string]int, error) {
 		return nil, err
 	}
 
-	return summary, nil
+	for k, v := range summary {
+		convert_summary[strings.ToLower(k)] = v
+	}
+
+	return convert_summary, nil
 }
 
 func GetResources(userName string) (interface{}, error) {
