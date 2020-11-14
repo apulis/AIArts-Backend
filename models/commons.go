@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -264,7 +265,8 @@ type Endpoint struct {
 	Status   string `json:"status"`
 	Domain   string `json:"domain"`
 	NodeName string `json:"nodeName,omitempty"`
-	Port     string `json:"port"`
+	//Port     string `json:"port"`
+	Port     json.Token `json:"port"`
 }
 
 // 查询endpoints信息，返回
