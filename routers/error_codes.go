@@ -56,5 +56,8 @@ const (
 	FDINFO_SET_ERROR   = 30602
 	FD_PUSH_ERROR_CODE = 30603
 
+	// vc
+	VC_ERROR                = 30701
+
 	REMOTE_SERVE_ERROR_CODE = 40000
 )
