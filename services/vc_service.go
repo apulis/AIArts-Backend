@@ -21,13 +21,16 @@ func OperateVC(userName string, opType models.VCOperateType, item *models.VCItem
 	if opType == models.VC_OPTYPE_ADD || opType == models.VC_OPTYPE_UPDATE {
 
 		// 检查VC是否已存在
-		oldItem := &models.VCItem{
-			VCName: item.VCName,
-		}
+		if opType == models.VC_OPTYPE_ADD {
+			
+			oldItem := &models.VCItem{
+				VCName: item.VCName,
+			}
 
-		err := OperateVC(userName, models.VC_OPTYPE_GET, oldItem)
-		if err == nil && oldItem.Quota != nil {
-			return fmt.Errorf("vc(%s)已存在", *(item.VCName))
+			err := OperateVC(userName, models.VC_OPTYPE_GET, oldItem)
+			if err == nil && oldItem.Quota != nil {
+				return fmt.Errorf("vc(%s)已存在", *(item.VCName))
+			}
 		}
 
 		if item.Metadata != nil {
