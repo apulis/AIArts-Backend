@@ -80,7 +80,7 @@ func createVisualJob(c *gin.Context) error {
 
 // @Summary get visual job List
 // @Produce json
-// @Param param body GetVisualJobListReq true "params"
+// @Param param body models.GetVisualJobListReq true "params"
 // @Success 200 {object} GetVisualJobListRsq "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"

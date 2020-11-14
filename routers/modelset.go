@@ -41,7 +41,7 @@ type GetModelsetsResp struct {
 
 // @Summary get model by id
 // @Produce  json
-// @Param query query LsModelsetsReq true "query"
+// @Param query query models.LsModelsetsReq true "query"
 // @Success 200 {object} getModelsetResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
