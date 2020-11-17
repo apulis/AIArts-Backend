@@ -45,7 +45,7 @@ func PostInferenceJob(c *gin.Context) error {
 
 	jobId, err := services.PostInferenceJob(params)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"jobId": jobId})
 }
@@ -72,7 +72,7 @@ func ListInferenceJob(c *gin.Context) error {
 	logger.Info(queryStringParameters)
 	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, jobs)
 }
@@ -85,7 +85,7 @@ func ListInferenceJob(c *gin.Context) error {
 func GetAllSupportInference(c *gin.Context) error {
 	inferences, err := services.GetAllSupportInference()
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, inferences)
 }
@@ -99,7 +99,7 @@ func GetAllDevice(c *gin.Context) error {
 	userName := getUsername(c)
 	jobs, err := services.GetAllDevice(userName)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, jobs)
 }
@@ -115,7 +115,7 @@ func GetJobDetail(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	jobs, err := services.GetJobDetail(userName, jobId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, jobs)
 }
@@ -131,7 +131,7 @@ func GetJobLog(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	jobs, err := services.GetJobLog(userName, jobId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, jobs)
 }
@@ -146,7 +146,7 @@ func GetJobStatus(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	jobs, err := services.GetJobStatus(jobId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, jobs)
 }
@@ -168,7 +168,7 @@ func Infer(c *gin.Context) error {
 	io.Copy(buf, content)
 	resp, err := services.Infer(jobId, signature_name, buf.Bytes())
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, resp)
 }
@@ -183,7 +183,7 @@ func DeleteJob(c *gin.Context) error {
 	jobId := c.Query("jobId")
 	resp, err := services.DeleteJob(jobId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, resp)
 }
@@ -199,7 +199,7 @@ func KillJob(c *gin.Context) error {
 	userName := getUsername(c)
 	resp, err := services.KillJob(jobId, userName)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, resp)
 }

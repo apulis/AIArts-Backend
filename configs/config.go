@@ -21,6 +21,7 @@ type ProjectConfig struct {
 	PrivateRegistry    string
 	Imagesave          ImageSaveConfig
 	TrackingUrl        string
+	EnableTrack        bool
 }
 
 type LogConfig struct {
@@ -89,4 +90,5 @@ func init() {
 	if Config.File.CleanEverySeconds <= 0 {
 		Config.File.CleanEverySeconds = 600
 	}
+	Config.EnableTrack=true
 }

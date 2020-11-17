@@ -15,7 +15,7 @@ type CommQueryParams struct {
 	Limit   uint     `form:"pageSize"`
 	OrderBy string   `form:"orderBy" `
 	Order   string   `form:"order" `
-	Name    string   `form:"name"`
+	Name    string   `form:"searchWord"`
 	All     uint     `form:"all"`
 }
 
@@ -28,8 +28,11 @@ func (s *CommQueryParams) SetQueryParams(c *gin.Context) {
 	 } else if s.Limit < 10 {
 	 	s.Limit=10
 	}
+	if s.PageNum >= 1 {
+		s.PageNum--;
+	}
 	 s.Offset= s.PageNum * s.Limit
-     if s.Order != "" && s.Order != "ASC" && s.Order != "DESC" {
+     if s.Order != "" && s.Order != "asc" && s.Order != "desc" {
      	s.Order=""
 	 }
 	 //@todo: check for order by ???
@@ -98,7 +101,18 @@ func MarkExperiment(id uint64, hide bool) error {
 }
 
 func  QueryExperiment(id uint64,experiment*models.Experiment)error{
-	return models.QueryExperiment(uint(id),experiment)
+	err := models.QueryExperiment(uint(id),experiment)
+	if err != nil{
+		return err
+	}
+	trackExperiment,err := getMlflowExperiment(id)
+	if err != nil{
+		return err
+	}
+	if trackExperiment != nil{
+ 		experiment.TrackId=trackExperiment.ExperimentID
+	}
+    return nil
 }
 
 func getMlflowExperimentName(experiment_id uint64) string{

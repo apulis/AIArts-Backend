@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -62,16 +63,16 @@ func lsEvaluations(c *gin.Context) error {
 	var req getEvaluationsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	evaluations, total, totalPage, err := services.GetEvaluations(username, req.PageNum, req.PageSize,
 		req.Status, req.Search, req.OrderBy, req.Order)
 	if err != nil {
-		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
+		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	data := getEvaluationsResp{
 		Evaluations: evaluations,
@@ -95,11 +96,11 @@ func createEvaluation(c *gin.Context) error {
 
 	err := c.BindJSON(&req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	//检查数据集文件是否存在
 	//if req.DatasetPath != "" {
@@ -137,7 +138,7 @@ func createEvaluation(c *gin.Context) error {
 	}
 	jobId, err := services.CreateEvaluation(username, req)
 	if err != nil {
-		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
+		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 
 	//更新评估参数
@@ -167,11 +168,11 @@ func getEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	job, err := services.GetEvaluation(username, id.ID)
 	if err != nil {
-		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
+		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	log, err := services.GetEvaluationLog(username, id.ID, logReq.PageNum)
 	logResp := ""
@@ -203,11 +204,11 @@ func stopEvaluation(c *gin.Context) error {
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	err = services.DeleteEvaluation(username, id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

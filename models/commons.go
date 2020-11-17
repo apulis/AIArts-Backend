@@ -177,6 +177,8 @@ type JobParams struct {
 	Desc        string `json:"desc"`
 
 	ScriptParams map[string]string `json:"scriptParams"`
+	JobGroup    string  `json:"jobGroup"`
+	Track       int     `json:"track"`
 }
 
 type Job struct {

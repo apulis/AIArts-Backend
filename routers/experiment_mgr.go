@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	//"fmt"
 	//"github.com/apulis/AIArtsBackend/models"
 	//"github.com/apulis/AIArtsBackend/services"
@@ -15,7 +16,7 @@ import (
 //AddGroupExperimentMgr
 func AddGroupExperimentMgr(r *gin.Engine) {
 
-	api_prefix := "/ai_arts/api"   //
+	api_prefix := "/qiming"   // /ai_arts/api
 
 	group := r.Group(api_prefix + "/projects")
 	//group.Use(Auth())
@@ -41,9 +42,14 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 
 }
 
+
+
 func doRespWith(c*gin.Context,err error,data interface{}) error{
     if err != nil{
-    	return err
+		if _,ok :=err.(*configs.APIException) ; ok{
+			return err
+		}
+    	return ServeError(configs.SERVER_ERROR_CODE,err.Error())
 	}
 	if data == nil {
 		return SuccessResp(c,gin.H{})
@@ -107,7 +113,7 @@ func createExpProject(c *gin.Context) error {
 	}
 	project.Creator=getUsername(c)
 	if len(project.Name) == 0 {
-		return AppError(APP_ERROR_CODE,"name cannot be empty")
+		return AppError(configs.NO_USRNAME,"name cannot be empty")
 	}
 	err = services.CreateExpProject(&project)
 	return doRespWith(c,err,gin.H{ "id":project.ID	})
@@ -123,7 +129,7 @@ func postExpProject(c *gin.Context) error {
 		case "restore":
 			return doRespWith(c,services.MarkExpProject(id, false),nil)
 		default:
-			return AppError(APP_ERROR_CODE, "Unsupport action !!!")
+			return AppError(configs.NOT_IMPLEMENT_CODE, "Unsupport action !!!")
 	}
 
 }
@@ -139,7 +145,7 @@ func getAllExperiments(c *gin.Context) error {
 
 	projectID,_ := strconv.ParseUint(c.Query("project"),0,0)
 	if projectID == 0 {
-		return AppError(PARAMETER_ERROR_CODE,"Invalid project ID !")
+		return ParameterError("Invalid project ID !")
 	}
 
 	var queryParams services.CommQueryParams
@@ -167,10 +173,9 @@ func postExperiment(c *gin.Context) error {
 	case "restore":
 		return doRespWith(c,services.MarkExperiment(id, false),nil)
 	case "run":
-		data,err := services.StartMlflowRun(id)
-		return doRespWith(c,err,data)
+		return createTraining(c)
 	default:
-		return AppError(APP_ERROR_CODE, "Unsupport action !!!")
+		return AppError(configs.NOT_IMPLEMENT_CODE, "Unsupport action !!!")
 	}
 }
 func updateExperiment(c *gin.Context) error {
@@ -192,7 +197,7 @@ func updateExperiment(c *gin.Context) error {
 func createExperiment(c*gin.Context)error{
 	projectID,_ := strconv.ParseUint(c.Query("project"),0,0)
 	if projectID == 0 {
-		return AppError(PARAMETER_ERROR_CODE,"Invalid project ID !")
+		return ParameterError("Invalid project ID !")
 	}
 
 	var experiment models.Experiment
@@ -202,7 +207,7 @@ func createExperiment(c*gin.Context)error{
 	}
 	experiment.Creator=getUsername(c)
 	if len(experiment.Name) == 0 {
-		return AppError(APP_ERROR_CODE,"name cannot be empty")
+		return AppError(configs.NO_USRNAME,"name cannot be empty")
 	}
 	experiment.ProjectID=uint(projectID)
 	err = services.CreateExperiment(&experiment)

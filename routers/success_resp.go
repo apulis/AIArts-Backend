@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"net/http"
 
 	"github.com/apulis/AIArtsBackend/models"
@@ -155,7 +156,7 @@ type APISuccessRespGetResource struct {
 
 func SuccessResp(c *gin.Context, data interface{}) error {
 	res := APISuccessResp{
-		Code: SUCCESS_CODE,
+		Code: configs.SUCCESS_CODE,
 		Msg:  "success",
 		Data: data,
 	}

@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
@@ -81,7 +82,7 @@ func createVisualJob(c *gin.Context) error {
 	username := getUsername(c)
 	err = services.CreateVisualJob(username, req.JobName, req.TensorboardLogDir, req.Description)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -143,7 +144,7 @@ func getEndpoints(c *gin.Context) error {
 	userName := getUsername(c)
 	path, err := services.GetEndpointsPath(userName, req.JobId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	rsp := GetEndpointsRsq{
 		Path: path,
@@ -167,7 +168,7 @@ func deleteVisualJob(c *gin.Context) error {
 	userName := getUsername(c)
 	err = services.DeleteVisualJob(userName, req.JobId)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -190,13 +191,13 @@ func switchVisualJobStatus(c *gin.Context) error {
 	if req.Status == "pause" {
 		err = services.StopVisualJob(userName, req.JobId)
 		if err != nil {
-			return AppError(APP_ERROR_CODE, err.Error())
+			return AppError(configs.APP_ERROR_CODE, err.Error())
 		}
 	}
 	if req.Status == "running" {
 		err = services.ContinueVisualJob(userName, req.JobId)
 		if err != nil {
-			return AppError(APP_ERROR_CODE, err.Error())
+			return AppError(configs.APP_ERROR_CODE, err.Error())
 		}
 	}
 	data := gin.H{}

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -53,11 +54,11 @@ type getLocalUpgradeLogResp struct {
 func getVersionInfo(c *gin.Context) error {
 	currentversion, err := services.GetCurrentVersion()
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	versionlogs, err := services.GetVersionLogs()
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	status := services.GetUpgradeStatus()
 	var isUpgrading bool
@@ -104,7 +105,7 @@ func getLocalUpgradeProgress(c *gin.Context) error {
 func getLocalUpgradeLog(c *gin.Context) error {
 	status, Log, err := services.GetUpgradeLog()
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := getLocalUpgradeLogResp{
 		Status:    status,
@@ -122,7 +123,7 @@ func getLocalUpgradeLog(c *gin.Context) error {
 func checkLocalEnv(c *gin.Context) error {
 	canUpgrade, isLower, err := services.GetLocalUpgradeEnv()
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := getLocalEnvResp{
 		CanUpgrade: canUpgrade,
@@ -145,7 +146,7 @@ func upgradeOnline(c *gin.Context) error {
 func upgradeLocal(c *gin.Context) error {
 	err := services.UpgradePlatformByLocal(getUsername(c))
 	if err != nil {
-		return AppError(ALREADY_UPGRADING_CODE, err.Error())
+		return AppError(configs.ALREADY_UPGRADING_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -89,11 +90,11 @@ func lsEdgeInferences(c *gin.Context) error {
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	conversionList, total, err := services.LsEdgeInferences(req.PageNum, req.PageSize, username, req.JobName, req.ModelConversionType, req.JobStatus, req.ModelConversionStatus, req.OrderBy, req.Order)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 
 	res := LsEdgeInferencesResp{
@@ -122,11 +123,11 @@ func createEdgeInference(c *gin.Context) error {
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	jobId, err := services.CreateEdgeInference(req.JobName, req.InputPath, req.OutputPath, req.ConversionType, username, req.ConversionArgs)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, CreateEdgeInferenceResp{JobId: jobId})
 }
@@ -140,7 +141,7 @@ func createEdgeInference(c *gin.Context) error {
 func getConversionTypes(c *gin.Context) error {
 	convTypes, err := services.GetConversionTypes()
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, convTypes)
 }
@@ -154,7 +155,7 @@ func getConversionTypes(c *gin.Context) error {
 func getFDInfo(c *gin.Context) error {
 	fdinfo, err := services.GetFDInfo()
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	data := GetFDInfoResp{FDInfo: fdinfo}
 	return SuccessResp(c, data)
@@ -175,12 +176,12 @@ func setFDInfo(c *gin.Context) error {
 	}
 	res, err := services.SetFDInfo(req.Username, req.Password, req.Url)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	if res {
 		return SuccessResp(c, gin.H{})
 	} else {
-		return ServeError(FDINFO_SET_ERROR, "fd set failed")
+		return ServeError(configs.FDINFO_SET_ERROR, "fd set failed")
 	}
 }
 
@@ -199,7 +200,7 @@ func pushToFD(c *gin.Context) error {
 	}
 	err = services.PushToFD(req.JobId)
 	if err != nil {
-		return ServeError(FD_PUSH_ERROR_CODE, err.Error())
+		return ServeError(configs.FD_PUSH_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -219,7 +220,7 @@ func deleteEdgeInference(c *gin.Context) error {
 	}
 	resp, err := services.DeleteJob(jobId.ID)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, resp)
 }

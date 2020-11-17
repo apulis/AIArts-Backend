@@ -4,23 +4,20 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/apulis/AIArtsBackend/configs"
 )
 
 type HandlerFunc func(c *gin.Context) error
 
-type APIException struct {
-	StatusCode int    `json:"-"`
-	Code       int    `json:"code"`
-	Msg        string `json:"msg"`
-}
+
 
 func wrapper(handler HandlerFunc) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		err := handler(c)
 		if err != nil {
 			logger.Error(err.Error())
-			var apiException *APIException
-			if h, ok := err.(*APIException); ok {
+			var apiException *configs.APIException
+			if h, ok := err.(*configs.APIException); ok {
 				apiException = h
 			} else if e, ok := err.(error); ok {
 				if gin.Mode() == "debug" {
@@ -37,45 +34,39 @@ func wrapper(handler HandlerFunc) func(c *gin.Context) {
 	}
 }
 
-func (e *APIException) Error() string {
-	return e.Msg
+
+
+func UnAuthorizedError(msg string) *configs.APIException {
+	return configs.NewAPIException(http.StatusUnauthorized, configs.AUTH_ERROR_CODE, msg)
 }
 
-func newAPIException(statusCode, code int, msg string) *APIException {
-	return &APIException{
-		StatusCode: statusCode,
-		Code:       code,
-		Msg:        msg,
-	}
+func ServerError() *configs.APIException {
+	return configs.NewAPIException(http.StatusInternalServerError, configs.SERVER_ERROR_CODE, http.StatusText(http.StatusInternalServerError))
 }
 
-func UnAuthorizedError(msg string) *APIException {
-	return newAPIException(http.StatusUnauthorized, AUTH_ERROR_CODE, msg)
+func NotFound() *configs.APIException {
+	return configs.NewAPIException(http.StatusNotFound, configs.NOT_FOUND_ERROR_CODE, http.StatusText(http.StatusNotFound))
 }
 
-func ServerError() *APIException {
-	return newAPIException(http.StatusInternalServerError, SERVER_ERROR_CODE, http.StatusText(http.StatusInternalServerError))
+func UnknownError(msg string) *configs.APIException {
+	return configs.NewAPIException(http.StatusForbidden, configs.UNKNOWN_ERROR_CODE, msg)
+}
+func RemoteServerError(msg string)*configs.APIException{
+	return ServeError(configs.REMOTE_SERVE_ERROR_CODE, msg)
+}
+func ParameterError(msg string) *configs.APIException {
+	return configs.NewAPIException(http.StatusBadRequest, configs.PARAMETER_ERROR_CODE, msg)
 }
 
-func NotFound() *APIException {
-	return newAPIException(http.StatusNotFound, NOT_FOUND_ERROR_CODE, http.StatusText(http.StatusNotFound))
+func AppError(errorCode int, msg string) *configs.APIException {
+	return configs.NewAPIException(http.StatusBadRequest, errorCode, msg)
 }
 
-func UnknownError(msg string) *APIException {
-	return newAPIException(http.StatusForbidden, UNKNOWN_ERROR_CODE, msg)
+func ServeError(errorCode int, msg string) *configs.APIException {
+	return configs.NewAPIException(http.StatusInternalServerError, errorCode, msg)
 }
 
-func ParameterError(msg string) *APIException {
-	return newAPIException(http.StatusBadRequest, PARAMETER_ERROR_CODE, msg)
-}
 
-func AppError(errorCode int, msg string) *APIException {
-	return newAPIException(http.StatusBadRequest, errorCode, msg)
-}
-
-func ServeError(errorCode int, msg string) *APIException {
-	return newAPIException(http.StatusInternalServerError, errorCode, msg)
-}
 
 func HandleNotFound(c *gin.Context) {
 	handleErr := NotFound()

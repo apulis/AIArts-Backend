@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"net/http"
 	"os"
 
@@ -39,39 +40,39 @@ func uploadDataset(c *gin.Context) error {
 	//存储文件夹
 	dir := c.PostForm("dir")
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
+		return AppError(configs.UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	} //取消大小限制
 	//if services.CheckFileOversize(file.Size) {
 	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
 	//}
 	filetype, err := services.CheckFileName(file.Filename)
 	if err != nil {
-		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
+		return AppError(configs.FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
 	filePath, err := services.GetDatasetTempPath(filetype)
 	if err != nil {
-		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting saving file")
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
-		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting extract file")
 
 	datasetStoragePath := services.GenerateDatasetStoragePath(dir, isPrivate, username)
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)
 	if err != nil {
-		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting remove file")
 	err = os.Remove(filePath)
 	if err != nil {
-		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.REMOVE_FILE_ERROR_CODE, err.Error())
 	}
 	if isPrivate=="false"{
 		_ = os.Chmod(unzippedPath, os.ModePerm)
@@ -94,15 +95,15 @@ func downloadDataset(c *gin.Context) error {
 	}
 	dataset, err := services.GetDataset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	err = services.CheckPathExists(dataset.Path)
 	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
 	targetPath, err := services.CompressFile(dataset.Path)
 	if err != nil {
-		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
+		return AppError(configs.COMPRESS_PATH_ERROR_CODE, err.Error())
 	}
 	fi, _ := os.Stat(targetPath)
 
@@ -128,35 +129,35 @@ func uploadModelset(c *gin.Context) error {
 	dir := c.PostForm("dir")
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	//存储文件夹
 	if err != nil {
-		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
+		return AppError(configs.UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
 	filetype, err := services.CheckFileName(file.Filename)
 	if err != nil {
-		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
+		return AppError(configs.FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
 	filePath, err := services.GetModelTempPath(filetype)
 	if err != nil {
-		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting saving file")
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
-		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.SAVE_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting extract file")
 	datasetStoragePath := services.GenerateModelStoragePath(dir, username)
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)
 	if err != nil {
-		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
 	logger.Info("starting remove file")
 	err = os.Remove(filePath)
 	if err != nil {
-		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+		return AppError(configs.REMOVE_FILE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, UploadFileResp{Path: unzippedPath})
 }
@@ -176,12 +177,12 @@ func downloadModelset(c *gin.Context) error {
 	}
 	modelset, err := services.GetModelset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	//just download the code path
 	targetPath, err := services.CompressFile(modelset.CodePath)
 	if err != nil {
-		return AppError(COMPRESS_PATH_ERROR_CODE, err.Error())
+		return AppError(configs.COMPRESS_PATH_ERROR_CODE, err.Error())
 	}
 	fi, _ := os.Stat(targetPath)
 

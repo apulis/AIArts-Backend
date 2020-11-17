@@ -5,15 +5,16 @@ import (
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	urllib "net/url"
+	"strconv"
 )
 
-func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
+func GetAllTraining(userName string, page, size int, jobStatus,jobGroup, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
 	//把传输过来的searchword空格改为%20urlencode
-	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
+	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s&jobGroup=%s`,
 		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
 		models.JobTypeArtsTraining,
 		page, size, jobStatus, urllib.PathEscape(searchWord),
-		orderBy, order)
+		orderBy, order,jobGroup)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -25,6 +26,7 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 
 	trainings := make([]*models.Training, 0)
 	for _, v := range jobList.AllJobs {
+		experiment_id,_ :=strconv.Atoi(v.JobParams.JobGroup)
 		trainings = append(trainings, &models.Training{
 			Id:          v.JobId,
 			Name:        v.JobName,
@@ -39,6 +41,8 @@ func GetAllTraining(userName string, page, size int, jobStatus, searchWord, orde
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			Desc:        v.JobParams.Desc,
+			ExperimentID: uint64(experiment_id),
+			Track:       v.JobParams.Track,
 		})
 	}
 
@@ -127,8 +131,13 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["vcName"] = models.DefaultVcName
 	params["team"] = models.DefaultVcName
 
+	err := checkCreateTrainingWithMlflow(training.ExperimentID,&params)
+	if err != nil{
+		return "", err
+	}
+
 	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	err = DoRequest(url, "POST", nil, params, id)
 
 	if err != nil {
 		fmt.Printf("create training err[%+v]\n", err)
@@ -186,6 +195,9 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Desc = job.JobParams.Desc
 	training.Params = job.JobParams.ScriptParams
 
+	training.ExperimentID,_ = strconv.ParseUint(job.JobParams.JobGroup,0,0)
+	training.Track        = job.JobParams.Track
+
 	return training, nil
 }
 
@@ -211,4 +223,24 @@ func GetTrainingLog(userName, id string, pageNum int) (*models.JobLog, error) {
 	jobLog.MaxPage = jobLogFromDlts.MaxPage
 
 	return jobLog, nil
+}
+
+//@add:  support for intergration with mlflow
+func checkCreateTrainingWithMlflow( experimentId uint64, params*map[string]interface{})error{
+   if experimentId == 0 {
+	   (*params)["jobGroup"] = ""
+   	   return nil
+   }
+	(*params)["jobGroup"] = strconv.Itoa(int(experimentId))
+	if !configs.Config.EnableTrack {
+		return nil
+	}
+	resp , err := StartMlflowRun(experimentId)
+	if err != nil{
+		return err
+	}
+	run := resp.(*MlflowRun)
+	(*params)["jobId"]=run.Info.RunId
+	(*params)["track"]=1
+	return nil
 }

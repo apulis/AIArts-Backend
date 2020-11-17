@@ -5,7 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/jinzhu/gorm"
+	"net/http"
+	"strconv"
+	"strings"
 )
 
 //ExpProject AIArts项目表示,类似于文件夹概念 .
@@ -56,10 +60,19 @@ func (d *JsonMetaData) Scan(v interface{}) error {
 	}
 	return nil
 }
+
+func checkDBError(err error)error{
+	if err != nil && strings.Contains(err.Error(),"Duplicate entry") {
+		return configs.NewAPIException(http.StatusBadRequest,configs.NAME_ALREADY_EXIST_CODE,err.Error())
+	}else{
+		return err
+	}
+}
+
 //Experiment 实验管理实例,分组一批runs集合 .
 type Experiment struct {
 	ID        uint   `json:"id" gorm:"primary_key;auto_increment"`
-	ProjectID uint   `json:"projectID" gorm:"unique_index:proj_idx"`
+	ProjectID uint   `json:"projectId" gorm:"unique_index:proj_idx"`
 	Name      string `json:"name" gorm:"unique_index:proj_idx;not null"`
 
 	Description string       `json:"description" gorm:"type:text"`
@@ -68,6 +81,9 @@ type Experiment struct {
 	UpdatedAt   UnixTime     `json:"updatedAt"`
 	DeletedAt   *UnixTime    `json:"deletedAt,omitempty"`
 	Meta        *JsonMetaData `json:"meta,omitempty" gorm:"type:text"`
+
+	ProjectName        string  `json:"projectName" gorm:"-"`
+	TrackId            string  `json:"trackId"     gorm:"-"`
 }
 
 type RequestUpdates map[string]interface{}
@@ -129,31 +145,34 @@ func checkFilterName(name string)func (*gorm.DB)*gorm.DB{
 		return db
 	 }
 }
-func checkUnScope(isAll uint) func(*gorm.DB)*gorm.DB{
+func checkListUnScope(isAll uint) func(*gorm.DB)*gorm.DB{
 	 return func(db*gorm.DB)*gorm.DB{
-	 	if isAll != 0{
-	 		return db.Unscoped()
+	 	switch isAll{
+		case 1:   return db.Unscoped()
+		case 2:   return db.Unscoped().Where("deleted_at is not null")
+		default:  return db
 		}
-		return db
 	 }
 }
+
+
 
 func ListAllExpProjects(offset, limit, isAll uint, name,orderBy, order string) ([]ExpProject, uint, error) {
 
 	var datasets []ExpProject
 	var total uint
 
-	err := db.Scopes(checkUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
+	err := db.Scopes(checkListUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
 		    Offset(offset).Limit(limit).Select(list_projects_fields).Find(&datasets).Error
 	if err == nil{
-		err = db.Model(&ExpProject{}).Scopes(checkUnScope(isAll),checkFilterName(name)).Count(&total).Error
+		err = db.Model(&ExpProject{}).Scopes(checkListUnScope(isAll),checkFilterName(name)).Count(&total).Error
 	}
 
 	return datasets,total,err
 }
 
 func CreateExpProject(project *ExpProject) error {
-     return db.Create(project).Error
+	 return  checkDBError(db.Create(project).Error)
 }
 
 func QueryExpProject(id uint , project*ExpProject) error{
@@ -185,18 +204,18 @@ func ListAllExperiments(projectID ,offset, limit, isAll uint,name, orderBy, orde
 	var datasets []Experiment
 	var total uint
 
-	err := db.Scopes(checkUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
+	err := db.Scopes(checkListUnScope(isAll),checkUserOrderBy(orderBy,order),checkFilterName(name)).
 		         Offset(offset).Limit(limit).Select(list_experiments_fields).
 		        Where("project_id=?",projectID).Find(&datasets).Error
 	if err == nil{
-		err = db.Model(&Experiment{}).Scopes(checkUnScope(isAll),checkFilterName(name)).
+		err = db.Model(&Experiment{}).Scopes(checkListUnScope(isAll),checkFilterName(name)).
 			    Where("project_id=?",projectID).Count(&total).Error
 	}
 
 	return datasets,total,err
 }
 func CreateExperiment(experiment *Experiment) error {
-	return db.Create(experiment).Error
+	return checkDBError(db.Create(experiment).Error)
 }
 
 func RenameExperiment(id uint,name string)error{
@@ -219,5 +238,7 @@ func RestoreExperiment(id uint)error{
 }
 func QueryExperiment(id uint , experiment*Experiment) error{
 	experiment.ID=id
-	return db.Unscoped().First(experiment).Error;
+	return db.Raw(`select experiments.*,exp_projects.name as project_name from experiments left join exp_projects on
+               experiments.project_id=exp_projects.id where experiments.id=` + strconv.Itoa(int(id))).
+		        Scan(experiment).Error
 }

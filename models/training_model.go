@@ -19,9 +19,11 @@ type Training struct {
 	Status      string            `json:"status"`
 	VisualPath string            `json:"visualPath"`
 	CreateTime  string            `json:"createTime"`
-	JobTrainingType string `json:"jobTrainingType"`
-	NumPs           int    `json:"numPs"`
-	NumPsWorker     int    `json:"numPsWorker"`
+	JobTrainingType string   `json:"jobTrainingType"`
+	NumPs           int      `json:"numPs"`
+	NumPsWorker     int      `json:"numPsWorker"`
+	ExperimentID    uint64   `json:"experimentId,omitempty"`
+	Track           int      `json:"track,omitempty"`
 }
 
 func ValidHomePath(userName, path string) bool {
