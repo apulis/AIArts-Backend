@@ -90,17 +90,28 @@ func GetDirSize(path string) (int64, error) {
 	return size, err
 }
 
-func GetDatasetTempPath(filetype string) (string, error) {
+func GetDatasetTempPath(dir string) (string, error) {
+
 	fileConf := configs.Config.File
 	datasetTempDir := fileConf.DatasetDir + "/tmp"
+
 	_, err := os.Stat(datasetTempDir)
 	if err != nil {
 		err = os.MkdirAll(datasetTempDir, os.ModeDir|os.ModePerm)
 		if err != nil {
-			return "", err
+			return "",  err
 		}
 	}
-	datasetTempPath := fmt.Sprintf("%s/%d%s", datasetTempDir, time.Now().UnixNano(), filetype)
+
+	// 解压目录
+	datasetTempPath := fmt.Sprintf("%s/%s", datasetTempDir, dir)
+	extractPath := fmt.Sprintf("%s/%s/extract", datasetTempDir, dir)
+
+	err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+
 	return datasetTempPath, nil
 }
 
@@ -183,15 +194,18 @@ func CompressFile(path string) (string, error) {
 	return targetPath, nil
 }
 
-func GenerateDatasetStoragePath(dir, isPrivate, username string) string {
+func GenerateDatasetStoragePath(username , folderName string, isPrivate string) string {
+
 	var datasetStoragePath string
 	fileConf := configs.Config.File
+
 	//直接使用前端上传的path
 	if isPrivate == "false" {
-		datasetStoragePath = fileConf.DatasetDir + "/storage/" + dir
+		datasetStoragePath = fileConf.DatasetDir + "/storage/" + folderName
 	} else {
-		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, dir)
+		datasetStoragePath = fmt.Sprintf("/home/%s/storage/%s", username, folderName)
 	}
+
 	return datasetStoragePath
 }
 
@@ -208,22 +222,22 @@ func GenerateModelStoragePath(dir, username string) string {
 	return datasetStoragePath
 }
 
-func ExtractFile(fromPath, filetype, datasetStoragePath string) (string, error) {
-	_, err := os.Stat(datasetStoragePath)
+func ExtractFile(fromPath, filetype, extractPath string) (string, error) {
+	_, err := os.Stat(extractPath)
 	if err != nil {
-		err = os.MkdirAll(datasetStoragePath, os.ModeDir|os.ModePerm)
+		err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
 		if err != nil {
 			return "", err
 		}
 	}
-	logger.Info("Extracting file: ", fromPath, " to ", datasetStoragePath)
+	logger.Info("Extracting file: ", fromPath, " to ", extractPath)
 	switch filetype {
 	case FILETYPE_ZIP:
-		err = extractZip(fromPath, datasetStoragePath)
+		err = extractZip(fromPath, extractPath)
 	case FILETYPE_TAR_GZ:
-		err = extractTarGz(fromPath, datasetStoragePath)
+		err = extractTarGz(fromPath, extractPath)
 	case FILETYPE_TAR:
-		err = extractTar(fromPath, datasetStoragePath)
+		err = extractTar(fromPath, extractPath)
 	default:
 		err = errors.New("Unknown file type")
 	}
@@ -233,7 +247,7 @@ func ExtractFile(fromPath, filetype, datasetStoragePath string) (string, error) 
 		return "", err
 	}
 
-	return datasetStoragePath, nil
+	return extractPath, nil
 }
 
 func extractZip(fromPath, toPath string) error {

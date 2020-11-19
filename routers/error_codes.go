@@ -30,6 +30,10 @@ const (
 	//已经存在同名的数据集
 	DATASET_IS_EXISTED = 30012
 
+	// 数据集文件不存在
+	DATASE_NOT_FOUND  			= 30013
+	DATASE_MOVE_FAIL  			= 30014
+
 	// modelset
 	//创建评估训练任务出错
 	CREATE_EVALUATION_FAILED_CODE = 30701

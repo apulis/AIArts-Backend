@@ -15,6 +15,7 @@ func AddGroupGeneral(r *gin.Engine) {
 	group.Use(Auth())
 	group.GET("/resource", wrapper(getResource))
 	group.GET("/resources", wrapper(getResources))
+	group.GET("/images", wrapper(getImageList))
 	group.GET("/job/summary", wrapper(getJobSummary))
 	group.DELETE("/DeleteJob", wrapper(DeleteJob))
 }
@@ -95,7 +96,7 @@ func getResource(c *gin.Context) error {
 
 		rsp.AIFrameworks[k] = make([]string, 0)
 		for _, item := range v {
-			rsp.AIFrameworks[k] = append(rsp.AIFrameworks[k], item)
+			rsp.AIFrameworks[k] = append(rsp.AIFrameworks[k], item.Image)
 		}
 	}
 
@@ -188,4 +189,31 @@ func getJobSummary(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, summary)
+}
+
+// @Summary get image list
+// @Produce  json
+// @Param param body GetJobSummaryReq true "params"
+// @Success 200 {object} APISuccessRespGetResource "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/common/images/ [get]
+func getImageList(c *gin.Context) error {
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	images := make([]configs.ImageItem, 0)
+	for _, v := range configs.Config.Image {
+		for _, item := range v {
+			images = append(images, configs.ImageItem{
+				Image: item.Image,
+				Desc:  item.Desc,
+			})
+		}
+	}
+
+	return SuccessResp(c, images)
 }
