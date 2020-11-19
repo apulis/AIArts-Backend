@@ -1,6 +1,8 @@
 package services
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
@@ -25,13 +27,13 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error){
+func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error) {
 
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-				configs.Config.DltsUrl, userName, userName, req.VCName,
-				models.JobTypeCodeEnv,
-				req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
-				req.OrderBy, req.Order)
+		configs.Config.DltsUrl, userName, userName, req.VCName,
+		models.JobTypeCodeEnv,
+		req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
+		req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -179,7 +181,16 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 			appRspData.Status = v.Status
 
 			if v.Status == "running" {
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+				param := struct {
+					Port     json.Token `json:"port"`
+					UserName string     `json:"userName"`
+				}{Port: v.Port, UserName: userName}
+				val, _ := json.Marshal(param)
+				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/",
+					v.NodeName,
+					v.Domain,
+					base64.StdEncoding.EncodeToString(val),
+				)
 			}
 
 			break
@@ -189,16 +200,13 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	return nil, appRspData
 }
 
-
 func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
 
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	fmt.Println(url)
 
 	var endpoints interface{}
-	var rspData = &models.EndpointsRsp{
-
-	}
+	var rspData = &models.EndpointsRsp{}
 
 	// 获取endpoints信息
 	err := DoRequest(url, "GET", nil, nil, &endpoints)
