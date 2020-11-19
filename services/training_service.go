@@ -12,10 +12,10 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 
 	//把传输过来的searchword空格改为%20urlencode
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-				configs.Config.DltsUrl, userName, userName, req.VCName,
-				models.JobTypeArtsTraining,
-				req.PageNum, req.PageSize, req.JobStatus, urllib.PathEscape(req.SearchWord),
-				req.OrderBy, req.Order)
+		configs.Config.DltsUrl, userName, userName, req.VCName,
+		models.JobTypeArtsTraining,
+		req.PageNum, req.PageSize, req.JobStatus, urllib.PathEscape(req.SearchWord),
+		req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -70,6 +70,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 	if configs.Config.InteractiveModeJob {
 		params["cmd"] = "sleep infinity" // use StartupFile, params instead
+	} else if len(training.Command) > 0 {
+		params["cmd"] = training.Command
 	} else {
 		fileType, err := CheckStartFileType(training.StartupFile)
 		if fileType == FILETYPE_PYTHON {
@@ -198,6 +200,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.Desc = job.JobParams.Desc
 	training.Params = job.JobParams.ScriptParams
+	training.Command = job.JobParams.Cmd
 
 	return training, nil
 }
