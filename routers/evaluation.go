@@ -4,7 +4,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 func AddGroupEvaluation(r *gin.Engine) {
@@ -98,17 +97,6 @@ func createEvaluation(c *gin.Context) error {
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
-	}
-
-	//如果是avisualis只添加pipeline
-	if strings.Index(strings.ToLower(req.Engine), "apulisvision") != -1 {
-		newParam := map[string]string{
-			"pipeline_config": req.Params["pipeline_config"],
-		}
-		if _, hasConfig := req.Params["config"]; hasConfig {
-			newParam["config"] = req.Params["config"]
-		}
-		req.Params = newParam
 	}
 
 	if req.VCName == "" {
