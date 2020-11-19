@@ -114,7 +114,7 @@ func CreateModelset(username, version string, req models.CreateModelsetReq) erro
 
 func UpdateModelset(ID int, version string, req models.CreateModelsetReq)  error {
 
-    modelset, err := models.GetModelsetById(ID)
+	modelset, err := models.GetModelsetById(ID)
 	if err != nil {
 		return err
 	}
@@ -234,9 +234,6 @@ func CreateAvisualisTraining(c *gin.Context, req models.CreateModelsetReq, usern
 	_, err = f.Write([]byte(nodesBytes))
 	defer f.Close()
 
-	//把数据传入params后端算法只需要pipeline_config_path
-	//baseconfig待定，
-	//req.Params["config"] = req.CodePath
 	training := models.Training{
 		Id:          req.JobId,
 		Name:        req.Name,
@@ -254,6 +251,7 @@ func CreateAvisualisTraining(c *gin.Context, req models.CreateModelsetReq, usern
 		DeviceType:      req.DeviceType,
 		DeviceNum:       req.DeviceNum,
 		JobTrainingType: req.JobTrainingType,
+		VCName:          req.VCName,
 	}
 
 	//启动训练作业

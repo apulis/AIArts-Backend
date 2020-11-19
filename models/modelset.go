@@ -94,8 +94,7 @@ type CreateModelsetReq struct {
 	NumPsWorker     int               `json:"numPsWorker"`
 	DeviceType      string            `json:"deviceType"`
 	DeviceNum       int               `json:"deviceNum"`
-
-	//VCName          string `json:"vcName"`
+	VCName     		string     		  `json:"vcName"`
 }
 
 

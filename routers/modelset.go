@@ -147,9 +147,9 @@ func createModelset(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	//if len(req.VCName) == 0 {
-	//	req.VCName = models.DefaultVcName
-	//}
+	if len(req.VCName) == 0 {
+		req.VCName = models.DefaultVcName
+	}
 
 	//如果上传模型文件检查路径是否存在
 	if req.CodePath != "" {
