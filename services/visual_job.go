@@ -208,7 +208,11 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["jobName"] = jobName
 	params["jobType"] = models.JobTypeVisualJob
 
-	params["image"] = ConvertImage("apulistech/visualjob:1.0")
+	var visualJob_image_name="apulistech/visualjob:1.0"
+	if find := strings.Contains(selectNodeDevice, "arm"); find {
+		visualJob_image_name=visualJob_image_name+"-arm64"
+	}
+	params["image"] = ConvertImage(visualJob_image_name)
 	fmt.Println(ConvertImage("apulistech/visualjob:1.0"))
 	params["gpuType"] = selectNodeDevice
 	params["resourcegpu"] = 0

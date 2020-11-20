@@ -154,7 +154,7 @@ func createDataset(c *gin.Context) error {
 	//判断数据集是否与该用户之前的数据集或者公有数据集同名，
 	isExist, err := services.DatasetIsExist(req.Name, username)
 	if isExist {
-		return AppError(DATASET_IS_EXISTED, "this dataset name is existed")
+		return AppError(DATASET_IS_EXISTED, "The dataset name already exists")
 	}
 	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
 	if err != nil {
