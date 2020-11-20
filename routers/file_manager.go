@@ -56,7 +56,7 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
 
-	// 获取数据集真实路径，但文件夹名称为dir结尾目录
+	// 获取数据集真实路径，但文件夹名称依dir结尾目录
 	// 待用户创建数据集时，会重命名此目录为真实名称
 	datasetStoragePath := services.GenerateDatasetStoragePath(username, dir, isPrivate)
 	logger.Info("uploadDataset - datasetStoragePath", datasetStoragePath)
@@ -70,6 +70,7 @@ func uploadDataset(c *gin.Context) error {
 	logger.Info("uploadDataset - filePath", filePath)
 	logger.Info("starting saving file")
 
+	// 将文件保存为filePath（包括文件名）
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())

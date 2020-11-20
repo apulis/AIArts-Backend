@@ -105,12 +105,12 @@ func GetDatasetTempPath(dir string) (string, error) {
 
 	// 解压目录
 	datasetTempPath := fmt.Sprintf("%s/%s", datasetTempDir, dir)
-	extractPath := fmt.Sprintf("%s/%s/extract", datasetTempDir, dir)
-
-	err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
-	if err != nil {
-		return "", err
-	}
+	//extractPath := fmt.Sprintf("%s/%sextract", datasetTempDir, dir)
+	//
+	//err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
+	//if err != nil {
+	//	return "", err
+	//}
 
 	return datasetTempPath, nil
 }
