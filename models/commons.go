@@ -307,4 +307,3 @@ type Paging struct {
 	PageSize   int		`form:"pageSize" json:"pageSize"`
 	Keyword    string	`form:"keyword" json:"keyword"`
 }
-

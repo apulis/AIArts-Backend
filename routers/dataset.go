@@ -1,9 +1,11 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func AddGroupDataset(r *gin.Engine) {
@@ -138,28 +140,50 @@ func getDataset(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [post]
 func createDataset(c *gin.Context) error {
+
 	var req createDatasetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
-	//判断数据集是否与该用户之前的数据集或者公有数据集同名，
+
+	// 判断数据集是否与该用户之前的数据集或者公有数据集同名，
 	isExist, err := services.DatasetIsExist(req.Name, username)
 	if isExist {
 		return AppError(DATASET_IS_EXISTED, "The dataset name already exists")
 	}
-	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
+
+	// 获取数据集真实路径
+	datasetStoragePath := services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
+	logger.Info("createDataset - datasetStoragePath", datasetStoragePath, req.Name)
+
+	// 检查数据集文件是否已存在
+	err = services.CheckPathExists(datasetStoragePath)
+	if err == nil {
+		return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+	}
+
+	// 将数据重命名为真实目录
+	err = os.Rename(req.Path, datasetStoragePath)
+	if err != nil {
+		return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+	}
+
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", datasetStoragePath, req.IsPrivate, req.IsTranslated)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	data := gin.H{}
 	return SuccessResp(c, data)
 }

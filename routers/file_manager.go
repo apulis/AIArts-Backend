@@ -33,49 +33,70 @@ type UploadFileResp struct {
 // @Router /ai_arts/api/files/upload/dataset [post]
 
 func uploadDataset(c *gin.Context) error {
+
 	logger.Info("starting upload file")
+
 	file, err := c.FormFile("data")
 	isPrivate := c.PostForm("isPrivate")
+
 	//存储文件夹
 	dir := c.PostForm("dir")
 	if err != nil {
 		return AppError(UPLOAD_TEMPDIR_FULL_CODE, err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	} //取消大小限制
-	//if services.CheckFileOversize(file.Size) {
-	//	return AppError(FILE_OVERSIZE_CODE, "File over size limit")
-	//}
+
+	// 获取文件类别
 	filetype, err := services.CheckFileName(file.Filename)
-	if err != nil {
+		if err != nil {
 		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
-	filePath, err := services.GetDatasetTempPath(filetype)
+
+	// 获取数据集真实路径，但文件夹名称为dir结尾目录
+	// 待用户创建数据集时，会重命名此目录为真实名称
+	datasetStoragePath := services.GenerateDatasetStoragePath(username, dir, isPrivate)
+	logger.Info("uploadDataset - datasetStoragePath", datasetStoragePath)
+
+	// 获取文件临时目录
+	filePath, err := services.GetDatasetTempPath(dir)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
+
+	logger.Info("uploadDataset - filePath", filePath)
 	logger.Info("starting saving file")
+
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
 	}
+
 	logger.Info("starting extract file")
 
-	datasetStoragePath := services.GenerateDatasetStoragePath(dir, isPrivate, username)
+	// 检查数据集文件是否已存在
+	err = services.CheckPathExists(datasetStoragePath)
+	if err == nil {
+		return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+	}
+
+	// 解压并返回解压后的目录
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)
 	if err != nil {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
-	logger.Info("starting remove file")
-	err = os.Remove(filePath)
-	if err != nil {
-		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
-	}
+
+	// 不移除，等到创建数据集时
 	if isPrivate=="false"{
 		_ = os.Chmod(unzippedPath, os.ModePerm)
 	}
+
+	// 返回解压后的目录，前端调用数据集创建接口会传入此参数
+	// 后端根据此参数将文件夹重命名
+	logger.Info("unzippedPath - unzippedPath", unzippedPath)
 	return SuccessResp(c, UploadFileResp{Path: unzippedPath})
 }
 
