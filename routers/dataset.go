@@ -184,7 +184,10 @@ func createDataset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	data := gin.H{}
+	data := gin.H{
+		"DatasetPath": datasetStoragePath,
+	}
+	
 	return SuccessResp(c, data)
 }
 
