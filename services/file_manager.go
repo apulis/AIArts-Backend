@@ -244,6 +244,7 @@ func ExtractFile(fromPath, filetype, extractPath string) (string, error) {
 }
 
 func extractZip(fromPath, toPath string) error {
+
 	reader, err := zip.OpenReader(fromPath)
 	//关闭reader便于之后删除tmp文件
 	defer reader.Close()
@@ -253,21 +254,26 @@ func extractZip(fromPath, toPath string) error {
 	}
 
 	for _, file := range reader.File {
+
 		path := filepath.Join(toPath, transformEncode(file.Name))
 		//如果直接递归到底层是文件 比如 /data/pic/train/1.png 那么先要创建pic文件夹,linux与windows的zip压缩包文件夹头结构不一样
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
 			continue
 		}
+
 		fileReader, err := file.Open()
 		if err != nil {
+			fileReader.Close()
 			return err
 		}
-		defer fileReader.Close()
 
 		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
-		defer targetFile.Close()
 		if err != nil {
+
+			fileReader.Close()
+			targetFile.Close()
+
 			if os.IsNotExist(err) {
 				logger.Error("Ignored not existed file: ", path)
 				return nil
@@ -275,8 +281,14 @@ func extractZip(fromPath, toPath string) error {
 				return err
 			}
 		} else if _, err := io.Copy(targetFile, fileReader); err != nil {
+
+			fileReader.Close()
+			targetFile.Close()
 			return err
 		}
+
+		fileReader.Close()
+		targetFile.Close()
 	}
 
 	return nil
@@ -287,8 +299,10 @@ func extractTar(fromPath, toPath string) error {
 	if err != nil {
 		return err
 	}
+
 	defer fileReader.Close()
 	tarReader := tar.NewReader(fileReader)
+
 	for {
 		head, err := tarReader.Next()
 		if head == nil || err == io.EOF {
@@ -305,16 +319,19 @@ func extractTar(fromPath, toPath string) error {
 			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
 				return err
 			}
+
 		case tar.TypeReg:
 			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
 			if err != nil {
 				return err
 			}
-			defer targetFile.Close()
 
 			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				targetFile.Close()
 				return err
 			}
+
+			targetFile.Close()
 		default:
 			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}
@@ -323,28 +340,34 @@ func extractTar(fromPath, toPath string) error {
 	return nil
 }
 
+
 func extractTarGz(fromPath, toPath string) error {
 	fileReader, err := os.Open(fromPath)
 	if err != nil {
 		return err
 	}
+
 	defer fileReader.Close()
 
 	gzipReader, err := gzip.NewReader(fileReader)
 	if err != nil {
 		return err
 	}
-	defer gzipReader.Close()
 
+	defer gzipReader.Close()
 	tarReader := tar.NewReader(gzipReader)
+
 	for {
+
 		head, err := tarReader.Next()
 		if head == nil || err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			return err
 		}
+
 		path := filepath.Join(toPath, transformEncode(head.Name))
 		fileInfo := head.FileInfo()
 		switch head.Typeflag {
@@ -353,16 +376,19 @@ func extractTarGz(fromPath, toPath string) error {
 			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
 				return err
 			}
+
 		case tar.TypeReg:
 			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
 			if err != nil {
 				return err
 			}
-			defer targetFile.Close()
 
 			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				targetFile.Close()
 				return err
 			}
+			targetFile.Close()
+
 		default:
 			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}
