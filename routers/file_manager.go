@@ -90,6 +90,13 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
 
+	// 删除临时文件
+	logger.Info("starting remove file")
+	err = os.Remove(filePath)
+	if err != nil {
+		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+	}
+
 	// 不移除，等到创建数据集时
 	if isPrivate=="false"{
 		_ = os.Chmod(unzippedPath, os.ModePerm)
