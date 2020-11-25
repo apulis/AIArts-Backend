@@ -8,7 +8,7 @@ import (
 )
 
 func AddGroupTraining(r *gin.Engine) {
-	group := r.Group("/qiming/trainings")
+	group := r.Group("/ai_arts/api/trainings")
 
 	group.Use(Auth())
 
@@ -94,7 +94,7 @@ func getAllTraining(c *gin.Context) error {
 	}
 
 	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize,
-		req.JobStatus,req.JobGroup, req.SearchWord, req.OrderBy, req.Order)
+		req.JobStatus, req.JobGroup, req.SearchWord, req.OrderBy, req.Order)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
