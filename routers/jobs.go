@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddJobManager(r *gin.Engine) {
+func AddGroupJobManager(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/jobs/")
 	group.Use(Auth())
 	group.GET("/", wrapper(GetAllJobs))
@@ -56,7 +56,7 @@ func GetAllJobSummary(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
-	summary, err := services.GetJobSummary(req.UserName, req.JobType, req.VCName)
+	summary, err := services.GetJobSummary("all", req.JobType, req.VCName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

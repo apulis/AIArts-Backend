@@ -57,6 +57,7 @@ func NewRouter() *gin.Engine {
 	AddGroupVisualJob(r)
 	AddGroupSavedImage(r)
 	AddGroupVC(r)
+	AddGroupJobManager(r)
 
 	return r
 }
