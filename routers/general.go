@@ -26,15 +26,16 @@ type GetResourceReq struct {
 
 type GetResourceRsp struct {
 	AIFrameworks          map[string][]string  `json:"aiFrameworks"`
-	DeviceList            []models.DeviceItem  `json:"deviceList"`               //
+	DeviceList            []models.DeviceItem  `json:"deviceList"` //
 	NodeInfo              []*models.NodeStatus `json:"nodeInfo"`
 	CodePathPrefix        string               `json:"codePathPrefix"`
 	NodeCountByDeviceType map[string]int       `json:"nodeCountByDeviceType"`
 }
 
 type GetJobSummaryReq struct {
-	JobType string `form:"jobType" json:"jobType"`
-	VCName  string `form:"vcName" json:"vcName"`
+	UserName string `form:"userName" json:"userName"`
+	JobType  string `form:"jobType" json:"jobType"`
+	VCName   string `form:"vcName" json:"vcName"`
 }
 
 func getUsername(c *gin.Context) string {
@@ -102,8 +103,8 @@ func getResource(c *gin.Context) error {
 	}
 
 	// 获取平台配额数据
-	quota := make(map[string]int)                       // vc配额数据
-	user_quota := make(map[string]models.UserQuota)     // vc下用户配额数据
+	quota := make(map[string]int)                   // vc配额数据
+	user_quota := make(map[string]models.UserQuota) // vc下用户配额数据
 
 	if len(vcInfo.Quota) != 0 {
 		err = json.Unmarshal([]byte(vcInfo.Quota), &quota)

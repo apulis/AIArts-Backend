@@ -62,6 +62,7 @@ type GetAllJobsReq struct {
 	PageNum    int    `form:"pageNum" json:"pageNum"`
 	PageSize   int    `form:"pageSize" json:"pageSize"`
 	JobStatus  string `form:"status" json:"status"`
+	JobType    string `form:"jobType" json:"jobType"`
 	SearchWord string `form:"searchWord" json:"searchWord"`
 	OrderBy    string `form:"orderBy" json:"orderBy"`
 	Order      string `form:"order" json:"order"`
