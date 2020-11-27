@@ -181,10 +181,7 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 			appRspData.Status = v.Status
 
 			if v.Status == "running" {
-				param := struct {
-					Port     json.Token `json:"port"`
-					UserName string     `json:"userName"`
-				}{Port: v.Port, UserName: userName}
+				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
 				val, _ := json.Marshal(param)
 				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/",
 					v.NodeName,

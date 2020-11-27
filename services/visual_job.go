@@ -1,6 +1,8 @@
 package services
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -96,7 +98,12 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 			appRspData.Status = v.Status
 
 			if v.Status == "running" {
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
+				val, _ := json.Marshal(param)
+				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/",
+					v.NodeName, v.Domain,
+					base64.StdEncoding.EncodeToString(val),
+				)
 			}
 
 			break
@@ -208,9 +215,9 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["jobName"] = jobName
 	params["jobType"] = models.JobTypeVisualJob
 
-	var visualJob_image_name="apulistech/visualjob:1.0"
+	var visualJob_image_name = "apulistech/visualjob:1.0"
 	if find := strings.Contains(selectNodeDevice, "arm"); find {
-		visualJob_image_name=visualJob_image_name+"-arm64"
+		visualJob_image_name = visualJob_image_name + "-arm64"
 	}
 	params["image"] = ConvertImage(visualJob_image_name)
 	fmt.Println(ConvertImage("apulistech/visualjob:1.0"))
