@@ -132,8 +132,7 @@ func createTraining(c *gin.Context) error {
 	}
 
 	//检查模型启动文件是否存在
-	err = services.CheckPathExists(req.StartupFile)
-	if err != nil {
+	if err := services.CheckPathExists(req.StartupFile); len(req.StartupFile) > 0 && err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {

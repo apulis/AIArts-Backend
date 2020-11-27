@@ -11,13 +11,13 @@ type Training struct {
 	DeviceType      string            `json:"deviceType"`
 	DeviceNum       int               `json:"deviceNum"`
 	CodePath        string            `json:"codePath"`
-	StartupFile     string            `json:"startupFile"`
+	StartupFile     string            `json:"startupFile,omitempty"`
 	OutputPath      string            `json:"outputPath"`
 	DatasetPath     string            `json:"datasetPath"`
 	Params          map[string]string `json:"params"`
 	Desc            string            `json:"desc"`
 	Status          string            `json:"status"`
-	VisualPath      string            `json:"visualPath"`
+	VisualPath      string            `json:"visualPath,omitempty"`
 	CreateTime      string            `json:"createTime"`
 	JobTrainingType string            `json:"jobTrainingType"`
 	NumPs           int               `json:"numPs"`
