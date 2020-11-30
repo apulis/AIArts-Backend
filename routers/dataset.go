@@ -174,9 +174,13 @@ func createDataset(c *gin.Context) error {
 	}
 
 	// 将数据重命名为真实目录
-	err = os.Rename(req.Path, datasetStoragePath)
-	if err != nil {
-		return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
+		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
+
+		err = os.Rename(req.Path, datasetStoragePath)
+		if err != nil {
+			return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+		}
 	}
 
 	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", datasetStoragePath, req.IsPrivate, req.IsTranslated)
