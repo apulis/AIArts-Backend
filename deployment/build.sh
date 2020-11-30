@@ -4,7 +4,7 @@ set -x
 
 # 镜像名和代码分支配置
 image_name=aiarts-backend
-tag_name=rc0
+tag_name=rc3
 branch_name=v1.2.0
 image_fullname=${image_name}:${branch_name}-${tag_name}
 

@@ -41,6 +41,7 @@ type createDatasetReq struct {
 	Path         string `json:"path" binding:"required"`
 	IsPrivate    bool   `json:"isPrivate" `
 	IsTranslated bool   `json:"isTranslated" `
+    SourceType   int    `json:"sourceType" `          // 1. 网页上传  2. 其他数据源
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
