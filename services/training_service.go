@@ -37,7 +37,7 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 			StartupFile: v.JobParams.StartupFile,
 			OutputPath:  v.JobParams.OutputPath,
 			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
+			Params:      v.JobParams.ScriptParams,
 			Status:      v.JobStatus,
 			CreateTime:  v.JobTime,
 			Desc:        v.JobParams.Desc,
