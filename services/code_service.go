@@ -50,6 +50,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 			Name:       v.JobName,
 			Engine:     v.JobParams.Image,
 			CodePath:   v.JobParams.CodePath,
+			Cmd:        v.JobParams.Cmd,
 			Status:     v.JobStatus,
 			CreateTime: v.JobTime,
 			JupyterUrl: "",
@@ -68,7 +69,6 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 }
 
 func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv) (string, error) {
-
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -83,7 +83,11 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	params["codePath"] = codeEnv.CodePath
 	params["desc"] = codeEnv.Desc
 
-	params["cmd"] = "sleep infinity"
+	if len(codeEnv.Cmd) > 0 {
+		params["cmd"] = codeEnv.Cmd
+	} else {
+		params["cmd"] = "sleep infinity"
+	}
 
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = codeEnv.JobTrainingType //"RegularJob"

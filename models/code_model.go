@@ -6,6 +6,7 @@ type CodeEnvItem struct {
 	Status     string `json:"status" binding:"required"`
 	Engine     string `json:"engine"  binding:"required"`
 	CodePath   string `json:"codePath"`
+	Cmd        string `json:"cmd"`
 	JupyterUrl string `json:"JupyterUrl"`
 	CreateTime string `json:"createTime"`
 	DeviceType string `json:"deviceType"`
@@ -21,6 +22,7 @@ type CreateCodeEnv struct {
 	DeviceNum  int    `json:"deviceNum"`
 	Desc       string `json:"desc"`
 	VCName     string `json:"vcName"`
+	Cmd        string `json:"cmd"`
 
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`
@@ -28,6 +30,6 @@ type CreateCodeEnv struct {
 }
 
 type EndpointsRsp struct {
-	IdentityFile  string 		`json:"identityFile"`
-	EndpointsInfo interface{} 	`json:"endpointsInfo"`
+	IdentityFile  string      `json:"identityFile"`
+	EndpointsInfo interface{} `json:"endpointsInfo"`
 }
