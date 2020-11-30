@@ -11,8 +11,18 @@ import (
 
 func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
-	group.GET("/download/model/:id", wrapper(downloadModelset))
-	group.GET("/download/dataset/:id", wrapper(downloadDataset))
+	group.GET("/download/model/:id", func(c *gin.Context) {
+		copy := c.Copy()
+		go func() {
+			wrapper(downloadModelset)(copy)
+		}()
+	})
+	group.GET("/download/dataset/:id", func(c *gin.Context) {
+		copy := c.Copy()
+		go func() {
+			wrapper(downloadDataset)(copy)
+		}()
+	})
 	group.Use(Auth())
 	group.POST("/upload/dataset", wrapper(uploadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
