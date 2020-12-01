@@ -9,20 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type downloadResult struct {
+	targetFile string
+	fn string
+}
+
 func AddGroupFile(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/files")
-	group.GET("/download/model/:id", func(c *gin.Context) {
-		copy := c.Copy()
+	group.GET("/download/model/:id", wrapper(func(c *gin.Context) error {
+		result := make(chan downloadResult)
 		go func() {
-			wrapper(downloadModelset)(copy)
+			downloadModelset(c, result)
 		}()
-	})
-	group.GET("/download/dataset/:id", func(c *gin.Context) {
-		copy := c.Copy()
+		ret := <-result
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Header("Content-Disposition", fmt.Sprint("attachment; filename=", ret.fn))
+		c.Writer.Header().Add("Content-Type", "application/octet-stream")
+		c.File(ret.targetFile)
+		return nil
+	}))
+	group.GET("/download/dataset/:id", wrapper(func(c *gin.Context) error{
+		result := make(chan downloadResult)
 		go func() {
-			wrapper(downloadDataset)(copy)
+			downloadDataset(c, result)
 		}()
-	})
+		ret := <-result
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Header("Content-Disposition", fmt.Sprint("attachment; filename=", ret.fn))
+		c.Writer.Header().Add("Content-Type", "application/octet-stream")
+		c.File(ret.targetFile)
+		return nil
+	}))
 	group.Use(Auth())
 	group.POST("/upload/dataset", wrapper(uploadDataset))
 	group.POST("/upload/model", wrapper(uploadModelset))
@@ -125,7 +142,7 @@ func uploadDataset(c *gin.Context) error {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/download/dataset/:id [get]
-func downloadDataset(c *gin.Context) error {
+func downloadDataset(c *gin.Context, chPath chan downloadResult) error {
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
@@ -145,11 +162,12 @@ func downloadDataset(c *gin.Context) error {
 	}
 	fi, _ := os.Stat(targetPath)
 
-	c.Writer.WriteHeader(http.StatusOK)
-	c.Header("Content-Disposition", fmt.Sprint("attachment; filename=", fi.Name()))
-	c.Writer.Header().Add("Content-Type", "application/octet-stream")
-	c.File(targetPath)
+	ret := downloadResult{
+		targetFile: targetPath,
+		fn:         fi.Name(),
+	}
 
+	chPath <- ret
 	return nil
 }
 
@@ -207,7 +225,7 @@ func uploadModelset(c *gin.Context) error {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/files/download/model/:id [get]
-func downloadModelset(c *gin.Context) error {
+func downloadModelset(c *gin.Context, chPath chan downloadResult) error {
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
@@ -224,10 +242,11 @@ func downloadModelset(c *gin.Context) error {
 	}
 	fi, _ := os.Stat(targetPath)
 
-	c.Writer.WriteHeader(http.StatusOK)
-	c.Header("Content-Disposition", fmt.Sprint("attachment; filename=", fi.Name()))
-	c.Writer.Header().Add("Content-Type", "application/octet-stream")
-	c.File(targetPath)
+	ret := downloadResult{
+		targetFile: targetPath,
+		fn:         fi.Name(),
+	}
 
+	chPath <- ret
 	return nil
 }
