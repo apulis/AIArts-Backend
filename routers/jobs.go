@@ -27,12 +27,12 @@ func GetAllJobs(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	count, err := services.GetJobsCount(req, userName)
+	count, err := services.GetJobsCount(req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	jobs, err := services.GetAllJobs(req, userName)
+	jobs, err := services.GetAllJobs(req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
