@@ -36,7 +36,7 @@ func ListSavedImages(page, count int, orderBy, order, imageName, username string
 
 func getContainerSize(hostIp, containerId string) (uint64, error) {
 	// docker ps -f "id={containerId}" --format '{{ .Size }}'
-	cmd := fmt.Sprintf("docker ps -f \"id=%s\" --format '{{ .Size }}'", containerId)
+	cmd := fmt.Sprintf("docker ps -f id=%s --format '{{ .Size }}'", containerId)
 
 	// output format: 5.55MB (virtual 916MB)
 	output, err := runSShCmd(hostIp, cmd)
@@ -50,12 +50,14 @@ func getContainerSize(hostIp, containerId string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	iSize, err := utils.ToBytes(strings.TrimSpace(strings.TrimRight(parts[1], ")")))
+	iSize, err := utils.ToBytes(strings.TrimSuffix(strings.TrimSpace(parts[1]), ")"))
 	if err != nil {
 		return 0, err
 	}
+	total := cSize + iSize
 
-	return cSize + iSize, nil
+	logger.Info(fmt.Sprintf("Run cmd %s on host %s, result: %s, size: %d", cmd, hostIp, output, total))
+	return total, nil
 }
 
 func CreateSavedImage(name, version, description, jobId, username string, isPrivate bool) (int64, error) {
@@ -79,8 +81,12 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 		saveElapsed = 0
 		saveSize = 0
 		lastSavePoint = start
+		logger.Info(fmt.Sprintf("reset save statistic at %s", start.String()))
 	}
 	size, sizeError := getContainerSize(hostIp, containerId)
+	if sizeError != nil {
+		logger.Errorf("get container %s size error: %s", containerId, sizeError.Error())
+	}
 
 	// save image by goroutine
 	go func() {
