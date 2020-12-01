@@ -17,6 +17,7 @@ func GetAllJobs(c *gin.Context) error {
 	var req models.GetAllJobsReq
 	var err error
 
+	//todo: user authorization
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
@@ -26,17 +27,12 @@ func GetAllJobs(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	// 兼容老代码
-	if req.VCName == "" {
-		req.VCName = "platform"
-	}
-
-	count, err := services.GetJobsCount(req)
+	count, err := services.GetJobsCount(req, userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	jobs, err := services.GetAllJobs(req)
+	jobs, err := services.GetAllJobs(req, userName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -48,15 +44,18 @@ func GetAllJobSummary(c *gin.Context) error {
 	var err error
 	var req GetJobSummaryReq
 
-	if len(req.VCName) == 0 {
-		req.VCName = models.DefaultVcName
-	}
-
+	//todo: user authorization
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
-	summary, err := services.GetJobSummary("all", req.JobType, req.VCName)
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+
+	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

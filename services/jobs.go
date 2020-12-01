@@ -7,9 +7,10 @@ import (
 	"net/url"
 )
 
-func GetJobsCount(req models.GetAllJobsReq) (int, error) {
-	url := fmt.Sprintf(`%s/GetJobCount?vcName=%s&jobType=%s&jobStatus=%s&searchWord=%s`,
-		configs.Config.DltsUrl, req.VCName,
+func GetJobsCount(req models.GetAllJobsReq, userName string) (int, error) {
+
+	url := fmt.Sprintf(`%s/GetJobCount?userName=%s&vcName=%s&jobType=%s&jobStatus=%s&searchWord=%s`,
+		configs.Config.DltsUrl, userName, req.VCName,
 		req.JobType, req.JobStatus, url.QueryEscape(req.SearchWord))
 
 	ret := struct {
@@ -24,9 +25,10 @@ func GetJobsCount(req models.GetAllJobsReq) (int, error) {
 	return ret.Count, nil
 }
 
-func GetAllJobs(req models.GetAllJobsReq) (interface{}, error) {
-	url := fmt.Sprintf(`%s/ListAllJobs?vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-		configs.Config.DltsUrl, req.VCName,
+func GetAllJobs(req models.GetAllJobsReq, userName string) (interface{}, error) {
+
+	url := fmt.Sprintf(`%s/ListAllJobs?userName=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
+		configs.Config.DltsUrl, userName, req.VCName,
 		req.JobType, req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
 		req.OrderBy, req.Order)
 
