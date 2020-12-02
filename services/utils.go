@@ -90,13 +90,11 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 }
 
 func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
-
 	rspData, err := doRequest(url, "GET", headers, rawBody)
 	if err != nil {
 		return err, ""
 	}
 
-	logger.Info(url)
 	return nil, string(rspData)
 }
 

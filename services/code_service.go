@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
@@ -27,8 +28,29 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error) {
+// check docker image name
+func handleCodeImage(name string, private bool) (string, error) {
+	if private {
+		return ConvertImage(name), nil
+	}
 
+	resp := make(map[string]interface{})
+	err, rawBody := DoGetRequest(fmt.Sprintf(dockerLibAPI, name), map[string]string{}, nil)
+	if err != nil {
+		return "", err
+	}
+	if err := json.Unmarshal([]byte(rawBody), &resp); err != nil {
+		return "", err
+	}
+
+	if v, exist := resp["detail"]; exist && strings.ToLower(v.(string)) == dockerErrDetail {
+		return "", errors.New(dockerErrDetail)
+	}
+
+	return name, nil
+}
+
+func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error) {
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, req.VCName,
 		models.JobTypeCodeEnv,
@@ -69,6 +91,11 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 }
 
 func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv) (string, error) {
+	imageName, err := handleCodeImage(codeEnv.Engine, codeEnv.PrivateImage)
+	if err != nil {
+		return "", err
+	}
+
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -122,7 +149,7 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 		header["Authorization"] = value
 	}
 
-	err := DoRequest(url, "POST", header, params, id)
+	err = DoRequest(url, "POST", header, params, id)
 	if err != nil {
 		fmt.Printf("create codeEnv err[%+v]\n", err)
 		return "", err
