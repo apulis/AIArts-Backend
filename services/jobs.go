@@ -54,3 +54,16 @@ func ResumeJob(jobId, userName string) (interface{}, error) {
 	}
 	return ret, nil
 }
+
+func PauseJob(jobId, userName string) (interface{}, error) {
+	reqUrl := fmt.Sprintf("%s/PauseJob?jobId=%s&userName=%s", configs.Config.DltsUrl, jobId, userName)
+
+	var ret interface{}
+	err := DoRequest(reqUrl, "GET", nil, nil, &ret)
+
+	if err != nil {
+		logger.Errorf("pause job %s failed", jobId)
+		return nil, err
+	}
+	return ret, nil
+}
