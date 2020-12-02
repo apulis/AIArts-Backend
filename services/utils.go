@@ -14,6 +14,7 @@ import (
 
 var (
 	dockerLibAPI    = "https://hub.docker.com/v2/repositories/library/%s/"
+	dockerTagAPI    = "https://hub.docker.com/v2/repositories/library/%s/tags/%s"
 	dockerErrDetail = "object not found"
 )
 
@@ -124,16 +125,17 @@ func ConvertImage(name string, private bool) (string, error) {
 		return ConvertPrivateImage(name), nil
 	}
 
-	resp := make(map[string]interface{})
-	err, rawBody := DoGetRequest(fmt.Sprintf(dockerLibAPI, name), map[string]string{}, nil)
-	if err != nil {
-		return "", err
-	}
-	if err := json.Unmarshal([]byte(rawBody), &resp); err != nil {
-		return "", err
-	}
-
-	if v, exist := resp["detail"]; exist && strings.ToLower(v.(string)) == dockerErrDetail {
+	// check image name and tag
+	parts := strings.Split(strings.TrimSpace(name), ":")
+	if len(parts) == 1 {
+		if err, _ := DoGetRequest(fmt.Sprintf(dockerLibAPI, parts[0]), map[string]string{}, nil); err != nil {
+			return "", err
+		}
+	} else if len(parts) == 2 {
+		if err, _ := DoGetRequest(fmt.Sprintf(dockerTagAPI, parts[0], parts[1]), map[string]string{}, nil); err != nil {
+			return "", err
+		}
+	} else {
 		return "", errors.New(dockerErrDetail)
 	}
 
