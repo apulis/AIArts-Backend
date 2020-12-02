@@ -38,7 +38,7 @@ func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (s
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
-	params["image"] = ConvertImage(evaluation.Engine)
+	params["image"] = ConvertPrivateImage(evaluation.Engine)
 	params["gpuType"] = evaluation.DeviceType
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum

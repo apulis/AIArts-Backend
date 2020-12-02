@@ -85,7 +85,7 @@ func CreateEdgeInference(userName string, req models.CreateEdgeInferenceReq)  (s
 		params["image"] = baseImageName + "-arm64"
 	}
 
-	params["image"] = ConvertImage(params["image"].(string)) // give image name a harbor prefix
+	params["image"] = ConvertPrivateImage(params["image"].(string)) // give image name a harbor prefix
 	var res models.ConversionJobId
 
 	err := DoRequest(url, "POST", nil, params, &res)

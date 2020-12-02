@@ -109,7 +109,6 @@ func getAllTraining(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/trainings [post]
 func createTraining(c *gin.Context) error {
-
 	var req models.Training
 	var id string
 
@@ -145,6 +144,12 @@ func createTraining(c *gin.Context) error {
 		req.VCName = "platform"
 	}
 
+	imageName, err := services.ConvertImage(req.Engine, req.IsPrivateImg)
+	if err != nil {
+		return AppError(DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.Engine = imageName
 	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

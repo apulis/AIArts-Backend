@@ -97,7 +97,6 @@ func getAllCodeEnv(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [post]
 func createCodeEnv(c *gin.Context) error {
-
 	var req CreateCodeEnvReq
 	var id string
 
@@ -120,6 +119,12 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
 
+	imageName, err := services.ConvertImage(req.CreateCodeEnv.Engine, req.CreateCodeEnv.IsPrivateImage)
+	if err != nil {
+		return AppError(DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.CreateCodeEnv.Engine = imageName
 	id, err = services.CreateCodeEnv(c, userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

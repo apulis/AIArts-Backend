@@ -12,7 +12,10 @@ import (
 	"strings"
 )
 
-
+var (
+	dockerLibAPI    = "https://hub.docker.com/v2/repositories/library/%s/"
+	dockerErrDetail = "object not found"
+)
 
 func doRequest(url, method string, headers map[string]string, rawBody interface{}) ([]byte, error) {
 
@@ -100,7 +103,7 @@ func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (e
 
 
 // 如果配置了私有仓库，则添加私有仓库前缀
-func ConvertImage(image string) string {
+func ConvertPrivateImage(image string) string {
 	imageName := strings.TrimSpace(image)
 	if len(configs.Config.PrivateRegistry) > 0 {
 		// 不带私有仓库前缀
@@ -113,6 +116,28 @@ func ConvertImage(image string) string {
 		}
 	}
 	return imageName
+}
+
+// check docker image name
+func ConvertImage(name string, private bool) (string, error) {
+	if private {
+		return ConvertPrivateImage(name), nil
+	}
+
+	resp := make(map[string]interface{})
+	err, rawBody := DoGetRequest(fmt.Sprintf(dockerLibAPI, name), map[string]string{}, nil)
+	if err != nil {
+		return "", err
+	}
+	if err := json.Unmarshal([]byte(rawBody), &resp); err != nil {
+		return "", err
+	}
+
+	if v, exist := resp["detail"]; exist && strings.ToLower(v.(string)) == dockerErrDetail {
+		return "", errors.New(dockerErrDetail)
+	}
+
+	return name, nil
 }
 
 // 如果配置了私有仓库，则删除掉

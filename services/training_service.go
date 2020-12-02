@@ -63,9 +63,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["jobName"] = training.Name
 	params["jobType"] = models.JobTypeArtsTraining
 
-	params["image"] = ConvertImage(training.Engine)
+	params["image"] = training.Engine
 	params["frameworkType"] = strings.TrimSpace(training.FrameworkType)
-	
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum

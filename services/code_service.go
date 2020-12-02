@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
@@ -18,7 +17,9 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var (
+	letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+)
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)
@@ -26,28 +27,6 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
-}
-
-// check docker image name
-func handleCodeImage(name string, private bool) (string, error) {
-	if private {
-		return ConvertImage(name), nil
-	}
-
-	resp := make(map[string]interface{})
-	err, rawBody := DoGetRequest(fmt.Sprintf(dockerLibAPI, name), map[string]string{}, nil)
-	if err != nil {
-		return "", err
-	}
-	if err := json.Unmarshal([]byte(rawBody), &resp); err != nil {
-		return "", err
-	}
-
-	if v, exist := resp["detail"]; exist && strings.ToLower(v.(string)) == dockerErrDetail {
-		return "", errors.New(dockerErrDetail)
-	}
-
-	return name, nil
 }
 
 func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error) {
@@ -91,11 +70,6 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 }
 
 func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv) (string, error) {
-	imageName, err := handleCodeImage(codeEnv.Engine, codeEnv.PrivateImage)
-	if err != nil {
-		return "", err
-	}
-
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
 
@@ -103,9 +77,9 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = models.JobTypeCodeEnv
 
-	params["image"] = ConvertImage(codeEnv.Engine)
 	params["frameworkType"] = strings.TrimSpace(codeEnv.FrameworkType)
 
+	params["image"] = codeEnv.Engine
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum
 
@@ -149,7 +123,7 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 		header["Authorization"] = value
 	}
 
-	err = DoRequest(url, "POST", header, params, id)
+	err := DoRequest(url, "POST", header, params, id)
 	if err != nil {
 		fmt.Printf("create codeEnv err[%+v]\n", err)
 		return "", err
@@ -179,7 +153,6 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 }
 
 func DeleteCodeEnv(userName, id string) error {
-
 	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	params := make(map[string]interface{})
 
@@ -195,7 +168,6 @@ func DeleteCodeEnv(userName, id string) error {
 }
 
 func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
-
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	fmt.Println(url)
 

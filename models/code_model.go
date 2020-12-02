@@ -24,7 +24,7 @@ type CreateCodeEnv struct {
 	VCName     string `json:"vcName"`
 	Cmd        string `json:"cmd"`
 
-	PrivateImage    bool   `json:"private"`
+	IsPrivateImage  bool   `json:"private"`
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`
 	NumPsWorker     int    `json:"numPsWorker"`

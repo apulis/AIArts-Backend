@@ -8,6 +8,7 @@ type Training struct {
 	Id              string            `json:"id"`
 	Name            string            `json:"name"`
 	Engine          string            `json:"engine"`
+	IsPrivateImg    bool              `json:"private"`
 	DeviceType      string            `json:"deviceType"`
 	DeviceNum       int               `json:"deviceNum"`
 	CodePath        string            `json:"codePath"`
