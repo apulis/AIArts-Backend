@@ -24,6 +24,8 @@ type Training struct {
 	NumPsWorker     int               `json:"numPsWorker"`
 	VCName          string            `json:"vcName"`
 	Command         string            `json:"command"`
+
+	FrameworkType   string            `json:"frameworkType"`
 }
 
 func ValidHomePath(userName, path string) bool {

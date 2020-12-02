@@ -135,6 +135,7 @@ func createTraining(c *gin.Context) error {
 	if err := services.CheckPathExists(req.StartupFile); len(req.StartupFile) > 0 && err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
+
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}

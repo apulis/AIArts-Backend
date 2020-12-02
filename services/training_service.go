@@ -6,6 +6,7 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/gin-gonic/gin"
 	urllib "net/url"
+	"strings"
 )
 
 func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Training, int, int, error) {
@@ -63,6 +64,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["jobType"] = models.JobTypeArtsTraining
 
 	params["image"] = ConvertImage(training.Engine)
+	params["frameworkType"] = strings.TrimSpace(training.FrameworkType)
+	
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum
@@ -73,16 +76,19 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	} else if len(training.Command) > 0 {
 		params["cmd"] = training.Command
 	} else {
+
 		fileType, err := CheckStartFileType(training.StartupFile)
 		if fileType == FILETYPE_PYTHON {
 			params["cmd"] = "python " + training.StartupFile
 		} else if fileType == FILETYPE_SHELL {
 			params["cmd"] = "bash " + training.StartupFile
 		}
+
 		if err != nil {
 			fmt.Printf("startupfile is invalid[%+v]\n", err)
 			return "", err
 		}
+
 		for k, v := range training.Params {
 			if k == "sudo" {
 				//添加sudo权限
@@ -92,9 +98,11 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 			}
 
 		}
+
 		if len(training.DatasetPath) > 0 {
 			params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
 		}
+
 		//params中加入visualpath
 		if len(training.VisualPath) > 0 {
 			training.Params["visualPath"] = training.VisualPath

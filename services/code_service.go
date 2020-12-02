@@ -77,6 +77,8 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	params["jobType"] = models.JobTypeCodeEnv
 
 	params["image"] = ConvertImage(codeEnv.Engine)
+	params["frameworkType"] = strings.TrimSpace(codeEnv.FrameworkType)
+
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum
 

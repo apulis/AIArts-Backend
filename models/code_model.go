@@ -27,6 +27,8 @@ type CreateCodeEnv struct {
 	JobTrainingType string `json:"jobTrainingType"`
 	NumPs           int    `json:"numPs"`
 	NumPsWorker     int    `json:"numPsWorker"`
+
+	FrameworkType    string    `json:"frameworkType"`
 }
 
 type EndpointsRsp struct {
