@@ -11,6 +11,8 @@ func AddGroupJobManager(r *gin.Engine) {
 	group.Use(Auth())
 	group.GET("/", wrapper(GetAllJobs))
 	group.GET("/summary", wrapper(GetAllJobSummary))
+	group.GET("/resume/:jobId", wrapper(ResumeJob))
+	group.GET("/pause/:jobId", wrapper(PauseJob))
 }
 
 func GetAllJobs(c *gin.Context) error {
@@ -61,4 +63,36 @@ func GetAllJobSummary(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, summary)
+}
+
+func ResumeJob(c *gin.Context) error {
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	jobId := c.Param("jobId")
+
+	ret, err := services.ResumeJob(jobId, userName)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, ret)
+}
+
+func PauseJob(c *gin.Context) error {
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	jobId := c.Param("jobId")
+
+	ret, err := services.PauseJob(jobId, userName)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, ret)
 }
