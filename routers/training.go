@@ -82,11 +82,6 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	// 兼容老代码
-	if req.VCName == "" {
-		req.VCName = "platform"
-	}
-
 	sets, total, totalPage, err := services.GetAllTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())

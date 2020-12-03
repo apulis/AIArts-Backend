@@ -214,9 +214,6 @@ func getJobSummary(c *gin.Context) error {
 	var err error
 	var req GetJobSummaryReq
 
-	if len(req.VCName) == 0 {
-		req.VCName = models.DefaultVcName
-	}
 
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
