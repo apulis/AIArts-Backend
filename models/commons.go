@@ -179,7 +179,7 @@ type Job struct {
 	JobName   string    `json:"jobName"`
 	JobParams JobParams `json:"jobParams"`
 	JobStatus string    `json:"jobStatus"`
-	JobStatusDetail json.Token  `json:"jobStatusDetail"` 
+	JobStatusDetail json.Token  `json:"jobStatusDetail"`
 	JobTime   string    `json:"jobTime"`
 	JobType   string    `json:"jobType"`
 	Priority  int       `json:"priority"`

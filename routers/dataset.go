@@ -164,9 +164,9 @@ func createDataset(c *gin.Context) error {
 		return AppError(DATASET_IS_EXISTED, "The dataset name already exists")
 	}
 
-	// 获取数据集真实路径
-	datasetStoragePath := services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
-	logger.Info("createDataset - datasetStoragePath", datasetStoragePath, req.Name)
+	// 1. 当数据集为已存在的文件数据时，路径设定为用户指定的路径
+	// 2. 当数据集为用户刚刚上传的文件时, 路径为后端生成的路径（通过uploadDataset创建并回传给前端）
+	datasetStoragePath := req.Path
 
 	// 检查数据集文件是否已存在
 	err = services.CheckPathExists(datasetStoragePath)
@@ -176,8 +176,8 @@ func createDataset(c *gin.Context) error {
 
 	// 将数据重命名为真实目录
 	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
-		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
 
+		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
 		err = os.Rename(req.Path, datasetStoragePath)
 		if err != nil {
 			return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
