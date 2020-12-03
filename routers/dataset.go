@@ -168,19 +168,27 @@ func createDataset(c *gin.Context) error {
 	// 2. 当数据集为用户刚刚上传的文件时, 路径为后端生成的路径（通过uploadDataset创建并回传给前端）
 	datasetStoragePath := req.Path
 
-	// 检查数据集文件是否已存在
-	err = services.CheckPathExists(datasetStoragePath)
-	if err == nil {
-		return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
-	}
-
 	// 将数据重命名为真实目录
 	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
+
+		// 数据集不应该存在，否则为 判为重名
+		err = services.CheckPathExists(datasetStoragePath)
+		if err == nil {
+			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+		}
 
 		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
 		err = os.Rename(req.Path, datasetStoragePath)
 		if err != nil {
 			return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+		}
+
+	} else {
+
+		// 数据集必须存在
+		err = services.CheckPathExists(datasetStoragePath)
+		if err != nil {
+			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
 		}
 	}
 
