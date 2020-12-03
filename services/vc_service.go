@@ -157,6 +157,12 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 			}
 		}
 
+		for k, v := range(unallocated) {
+			if v < 0{
+				unallocated[k] = 0
+			}
+		}
+
 		return &models.VCStatisticRsp{
 			UnallocatedDevice: unallocated,
 		}, nil
