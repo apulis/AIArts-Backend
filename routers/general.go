@@ -105,6 +105,7 @@ func getResource(c *gin.Context) error {
 	// 获取平台配额数据
 	quota := make(map[string]int)                   // vc配额数据
 	user_quota := make(map[string]models.UserQuota) // vc下用户配额数据
+	user_used := make(map[string]int)
 
 	if len(vcInfo.Quota) != 0 {
 		err = json.Unmarshal([]byte(vcInfo.Quota), &quota)
@@ -118,6 +119,15 @@ func getResource(c *gin.Context) error {
 		err = json.Unmarshal([]byte(vcInfo.Metadata), &user_quota)
 		if err != nil {
 
+		}
+	}
+
+	// 整理用户已使用数据
+	for _, v := range vcInfo.UserStatus {
+		if v.UserName == userName {
+			for dev, used := range v.UserGPU {
+				user_used[dev] = used
+			}
 		}
 	}
 
@@ -139,6 +149,13 @@ func getResource(c *gin.Context) error {
 			deviceInfo.UserQuota = quota[k]
 		} else {
 			deviceInfo.UserQuota = 0
+		}
+
+		// 用户配额 - 用户已使用设备数量
+		if _, ok := user_used[k]; ok {
+			deviceInfo.Avail = deviceInfo.UserQuota - user_used[k]
+		} else {
+			deviceInfo.Avail = deviceInfo.UserQuota
 		}
 
 		rsp.DeviceList = append(rsp.DeviceList, deviceInfo)

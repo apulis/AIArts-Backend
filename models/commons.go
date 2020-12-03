@@ -210,6 +210,11 @@ type NodeStatus struct {
 	DeviceStr   string         `json:"deviceStr,omitempty"`
 }
 
+type UserStatusItem struct {
+	UserGPU     map[string] int `json:"userGPU"`
+	UserName    string `json:"userName"`
+ }
+
 // 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
 	DeviceAvail    map[string]int `json:"gpu_avaliable"`
@@ -217,6 +222,7 @@ type VcInfo struct {
 	Nodes          []*NodeStatus  `json:"node_status"`
 	Quota          string         `json:"quota"`
 	Metadata       string         `json:"metadata"`
+	UserStatus     []*UserStatusItem  `json:"user_status"`
 }
 
 // 获取metadata数据
