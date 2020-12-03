@@ -172,6 +172,8 @@ func createDataset(c *gin.Context) error {
 	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
 
 		// 数据集不应该存在，否则为 判为重名
+		datasetStoragePath = services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
+		
 		err = services.CheckPathExists(datasetStoragePath)
 		if err == nil {
 			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
