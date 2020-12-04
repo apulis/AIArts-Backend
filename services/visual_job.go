@@ -10,9 +10,9 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func CreateVisualJob(userName string, jobName string, logdir string, description string) error {
+func CreateVisualJob(userName string, vcName string, jobName string, logdir string, description string) error {
 	//step1. create a background job
-	relateJobId, err := createBackgroundJob(userName, jobName, logdir, description)
+	relateJobId, err := createBackgroundJob(userName, vcName, jobName, logdir, description)
 	if err != nil {
 		fmt.Printf("create background job failed : [%+v]\n", err)
 		return err
@@ -144,13 +144,13 @@ func StopVisualJob(userName string, jobId int) error {
 	return nil
 }
 
-func ContinueVisualJob(userName string, jobId int) error {
+func ContinueVisualJob(userName string, vcName string, jobId int) error {
 	targetJob, err := models.GetVisualJobById(jobId)
 	if err != nil {
 		fmt.Printf("get job detail err[%+v]\n", err)
 		return err
 	}
-	relateJobId, err := createBackgroundJob(userName, targetJob.Name, targetJob.LogPath, targetJob.Description)
+	relateJobId, err := createBackgroundJob(userName, vcName, targetJob.Name, targetJob.LogPath, targetJob.Description)
 	if err != nil {
 		fmt.Printf("create background job failed : [%+v]\n", err)
 		return err
@@ -191,10 +191,10 @@ func DeleteVisualJob(userName string, jobId int) error {
 	return nil
 }
 
-func createBackgroundJob(userName string, jobName string, logdir string, description string) (string, error) {
+func createBackgroundJob(userName string, vcName string, jobName string, logdir string, description string) (string, error) {
 	//step1. create a job
 	// * get cluster availuable gpu type, and randomly select one to run visual job
-	requestClusterStatusURL := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
+	requestClusterStatusURL := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, vcName)
 	vcInfo := &models.VcInfo{}
 
 	err := DoRequest(requestClusterStatusURL, "GET", nil, nil, vcInfo)
