@@ -53,7 +53,10 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 
 func GetAllVisualJobByArguments(userName string, vcName string, pageNum int, pageSize int, status string, jobName string, order string, orderBy string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("user_name =?", userName).Where("vc_name =?", vcName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
+	temp := db.Where("user_name =?", userName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
+	if vcName != "" {
+		temp = temp.Where("vc_name =?", vcName)
+	}
 	if orderBy != "" && order != "" {
 		fmt.Println("search order %s", order)
 		if orderBy == "createTime" {

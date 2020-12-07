@@ -277,7 +277,7 @@ func createBackgroundJob(userName string, vcName string, jobName string, logdir 
 }
 
 func renewStatusInfo(userName string) error {
-	visualJobList, err := models.GetAllVisualJobByArguments(userName, 1, -1, "", "", "", "")
+	visualJobList, err := models.GetAllVisualJobByArguments(userName, "", 1, -1, "", "", "", "")
 	if err != nil {
 		fmt.Printf("get visual job  err[%+v]\n", err)
 		return err
