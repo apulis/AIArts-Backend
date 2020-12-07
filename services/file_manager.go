@@ -153,21 +153,31 @@ func CompressFile(path string) (string, error) {
 		if err := tarWriter.WriteHeader(header); err != nil {
 			return err
 		}
+
 		if !fi.IsDir() {
 			data, err := os.Open(file)
 			if err != nil {
 				return err
 			}
+
 			if _, err := io.Copy(tarWriter, data); err != nil {
+
+				data.Close()
+				tarWriter.Close()
+				gzipWriter.Close()
 				return err
 			}
+
+			data.Close()
 		}
+
 		return err
 	})
 
 	if err := tarWriter.Close(); err != nil {
 		return "", err
 	}
+
 	if err := gzipWriter.Close(); err != nil {
 		return "", err
 	}
@@ -184,6 +194,8 @@ func CompressFile(path string) (string, error) {
 	if _, err := io.Copy(fileToWrite, &buf); err != nil {
 		return "", err
 	}
+
+	fileToWrite.Close()
 	return targetPath, nil
 }
 
