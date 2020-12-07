@@ -17,6 +17,7 @@ type SavedImage struct {
 	IsPrivate   bool   `gorm:"not null" json:"isPrivate"`
 	ContaindrId string `gorm:"not null" json:"containerId"`
 	ImageId     string `gorm:"not null" json:"imageId"`
+	Param       string `json:"param"`
 }
 
 func ListSavedImages(offset, limit int, orderBy, order, name, username string) ([]SavedImage, int, error) {

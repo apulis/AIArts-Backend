@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/utils"
@@ -137,6 +138,27 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 			if err := models.DeleteSavedImage(&img); err != nil {
 				logger.Errorf("delete image %s occurs error: %s", img.ImageId, err.Error())
 			}
+		}
+
+		// 读取任务信息
+		params := make(map[string] interface{})
+
+		jobInfo, err := GetDltsJobV2(username, jobId)
+		if err != nil {
+			fmt.Printf("get GetDltsJobV2 err[%+v]\n", err)
+		}
+
+		if jobInfo != nil && len(jobInfo.JobParams.FrameworkType) > 0 {
+
+			// 做一点冗余，和job模块解耦
+			params["origJobId"] = jobId
+			params["frameworkType"] = jobInfo.JobParams.FrameworkType
+		}
+
+		// 写入参数数据
+		jsonString, err := json.Marshal(params)
+		if err == nil {
+			savedImage.Param = string(jsonString)
 		}
 
 		if err := models.CreateSavedImage(savedImage); err != nil {

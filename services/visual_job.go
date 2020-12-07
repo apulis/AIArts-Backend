@@ -117,7 +117,7 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 func StopVisualJob(userName string, jobId int) error {
 	targetJob, err := models.GetVisualJobById(jobId)
 	if err != nil {
-		fmt.Printf("get job detail err[%+v]\n", err)
+		logger.Error("get job detail err ", err)
 		return err
 	}
 	backgroundJobId := targetJob.RelateJobId
@@ -127,21 +127,16 @@ func StopVisualJob(userName string, jobId int) error {
 	job := &models.Job{}
 	err = DoRequest(url, "GET", nil, params, job)
 	if err != nil {
-		fmt.Printf("delete backgournd job err[%+v]\n", err)
+		logger.Error("delete background job err: ", err)
 		return err
 	}
 	targetJob.Status = "paused"
-	targetJob.RelateJobId = ""
 	err = models.UpdateVisualJob(&targetJob)
 	if err != nil {
-		fmt.Printf("kill backgournd job err[%+v]\n", err)
+		logger.Error("kill background job err %s", err)
 		return err
 	}
-	_, err = DeleteJob(backgroundJobId)
-	if err != nil {
-		fmt.Printf("update visual job info fail: [%+v]\n", err)
-		return err
-	}
+
 	return nil
 }
 
@@ -169,26 +164,35 @@ func ContinueVisualJob(userName string, vcName string, jobId int) error {
 func DeleteVisualJob(userName string, jobId int) error {
 	err := renewStatusInfo(userName)
 	if err != nil {
-		fmt.Printf("job status renew fail : err[%+v]\n", err)
+		logger.Error("job status renew fail : ", err)
 		return err
 	}
 	job, err := models.GetVisualJobById(jobId)
 	if err != nil {
-		fmt.Printf("get job detail err[%+v]\n", err)
+		logger.Error("get job detail err: ", err)
 		return err
 	}
-	err = models.DeleteVisualJob(&job)
-	if err != nil {
-		fmt.Printf("delete visual job record error :[%+v]\n", err)
-		return err
-	}
+
 	if job.Status == "running" {
 		err := StopVisualJob(userName, jobId)
 		if err != nil {
-			fmt.Printf("stop job error :[%+v]\n", err)
+			logger.Error("stop job error: ", err)
 			return err
 		}
 	}
+
+	_, err = DeleteJob(job.RelateJobId)
+	if err != nil {
+		logger.Error("delete visual job info fail: ", err)
+		return err
+	}
+
+	err = models.DeleteVisualJob(&job)
+	if err != nil {
+		logger.Error("delete visual job record error : %s", err)
+		return err
+	}
+
 	return nil
 }
 

@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -139,51 +140,13 @@ func CompressFile(path string) (string, error) {
 	}
 	targetPath := tmpDir + fileName + strconv.FormatInt(time.Now().Unix(), 10) + ".tar.gz"
 
-	var buf bytes.Buffer
-	gzipWriter := gzip.NewWriter(&buf)
-	tarWriter := tar.NewWriter(gzipWriter)
-
-	filepath.Walk(path, func(file string, fi os.FileInfo, err error) error {
-		header, err := tar.FileInfoHeader(fi, file)
-		if err != nil {
-			return err
-		}
-		header.Name = strings.TrimPrefix(filepath.ToSlash(file), dirName)
-		header.Format = tar.FormatGNU
-		if err := tarWriter.WriteHeader(header); err != nil {
-			return err
-		}
-		if !fi.IsDir() {
-			data, err := os.Open(file)
-			if err != nil {
-				return err
-			}
-			if _, err := io.Copy(tarWriter, data); err != nil {
-				return err
-			}
-		}
-		return err
-	})
-
-	if err := tarWriter.Close(); err != nil {
-		return "", err
-	}
-	if err := gzipWriter.Close(); err != nil {
+	var cmd *exec.Cmd
+	cmd = exec.Command("tar", "-zcf", targetPath, path)
+	if _, err := cmd.Output(); err != nil {
+		logger.Error(fmt.Sprintf("run cmd %s error: %s", cmd.String(), err.Error()))
 		return "", err
 	}
 
-	fileToWrite, err := os.OpenFile(targetPath, os.O_CREATE|os.O_RDWR, os.FileMode(fileInfo.Mode()))
-	if err != nil {
-		return "", err
-	}
-	//权限改为777
-	//err = os.Chmod(path, os.FileMode(777))
-	//if err != nil {
-	//	return "", err
-	//}
-	if _, err := io.Copy(fileToWrite, &buf); err != nil {
-		return "", err
-	}
 	return targetPath, nil
 }
 

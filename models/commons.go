@@ -164,6 +164,7 @@ type JobParams struct {
 	UserName          string   `json:"userName"`
 	VcName            string   `json:"vcName"`
 	WorkPath          string   `json:"workPath"`
+	FrameworkType     string   `json:"frameworkType"`
 
 	CodePath    string `json:"codePath"`
 	StartupFile string `json:"startupFile"`
