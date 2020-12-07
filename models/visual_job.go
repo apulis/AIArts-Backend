@@ -13,6 +13,7 @@ type VisualJob struct {
 	UserName    string    `gorm: "userName" json:"username"`
 	Name        string    `json:"name"`
 	Status      string    `json:status`
+	VCName      string    `gorm: "vcName" json:"vcName"`
 	LogPath     string    `gorm: "logPath" json:"logPath"`
 	Description string    `gorm:"type:text" json:"description"`
 	RelateJobId string    `gorm: "relateJobId" json:relateJobId`
@@ -27,7 +28,6 @@ type GetVisualJobListReq struct {
 	Order    string `form:"order"`
 	VCName   string `form:"vcName"`
 }
-
 
 func CreateVisualJob(visualJob VisualJob) error {
 	return db.Create(&visualJob).Error
@@ -51,9 +51,9 @@ func GetVisualJobById(Id int) (VisualJob, error) {
 	return visualJob, nil
 }
 
-func GetAllVisualJobByArguments(userName string, pageNum int, pageSize int, status string, jobName string, order string, orderBy string) ([]VisualJob, error) {
+func GetAllVisualJobByArguments(userName string, vcName string, pageNum int, pageSize int, status string, jobName string, order string, orderBy string) ([]VisualJob, error) {
 	var visualJobList []VisualJob
-	temp := db.Where("user_name =?", userName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
+	temp := db.Where("user_name =?", userName).Where("vc_name =?", vcName).Offset((pageNum - 1) * pageSize).Limit(pageSize)
 	if orderBy != "" && order != "" {
 		fmt.Println("search order %s", order)
 		if orderBy == "createTime" {
@@ -89,9 +89,9 @@ func GetVisualJobsSumCount(userName string) (int, error) {
 	return count, nil
 }
 
-func GetVisualJobCountByArguments(userName string, status string, jobName string) (int, error) {
+func GetVisualJobCountByArguments(userName string, vcName string, status string, jobName string) (int, error) {
 	var count int
-	temp := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?", userName)
+	temp := db.Table("visual_jobs").Where("deleted_at is NULL").Where("user_name = ?", userName).Where("vc_name = ?", vcName)
 	if jobName != "" {
 		fmt.Println("search jobName %s", jobName)
 		temp = temp.Where("name LIKE ?", jobName+"%")

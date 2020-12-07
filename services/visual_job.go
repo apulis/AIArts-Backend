@@ -22,6 +22,7 @@ func CreateVisualJob(userName string, vcName string, jobName string, logdir stri
 		UserName:    userName,
 		Name:        jobName,
 		Status:      "scheduling",
+		VCName:      vcName,
 		LogPath:     logdir,
 		Description: description,
 		RelateJobId: relateJobId,
@@ -44,13 +45,13 @@ func GetAllVisualJobInfo(userName string, req models.GetVisualJobListReq) ([]mod
 	}
 
 	//step2. get job info and return
-	jobList, err := models.GetAllVisualJobByArguments(userName, req.PageNum, req.PageSize, req.Status, req.JobName, req.Order, req.OrderBy)
+	jobList, err := models.GetAllVisualJobByArguments(userName, req.VCName, req.PageNum, req.PageSize, req.Status, req.JobName, req.Order, req.OrderBy)
 	if err != nil {
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
 
-	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, req.Status, req.JobName)
+	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, req.VCName, req.Status, req.JobName)
 	if err != nil {
 		fmt.Printf("get job list count err[%+v]\n", err)
 		return nil, 0, 0, err
