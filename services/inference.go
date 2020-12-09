@@ -141,12 +141,19 @@ func KillJob(jobId string, userName string) (interface{}, error) {
 
 func DeleteJob(jobId string) (interface{}, error) {
 	BackendUrl = configs.Config.Infer.BackendUrl
-	resp, err := grequests.Delete(BackendUrl+"/apis/DeleteJob?&jobId="+jobId, nil)
+	resp, err := grequests.Delete(BackendUrl+"/apis/DeleteJob?jobId="+jobId, nil)
 	if resp.StatusCode != 200 {
 		logger.Error("response code is ", resp.StatusCode, resp.String())
 		return nil, errors.New("response code: " + (strconv.Itoa(resp.StatusCode)) + ",detail: " + resp.String())
 	}
-	var ret interface{}
+	var ret map[string]interface{}
 	json.Unmarshal(resp.Bytes(), &ret)
+
+	//errCode := int(ret["code"].(float64))
+	//if errCode == 0 {
+	//	return ret, nil
+	//} else {
+	//	return nil, fmt.Errorf("delete job error code: %d, detail: %s", errCode, ret["result"].(string))
+	//}
 	return ret, err
 }

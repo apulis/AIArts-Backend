@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -108,8 +109,9 @@ func initVersionInfoTable() {
 
 // 以下结构体用于api/common
 type DeviceItem struct {
-	DeviceType string `json:"deviceType"`
-	Avail      int    `json:"avail"`
+	DeviceType string `json:"deviceType"` // 计算设备类型
+	Avail      int    `json:"avail"`      // VC下该设备类型的可用数量
+	UserQuota  int    `json:"userQuota"`  // VC下该设备类型的用户配额，相当于用户在VC下的最大可占用数量
 }
 
 type NodeInfo struct {
@@ -169,6 +171,7 @@ type JobParams struct {
 	UserName          string   `json:"userName"`
 	VcName            string   `json:"vcName"`
 	WorkPath          string   `json:"workPath"`
+	FrameworkType     string   `json:"frameworkType"`
 
 	CodePath    string `json:"codePath"`
 	StartupFile string `json:"startupFile"`
@@ -186,6 +189,7 @@ type Job struct {
 	JobName   string    `json:"jobName"`
 	JobParams JobParams `json:"jobParams"`
 	JobStatus string    `json:"jobStatus"`
+	JobStatusDetail json.Token  `json:"jobStatusDetail"`
 	JobTime   string    `json:"jobTime"`
 	JobType   string    `json:"jobType"`
 	Priority  int       `json:"priority"`
@@ -216,20 +220,36 @@ type NodeStatus struct {
 	DeviceStr   string         `json:"deviceStr,omitempty"`
 }
 
+type UserStatusItem struct {
+	UserGPU     map[string] int `json:"userGPU"`
+	UserName    string `json:"userName"`
+ }
+
 // 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
 	DeviceAvail    map[string]int `json:"gpu_avaliable"`
 	DeviceCapacity map[string]int `json:"gpu_capacity"`
 	Nodes          []*NodeStatus  `json:"node_status"`
+	Quota          string         `json:"quota"`
+	Metadata       string         `json:"metadata"`
+	UserStatus     []*UserStatusItem  `json:"user_status"`
+}
+
+// 获取metadata数据
+type UserQuota struct {
+	Quota int `json:"user_quota"`
 }
 
 // 接口：apis/GetAllDevice?userName=
 type DeviceItem2 struct {
 	DeviceStr string `json:"deviceStr"`
+	Capacity  int    `json:"capacity"`
 }
 
-type JobId struct {
-	Id string `json:"jobId"`
+type CreateJobReq struct {
+	Id   string `json:"jobId"`
+	Code int    `json:"code"`
+	Msg  string `json:"error"`
 }
 
 type UriJobId struct {
@@ -262,7 +282,13 @@ type Endpoint struct {
 	Status   string `json:"status"`
 	Domain   string `json:"domain"`
 	NodeName string `json:"nodeName,omitempty"`
-	Port     string `json:"port"`
+	//Port     string `json:"port"`
+	Port json.Token `json:"port"`
+}
+
+type EndpointURLCode struct {
+	Port     json.Token `json:"port"`
+	UserName string     `json:"userName"`
 }
 
 // 查询endpoints信息，返回
@@ -288,3 +314,18 @@ var UPGRADE_CONFIG_FILE = "version.yaml"
  */
 var Upgrade_Progress = -1
 var Log_Line_Point = 0
+
+// VC资源项
+type VCItem struct {
+	VCName   *string `form:"vcName"  json:"vcName"`
+	Quota    *string `form:"Quota" json:"quota"`
+	Metadata *string `form:"Metadata" json:"metadata"`
+	UserNum  int     `json:"userNum"`
+}
+
+// 分页请求
+type Paging struct {
+	PageNum  int    `form:"pageNum" json:"pageNum"`
+	PageSize int    `form:"pageSize" json:"pageSize"`
+	Keyword  string `form:"keyword" json:"keyword"`
+}

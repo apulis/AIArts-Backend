@@ -2,9 +2,11 @@ package routers
 
 import (
 	"github.com/apulis/AIArtsBackend/configs"
+	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func AddGroupDataset(r *gin.Engine) {
@@ -40,6 +42,7 @@ type createDatasetReq struct {
 	Path         string `json:"path" binding:"required"`
 	IsPrivate    bool   `json:"isPrivate" `
 	IsTranslated bool   `json:"isTranslated" `
+    SourceType   int    `json:"sourceType" `          // 1. 网页上传  2. 其他数据源
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -139,29 +142,68 @@ func getDataset(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/datasets [post]
 func createDataset(c *gin.Context) error {
+
 	var req createDatasetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
 		return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
-	//判断数据集是否与该用户之前的数据集或者公有数据集同名，
+
+	// 判断数据集是否与该用户之前的数据集或者公有数据集同名，
 	isExist, err := services.DatasetIsExist(req.Name, username)
 	if isExist {
 		return AppError(configs.DATASET_IS_EXISTED, "this dataset name is existed")
 	}
-	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", req.Path, req.IsPrivate, req.IsTranslated)
+
+	// 1. 当数据集为已存在的文件数据时，路径设定为用户指定的路径
+	// 2. 当数据集为用户刚刚上传的文件时, 路径为后端生成的路径（通过uploadDataset创建并回传给前端）
+	datasetStoragePath := req.Path
+
+	// 将数据重命名为真实目录
+	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
+
+		// 数据集不应该存在，否则为 判为重名
+		datasetStoragePath = services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
+
+		err = services.CheckPathExists(datasetStoragePath)
+		if err == nil {
+			return AppError(configs.DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+		}
+
+		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
+		err = os.Rename(req.Path, datasetStoragePath)
+		if err != nil {
+			return AppError(configs.DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+		}
+
+	} else {
+
+		// 数据集必须存在
+		err = services.CheckPathExists(datasetStoragePath)
+		if err != nil {
+			return AppError(configs.DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+		}
+	}
+
+	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", datasetStoragePath, req.IsPrivate, req.IsTranslated)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
-	data := gin.H{}
+
+	data := gin.H{
+		"DatasetPath": datasetStoragePath,
+	}
+	
 	return SuccessResp(c, data)
 }
 

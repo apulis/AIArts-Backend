@@ -127,11 +127,11 @@ func createSavedImage(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
-	err = services.CreateSavedImage(req.Name, req.Version, req.Description, req.JobId, username, req.IsPrivate)
+	t, err := services.CreateSavedImage(req.Name, req.Version, req.Description, req.JobId, username, req.IsPrivate)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
-	data := gin.H{}
+	data := gin.H{"duration" : t}
 	return SuccessResp(c, data)
 }
 

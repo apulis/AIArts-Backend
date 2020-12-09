@@ -5,25 +5,31 @@ import (
 )
 
 type Training struct {
-	Id          string            `json:"id"`
-	Name        string            `json:"name"`
-	Engine      string            `json:"engine"`
-	DeviceType  string            `json:"deviceType"`
-	DeviceNum   int               `json:"deviceNum"`
-	CodePath    string            `json:"codePath"`
-	StartupFile string            `json:"startupFile"`
-	OutputPath  string            `json:"outputPath"`
-	DatasetPath string            `json:"datasetPath"`
-	Params      map[string]string `json:"params"`
-	Desc        string            `json:"desc"`
-	Status      string            `json:"status"`
-	VisualPath string            `json:"visualPath"`
-	CreateTime  string            `json:"createTime"`
-	JobTrainingType string   `json:"jobTrainingType"`
-	NumPs           int      `json:"numPs"`
-	NumPsWorker     int      `json:"numPsWorker"`
-	ExperimentID    uint64   `json:"experimentId,omitempty"`
-	Track           int      `json:"track,omitempty"`
+	Id              string            `json:"id"`
+	Name            string            `json:"name"`
+	Engine          string            `json:"engine"`
+	IsPrivateImg    bool              `json:"private"`
+	DeviceType      string            `json:"deviceType"`
+	DeviceNum       int               `json:"deviceNum"`
+	CodePath        string            `json:"codePath"`
+	StartupFile     string            `json:"startupFile,omitempty"`
+	OutputPath      string            `json:"outputPath"`
+	DatasetPath     string            `json:"datasetPath"`
+	Params          map[string]string `json:"params"`
+	Desc            string            `json:"desc"`
+	Status          string            `json:"status"`
+	VisualPath      string            `json:"visualPath,omitempty"`
+	CreateTime      string            `json:"createTime"`
+	JobTrainingType string            `json:"jobTrainingType"`
+	NumPs           int               `json:"numPs"`
+	NumPsWorker     int               `json:"numPsWorker"`
+	VCName          string            `json:"vcName"`
+	Command         string            `json:"command"`
+
+	FrameworkType string `json:"frameworkType"`
+
+	ExperimentID uint64 `json:"experimentId,omitempty"`
+	Track        int    `json:"track,omitempty"`
 }
 
 func ValidHomePath(userName, path string) bool {
@@ -56,4 +62,16 @@ func (t *Training) ValidatePathByUser(userName string) (bool, string) {
 	//}
 
 	return true, ""
+}
+
+type GetAllJobsReq struct {
+	PageNum    int    `form:"pageNum" json:"pageNum"`
+	PageSize   int    `form:"pageSize" json:"pageSize"`
+	JobStatus  string `form:"status" json:"status"`
+	JobType    string `form:"jobType" json:"jobType"`
+	SearchWord string `form:"searchWord" json:"searchWord"`
+	OrderBy    string `form:"orderBy" json:"orderBy"`
+	Order      string `form:"order" json:"order"`
+	VCName     string `form:"vcName" json:"vcName"`
+	JobGroup   string `from:"jobGroup" json:"jobGroup" `
 }

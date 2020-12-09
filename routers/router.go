@@ -14,11 +14,14 @@ import (
 var logger = loggers.Log
 
 func NewRouter() *gin.Engine {
+
 	if err := initSamlValidator(); err != nil {
 		logger.Fatalf("initialize saml middleware occurs error: %s", err.Error())
 		return nil
 	}
+
 	r := gin.New()
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	if openSaml {
 		AddSamlInterface(r)
@@ -53,6 +56,8 @@ func NewRouter() *gin.Engine {
 	AddGroupEdgeInference(r)
 	AddGroupVisualJob(r)
 	AddGroupSavedImage(r)
+	AddGroupVC(r)
+	AddGroupJobManager(r)
 
 	AddGroupExperimentMgr(r)
 

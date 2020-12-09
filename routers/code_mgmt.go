@@ -17,6 +17,7 @@ func AddGroupCode(r *gin.Engine) {
 	group.POST("/", wrapper(createCodeEnv))
 	group.DELETE("/:id", wrapper(delCodeEnv))
 	group.GET("/:id/jupyter", wrapper(getJupyterPath))
+	group.GET("/:id/endpoints", wrapper(getCodeEnvEndpoints))
 	group.POST("/upload", wrapper(uploadCode))
 }
 
@@ -58,7 +59,7 @@ type CodeEnvId struct {
 // @Router /ai_arts/api/codes [get]
 func getAllCodeEnv(c *gin.Context) error {
 
-	var req GetAllJobsReq
+	var req models.GetAllJobsReq
 	var err error
 
 	if err = c.Bind(&req); err != nil {
@@ -70,8 +71,12 @@ func getAllCodeEnv(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req.PageNum, req.PageSize,
-		req.JobStatus, req.SearchWord, req.OrderBy, req.Order)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
+
+	sets, total, totalPage, err := services.GetAllCodeEnv(userName, req)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
@@ -93,7 +98,6 @@ func getAllCodeEnv(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [post]
 func createCodeEnv(c *gin.Context) error {
-
 	var req CreateCodeEnvReq
 	var id string
 
@@ -107,11 +111,22 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(configs.INVALID_TRAINING_TYPE, "任务类型非法")
 	}
 
-	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
+	imageName, err := services.ConvertImage(req.CreateCodeEnv.Engine, req.CreateCodeEnv.IsPrivateImage)
+	if err != nil {
+		return AppError(configs.DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.CreateCodeEnv.Engine = imageName
+	id, err = services.CreateCodeEnv(c, userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
@@ -167,6 +182,35 @@ func getJupyterPath(c *gin.Context) error {
 	}
 
 	err, rspData = services.GetJupyterPath(userName, id)
+	if err != nil {
+		return AppError(configs.APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, rspData)
+}
+
+// @Summary get CodeEnv endpoints
+// @Produce  json
+// @Param id query string true "code id"
+// @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/:id/endpoints [get]
+func getCodeEnvEndpoints(c *gin.Context) error {
+
+	var err error
+	var id string
+	var rspData interface{}
+
+	id = c.Param("id")
+	fmt.Println(id)
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(configs.NO_USRNAME, "no username")
+	}
+
+	err, rspData = services.GetEndpoints(userName, id)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}

@@ -26,16 +26,6 @@ type GetAllTrainingReq struct {
 	SearchWord string `json:"searchWord"`
 }
 
-type GetAllJobsReq struct {
-	PageNum    int    `form:"pageNum" json:"pageNum"`
-	PageSize   int    `form:"pageSize" json:"pageSize"`
-	JobStatus  string `form:"status" json:"status"`
-	SearchWord string `form:"searchWord" json:"searchWord"`
-	OrderBy    string `form:"orderBy" json:"orderBy"`
-	Order      string `form:"order" json:"order"`
-	JobGroup   string `form:"experimentId"`
-}
-
 type GetAllTrainingRsp struct {
 	Trainings []*models.Training `json:"Trainings"`
 	Total     int                `json:"total"`
@@ -81,7 +71,7 @@ type GetLogReq struct {
 // @Router /ai_arts/api/trainings [get]
 func getAllTraining(c *gin.Context) error {
 
-	var req GetAllJobsReq
+	var req models.GetAllJobsReq
 	var err error
 
 	if err = c.Bind(&req); err != nil {
@@ -93,8 +83,7 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
-	sets, total, totalPage, err := services.GetAllTraining(userName, req.PageNum, req.PageSize,
-		req.JobStatus, req.JobGroup, req.SearchWord, req.OrderBy, req.Order)
+	sets, total, totalPage, err := services.GetAllTraining(userName, req)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
@@ -116,7 +105,6 @@ func getAllTraining(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/trainings [post]
 func createTraining(c *gin.Context) error {
-
 	var req models.Training
 	var id string
 
@@ -129,6 +117,7 @@ func createTraining(c *gin.Context) error {
 	if len(userName) == 0 {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
+
 	//检查数据集文件是否存在
 	if req.DatasetPath != "" {
 		err = services.CheckPathExists(req.DatasetPath)
@@ -138,19 +127,26 @@ func createTraining(c *gin.Context) error {
 	}
 
 	//检查模型启动文件是否存在
-	err = services.CheckPathExists(req.StartupFile)
-	if err != nil {
+	if err := services.CheckPathExists(req.StartupFile); len(req.StartupFile) > 0 && err != nil {
 		return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
+
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(configs.INVALID_TRAINING_TYPE, "任务类型非法")
 	}
-	//不校验home目录
-	//if valid, msg := req.ValidatePathByUser(userName); !valid {
-	//	return AppError(INVALID_CODE_PATH, msg)
-	//}
 
-	id, err = services.CreateTraining(userName, req)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = "platform"
+	}
+
+	imageName, err := services.ConvertImage(req.Engine, req.IsPrivateImg)
+	if err != nil {
+		return AppError(configs.DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.Engine = imageName
+	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}

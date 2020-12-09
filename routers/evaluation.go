@@ -5,7 +5,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 func AddGroupEvaluation(r *gin.Engine) {
@@ -23,15 +22,6 @@ type getEvaluationReq struct {
 }
 type getLogReq struct {
 	PageNum int `form:"pageNum" json:"pageNum"`
-}
-
-type getEvaluationsReq struct {
-	PageNum  int    `form:"pageNum" json:"pageNum"`
-	PageSize int    `form:"pageSize" json:"pageSize"`
-	Status   string `form:"status" json:"status"`
-	Search   string `form:"search" json:"search"`
-	OrderBy  string `form:"orderBy" json:"orderBy"`
-	Order    string `form:"order" json:"order"`
 }
 
 type getEvaluationsResp struct {
@@ -60,20 +50,27 @@ type getEvaluationResp struct {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/evaluations [get]
 func lsEvaluations(c *gin.Context) error {
-	var req getEvaluationsReq
+
+	var req models.GetEvaluationsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
-	evaluations, total, totalPage, err := services.GetEvaluations(username, req.PageNum, req.PageSize,
-		req.Status, req.Search, req.OrderBy, req.Order)
+
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
+	evaluations, total, totalPage, err := services.GetEvaluations(username, req)
 	if err != nil {
 		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
+
 	data := getEvaluationsResp{
 		Evaluations: evaluations,
 		Total:       total,
@@ -102,41 +99,12 @@ func createEvaluation(c *gin.Context) error {
 	if len(username) == 0 {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
-	//检查数据集文件是否存在
-	//if req.DatasetPath != "" {
-	//	err = services.CheckPathExists(req.DatasetPath)
-	//	if err != nil {
-	//		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//	}
-	//}
-	//检查模型参数文件是否存在
-	//err = services.CheckPathExists(req.CodePath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//检查启动文件是否存在
-	//err = services.CheckPathExists(req.StartupFile)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//检查输出路径是否存在自动去创建
-	//err = services.CheckPathExists(req.OutputPath)
-	//if err != nil {
-	//	return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
-	//}
-	//
 
-	//如果是avisualis只添加pipeline
-	if strings.Index(strings.ToLower(req.Engine), "apulisvision") != -1 {
-		newParam := map[string]string{
-			"pipeline_config": req.Params["pipeline_config"],
-		}
-		if _, hasConfig := req.Params["config"]; hasConfig {
-			newParam["config"] = req.Params["config"]
-		}
-		req.Params = newParam
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
 	}
-	jobId, err := services.CreateEvaluation(username, req)
+
+	jobId, err := services.CreateEvaluation(c, username, req)
 	if err != nil {
 		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
@@ -175,11 +143,16 @@ func getEvaluation(c *gin.Context) error {
 		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	log, err := services.GetEvaluationLog(username, id.ID, logReq.PageNum)
-	logResp := ""
+	// 请求最后一页日志以获取评估指标
+	var maxPageLog *models.JobLog
+	var indicator map[string]string
+	var confusion map[string]string
 	if log != nil {
-		logResp = log.Log
+		maxPageLog, err = services.GetEvaluationLog(username, id.ID, log.MaxPage)
+		if maxPageLog != nil {
+			indicator, confusion = services.GetRegexpLog(maxPageLog.Log)
+		}
 	}
-	indicator, confusion := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
 		Evaluation: job,
 		Log:        log,

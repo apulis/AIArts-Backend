@@ -2,19 +2,23 @@ package services
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/apulis/AIArtsBackend/models"
 	urllib "net/url"
 	"strconv"
+	"strings"
+
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 )
 
-func GetAllTraining(userName string, page, size int, jobStatus,jobGroup, searchWord, orderBy, order string) ([]*models.Training, int, int, error) {
+func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Training, int, int, error) {
+
 	//把传输过来的searchword空格改为%20urlencode
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s&jobGroup=%s`,
-		configs.Config.DltsUrl, userName, userName, models.DefaultVcName,
+		configs.Config.DltsUrl, userName, userName, req.VCName,
 		models.JobTypeArtsTraining,
-		page, size, jobStatus, urllib.PathEscape(searchWord),
-		orderBy, order,jobGroup)
+		req.PageNum, req.PageSize, req.JobStatus, urllib.PathEscape(req.SearchWord),
+		req.OrderBy, req.Order, req.JobGroup)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -26,37 +30,37 @@ func GetAllTraining(userName string, page, size int, jobStatus,jobGroup, searchW
 
 	trainings := make([]*models.Training, 0)
 	for _, v := range jobList.AllJobs {
-		experiment_id,_ :=strconv.Atoi(v.JobParams.JobGroup)
+		experiment_id, _ := strconv.Atoi(v.JobParams.JobGroup)
 		trainings = append(trainings, &models.Training{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			CodePath:    v.JobParams.CodePath,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			Desc:        v.JobParams.Desc,
+			Id:           v.JobId,
+			Name:         v.JobName,
+			Engine:       v.JobParams.Image,
+			DeviceType:   v.JobParams.GpuType,
+			CodePath:     v.JobParams.CodePath,
+			DeviceNum:    v.JobParams.Resourcegpu,
+			StartupFile:  v.JobParams.StartupFile,
+			OutputPath:   v.JobParams.OutputPath,
+			DatasetPath:  v.JobParams.DatasetPath,
+			Params:       v.JobParams.ScriptParams,
+			Status:       v.JobStatus,
+			CreateTime:   v.JobTime,
+			Desc:         v.JobParams.Desc,
 			ExperimentID: uint64(experiment_id),
-			Track:       v.JobParams.Track,
+			Track:        v.JobParams.Track,
 		})
 	}
 
 	totalJobs := jobList.Meta.TotalJobs
-	totalPages := totalJobs / size
+	totalPages := totalJobs / req.PageSize
 
-	if (totalJobs % size) != 0 {
+	if (totalJobs % req.PageSize) != 0 {
 		totalPages += 1
 	}
 
 	return trainings, totalJobs, totalPages, nil
 }
 
-func CreateTraining(userName string, training models.Training) (string, error) {
+func CreateTraining(c *gin.Context, userName string, training models.Training) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
@@ -64,7 +68,8 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["jobName"] = training.Name
 	params["jobType"] = models.JobTypeArtsTraining
 
-	params["image"] = ConvertImage(training.Engine)
+	params["image"] = training.Engine
+	params["frameworkType"] = strings.TrimSpace(training.FrameworkType)
 	params["gpuType"] = training.DeviceType
 	params["resourcegpu"] = training.DeviceNum
 	params["DeviceNum"] = training.DeviceNum
@@ -72,17 +77,22 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 
 	if configs.Config.InteractiveModeJob {
 		params["cmd"] = "sleep infinity" // use StartupFile, params instead
+	} else if len(training.Command) > 0 {
+		params["cmd"] = training.Command
 	} else {
+
 		fileType, err := CheckStartFileType(training.StartupFile)
 		if fileType == FILETYPE_PYTHON {
 			params["cmd"] = "python " + training.StartupFile
 		} else if fileType == FILETYPE_SHELL {
 			params["cmd"] = "bash " + training.StartupFile
 		}
+
 		if err != nil {
 			fmt.Printf("startupfile is invalid[%+v]\n", err)
 			return "", err
 		}
+
 		for k, v := range training.Params {
 			if k == "sudo" {
 				//添加sudo权限
@@ -92,9 +102,11 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 			}
 
 		}
+
 		if len(training.DatasetPath) > 0 {
 			params["cmd"] = params["cmd"].(string) + " --data_path " + training.DatasetPath
 		}
+
 		//params中加入visualpath
 		if len(training.VisualPath) > 0 {
 			training.Params["visualPath"] = training.VisualPath
@@ -128,20 +140,30 @@ func CreateTraining(userName string, training models.Training) (string, error) {
 	params["numpsworker"] = training.NumPs
 	params["numps"] = training.NumPsWorker
 
-	params["vcName"] = models.DefaultVcName
-	params["team"] = models.DefaultVcName
+	params["vcName"] = training.VCName
+	params["team"] = training.VCName
 
-	err := checkCreateTrainingWithMlflow(training.ExperimentID,&params)
-	if err != nil{
+	header := make(map[string]string)
+	if value := c.GetHeader("Authorization"); len(value) != 0 {
+		header["Authorization"] = value
+	}
+
+	err := checkCreateTrainingWithMlflow(training.ExperimentID, &params)
+	if err != nil {
 		return "", err
 	}
 
-	id := &models.JobId{}
-	err = DoRequest(url, "POST", nil, params, id)
+	id := &models.CreateJobReq{}
+	err = DoRequest(url, "POST", header, params, id)
 
 	if err != nil {
 		fmt.Printf("create training err[%+v]\n", err)
 		return "", err
+	}
+
+	if id.Code != 0 && len(id.Msg) != 0 {
+		fmt.Printf("create codeEnv err[%+v]\n", id.Msg)
+		return "", fmt.Errorf("%s", id.Msg)
 	}
 
 	return id.Id, nil
@@ -185,6 +207,7 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.CreateTime = job.JobTime
 	training.JobTrainingType = job.JobParams.Jobtrainingtype
+	training.VCName = job.VcName
 
 	training.Params = nil
 	training.CodePath = job.JobParams.CodePath
@@ -194,9 +217,10 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Status = job.JobStatus
 	training.Desc = job.JobParams.Desc
 	training.Params = job.JobParams.ScriptParams
+	training.Command = job.JobParams.Cmd
 
-	training.ExperimentID,_ = strconv.ParseUint(job.JobParams.JobGroup,0,0)
-	training.Track        = job.JobParams.Track
+	training.ExperimentID, _ = strconv.ParseUint(job.JobParams.JobGroup, 0, 0)
+	training.Track = job.JobParams.Track
 
 	return training, nil
 }
@@ -226,21 +250,21 @@ func GetTrainingLog(userName, id string, pageNum int) (*models.JobLog, error) {
 }
 
 //@add:  support for intergration with mlflow
-func checkCreateTrainingWithMlflow( experimentId uint64, params*map[string]interface{})error{
-   if experimentId == 0 {
-	   (*params)["jobGroup"] = ""
-   	   return nil
-   }
+func checkCreateTrainingWithMlflow(experimentId uint64, params *map[string]interface{}) error {
+	if experimentId == 0 {
+		(*params)["jobGroup"] = ""
+		return nil
+	}
 	(*params)["jobGroup"] = strconv.Itoa(int(experimentId))
 	if !configs.Config.EnableTrack {
 		return nil
 	}
-	resp , err := StartMlflowRun(experimentId,(*params)["userName"].(string),(*params)["jobName"].(string))
-	if err != nil{
+	resp, err := StartMlflowRun(experimentId, (*params)["userName"].(string), (*params)["jobName"].(string))
+	if err != nil {
 		return err
 	}
 	run := resp.(*MlflowRun)
-	(*params)["jobId"]=run.Info.RunId
-	(*params)["track"]=1
+	(*params)["jobId"] = run.Info.RunId
+	(*params)["track"] = 1
 	return nil
 }

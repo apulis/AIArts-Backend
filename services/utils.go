@@ -5,14 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/apulis/AIArtsBackend/configs"
 )
 
-
+var (
+	dockerLibAPI    = "https://hub.docker.com/v2/repositories/library/%s/"
+	dockerTagAPI    = "https://hub.docker.com/v2/repositories/library/%s/tags/%s"
+	dockerErrDetail = "object not found"
+)
 
 func doRequest(url, method string, headers map[string]string, rawBody interface{}) ([]byte, error) {
 
@@ -78,14 +83,14 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 	if err != nil {
 		return err
 	}
-	logger.Info(url)
 	if len(rspData) > 0 {
 		err = json.Unmarshal(rspData, output)
 		if err != nil {
 			return err
 		}
 	}
-
+	logger.Info(url)
+	logger.Info(output)
 	return nil
 }
 
@@ -102,8 +107,17 @@ func DoRequest2(url, method string, headers map[string]string, rawBody interface
 	return err
 }
 
+func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
+	rspData, err := doRequest(url, "GET", headers, rawBody)
+	if err != nil {
+		return err, ""
+	}
+
+	return nil, string(rspData)
+}
+
 // 如果配置了私有仓库，则添加私有仓库前缀
-func ConvertImage(image string) string {
+func ConvertPrivateImage(image string) string {
 	imageName := strings.TrimSpace(image)
 	if len(configs.Config.PrivateRegistry) > 0 {
 		// 不带私有仓库前缀
@@ -116,6 +130,29 @@ func ConvertImage(image string) string {
 		}
 	}
 	return imageName
+}
+
+// check docker image name
+func ConvertImage(name string, private bool) (string, error) {
+	if private {
+		return ConvertPrivateImage(name), nil
+	}
+
+	// check image name and tag
+	parts := strings.Split(strings.TrimSpace(name), ":")
+	if len(parts) == 1 {
+		if err, _ := DoGetRequest(fmt.Sprintf(dockerLibAPI, parts[0]), map[string]string{}, nil); err != nil {
+			return "", err
+		}
+	} else if len(parts) == 2 {
+		if err, _ := DoGetRequest(fmt.Sprintf(dockerTagAPI, parts[0], parts[1]), map[string]string{}, nil); err != nil {
+			return "", err
+		}
+	} else {
+		return "", errors.New(dockerErrDetail)
+	}
+
+	return name, nil
 }
 
 // 如果配置了私有仓库，则删除掉

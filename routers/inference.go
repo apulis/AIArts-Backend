@@ -36,9 +36,11 @@ func PostInferenceJob(c *gin.Context) error {
 	err := c.ShouldBind(&params)
 	params.UserName = getUsername(c)
 	params.UserId = getUserId(c)
+
 	if params.VcName == "" {
 		params.VcName = "platform"
 	}
+	
 	if err != nil {
 		return ParameterError(err.Error())
 	}
@@ -65,11 +67,13 @@ func ListInferenceJob(c *gin.Context) error {
 	if vcName == "" {
 		vcName = "platform"
 	}
+
 	//jobOwner := c.Query("jobOwner")
 	jobOwner := getUsername(c)
 	var queryStringParameters models.QueryStringParametersV2
 	err := c.ShouldBindQuery(&queryStringParameters)
 	logger.Info(queryStringParameters)
+
 	jobs, err := services.ListInferenceJob(jobOwner, vcName, queryStringParameters)
 	if err != nil {
 		return RemoteServerError(err.Error())

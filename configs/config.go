@@ -6,6 +6,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+type ImageItem struct {
+	Image 			string `json:"image"`
+	Desc    		string `json:"desc"`
+}
+
 type ProjectConfig struct {
 	Port               int
 	Log                LogConfig
@@ -16,7 +21,7 @@ type ProjectConfig struct {
 	Anno               AnnotationConfig
 	Infer              InferenceConfig
 	Token              string
-	Image              map[string][]string
+	Image              map[string][]ImageItem
 	InteractiveModeJob bool
 	PrivateRegistry    string
 	Imagesave          ImageSaveConfig
