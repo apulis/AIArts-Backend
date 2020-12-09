@@ -18,7 +18,7 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 	api_prefix := "/ai_arts/api"
 
 	group := r.Group(api_prefix + "/projects")
-	//group.Use(Auth())
+	group.Use(Auth())
 
 	group.GET("/", wrapper(getAllExpProjects))
 	group.GET("/:id", wrapper(getExpProject))
@@ -27,7 +27,7 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 	group.POST("/:id", wrapper(postExpProject))
 
 	group = r.Group(api_prefix + "/experiments")
-	//group.Use(Auth())
+	group.Use(Auth())
 
 	group.GET("/", wrapper(getAllExperiments))
 	group.GET("/:id", wrapper(getExperiment))
@@ -36,7 +36,7 @@ func AddGroupExperimentMgr(r *gin.Engine) {
 	group.POST("/:id", wrapper(postExperiment))
 
 	group = r.Group("/ai_arts/api/runs")
-	//group.Use(Auth())
+	group.Use(Auth())
 	group.GET("/:id", wrapper(getExperimentRun))
 
 }
@@ -172,6 +172,9 @@ func postExperiment(c *gin.Context) error {
 		return doRespWith(c, services.MarkExperiment(id, false), nil)
 	case "run":
 		return createTraining(c)
+	case "jump":
+		data,err := services.JumpExperimentView(id)
+		return doRespWith(c,err,data)
 	default:
 		return AppError(configs.NOT_IMPLEMENT_CODE, "Unsupport action !!!")
 	}

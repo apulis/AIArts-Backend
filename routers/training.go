@@ -127,7 +127,7 @@ func createTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		//return AppError(configs.NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	//检查数据集文件是否存在
 	if req.DatasetPath != "" {

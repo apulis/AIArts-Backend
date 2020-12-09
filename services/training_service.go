@@ -235,7 +235,7 @@ func checkCreateTrainingWithMlflow( experimentId uint64, params*map[string]inter
 	if !configs.Config.EnableTrack {
 		return nil
 	}
-	resp , err := StartMlflowRun(experimentId)
+	resp , err := StartMlflowRun(experimentId,(*params)["userName"].(string),(*params)["jobName"].(string))
 	if err != nil{
 		return err
 	}
