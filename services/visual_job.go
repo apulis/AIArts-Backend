@@ -92,6 +92,11 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 		return err, nil
 	}
 
+	protocol := "http"
+	if len(configs.Config.ExtranetProtocol) > 0 {
+		protocol = configs.Config.ExtranetProtocol
+	}
+
 	appRspData := &models.EndpointWrapper{}
 	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "tensorboard" {
@@ -101,7 +106,8 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 			if v.Status == "running" {
 				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
 				val, _ := json.Marshal(param)
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/",
+				appRspData.AccessPoint = fmt.Sprintf("%s://%s.%s/endpoints/%s/",
+					protocol,
 					v.NodeName, v.Domain,
 					base64.StdEncoding.EncodeToString(val),
 				)
