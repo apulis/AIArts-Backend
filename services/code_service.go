@@ -234,7 +234,7 @@ func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
 	return nil, rspData
 }
 
-func AddEndpoints(userName, id string, req models.AddEndportReq) (error, result string) {
+func AddEndpoints(userName, id string, req models.AddEndportReq) (error, string) {
 	url := fmt.Sprintf("%s/endpoints?userName=%s", configs.Config.DltsUrl, userName)
 	err, result := DoRequestStr(url, "POST", nil, req)
 	if err != nil {

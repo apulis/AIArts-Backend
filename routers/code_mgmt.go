@@ -18,6 +18,7 @@ func AddGroupCode(r *gin.Engine) {
 	group.DELETE("/:id", wrapper(delCodeEnv))
 	group.GET("/:id/jupyter", wrapper(getJupyterPath))
 	group.GET("/:id/endpoints", wrapper(getCodeEnvEndpoints))
+	group.PATCH("/:id/endpoints", wrapper(addCodeEnvEndpoints))
 	group.POST("/upload", wrapper(uploadCode))
 }
 
@@ -224,23 +225,25 @@ func getCodeEnvEndpoints(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/codes/:id/endpoints [post]
+// @Router /ai_arts/api/codes/:id/endpoints [patch]
 func addCodeEnvEndpoints(c *gin.Context) error {
 	var err error
 
-	var req AddEndportReq
+	var req models.AddEndportReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
 	var id string
 	id = c.Param("id")
+	req.JobId = id
 
-	if userName := getUsername(c); len(userName) == 0 {
+	userName := getUsername(c)
+	if len(userName) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	err, result = services.AddEndpoints(userName, id, req)
+	err, result := services.AddEndpoints(userName, id, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
