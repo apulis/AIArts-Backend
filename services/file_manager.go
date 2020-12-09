@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/apulis/AIArtsBackend/configs"
@@ -180,7 +181,9 @@ func GenerateModelStoragePath(dir, username string) string {
 
 func ExtractFile(fromPath, filetype, extractPath string) (string, error) {
 	_, err := os.Stat(extractPath)
-	if err != nil {
+	if err != nil && os.IsNotExist(err) {
+		mask := syscall.Umask(0)  // 改为 0000 八进制
+		defer syscall.Umask(mask) // 改为原来的 umask
 		err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
 		if err != nil {
 			return "", err
