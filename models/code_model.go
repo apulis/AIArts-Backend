@@ -29,10 +29,15 @@ type CreateCodeEnv struct {
 	NumPs           int    `json:"numPs"`
 	NumPsWorker     int    `json:"numPsWorker"`
 
-	FrameworkType    string    `json:"frameworkType"`
+	FrameworkType string `json:"frameworkType"`
 }
 
 type EndpointsRsp struct {
 	IdentityFile  string      `json:"identityFile"`
 	EndpointsInfo interface{} `json:"endpointsInfo"`
+}
+
+type AddEndportReq struct {
+	JobId     string      `json:"jobId"`
+	Endpoints interface{} `json:"endpoints"`
 }

@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/apulis/AIArtsBackend/configs"
 )
 
 var (
@@ -93,6 +94,18 @@ func DoRequest(url, method string, headers map[string]string, rawBody interface{
 	return nil
 }
 
+func DoRequestStr(url, method string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
+	rspData, err := doRequest(url, method, headers, rawBody)
+	if err != nil {
+		return err, ""
+	}
+	if len(rspData) > 0 {
+		return nil, string(rspData)
+	}
+
+	return err, ""
+}
+
 func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
 	rspData, err := doRequest(url, "GET", headers, rawBody)
 	if err != nil {
@@ -101,7 +114,6 @@ func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (e
 
 	return nil, string(rspData)
 }
-
 
 // 如果配置了私有仓库，则添加私有仓库前缀
 func ConvertPrivateImage(image string) string {

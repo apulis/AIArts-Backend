@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -194,7 +195,7 @@ func getJupyterPath(c *gin.Context) error {
 // @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
-// @Router /ai_arts/api/codes/:id/endpoints [get]
+// @Router /ai_arts/api/codes/:id/endpoints [post]
 func getCodeEnvEndpoints(c *gin.Context) error {
 
 	var err error
@@ -215,6 +216,36 @@ func getCodeEnvEndpoints(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, rspData)
+}
+
+// @Summary add CodeEnv endpoints
+// @Produce  json
+// @Param id query string true "code id"
+// @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/:id/endpoints [post]
+func addCodeEnvEndpoints(c *gin.Context) error {
+	var err error
+
+	var req AddEndportReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		return ParameterError(err.Error())
+	}
+
+	var id string
+	id = c.Param("id")
+
+	if userName := getUsername(c); len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err, result = services.AddEndpoints(userName, id, req)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, result)
 }
 
 // @Summary upload code

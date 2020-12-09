@@ -4,13 +4,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/apulis/AIArtsBackend/models"
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -231,4 +232,13 @@ func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
 
 	rspData.IdentityFile = fmt.Sprintf("/dlwsdata/work/%s/.ssh/id_rsa", jobInfo.JobParams.WorkPath)
 	return nil, rspData
+}
+
+func AddEndpoints(userName, id string, req models.AddEndportReq) (error, result string) {
+	url := fmt.Sprintf("%s/endpoints?userName=%s", configs.Config.DltsUrl, userName)
+	err, result := DoRequestStr(url, "POST", nil, req)
+	if err != nil {
+		result = ""
+	}
+	return err, result
 }
