@@ -76,13 +76,11 @@ func CreateEdgeInference(userName string, req models.CreateEdgeInferenceReq)  (s
 
 	baseImageName := "apulistech/atc:0.0.1"
 	if strings.HasPrefix(req.ConversionType, "arm64") {
-
 		params["gpuType"] = "huawei_npu_arm64"
 		params["image"] = baseImageName + "-arm64"
 	}else{
-
 		params["gpuType"] = "nvidia_gpu_amd64"
-		params["image"] = baseImageName + "-arm64"
+		params["image"] = baseImageName + "-amd64"
 	}
 
 	params["image"] = ConvertPrivateImage(params["image"].(string)) // give image name a harbor prefix
