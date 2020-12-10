@@ -1,5 +1,7 @@
 package models
 
+import "encoding/json"
+
 type CodeEnvItem struct {
 	Id         string `json:"id"`
 	Name       string `json:"name"   binding:"required"`
@@ -12,6 +14,7 @@ type CodeEnvItem struct {
 	DeviceType string `json:"deviceType"`
 	DeviceNum  int    `json:"deviceNum"`
 	Desc       string `json:"desc"`
+	JobStatusDetail json.Token  `json:"jobStatusDetail"`
 }
 
 type CreateCodeEnv struct {
