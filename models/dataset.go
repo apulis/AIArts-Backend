@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+const (
+	DATASET_UPLOAD_FROM_WEB 		int = 1
+	DATASET_UPLOAD_FROM_OTHER 		int = 2
+)
+
 type Dataset struct {
 	ID        int       `gorm:"primary_key" json:"id"`
 	CreatedAt UnixTime  `json:"createdAt"`

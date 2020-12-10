@@ -1,9 +1,12 @@
 package services
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/url"
 	"strings"
@@ -14,7 +17,9 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var (
+	letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+)
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)
@@ -24,13 +29,12 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error){
-
+func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnvItem, int, int, error) {
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
-				configs.Config.DltsUrl, userName, userName, req.VCName,
-				models.JobTypeCodeEnv,
-				req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
-				req.OrderBy, req.Order)
+		configs.Config.DltsUrl, userName, userName, req.VCName,
+		models.JobTypeCodeEnv,
+		req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
+		req.OrderBy, req.Order)
 
 	jobList := &models.JobList{}
 	err := DoRequest(url, "GET", nil, nil, jobList)
@@ -47,10 +51,12 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 			Name:       v.JobName,
 			Engine:     v.JobParams.Image,
 			CodePath:   v.JobParams.CodePath,
+			Cmd:        v.JobParams.Cmd,
 			Status:     v.JobStatus,
 			CreateTime: v.JobTime,
 			JupyterUrl: "",
 			Desc:       v.JobParams.Desc,
+			JobStatusDetail: v.JobStatusDetail,
 		})
 	}
 
@@ -64,7 +70,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 	return codes, totalJobs, totalPages, nil
 }
 
-func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error) {
+func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
@@ -73,14 +79,20 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = models.JobTypeCodeEnv
 
-	params["image"] = ConvertImage(codeEnv.Engine)
+	params["frameworkType"] = strings.TrimSpace(codeEnv.FrameworkType)
+
+	params["image"] = codeEnv.Engine
 	params["gpuType"] = codeEnv.DeviceType
 	params["resourcegpu"] = codeEnv.DeviceNum
 
 	params["codePath"] = codeEnv.CodePath
 	params["desc"] = codeEnv.Desc
 
-	params["cmd"] = "sleep infinity"
+	if len(codeEnv.Cmd) > 0 {
+		params["cmd"] = codeEnv.Cmd
+	} else {
+		params["cmd"] = "sleep infinity"
+	}
 
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = codeEnv.JobTrainingType //"RegularJob"
@@ -107,12 +119,21 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	params["vcName"] = codeEnv.VCName
 	params["team"] = codeEnv.VCName
 
-	id := &models.JobId{}
-	err := DoRequest(url, "POST", nil, params, id)
+	id := &models.CreateJobReq{}
+	header := make(map[string]string)
+	if value := c.GetHeader("Authorization"); len(value) != 0 {
+		header["Authorization"] = value
+	}
 
+	err := DoRequest(url, "POST", header, params, id)
 	if err != nil {
 		fmt.Printf("create codeEnv err[%+v]\n", err)
 		return "", err
+	}
+
+	if id.Code != 0 && len(id.Msg) != 0 {
+		fmt.Printf("create codeEnv err[%+v]\n", id.Msg)
+		return "", fmt.Errorf("%s", id.Msg)
 	}
 
 	// create endpoints
@@ -121,6 +142,7 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 	ret := &models.CreateEndpointsRsp{}
 
 	req.Endpoints = append(req.Endpoints, "ipython")
+	req.Endpoints = append(req.Endpoints, "ssh")
 	req.JobId = id.Id
 
 	err = DoRequest(url, "POST", nil, req, ret)
@@ -133,7 +155,6 @@ func CreateCodeEnv(userName string, codeEnv models.CreateCodeEnv) (string, error
 }
 
 func DeleteCodeEnv(userName, id string) error {
-
 	url := fmt.Sprintf("%s/KillJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	params := make(map[string]interface{})
 
@@ -149,7 +170,6 @@ func DeleteCodeEnv(userName, id string) error {
 }
 
 func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
-
 	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
 	fmt.Println(url)
 
@@ -162,13 +182,25 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	appRspData := &models.EndpointWrapper{}
+
+	protocol := "http"
+	if len(configs.Config.ExtranetProtocol) > 0 {
+		protocol = configs.Config.ExtranetProtocol
+	}
 	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "ipython" {
 			appRspData.Name = v.Name
 			appRspData.Status = v.Status
 
 			if v.Status == "running" {
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
+				val, _ := json.Marshal(param)
+				appRspData.AccessPoint = fmt.Sprintf("%s://%s.%s/endpoints/%s/",
+					protocol,
+					v.NodeName,
+					v.Domain,
+					base64.StdEncoding.EncodeToString(val),
+				)
 			}
 
 			break
@@ -176,4 +208,34 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	return nil, appRspData
+}
+
+func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
+
+	url := fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+	fmt.Println(url)
+
+	var endpoints interface{}
+	var rspData = &models.EndpointsRsp{}
+
+	// 获取endpoints信息
+	err := DoRequest(url, "GET", nil, nil, &endpoints)
+	if err == nil {
+		rspData.EndpointsInfo = endpoints
+	} else {
+		fmt.Printf("get endpoints path err[%+v]\n", err)
+		return err, nil
+	}
+
+	// 获取ssh身份信息
+	// 1. 获取任务信息：workPath
+	// 2. 获取挂载路径信息
+	jobInfo, err2 := GetDltsJobV2(userName, id)
+	if err2 != nil {
+		fmt.Printf("get GetDltsJobV2 err[%+v]\n", err)
+		return err, nil
+	}
+
+	rspData.IdentityFile = fmt.Sprintf("/dlwsdata/work/%s/.ssh/id_rsa", jobInfo.JobParams.WorkPath)
+	return nil, rspData
 }

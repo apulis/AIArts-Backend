@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -29,7 +30,7 @@ type Evaluation struct {
 	VCName      string            `json:"vcName"`
 }
 
-func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
+func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (string, error) {
 
 	url := fmt.Sprintf("%s/PostJob", configs.Config.DltsUrl)
 	params := make(map[string]interface{})
@@ -37,7 +38,7 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["userName"] = userName
 	params["jobName"] = evaluation.Name
 	params["jobType"] = models.JobTypeArtsEvaluation
-	params["image"] = ConvertImage(evaluation.Engine)
+	params["image"] = ConvertPrivateImage(evaluation.Engine)
 	params["gpuType"] = evaluation.DeviceType
 	params["resourcegpu"] = evaluation.DeviceNum
 	params["DeviceNum"] = evaluation.DeviceNum
@@ -92,11 +93,21 @@ func CreateEvaluation(userName string, evaluation Evaluation) (string, error) {
 	params["vcName"] = evaluation.VCName
 	params["team"] = evaluation.VCName
 
-	id := &models.JobId{}
-	err = DoRequest(url, "POST", nil, params, id)
+	id := &models.CreateJobReq{}
+	header := make(map[string]string)
+	if value := c.GetHeader("Authorization"); len(value) != 0 {
+		header["Authorization"] = value
+	}
+
+	err = DoRequest(url, "POST", header, params, id)
 	if err != nil {
 		fmt.Printf("create evaluation err[%+v]\n", err)
 		return "", err
+	}
+
+	if id.Code != 0 && len(id.Msg) != 0 {
+		fmt.Printf("create codeEnv err[%+v]\n", id.Msg)
+		return "", fmt.Errorf("%s", id.Msg)
 	}
 
 	return id.Id, nil

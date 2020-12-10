@@ -52,11 +52,11 @@ func uploadDataset(c *gin.Context) error {
 
 	// 获取文件类别
 	filetype, err := services.CheckFileName(file.Filename)
-		if err != nil {
+	if err != nil {
 		return AppError(FILETYPE_NOT_SUPPORTED_CODE, err.Error())
 	}
 
-	// 获取数据集真实路径，但文件夹名称为dir结尾目录
+	// 获取数据集真实路径，但文件夹名称依dir结尾目录
 	// 待用户创建数据集时，会重命名此目录为真实名称
 	datasetStoragePath := services.GenerateDatasetStoragePath(username, dir, isPrivate)
 	logger.Info("uploadDataset - datasetStoragePath", datasetStoragePath)
@@ -70,6 +70,7 @@ func uploadDataset(c *gin.Context) error {
 	logger.Info("uploadDataset - filePath", filePath)
 	logger.Info("starting saving file")
 
+	// 将文件保存为filePath（包括文件名）
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
 		return AppError(SAVE_FILE_ERROR_CODE, err.Error())
@@ -78,10 +79,10 @@ func uploadDataset(c *gin.Context) error {
 	logger.Info("starting extract file")
 
 	// 检查数据集文件是否已存在
-	err = services.CheckPathExists(datasetStoragePath)
-	if err == nil {
-		return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
-	}
+	//err = services.CheckPathExists(datasetStoragePath)
+	//if err == nil {
+	//	return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+	//}
 
 	// 解压并返回解压后的目录
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)
@@ -89,8 +90,15 @@ func uploadDataset(c *gin.Context) error {
 		return AppError(EXTRACT_FILE_ERROR_CODE, err.Error())
 	}
 
+	// 删除临时文件
+	logger.Info("starting remove file")
+	err = os.Remove(filePath)
+	if err != nil {
+		return AppError(REMOVE_FILE_ERROR_CODE, err.Error())
+	}
+
 	// 不移除，等到创建数据集时
-	if isPrivate=="false"{
+	if isPrivate == "false" {
 		_ = os.Chmod(unzippedPath, os.ModePerm)
 	}
 

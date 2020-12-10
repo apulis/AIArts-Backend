@@ -4,7 +4,6 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 func AddGroupEvaluation(r *gin.Engine) {
@@ -100,22 +99,11 @@ func createEvaluation(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	//如果是avisualis只添加pipeline
-	if strings.Index(strings.ToLower(req.Engine), "apulisvision") != -1 {
-		newParam := map[string]string{
-			"pipeline_config": req.Params["pipeline_config"],
-		}
-		if _, hasConfig := req.Params["config"]; hasConfig {
-			newParam["config"] = req.Params["config"]
-		}
-		req.Params = newParam
-	}
-
 	if req.VCName == "" {
 		req.VCName = models.DefaultVcName
 	}
 
-	jobId, err := services.CreateEvaluation(username, req)
+	jobId, err := services.CreateEvaluation(c, username, req)
 	if err != nil {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
@@ -154,11 +142,16 @@ func getEvaluation(c *gin.Context) error {
 		return AppError(CREATE_EVALUATION_FAILED_CODE, err.Error())
 	}
 	log, err := services.GetEvaluationLog(username, id.ID, logReq.PageNum)
-	logResp := ""
+	// 请求最后一页日志以获取评估指标
+	var maxPageLog *models.JobLog
+	var indicator map[string]string
+	var confusion map[string]string
 	if log != nil {
-		logResp = log.Log
+		maxPageLog, err = services.GetEvaluationLog(username, id.ID, log.MaxPage)
+		if maxPageLog != nil {
+			indicator, confusion = services.GetRegexpLog(maxPageLog.Log)
+		}
 	}
-	indicator, confusion := services.GetRegexpLog(logResp)
 	data := getEvaluationResp{
 		Evaluation: job,
 		Log:        log,

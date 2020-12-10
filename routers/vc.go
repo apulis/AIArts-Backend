@@ -42,7 +42,7 @@ func getVC(c *gin.Context) error {
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_GET, &vcItem)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, vcItem)
@@ -73,7 +73,7 @@ func addVC(c *gin.Context) error {
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_ADD, &vcItem)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)
@@ -102,7 +102,7 @@ func delVC(c *gin.Context) error {
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_DEL, &vcItem)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)
@@ -133,7 +133,7 @@ func updateVC(c *gin.Context) error {
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_UPDATE, &vcItem)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)

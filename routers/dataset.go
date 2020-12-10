@@ -41,6 +41,7 @@ type createDatasetReq struct {
 	Path         string `json:"path" binding:"required"`
 	IsPrivate    bool   `json:"isPrivate" `
 	IsTranslated bool   `json:"isTranslated" `
+    SourceType   int    `json:"sourceType" `          // 1. 网页上传  2. 其他数据源
 }
 type bindDatasetReq struct {
 	Platform string `json:"platform" binding:"required"`
@@ -160,23 +161,37 @@ func createDataset(c *gin.Context) error {
 	// 判断数据集是否与该用户之前的数据集或者公有数据集同名，
 	isExist, err := services.DatasetIsExist(req.Name, username)
 	if isExist {
-		return AppError(DATASET_IS_EXISTED, "this dataset name is existed")
+		return AppError(DATASET_IS_EXISTED, "The dataset name already exists")
 	}
 
-	// 获取数据集真实路径
-	datasetStoragePath := services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
-	logger.Info("createDataset - datasetStoragePath", datasetStoragePath, req.Name)
-
-	// 检查数据集文件是否已存在
-	err = services.CheckPathExists(datasetStoragePath)
-	if err == nil {
-		return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
-	}
+	// 1. 当数据集为已存在的文件数据时，路径设定为用户指定的路径
+	// 2. 当数据集为用户刚刚上传的文件时, 路径为后端生成的路径（通过uploadDataset创建并回传给前端）
+	datasetStoragePath := req.Path
 
 	// 将数据重命名为真实目录
-	err = os.Rename(req.Path, datasetStoragePath)
-	if err != nil {
-		return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+	if req.SourceType == models.DATASET_UPLOAD_FROM_WEB {
+
+		// 数据集不应该存在，否则为 判为重名
+		datasetStoragePath = services.GenerateDatasetStoragePath(username, req.Name, fmt.Sprintf("%v", req.IsPrivate))
+
+		err = services.CheckPathExists(datasetStoragePath)
+		if err == nil {
+			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+		}
+
+		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
+		err = os.Rename(req.Path, datasetStoragePath)
+		if err != nil {
+			return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+		}
+
+	} else {
+
+		// 数据集必须存在
+		err = services.CheckPathExists(datasetStoragePath)
+		if err != nil {
+			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+		}
 	}
 
 	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", datasetStoragePath, req.IsPrivate, req.IsTranslated)
@@ -184,7 +199,10 @@ func createDataset(c *gin.Context) error {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
 
-	data := gin.H{}
+	data := gin.H{
+		"DatasetPath": datasetStoragePath,
+	}
+	
 	return SuccessResp(c, data)
 }
 

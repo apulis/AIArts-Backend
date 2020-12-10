@@ -26,18 +26,6 @@ type createEvaluationResp struct {
 	EvaluationId string `json:"jobId"`
 }
 
-type lsModelsetsReq struct {
-	PageNum  int    `form:"pageNum"`
-	PageSize int    `form:"pageSize,default=10"`
-	Name     string `form:"name"`
-	//all
-	Use       string `form:"use"`
-	Status    string `form:"status"`
-	IsAdvance bool   `form:"isAdvance"`
-	OrderBy   string `form:"orderBy,default=created_at"`
-	Order     string `form:"order,default=desc"`
-}
-
 type getModelsetResp struct {
 	Model    models.Modelset  `json:"model"`
 	Training *models.Training `json:"training"`
@@ -53,17 +41,19 @@ type GetModelsetsResp struct {
 
 // @Summary get model by id
 // @Produce  json
-// @Param query query lsModelsetsReq true "query"
+// @Param query query models.LsModelsetsReq true "query"
 // @Success 200 {object} getModelsetResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [get]
 func lsModelsets(c *gin.Context) error {
-	var req lsModelsetsReq
+
+	var req models.LsModelsetsReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	var modelsets []models.Modelset
 	var total int
 	//获取当前用户创建的模型
@@ -72,7 +62,8 @@ func lsModelsets(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	modelsets, total, err = services.ListModelSets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.IsAdvance, req.Name, req.Status, req.Use, username)
+	modelsets, total, err = services.ListModelSets(username, req)
+
 	if strings.HasPrefix(req.Use, `Avisualis`) {
 		for i := 0; i < len(modelsets); i++ {
 			training, err := services.GetTraining(username, modelsets[i].JobId)
@@ -104,20 +95,25 @@ func lsModelsets(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id [get]
 func getModelset(c *gin.Context) error {
+
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	var training *models.Training
+
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	username := getUsername(c)
 	if len(username) == 0 {
 		return AppError(NO_USRNAME, "no username")
 	}
+
 	modelset, err := services.GetModelset(id.ID)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	//插入数据集面板
 	if strings.HasPrefix(modelset.Use, `Avisualis`) {
 		modelset, err = services.GeneratePanel(modelset, username)
@@ -138,16 +134,21 @@ func getModelset(c *gin.Context) error {
 
 // @Summary create model
 // @Produce  json
-// @Param body body services.CreateModelsetReq true "jsonbody"
+// @Param body body models.CreateModelsetReq true "jsonbody"
 // @Success 200 {object} APISuccessResp "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models [post]
 func createModelset(c *gin.Context) error {
-	var req services.CreateModelsetReq
+
+	var req models.CreateModelsetReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
+	}
+
+	if len(req.VCName) == 0 {
+		req.VCName = models.DefaultVcName
 	}
 
 	//如果上传模型文件检查路径是否存在
@@ -157,6 +158,7 @@ func createModelset(c *gin.Context) error {
 			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
+
 	//avisualis不检测参数路径是否存在
 	if req.ParamPath != "" && !strings.HasPrefix(req.Use, `Avisualis`) {
 		err = services.CheckPathExists(req.ParamPath)
@@ -171,16 +173,17 @@ func createModelset(c *gin.Context) error {
 	}
 
 	if strings.HasPrefix(req.Use, `Avisualis`) && !req.IsAdvance {
-		req, err = services.CreateAvisualisTraining(req, username)
+		req, err = services.CreateAvisualisTraining(c, req, username)
 		if err != nil {
 			return err
 		}
 	}
-	err = services.CreateModelset(req.Name, req.Description, username, "0.0.1", req.JobId, req.CodePath, req.ParamPath, req.IsAdvance,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.DeviceType, req.VisualPath, req.DeviceNum)
+
+	err = services.CreateModelset(username, "0.0.1", req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	data := gin.H{}
 	return SuccessResp(c, data)
 }
@@ -193,12 +196,13 @@ func createModelset(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/models/:id [post]
 func updateModelset(c *gin.Context) error {
+
 	var id modelsetId
 	err := c.ShouldBindUri(&id)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	var req services.CreateModelsetReq
+	var req models.CreateModelsetReq
 	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
@@ -215,16 +219,17 @@ func updateModelset(c *gin.Context) error {
 			_ = services.DeleteTraining(username, req.JobId)
 		}
 		//更新节点的parma配置节点
-		req, err = services.CreateAvisualisTraining(req, username)
+		req, err = services.CreateAvisualisTraining(c, req, username)
 		if err != nil {
 			return err
 		}
 	}
-	err = services.UpdateModelset(id.ID, req.Name, req.Description, "0.0.1", req.JobId, req.CodePath, req.ParamPath,
-		req.Use, req.Size, req.DataFormat, req.DatasetName, req.DatasetPath, req.Params, req.Engine, req.Precision, req.OutputPath, req.StartupFile, req.VisualPath)
+
+	err = services.UpdateModelset(id.ID, "0.0.1", req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
+
 	data := gin.H{}
 	return SuccessResp(c, data)
 }

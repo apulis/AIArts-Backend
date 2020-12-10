@@ -2,8 +2,9 @@ package routers
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/services"
+
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,18 +21,10 @@ func AddGroupVisualJob(r *gin.Engine) {
 }
 
 type CreateVisualJobReq struct {
+	VCName            string `form:"vcName"`
 	JobName           string `form:"jobName"`
 	TensorboardLogDir string `form:"tensorboardLogDir"`
 	Description       string `form:"description"`
-}
-
-type GetVisualJobListReq struct {
-	PageNum  int    `form:"pageNum"`
-	PageSize int    `form:"pageSize"`
-	OrderBy  string `form:"orderBy"`
-	Status   string `form:"status"`
-	JobName  string `form:"jobName"`
-	Order    string `form:"order"`
 }
 
 type GetVisualJobListRsq struct {
@@ -41,12 +34,12 @@ type GetVisualJobListRsq struct {
 }
 
 type VisualJobListRspUnit struct {
-	Id                int    `json:"id"`
-	JobName           string `json:"jobName"`
-	Status            string `json:"status"`
+	Id                int             `json:"id"`
+	JobName           string          `json:"jobName"`
+	Status            string          `json:"status"`
 	CreateTime        models.UnixTime `json:"createTime"`
-	TensorboardLogDir string `json:"TensorboardLogDir"`
-	Description       string `json:"description"`
+	TensorboardLogDir string          `json:"TensorboardLogDir"`
+	Description       string          `json:"description"`
 }
 
 type GetEndpointsReq struct {
@@ -58,6 +51,7 @@ type GetEndpointsRsq struct {
 
 type SwitchVisualJobStatusReq struct {
 	JobId  int    `form:"id"`
+	VCName string `form:"vcName"`
 	Status string `form:"status"`
 }
 
@@ -79,7 +73,7 @@ func createVisualJob(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 	username := getUsername(c)
-	err = services.CreateVisualJob(username, req.JobName, req.TensorboardLogDir, req.Description)
+	err = services.CreateVisualJob(username, req.VCName, req.JobName, req.TensorboardLogDir, req.Description)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -89,23 +83,30 @@ func createVisualJob(c *gin.Context) error {
 
 // @Summary get visual job List
 // @Produce json
-// @Param param body GetVisualJobListReq true "params"
+// @Param param body models.GetVisualJobListReq true "params"
 // @Success 200 {object} GetVisualJobListRsq "success"
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/visual/list [get]
 func getVisualJobList(c *gin.Context) error {
-	var req GetVisualJobListReq
+
+	var req models.GetVisualJobListReq
 	err := c.ShouldBindQuery(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
-	userName := getUsername(c)
 
-	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(userName, req.PageNum, req.PageSize, req.OrderBy, req.Status, req.JobName, req.Order)
+	userName := getUsername(c)
+	// 兼容老代码
+	if req.VCName == "" {
+		req.VCName = models.DefaultVcName
+	}
+
+	visualJobList, totalJobsNum, totalPagesNum, err := services.GetAllVisualJobInfo(userName, req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
 	var visualJobListRspUnitArray []VisualJobListRspUnit
 	for _, visualJob := range visualJobList {
 		newVisualJobListRspUnit := VisualJobListRspUnit{
@@ -118,7 +119,7 @@ func getVisualJobList(c *gin.Context) error {
 		}
 		visualJobListRspUnitArray = append(visualJobListRspUnitArray, newVisualJobListRspUnit)
 	}
-	fmt.Printf("%d",totalJobsNum)
+	fmt.Printf("%d", totalJobsNum)
 	rsp := GetVisualJobListRsq{
 		Templates:    visualJobListRspUnitArray,
 		TotalJobsNum: totalJobsNum,
@@ -194,7 +195,7 @@ func switchVisualJobStatus(c *gin.Context) error {
 		}
 	}
 	if req.Status == "running" {
-		err = services.ContinueVisualJob(userName, req.JobId)
+		err = services.ContinueVisualJob(userName, req.VCName, req.JobId)
 		if err != nil {
 			return AppError(APP_ERROR_CODE, err.Error())
 		}

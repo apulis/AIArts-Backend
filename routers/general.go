@@ -26,14 +26,16 @@ type GetResourceReq struct {
 
 type GetResourceRsp struct {
 	AIFrameworks          map[string][]string  `json:"aiFrameworks"`
-	DeviceList            []models.DeviceItem  `json:"deviceList"`               //
+	DeviceList            []models.DeviceItem  `json:"deviceList"` //
 	NodeInfo              []*models.NodeStatus `json:"nodeInfo"`
 	CodePathPrefix        string               `json:"codePathPrefix"`
 	NodeCountByDeviceType map[string]int       `json:"nodeCountByDeviceType"`
 }
 
 type GetJobSummaryReq struct {
-	JobType string `form:"jobType" json:"jobType"`
+	UserName string `form:"userName" json:"userName"`
+	JobType  string `form:"jobType" json:"jobType"`
+	VCName   string `form:"vcName" json:"vcName"`
 }
 
 func getUsername(c *gin.Context) string {
@@ -101,11 +103,31 @@ func getResource(c *gin.Context) error {
 	}
 
 	// 获取平台配额数据
-	quota := make(map[string]int)
+	quota := make(map[string]int)                   // vc配额数据
+	user_quota := make(map[string]models.UserQuota) // vc下用户配额数据
+	user_used := make(map[string]int)
+
 	if len(vcInfo.Quota) != 0 {
 		err = json.Unmarshal([]byte(vcInfo.Quota), &quota)
 		if err != nil {
 
+		}
+	}
+
+	// 获取用户配额数据
+	if len(vcInfo.Metadata) != 0 {
+		err = json.Unmarshal([]byte(vcInfo.Metadata), &user_quota)
+		if err != nil {
+
+		}
+	}
+
+	// 整理用户已使用数据
+	for _, v := range vcInfo.UserStatus {
+		if v.UserName == userName {
+			for dev, used := range v.UserGPU {
+				user_used[dev] = used
+			}
 		}
 	}
 
@@ -119,8 +141,21 @@ func getResource(c *gin.Context) error {
 			Avail:      v,
 		}
 
-		if _, ok := quota[k]; ok {
+		// 1. 用户配置了user_quota，直接返回配置数据
+		// 2. 用户未配置user_quota，返回VC配置数据
+		if _, ok := user_quota[k]; ok {
+			deviceInfo.UserQuota = user_quota[k].Quota
+		} else if _, ok := quota[k]; ok {
 			deviceInfo.UserQuota = quota[k]
+		} else {
+			deviceInfo.UserQuota = 0
+		}
+
+		// 用户配额 - 用户已使用设备数量
+		if _, ok := user_used[k]; ok {
+			deviceInfo.Avail = deviceInfo.UserQuota - user_used[k]
+		} else {
+			deviceInfo.Avail = deviceInfo.UserQuota
 		}
 
 		rsp.DeviceList = append(rsp.DeviceList, deviceInfo)
@@ -179,11 +214,12 @@ func getJobSummary(c *gin.Context) error {
 	var err error
 	var req GetJobSummaryReq
 
+
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
 
-	summary, err := services.GetJobSummary(userName, req.JobType)
+	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

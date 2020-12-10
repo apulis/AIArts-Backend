@@ -11,9 +11,11 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/apulis/AIArtsBackend/configs"
@@ -106,13 +108,6 @@ func GetDatasetTempPath(dir string) (string, error) {
 
 	// 解压目录
 	datasetTempPath := fmt.Sprintf("%s/%s", datasetTempDir, dir)
-	extractPath := fmt.Sprintf("%s/%s/extract", datasetTempDir, dir)
-
-	err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
-	if err != nil {
-		return "", err
-	}
-
 	return datasetTempPath, nil
 }
 
@@ -147,51 +142,13 @@ func CompressFile(path string) (string, error) {
 	}
 	targetPath := tmpDir + fileName + strconv.FormatInt(time.Now().Unix(), 10) + ".tar.gz"
 
-	var buf bytes.Buffer
-	gzipWriter := gzip.NewWriter(&buf)
-	tarWriter := tar.NewWriter(gzipWriter)
-
-	filepath.Walk(path, func(file string, fi os.FileInfo, err error) error {
-		header, err := tar.FileInfoHeader(fi, file)
-		if err != nil {
-			return err
-		}
-		header.Name = strings.TrimPrefix(filepath.ToSlash(file), dirName)
-		header.Format = tar.FormatGNU
-		if err := tarWriter.WriteHeader(header); err != nil {
-			return err
-		}
-		if !fi.IsDir() {
-			data, err := os.Open(file)
-			if err != nil {
-				return err
-			}
-			if _, err := io.Copy(tarWriter, data); err != nil {
-				return err
-			}
-		}
-		return err
-	})
-
-	if err := tarWriter.Close(); err != nil {
-		return "", err
-	}
-	if err := gzipWriter.Close(); err != nil {
+	var cmd *exec.Cmd
+	cmd = exec.Command("tar", "-zcf", targetPath, path)
+	if _, err := cmd.Output(); err != nil {
+		logger.Error(fmt.Sprintf("run cmd %s error: %s", cmd.String(), err.Error()))
 		return "", err
 	}
 
-	fileToWrite, err := os.OpenFile(targetPath, os.O_CREATE|os.O_RDWR, os.FileMode(fileInfo.Mode()))
-	if err != nil {
-		return "", err
-	}
-	//权限改为777
-	//err = os.Chmod(path, os.FileMode(777))
-	//if err != nil {
-	//	return "", err
-	//}
-	if _, err := io.Copy(fileToWrite, &buf); err != nil {
-		return "", err
-	}
 	return targetPath, nil
 }
 
@@ -224,18 +181,19 @@ func GenerateModelStoragePath(dir, username string) string {
 }
 
 func ExtractFile(fromPath, filetype, extractPath string) (string, error) {
+
 	_, err := os.Stat(extractPath)
 	if err != nil && os.IsNotExist(err) {
 
-		mask := utils.Umask(0)  // 改为 0000 八进制
-		defer utils.Umask(mask) // 改为原来的 umask
+		mask := syscall.Umask(0)  // 改为 0000 八进制
+		defer syscall.Umask(mask) // 改为原来的 umask
 
 		err = os.MkdirAll(extractPath, os.ModeDir|os.ModePerm)
 		if err != nil {
 			return "", err
 		}
 	}
-	
+
 	logger.Info("Extracting file: ", fromPath, " to ", extractPath)
 	switch filetype {
 	case FILETYPE_ZIP:
@@ -257,6 +215,7 @@ func ExtractFile(fromPath, filetype, extractPath string) (string, error) {
 }
 
 func extractZip(fromPath, toPath string) error {
+
 	reader, err := zip.OpenReader(fromPath)
 	//关闭reader便于之后删除tmp文件
 	defer reader.Close()
@@ -266,21 +225,26 @@ func extractZip(fromPath, toPath string) error {
 	}
 
 	for _, file := range reader.File {
+
 		path := filepath.Join(toPath, transformEncode(file.Name))
 		//如果直接递归到底层是文件 比如 /data/pic/train/1.png 那么先要创建pic文件夹,linux与windows的zip压缩包文件夹头结构不一样
 		if file.FileInfo().IsDir() {
 			os.MkdirAll(path, file.Mode())
 			continue
 		}
+
 		fileReader, err := file.Open()
 		if err != nil {
+			fileReader.Close()
 			return err
 		}
-		defer fileReader.Close()
 
 		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
-		defer targetFile.Close()
 		if err != nil {
+
+			fileReader.Close()
+			targetFile.Close()
+
 			if os.IsNotExist(err) {
 				logger.Error("Ignored not existed file: ", path)
 				return nil
@@ -288,8 +252,14 @@ func extractZip(fromPath, toPath string) error {
 				return err
 			}
 		} else if _, err := io.Copy(targetFile, fileReader); err != nil {
+
+			fileReader.Close()
+			targetFile.Close()
 			return err
 		}
+
+		fileReader.Close()
+		targetFile.Close()
 	}
 
 	return nil
@@ -300,8 +270,10 @@ func extractTar(fromPath, toPath string) error {
 	if err != nil {
 		return err
 	}
+
 	defer fileReader.Close()
 	tarReader := tar.NewReader(fileReader)
+
 	for {
 		head, err := tarReader.Next()
 		if head == nil || err == io.EOF {
@@ -318,16 +290,19 @@ func extractTar(fromPath, toPath string) error {
 			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
 				return err
 			}
+
 		case tar.TypeReg:
 			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
 			if err != nil {
 				return err
 			}
-			defer targetFile.Close()
 
 			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				targetFile.Close()
 				return err
 			}
+
+			targetFile.Close()
 		default:
 			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}
@@ -336,28 +311,34 @@ func extractTar(fromPath, toPath string) error {
 	return nil
 }
 
+
 func extractTarGz(fromPath, toPath string) error {
 	fileReader, err := os.Open(fromPath)
 	if err != nil {
 		return err
 	}
+
 	defer fileReader.Close()
 
 	gzipReader, err := gzip.NewReader(fileReader)
 	if err != nil {
 		return err
 	}
-	defer gzipReader.Close()
 
+	defer gzipReader.Close()
 	tarReader := tar.NewReader(gzipReader)
+
 	for {
+
 		head, err := tarReader.Next()
 		if head == nil || err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			return err
 		}
+
 		path := filepath.Join(toPath, transformEncode(head.Name))
 		fileInfo := head.FileInfo()
 		switch head.Typeflag {
@@ -366,16 +347,19 @@ func extractTarGz(fromPath, toPath string) error {
 			if err := os.MkdirAll(path, fileInfo.Mode()); err != nil {
 				return err
 			}
+
 		case tar.TypeReg:
 			targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
 			if err != nil {
 				return err
 			}
-			defer targetFile.Close()
 
 			if _, err := io.Copy(targetFile, tarReader); err != nil {
+				targetFile.Close()
 				return err
 			}
+			targetFile.Close()
+
 		default:
 			logger.Info("Extracting unknown type ", string(head.Typeflag))
 		}

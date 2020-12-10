@@ -20,6 +20,19 @@ func OperateVC(userName string, opType models.VCOperateType, item *models.VCItem
 	url := fmt.Sprintf("%s/%s?userName=%s&vcName=%s", configs.Config.DltsUrl, opType.GetAPIName(), userName, *(item.VCName))
 	if opType == models.VC_OPTYPE_ADD || opType == models.VC_OPTYPE_UPDATE {
 
+		// 检查VC是否已存在
+		if opType == models.VC_OPTYPE_ADD {
+			
+			oldItem := &models.VCItem{
+				VCName: item.VCName,
+			}
+
+			err := OperateVC(userName, models.VC_OPTYPE_GET, oldItem)
+			if err == nil && oldItem.Quota != nil {
+				return fmt.Errorf("vc(%s)已存在", *(item.VCName))
+			}
+		}
+
 		if item.Metadata != nil {
 			url = url + fmt.Sprintf("&metadata=%s", urllib.PathEscape(*(item.Metadata)))
 		}
@@ -39,6 +52,10 @@ func OperateVC(userName string, opType models.VCOperateType, item *models.VCItem
 	if err != nil {
 		fmt.Printf("operate vc err[%+v]\n", err)
 		return err
+	}
+
+	if opType == models.VC_OPTYPE_GET && item.Quota == nil {
+		return fmt.Errorf("vc(%s)不存在", *(item.VCName))
 	}
 
 	return nil
@@ -137,6 +154,12 @@ func GetVCStatistic(userName string, req models.VCStatisticReq) (*models.VCStati
 				if _, totalOk := total[k]; totalOk {
 					unallocated[k] += total[k] - alloc[k]
 				}
+			}
+		}
+
+		for k, v := range(unallocated) {
+			if v < 0{
+				unallocated[k] = 0
 			}
 		}
 

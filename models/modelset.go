@@ -47,35 +47,92 @@ type Modelset struct {
 	// 评估设备类型
 	DeviceType string `json:"deviceType"`
 	DeviceNum  int    `json:"deviceNum"`
+	//VCName     string `json:"vcName"`
 }
+
+type LsModelsetsReq struct {
+	PageNum  int    `form:"pageNum"`
+	PageSize int    `form:"pageSize,default=10"`
+	Name     string `form:"name"`
+	//all
+	Use       string `form:"use"`
+	Status    string `form:"status"`
+	IsAdvance bool   `form:"isAdvance"`
+	OrderBy   string `form:"orderBy,default=created_at"`
+	Order     string `form:"order,default=desc"`
+	//VCName    string `form:"vcName"`
+}
+
+
+type CreateModelsetReq struct {
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" `
+	JobId       string `json:"jobId"`
+	CodePath    string `json:"codePath"`
+	ParamPath   string `json:"paramPath"`
+	IsAdvance   bool   `json:"isAdvance,default=false"`
+
+	Use         string `json:"use"`
+	Size        int64  `json:"size"`
+	DataFormat  string `json:"dataFormat"`
+	DatasetName string `json:"datasetName"`
+	DatasetPath string `json:"datasetPath"`
+	//omitempty 值为空，不编码
+	Params    map[string]string `json:"params"`
+	Engine    string            `json:"engine"`
+	Precision string            `json:"precision"`
+	//指定的模型参数路径
+	// 输出文件路径
+	OutputPath string `json:"outputPath"`
+	//启动文件路径
+	StartupFile string `json:"startupFile"`
+	VisualPath  string `json:"visualPath"`
+
+	//用于可视化建模平台直接启动训练任务
+	JobTrainingType string            `json:"jobTrainingType"`
+	NumPs           int               `json:"numPs"`
+	NumPsWorker     int               `json:"numPsWorker"`
+	DeviceType      string            `json:"deviceType"`
+	DeviceNum       int               `json:"deviceNum"`
+	VCName     		string     		  `json:"vcName"`
+}
+
 
 type ParamsItem map[string]string
 
-func ListModelSets(offset, limit int, orderBy, order string, isAdvance bool, name, status, use, username string) ([]Modelset, int, error) {
+func ListModelSets(username string, offset, limit int, orderBy,
+	order string, isAdvance bool, name, status, use string) ([]Modelset, int, error) {
+
 	var modelsets []Modelset
 	total := 0
 
-	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 ", username)
+	//whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 and vcName='%s' ", username, vcName)
+	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0  ", username)
 	if isAdvance {
 		whereQueryStr = fmt.Sprintf(" is_advance = 1 ")
 	}
+
 	if name != "" {
 		whereQueryStr += "and name like '%" + name + "%' "
 	}
+
 	if status != "" {
 		whereQueryStr += fmt.Sprintf("and status='%s' ", status)
 	}
+
 	if strings.HasPrefix(use,`Avisualis`) {
 		whereQueryStr += "and `use` like '" + use + "%' "
 	} else {
 		whereQueryStr += "and `use` not like 'Avisualis%' "
 	}
+
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 	res := db.Offset(offset).Limit(limit).Order(orderQueryStr).Where(whereQueryStr).Find(&modelsets)
 
 	if res.Error != nil {
 		return modelsets, total, res.Error
 	}
+
 	db.Model(&Modelset{}).Where(whereQueryStr).Count(&total)
 	return modelsets, total, nil
 }

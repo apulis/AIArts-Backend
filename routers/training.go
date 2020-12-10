@@ -82,11 +82,6 @@ func getAllTraining(c *gin.Context) error {
 		return AppError(NO_USRNAME, "no username")
 	}
 
-	// 兼容老代码
-	if req.VCName == "" {
-		req.VCName = "platform"
-	}
-
 	sets, total, totalPage, err := services.GetAllTraining(userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
@@ -109,7 +104,6 @@ func getAllTraining(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/trainings [post]
 func createTraining(c *gin.Context) error {
-
 	var req models.Training
 	var id string
 
@@ -132,10 +126,10 @@ func createTraining(c *gin.Context) error {
 	}
 
 	//检查模型启动文件是否存在
-	err = services.CheckPathExists(req.StartupFile)
-	if err != nil {
+	if err := services.CheckPathExists(req.StartupFile); len(req.StartupFile) > 0 && err != nil {
 		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
+
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
@@ -145,7 +139,13 @@ func createTraining(c *gin.Context) error {
 		req.VCName = "platform"
 	}
 
-	id, err = services.CreateTraining(userName, req)
+	imageName, err := services.ConvertImage(req.Engine, req.IsPrivateImg)
+	if err != nil {
+		return AppError(DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.Engine = imageName
+	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}

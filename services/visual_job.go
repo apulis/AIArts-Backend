@@ -1,6 +1,8 @@
 package services
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -8,9 +10,9 @@ import (
 	"github.com/apulis/AIArtsBackend/models"
 )
 
-func CreateVisualJob(userName string, jobName string, logdir string, description string) error {
+func CreateVisualJob(userName string, vcName string, jobName string, logdir string, description string) error {
 	//step1. create a background job
-	relateJobId, err := createBackgroundJob(userName, jobName, logdir, description)
+	relateJobId, err := createBackgroundJob(userName, vcName, jobName, logdir, description)
 	if err != nil {
 		fmt.Printf("create background job failed : [%+v]\n", err)
 		return err
@@ -20,6 +22,7 @@ func CreateVisualJob(userName string, jobName string, logdir string, description
 		UserName:    userName,
 		Name:        jobName,
 		Status:      "scheduling",
+		VCName:      vcName,
 		LogPath:     logdir,
 		Description: description,
 		RelateJobId: relateJobId,
@@ -32,29 +35,33 @@ func CreateVisualJob(userName string, jobName string, logdir string, description
 	return nil
 }
 
-func GetAllVisualJobInfo(userName string, pageNum int, pageSize int, orderBy string, status string, jobName string, order string) ([]models.VisualJob, int, int, error) {
+func GetAllVisualJobInfo(userName string, req models.GetVisualJobListReq) ([]models.VisualJob, int, int, error) {
+
 	//step1. renew all visual job status
 	err := renewStatusInfo(userName)
 	if err != nil {
 		fmt.Printf("job status renew fail : err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
+
 	//step2. get job info and return
-	jobList, err := models.GetAllVisualJobByArguments(userName, pageNum, pageSize, status, jobName, order, orderBy)
+	jobList, err := models.GetAllVisualJobByArguments(userName, req.VCName, req.PageNum, req.PageSize, req.Status, req.JobName, req.Order, req.OrderBy)
 	if err != nil {
 		fmt.Printf("get job list err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, status, jobName)
+
+	totalJobsNum, err := models.GetVisualJobCountByArguments(userName, req.VCName, req.Status, req.JobName)
 	if err != nil {
 		fmt.Printf("get job list count err[%+v]\n", err)
 		return nil, 0, 0, err
 	}
-	totalPages := totalJobsNum / pageSize
 
-	if (totalJobsNum % pageSize) != 0 {
+	totalPages := totalJobsNum / req.PageSize
+	if (totalJobsNum % req.PageSize) != 0 {
 		totalPages += 1
 	}
+
 	return jobList, totalJobsNum, totalPages, nil
 }
 
@@ -85,6 +92,11 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 		return err, nil
 	}
 
+	protocol := "http"
+	if len(configs.Config.ExtranetProtocol) > 0 {
+		protocol = configs.Config.ExtranetProtocol
+	}
+
 	appRspData := &models.EndpointWrapper{}
 	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "tensorboard" {
@@ -92,7 +104,13 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 			appRspData.Status = v.Status
 
 			if v.Status == "running" {
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/", v.NodeName, v.Domain, v.Port)
+				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
+				val, _ := json.Marshal(param)
+				appRspData.AccessPoint = fmt.Sprintf("%s://%s.%s/endpoints/%s/",
+					protocol,
+					v.NodeName, v.Domain,
+					base64.StdEncoding.EncodeToString(val),
+				)
 			}
 
 			break
@@ -105,7 +123,7 @@ func GetTensorboardPath(userName, jobId string) (error, *models.EndpointWrapper)
 func StopVisualJob(userName string, jobId int) error {
 	targetJob, err := models.GetVisualJobById(jobId)
 	if err != nil {
-		fmt.Printf("get job detail err[%+v]\n", err)
+		logger.Error("get job detail err ", err)
 		return err
 	}
 	backgroundJobId := targetJob.RelateJobId
@@ -115,31 +133,26 @@ func StopVisualJob(userName string, jobId int) error {
 	job := &models.Job{}
 	err = DoRequest(url, "GET", nil, params, job)
 	if err != nil {
-		fmt.Printf("delete backgournd job err[%+v]\n", err)
+		logger.Error("delete background job err: ", err)
 		return err
 	}
 	targetJob.Status = "paused"
-	targetJob.RelateJobId = ""
 	err = models.UpdateVisualJob(&targetJob)
 	if err != nil {
-		fmt.Printf("kill backgournd job err[%+v]\n", err)
+		logger.Error("kill background job err %s", err)
 		return err
 	}
-	_, err = DeleteJob(backgroundJobId)
-	if err != nil {
-		fmt.Printf("update visual job info fail: [%+v]\n", err)
-		return err
-	}
+
 	return nil
 }
 
-func ContinueVisualJob(userName string, jobId int) error {
+func ContinueVisualJob(userName string, vcName string, jobId int) error {
 	targetJob, err := models.GetVisualJobById(jobId)
 	if err != nil {
 		fmt.Printf("get job detail err[%+v]\n", err)
 		return err
 	}
-	relateJobId, err := createBackgroundJob(userName, targetJob.Name, targetJob.LogPath, targetJob.Description)
+	relateJobId, err := createBackgroundJob(userName, vcName, targetJob.Name, targetJob.LogPath, targetJob.Description)
 	if err != nil {
 		fmt.Printf("create background job failed : [%+v]\n", err)
 		return err
@@ -157,33 +170,42 @@ func ContinueVisualJob(userName string, jobId int) error {
 func DeleteVisualJob(userName string, jobId int) error {
 	err := renewStatusInfo(userName)
 	if err != nil {
-		fmt.Printf("job status renew fail : err[%+v]\n", err)
+		logger.Error("job status renew fail : ", err)
 		return err
 	}
 	job, err := models.GetVisualJobById(jobId)
 	if err != nil {
-		fmt.Printf("get job detail err[%+v]\n", err)
+		logger.Error("get job detail err: ", err)
 		return err
 	}
-	err = models.DeleteVisualJob(&job)
-	if err != nil {
-		fmt.Printf("delete visual job record error :[%+v]\n", err)
-		return err
-	}
+
 	if job.Status == "running" {
 		err := StopVisualJob(userName, jobId)
 		if err != nil {
-			fmt.Printf("stop job error :[%+v]\n", err)
+			logger.Error("stop job error: ", err)
 			return err
 		}
 	}
+
+	_, err = DeleteJob(job.RelateJobId)
+	if err != nil {
+		logger.Error("delete visual job info fail: ", err)
+		return err
+	}
+
+	err = models.DeleteVisualJob(&job)
+	if err != nil {
+		logger.Error("delete visual job record error : %s", err)
+		return err
+	}
+
 	return nil
 }
 
-func createBackgroundJob(userName string, jobName string, logdir string, description string) (string, error) {
+func createBackgroundJob(userName string, vcName string, jobName string, logdir string, description string) (string, error) {
 	//step1. create a job
 	// * get cluster availuable gpu type, and randomly select one to run visual job
-	requestClusterStatusURL := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, models.DefaultVcName)
+	requestClusterStatusURL := fmt.Sprintf("%s/GetVC?userName=%s&vcName=%s", configs.Config.DltsUrl, userName, vcName)
 	vcInfo := &models.VcInfo{}
 
 	err := DoRequest(requestClusterStatusURL, "GET", nil, nil, vcInfo)
@@ -204,8 +226,12 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["jobName"] = jobName
 	params["jobType"] = models.JobTypeVisualJob
 
-	params["image"] = ConvertImage("apulistech/visualjob:1.0")
-	fmt.Println(ConvertImage("apulistech/visualjob:1.0"))
+	var visualJob_image_name = "apulistech/visualjob:1.0"
+	if find := strings.Contains(selectNodeDevice, "arm"); find {
+		visualJob_image_name = visualJob_image_name + "-arm64"
+	}
+	params["image"] = ConvertPrivateImage(visualJob_image_name)
+	fmt.Println(ConvertPrivateImage("apulistech/visualjob:1.0"))
 	params["gpuType"] = selectNodeDevice
 	params["resourcegpu"] = 0
 
@@ -229,15 +255,16 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 	params["isPrivileged"] = false
 	params["interactivePorts"] = false
 
-	params["vcName"] = models.DefaultVcName
+	params["vcName"] = vcName
 	params["team"] = models.DefaultVcName
 
-	id := &models.JobId{}
+	id := &models.CreateJobReq{}
 	err = DoRequest(url, "POST", nil, params, id)
 	if err != nil {
 		fmt.Printf("post dlts err[%+v]\n", err)
 		return "", err
 	}
+
 	//step2. create endpoints
 	url = fmt.Sprintf("%s/endpoints?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id.Id)
 	req := &models.CreateEndpointsReq{}
@@ -256,7 +283,7 @@ func createBackgroundJob(userName string, jobName string, logdir string, descrip
 }
 
 func renewStatusInfo(userName string) error {
-	visualJobList, err := models.GetAllVisualJobByArguments(userName, 1, -1, "", "", "", "")
+	visualJobList, err := models.GetAllVisualJobByArguments(userName, "", 1, -1, "", "", "", "")
 	if err != nil {
 		fmt.Printf("get visual job  err[%+v]\n", err)
 		return err

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	_ "encoding/json"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
@@ -16,6 +17,7 @@ func AddGroupCode(r *gin.Engine) {
 	group.POST("/", wrapper(createCodeEnv))
 	group.DELETE("/:id", wrapper(delCodeEnv))
 	group.GET("/:id/jupyter", wrapper(getJupyterPath))
+	group.GET("/:id/endpoints", wrapper(getCodeEnvEndpoints))
 	group.POST("/upload", wrapper(uploadCode))
 }
 
@@ -96,7 +98,6 @@ func getAllCodeEnv(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/codes [post]
 func createCodeEnv(c *gin.Context) error {
-
 	var req CreateCodeEnvReq
 	var id string
 
@@ -112,14 +113,20 @@ func createCodeEnv(c *gin.Context) error {
 
 	// 兼容老代码
 	if req.VCName == "" {
-		req.VCName = "platform"
+		req.VCName = models.DefaultVcName
 	}
 
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
 		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
 	}
 
-	id, err = services.CreateCodeEnv(userName, req.CreateCodeEnv)
+	imageName, err := services.ConvertImage(req.CreateCodeEnv.Engine, req.CreateCodeEnv.IsPrivateImage)
+	if err != nil {
+		return AppError(DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+	}
+
+	req.CreateCodeEnv.Engine = imageName
+	id, err = services.CreateCodeEnv(c, userName, req.CreateCodeEnv)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -175,6 +182,35 @@ func getJupyterPath(c *gin.Context) error {
 	}
 
 	err, rspData = services.GetJupyterPath(userName, id)
+	if err != nil {
+		return AppError(APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, rspData)
+}
+
+// @Summary get CodeEnv endpoints
+// @Produce  json
+// @Param id query string true "code id"
+// @Success 200 {object} APISuccessRespGetCodeEnvJupyter "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/codes/:id/endpoints [get]
+func getCodeEnvEndpoints(c *gin.Context) error {
+
+	var err error
+	var id string
+	var rspData interface{}
+
+	id = c.Param("id")
+	fmt.Println(id)
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(NO_USRNAME, "no username")
+	}
+
+	err, rspData = services.GetEndpoints(userName, id)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
