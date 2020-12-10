@@ -23,7 +23,7 @@ ADD ./go.mod .
 ADD ./go.sum .
 RUN go mod download && go get -u github.com/swaggo/swag/cmd/swag
 ADD . .
-RUN swag init && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
+RUN swag init --parseDependency --parseInternal && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
 
 FROM alpine:3.11
 RUN apk --no-cache add ca-certificates libdrm

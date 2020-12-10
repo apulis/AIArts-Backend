@@ -139,32 +139,32 @@ type JobParams struct {
 	Cmd             string `json:"cmd"`
 	ContainerUserId int    `json:"containerUserId"`
 
-	Enabledatapath    bool     `json:"enabledatapath"`
-	Enablejobpath     bool     `json:"enablejobpath"`
-	Enableworkpath    bool     `json:"enableworkpath"`
-	Env               []string `json:"env"`
-	FamilyToken       string   `json:"familyToken"`
-	GpuType           string   `json:"gpuType"`
-	HostNetwork       bool     `json:"hostNetwork"`
-	Image             string   `json:"image"`
-	InteractivePorts  bool     `json:"interactivePorts"`
-	IsParent          int      `json:"isParent"`
-	IsPrivileged      bool     `json:"isPrivileged"`
-	JobId             string   `json:"jobId"`
-	JobName           string   `json:"jobName"`
-	JobPath           string   `json:"jobPath"`
-	JobType           string   `json:"jobType"`
-	Jobtrainingtype   string   `json:"jobtrainingtype"`
-	Numps             int      `json:"numps"`
-	Numpsworker       int      `json:"numpsworker"`
-	PreemptionAllowed bool     `json:"preemptionAllowed"`
-	Resourcegpu       int      `json:"resourcegpu"`
-	Team              string   `json:"team"`
-	UserId            int      `json:"userId"`
-	UserName          string   `json:"userName"`
-	VcName            string   `json:"vcName"`
-	WorkPath          string   `json:"workPath"`
-	FrameworkType     string   `json:"frameworkType"`
+	Enabledatapath    bool       `json:"enabledatapath"`
+	Enablejobpath     bool       `json:"enablejobpath"`
+	Enableworkpath    bool       `json:"enableworkpath"`
+	Env               []string   `json:"env"`
+	FamilyToken       string     `json:"familyToken"`
+	GpuType           string     `json:"gpuType"`
+	HostNetwork       bool       `json:"hostNetwork"`
+	Image             string     `json:"image"`
+	InteractivePorts  json.Token `json:"interactivePorts"`
+	IsParent          int        `json:"isParent"`
+	IsPrivileged      bool       `json:"isPrivileged"`
+	JobId             string     `json:"jobId"`
+	JobName           string     `json:"jobName"`
+	JobPath           string     `json:"jobPath"`
+	JobType           string     `json:"jobType"`
+	Jobtrainingtype   string     `json:"jobtrainingtype"`
+	Numps             int        `json:"numps"`
+	Numpsworker       int        `json:"numpsworker"`
+	PreemptionAllowed bool       `json:"preemptionAllowed"`
+	Resourcegpu       int        `json:"resourcegpu"`
+	Team              string     `json:"team"`
+	UserId            int        `json:"userId"`
+	UserName          string     `json:"userName"`
+	VcName            string     `json:"vcName"`
+	WorkPath          string     `json:"workPath"`
+	FrameworkType     string     `json:"frameworkType"`
 
 	CodePath    string `json:"codePath"`
 	StartupFile string `json:"startupFile"`
@@ -176,16 +176,16 @@ type JobParams struct {
 }
 
 type Job struct {
-	JobId     string    `json:"jobId"`
-	JobName   string    `json:"jobName"`
-	JobParams JobParams `json:"jobParams"`
-	JobStatus string    `json:"jobStatus"`
-	JobStatusDetail json.Token  `json:"jobStatusDetail"`
-	JobTime   string    `json:"jobTime"`
-	JobType   string    `json:"jobType"`
-	Priority  int       `json:"priority"`
-	UserName  string    `json:"userName"`
-	VcName    string    `json:"vcName"`
+	JobId           string     `json:"jobId"`
+	JobName         string     `json:"jobName"`
+	JobParams       JobParams  `json:"jobParams"`
+	JobStatus       string     `json:"jobStatus"`
+	JobStatusDetail json.Token `json:"jobStatusDetail"`
+	JobTime         string     `json:"jobTime"`
+	JobType         string     `json:"jobType"`
+	Priority        int        `json:"priority"`
+	UserName        string     `json:"userName"`
+	VcName          string     `json:"vcName"`
 }
 
 type JobMeta struct {
@@ -212,18 +212,18 @@ type NodeStatus struct {
 }
 
 type UserStatusItem struct {
-	UserGPU     map[string] int `json:"userGPU"`
-	UserName    string `json:"userName"`
- }
+	UserGPU  map[string]int `json:"userGPU"`
+	UserName string         `json:"userName"`
+}
 
 // 接口：apis/GetVC?userName=&vcName=platform
 type VcInfo struct {
-	DeviceAvail    map[string]int `json:"gpu_avaliable"`
-	DeviceCapacity map[string]int `json:"gpu_capacity"`
-	Nodes          []*NodeStatus  `json:"node_status"`
-	Quota          string         `json:"quota"`
-	Metadata       string         `json:"metadata"`
-	UserStatus     []*UserStatusItem  `json:"user_status"`
+	DeviceAvail    map[string]int    `json:"gpu_avaliable"`
+	DeviceCapacity map[string]int    `json:"gpu_capacity"`
+	Nodes          []*NodeStatus     `json:"node_status"`
+	Quota          string            `json:"quota"`
+	Metadata       string            `json:"metadata"`
+	UserStatus     []*UserStatusItem `json:"user_status"`
 }
 
 // 获取metadata数据
