@@ -2,9 +2,10 @@ package routers
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
 	"net/http"
 	"os"
+
+	"github.com/apulis/AIArtsBackend/configs"
 
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -80,10 +81,10 @@ func uploadDataset(c *gin.Context) error {
 	logger.Info("starting extract file")
 
 	// 检查数据集文件是否已存在
-	err = services.CheckPathExists(datasetStoragePath)
-	if err == nil {
-		return AppError(configs.DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
-	}
+	//err = services.CheckPathExists(datasetStoragePath)
+	//if err == nil {
+	//	return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+	//}
 
 	// 解压并返回解压后的目录
 	unzippedPath, err := services.ExtractFile(filePath, filetype, datasetStoragePath)

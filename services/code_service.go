@@ -56,6 +56,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 			CreateTime: v.JobTime,
 			JupyterUrl: "",
 			Desc:       v.JobParams.Desc,
+			JobStatusDetail: v.JobStatusDetail,
 		})
 	}
 
@@ -181,6 +182,11 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 	}
 
 	appRspData := &models.EndpointWrapper{}
+
+	protocol := "http"
+	if len(configs.Config.ExtranetProtocol) > 0 {
+		protocol = configs.Config.ExtranetProtocol
+	}
 	for _, v := range rspData {
 		if strings.ToLower(v.Name) == "ipython" {
 			appRspData.Name = v.Name
@@ -189,7 +195,8 @@ func GetJupyterPath(userName, id string) (error, *models.EndpointWrapper) {
 			if v.Status == "running" {
 				param := models.EndpointURLCode{Port: v.Port, UserName: userName}
 				val, _ := json.Marshal(param)
-				appRspData.AccessPoint = fmt.Sprintf("http://%s.%s/endpoints/%s/",
+				appRspData.AccessPoint = fmt.Sprintf("%s://%s.%s/endpoints/%s/",
+					protocol,
 					v.NodeName,
 					v.Domain,
 					base64.StdEncoding.EncodeToString(val),

@@ -7,12 +7,13 @@ import (
 )
 
 type ImageItem struct {
-	Image 			string `json:"image"`
-	Desc    		string `json:"desc"`
+	Image string `json:"image"`
+	Desc  string `json:"desc"`
 }
 
 type ProjectConfig struct {
 	Port               int
+	ExtranetProtocol   string
 	Log                LogConfig
 	Db                 DbConfig
 	File               FileConfig

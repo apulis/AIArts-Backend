@@ -1,6 +1,7 @@
 package routers
 
 import (
+	_ "encoding/json"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
