@@ -15,6 +15,7 @@ type CodeEnvItem struct {
 	DeviceNum  int    `json:"deviceNum"`
 	Desc       string `json:"desc"`
 	JobStatusDetail json.Token  `json:"jobStatusDetail"`
+	JobErrMsg  string  `json:"errorMsg"`
 }
 
 type CreateCodeEnv struct {

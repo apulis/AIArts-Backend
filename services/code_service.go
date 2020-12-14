@@ -57,6 +57,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 			JupyterUrl: "",
 			Desc:       v.JobParams.Desc,
 			JobStatusDetail: v.JobStatusDetail,
+			JobErrMsg: v.ErrMsg,
 		})
 	}
 
