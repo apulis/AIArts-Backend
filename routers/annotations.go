@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -49,7 +50,7 @@ func GetProjects(c *gin.Context) error {
 	err := c.ShouldBindQuery(&queryStringParameters)
 	projects, totalCount, err := services.GetProjects(queryStringParameters)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"projects": projects, "totalCount": totalCount})
 }
@@ -65,7 +66,7 @@ func DeleteProject(c *gin.Context) error {
 	projectId := c.Param("projectId")
 	err := services.DeleteProject(projectId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -85,7 +86,7 @@ func AddProject(c *gin.Context) error {
 	params.Creator = getUsername(c)
 	err = services.AddProject(params)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -107,7 +108,7 @@ func UpdateProject(c *gin.Context) error {
 	}
 	err = services.UpdateProject(project, projectId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -128,7 +129,7 @@ func GetDatasets(c *gin.Context) error {
 	err := c.ShouldBindQuery(&queryStringParameters)
 	datasets, totalCount, err := services.GetDatasets(projectId, queryStringParameters)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }
@@ -149,7 +150,7 @@ func AddDataset(c *gin.Context) error {
 	}
 	err = services.AddDataset(projectId, dataset)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -167,7 +168,7 @@ func GetDatasetInfo(c *gin.Context) error {
 	dataSetId := c.Param("dataSetId")
 	dataset, err := services.GetDatasetInfo(projectId, dataSetId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"info": dataset})
 }
@@ -190,7 +191,7 @@ func UpdateDataSet(c *gin.Context) error {
 	}
 	err = services.UpdateDataSet(projectId, dataSetId, dataset)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -212,7 +213,7 @@ func RemoveDataSet(c *gin.Context) error {
 	}
 	err = services.RemoveDataSet(projectId, dataSetId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -234,7 +235,7 @@ func GetTasks(c *gin.Context) error {
 	err := c.ShouldBindQuery(&queryStringParameters)
 	tasks, totalCount, err := services.GetTasks(projectId, dataSetId, queryStringParameters)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return ServeError(configs.REMOTE_SERVE_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"taskList": tasks, "totalCount": totalCount})
 }
@@ -254,7 +255,7 @@ func GetNextTask(c *gin.Context) error {
 	taskId := c.Param("taskId")
 	nextTask, err := services.GetNextTask(projectId, dataSetId, taskId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"next": nextTask})
 }
@@ -274,7 +275,7 @@ func GetTaskSuffix(c *gin.Context) error {
 	taskId := c.Param("taskId")
 	suffix, err := services.GetTaskSuffix(projectId, dataSetId, taskId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"suffix": suffix})
 }
@@ -294,7 +295,7 @@ func GetPreviousTask(c *gin.Context) error {
 	taskId := c.Param("taskId")
 	nextTask, err := services.GetPreviousTask(projectId, dataSetId, taskId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"previous": nextTask})
 }
@@ -314,7 +315,7 @@ func GetOneTask(c *gin.Context) error {
 	taskId := c.Param("taskId")
 	taskObj, err := services.GetOneTask(projectId, dataSetId, taskId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"annotations": taskObj})
 }
@@ -335,7 +336,7 @@ func PostOneTask(c *gin.Context) error {
 	value, _ := c.GetRawData()
 	err := services.PostOneTask(projectId, dataSetId, taskId, string(value))
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{})
 }
@@ -353,7 +354,7 @@ func GetDataSetLabels(c *gin.Context) error {
 	dataSetId := c.Param("dataSetId")
 	labels, err := services.GetDataSetLabels(projectId, dataSetId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"annotations": labels})
 }
@@ -380,7 +381,7 @@ func ConvertDataFormat(c *gin.Context) error {
 	convert.ProjectId = projectId
 	ret, err := services.ConvertDataFormat(convert)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, ret)
 }
@@ -397,7 +398,7 @@ func ConvertSupportFormat(c *gin.Context) error {
 	dataSetId := c.Param("dataSetId")
 	ret, err := services.ConvertSupportFormat(projectId, dataSetId)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, ret)
 }
@@ -415,7 +416,7 @@ func ListAllDatasets(c *gin.Context) error {
 	err := c.ShouldBindQuery(&queryStringParameters)
 	datasets, totalCount, err := services.ListAllDatasets(queryStringParameters)
 	if err != nil {
-		return ServeError(REMOTE_SERVE_ERROR_CODE, err.Error())
+		return RemoteServerError(err.Error())
 	}
 	return SuccessResp(c, gin.H{"datasets": datasets, "totalCount": totalCount})
 }

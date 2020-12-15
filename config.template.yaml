@@ -34,4 +34,8 @@ imagesave:
   sshkey: /root/.ssh/id_rsa
   sshuser: dlwsadmin
 
-DltsUrl: http://219.133.167.42:52009/apis
+DltsUrl:     http://219.133.167.42:52009/apis
+
+TrackingUrl: http://127.0.0.1:5000
+
+

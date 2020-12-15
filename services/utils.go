@@ -106,6 +106,19 @@ func DoRequestStr(url, method string, headers map[string]string, rawBody interfa
 	return err, ""
 }
 
+func DoRequest2(url, method string, headers map[string]string, rawBody interface{}, output interface{}) error {
+
+	rspData, err := doRequest(url, method, headers, rawBody)
+	var resp_err error = nil
+	if len(rspData) > 0 {
+		resp_err = json.Unmarshal(rspData, output)
+	}
+	if resp_err != nil {
+		return resp_err
+	}
+	return err
+}
+
 func DoGetRequest(url string, headers map[string]string, rawBody interface{}) (err error, rawData string) {
 	rspData, err := doRequest(url, "GET", headers, rawBody)
 	if err != nil {

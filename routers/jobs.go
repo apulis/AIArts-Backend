@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -26,17 +27,17 @@ func GetAllJobs(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	count, err := services.GetJobsCount(req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	jobs, err := services.GetAllJobs(req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, map[string]interface{}{"jobs": jobs, "total": count})
@@ -53,13 +54,13 @@ func GetAllJobSummary(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 
 	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, summary)
@@ -68,14 +69,14 @@ func GetAllJobSummary(c *gin.Context) error {
 func ResumeJob(c *gin.Context) error {
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	jobId := c.Param("jobId")
 
 	ret, err := services.ResumeJob(jobId, userName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, ret)
@@ -84,14 +85,14 @@ func ResumeJob(c *gin.Context) error {
 func PauseJob(c *gin.Context) error {
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	jobId := c.Param("jobId")
 
 	ret, err := services.PauseJob(jobId, userName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, ret)

@@ -26,7 +26,10 @@ type Training struct {
 	VCName          string            `json:"vcName"`
 	Command         string            `json:"command"`
 
-	FrameworkType   string            `json:"frameworkType"`
+	FrameworkType string `json:"frameworkType"`
+
+	ExperimentID uint64 `json:"experimentId,omitempty"`
+	Track        int    `json:"track,omitempty"`
 }
 
 func ValidHomePath(userName, path string) bool {
@@ -70,4 +73,5 @@ type GetAllJobsReq struct {
 	OrderBy    string `form:"orderBy" json:"orderBy"`
 	Order      string `form:"order" json:"order"`
 	VCName     string `form:"vcName" json:"vcName"`
+	JobGroup   string `from:"jobGroup" json:"jobGroup" `
 }

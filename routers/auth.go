@@ -1,14 +1,15 @@
 package routers
 
 import (
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strings"
-	"time"
 )
 
 type Claim struct {

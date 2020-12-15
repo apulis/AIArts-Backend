@@ -7,12 +7,13 @@ import (
 )
 
 type ImageItem struct {
-	Image 			string `json:"image"`
-	Desc    		string `json:"desc"`
+	Image string `json:"image"`
+	Desc  string `json:"desc"`
 }
 
 type ProjectConfig struct {
 	Port               int
+	ExtranetProtocol   string
 	Log                LogConfig
 	Db                 DbConfig
 	File               FileConfig
@@ -25,6 +26,8 @@ type ProjectConfig struct {
 	InteractiveModeJob bool
 	PrivateRegistry    string
 	Imagesave          ImageSaveConfig
+	TrackingUrl        string
+	EnableTrack        bool
 }
 
 type LogConfig struct {
@@ -93,4 +96,5 @@ func init() {
 	if Config.File.CleanEverySeconds <= 0 {
 		Config.File.CleanEverySeconds = 600
 	}
+	Config.EnableTrack=true
 }

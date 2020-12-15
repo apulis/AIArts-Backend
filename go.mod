@@ -30,7 +30,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3
-	golang.org/x/tools v0.0.0-20200723000907-a7c6fd066f6d // indirect
+	golang.org/x/tools/gopls v0.5.2 // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.19.1 // indirect

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -79,12 +80,12 @@ func getAllTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	sets, total, totalPage, err := services.GetAllTraining(userName, req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	rsp := &GetAllTrainingRsp{
@@ -114,24 +115,24 @@ func createTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	//检查数据集文件是否存在
 	if req.DatasetPath != "" {
 		err = services.CheckPathExists(req.DatasetPath)
 		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+			return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
 
 	//检查模型启动文件是否存在
 	if err := services.CheckPathExists(req.StartupFile); len(req.StartupFile) > 0 && err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
 
 	if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
-		return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+		return AppError(configs.INVALID_TRAINING_TYPE, "任务类型非法")
 	}
 
 	// 兼容老代码
@@ -141,13 +142,13 @@ func createTraining(c *gin.Context) error {
 
 	imageName, err := services.ConvertImage(req.Engine, req.IsPrivateImg)
 	if err != nil {
-		return AppError(DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
+		return AppError(configs.DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
 	}
 
 	req.Engine = imageName
 	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, id)
@@ -172,12 +173,12 @@ func getTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	training, err = services.GetTraining(userName, id.Id)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, training)
@@ -200,12 +201,12 @@ func delTraining(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	err = services.DeleteTraining(userName, id.Id)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := gin.H{}
@@ -236,12 +237,12 @@ func getLog(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	jobLog, err = services.GetTrainingLog(userName, id.Id, req.PageNum)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, jobLog)

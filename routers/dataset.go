@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"fmt"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
@@ -83,14 +84,14 @@ func LsDatasets(c *gin.Context) error {
 	var total = 0
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	//获取该用户能够访问的所有已经标注好的数据库
 	var message = "success"
 	datasets, total, err = services.ListDatasets(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, req.Status, req.IsTranslated, username)
 
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	if req.IsTranslated {
@@ -123,7 +124,7 @@ func getDataset(c *gin.Context) error {
 	}
 	dataset, err := services.GetDataset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := GetDatasetResp{Dataset: dataset}
 	return SuccessResp(c, data)
@@ -150,18 +151,18 @@ func createDataset(c *gin.Context) error {
 
 	err = services.CheckPathExists(req.Path)
 	if err != nil {
-		return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+		return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 	}
 
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	// 判断数据集是否与该用户之前的数据集或者公有数据集同名，
 	isExist, err := services.DatasetIsExist(req.Name, username)
 	if isExist {
-		return AppError(DATASET_IS_EXISTED, "The dataset name already exists")
+		return AppError(configs.DATASET_IS_EXISTED, "this dataset name is existed")
 	}
 
 	// 1. 当数据集为已存在的文件数据时，路径设定为用户指定的路径
@@ -176,13 +177,13 @@ func createDataset(c *gin.Context) error {
 
 		err = services.CheckPathExists(datasetStoragePath)
 		if err == nil {
-			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+			return AppError(configs.DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
 		}
 
 		logger.Info(fmt.Sprintf("createDataset - to rename(%s) to path(%s)", req.Path, datasetStoragePath))
 		err = os.Rename(req.Path, datasetStoragePath)
 		if err != nil {
-			return AppError(DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
+			return AppError(configs.DATASE_MOVE_FAIL, fmt.Sprintf("cannot move dataset to target path. err: %v", err))
 		}
 
 	} else {
@@ -190,13 +191,13 @@ func createDataset(c *gin.Context) error {
 		// 数据集必须存在
 		err = services.CheckPathExists(datasetStoragePath)
 		if err != nil {
-			return AppError(DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
+			return AppError(configs.DATASET_IS_EXISTED, "same dataset found! cannot move to target path")
 		}
 	}
 
 	err = services.CreateDataset(req.Name, req.Description, username, "0.0.1", datasetStoragePath, req.IsPrivate, req.IsTranslated)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := gin.H{
@@ -226,7 +227,7 @@ func updateDataset(c *gin.Context) error {
 	}
 	err = services.UpdateDataset(id.ID, req.Description)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -248,7 +249,7 @@ func deleteDataset(c *gin.Context) error {
 	}
 	err = services.DeleteDataset(id.ID)
 	if err != nil {
-		return AppError(DATASET_IS_STILL_USE_CODE, err.Error())
+		return AppError(configs.DATASET_IS_STILL_USE_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -276,7 +277,7 @@ func bindDataset(c *gin.Context) error {
 
 	err = services.BindDataset(id.ID, req.Platform, req.Id)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -303,7 +304,7 @@ func unbindDataset(c *gin.Context) error {
 	}
 	err = services.UnbindDataset(id.ID, req.Platform, req.Id)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

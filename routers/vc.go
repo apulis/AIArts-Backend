@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -37,12 +38,12 @@ func getVC(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_GET, &vcItem)
 	if err != nil {
-		return AppError(VC_ERROR, err.Error())
+		return AppError(configs.VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, vcItem)
@@ -68,12 +69,12 @@ func addVC(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_ADD, &vcItem)
 	if err != nil {
-		return AppError(VC_ERROR, err.Error())
+		return AppError(configs.VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)
@@ -97,12 +98,12 @@ func delVC(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_DEL, &vcItem)
 	if err != nil {
-		return AppError(VC_ERROR, err.Error())
+		return AppError(configs.VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)
@@ -128,12 +129,12 @@ func updateVC(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	err = services.OperateVC(userName, models.VC_OPTYPE_UPDATE, &vcItem)
 	if err != nil {
-		return AppError(VC_ERROR, err.Error())
+		return AppError(configs.VC_ERROR, err.Error())
 	}
 
 	return SuccessResp(c, nil)
@@ -158,12 +159,12 @@ func listVC(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	vcRsp, err = services.ListVC(userName, req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, *vcRsp)
@@ -188,12 +189,12 @@ func getVCStatistic(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	vcRsp, err = services.GetVCStatistic(userName, req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, vcRsp)

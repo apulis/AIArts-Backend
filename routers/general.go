@@ -77,7 +77,7 @@ func getResource(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	// 兼容老代码
@@ -87,7 +87,7 @@ func getResource(c *gin.Context) error {
 
 	vcInfo, err := services.GetResource(userName, req.VCName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	rsp := &GetResourceRsp{}
@@ -188,11 +188,11 @@ func getResource(c *gin.Context) error {
 func getResources(c *gin.Context) error {
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	Resources, err := services.GetResources(userName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	return SuccessResp(c, gin.H{"resources": Resources})
 }
@@ -208,7 +208,7 @@ func getJobSummary(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	var err error
@@ -221,7 +221,7 @@ func getJobSummary(c *gin.Context) error {
 
 	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, summary)
@@ -238,7 +238,7 @@ func getImageList(c *gin.Context) error {
 
 	userName := getUsername(c)
 	if len(userName) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	images := make([]configs.ImageItem, 0)

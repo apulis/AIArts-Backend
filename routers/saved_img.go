@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -69,11 +70,11 @@ func lsSavedImages(c *gin.Context) error {
 	var total int
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 	savedImages, total, err = services.ListSavedImages(req.PageNum, req.PageSize, req.OrderBy, req.Order, req.Name, username)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := GetSavedImagesResp{
@@ -101,7 +102,7 @@ func getSavedImage(c *gin.Context) error {
 	}
 	savedImage, err := services.GetSavedImage(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := GetSavedImageResp{SavedImage: savedImage}
 	return SuccessResp(c, data)
@@ -123,12 +124,12 @@ func createSavedImage(c *gin.Context) error {
 
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	t, err := services.CreateSavedImage(req.Name, req.Version, req.Description, req.JobId, username, req.IsPrivate)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{"duration" : t}
 	return SuccessResp(c, data)
@@ -154,7 +155,7 @@ func updateSavedImage(c *gin.Context) error {
 	}
 	err = services.UpdateSavedImage(id.ID, req.Description)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)
@@ -175,7 +176,7 @@ func deleteSavedImage(c *gin.Context) error {
 	}
 	err = services.DeleteSavedImage(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

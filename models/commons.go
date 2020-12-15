@@ -31,7 +31,13 @@ func init() {
 	createTableIfNotExists(SavedImage{})
 	createTableIfNotExists(PrivilegedSetting{})
 
+	createTableIfNotExists(ExpProject{})
+	createTableIfNotExists(Experiment{})
+
+	db.Model(&Experiment{}).AddForeignKey("project_id", "exp_projects(id)", "RESTRICT", "RESTRICT")
+
 	initVersionInfoTable()
+
 }
 
 //驼峰转下划线形式
@@ -174,6 +180,8 @@ type JobParams struct {
 	Desc        string `json:"desc"`
 
 	ScriptParams map[string]string `json:"scriptParams"`
+	JobGroup     string            `json:"jobGroup"`
+	Track        int               `json:"track"`
 }
 
 type Job struct {
@@ -187,6 +195,7 @@ type Job struct {
 	Priority        int        `json:"priority"`
 	UserName        string     `json:"userName"`
 	VcName          string     `json:"vcName"`
+	ErrMsg          string     `json:"errorMsg"`
 }
 
 type JobMeta struct {

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
@@ -59,7 +60,7 @@ func lsModelsets(c *gin.Context) error {
 	//获取当前用户创建的模型
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	modelsets, total, err = services.ListModelSets(username, req)
@@ -68,13 +69,13 @@ func lsModelsets(c *gin.Context) error {
 		for i := 0; i < len(modelsets); i++ {
 			training, err := services.GetTraining(username, modelsets[i].JobId)
 			if err != nil {
-				return AppError(FAILED_START_TRAINING, err.Error())
+				return AppError(configs.FAILED_START_TRAINING, err.Error())
 			}
 			modelsets[i].Status = training.Status
 		}
 	}
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := GetModelsetsResp{
@@ -106,12 +107,12 @@ func getModelset(c *gin.Context) error {
 
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	modelset, err := services.GetModelset(id.ID)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	//插入数据集面板
@@ -155,7 +156,7 @@ func createModelset(c *gin.Context) error {
 	if req.CodePath != "" {
 		err = services.CheckPathExists(req.CodePath)
 		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+			return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
 
@@ -163,13 +164,13 @@ func createModelset(c *gin.Context) error {
 	if req.ParamPath != "" && !strings.HasPrefix(req.Use, `Avisualis`) {
 		err = services.CheckPathExists(req.ParamPath)
 		if err != nil {
-			return AppError(FILEPATH_NOT_EXISTS_CODE, err.Error())
+			return AppError(configs.FILEPATH_NOT_EXISTS_CODE, err.Error())
 		}
 	}
 
 	username := getUsername(c)
 	if len(username) == 0 {
-		return AppError(NO_USRNAME, "no username")
+		return AppError(configs.NO_USRNAME, "no username")
 	}
 
 	if strings.HasPrefix(req.Use, `Avisualis`) && !req.IsAdvance {
@@ -181,7 +182,7 @@ func createModelset(c *gin.Context) error {
 
 	err = services.CreateModelset(username, "0.0.1", req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := gin.H{}
@@ -212,7 +213,7 @@ func updateModelset(c *gin.Context) error {
 	//更新Avisualis任务
 	if strings.HasPrefix(req.Use, `Avisualis`) {
 		if req.JobTrainingType != models.TrainingTypeDist && req.JobTrainingType != models.TrainingTypeRegular {
-			return AppError(INVALID_TRAINING_TYPE, "任务类型非法")
+			return AppError(configs.INVALID_TRAINING_TYPE, "任务类型非法")
 		}
 		if req.JobId != "" {
 			//重启新的training
@@ -227,7 +228,7 @@ func updateModelset(c *gin.Context) error {
 
 	err = services.UpdateModelset(id.ID, "0.0.1", req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	data := gin.H{}
@@ -255,7 +256,7 @@ func deleteModelset(c *gin.Context) error {
 		_ = services.DeleteTraining(username, model.JobId)
 	}
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 	data := gin.H{}
 	return SuccessResp(c, data)

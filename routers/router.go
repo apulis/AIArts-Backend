@@ -60,5 +60,7 @@ func NewRouter() *gin.Engine {
 	AddGroupJobManager(r)
 	AddGrouSettings(r)
 
+	AddGroupExperimentMgr(r)
+
 	return r
 }

@@ -1,4 +1,4 @@
-package routers
+package configs
 
 const (
 	SUCCESS_CODE = 0
@@ -8,8 +8,10 @@ const (
 	SERVER_ERROR_CODE    = 10003
 
 	// Request error codes
-	PARAMETER_ERROR_CODE = 20001
-	AUTH_ERROR_CODE      = 20002
+	PARAMETER_ERROR_CODE   = 20001
+	AUTH_ERROR_CODE        = 20002
+	NAME_ALREADY_EXIST_CODE= 20003
+	NOT_IMPLEMENT_CODE     = 20004
 
 	// APP error codes
 	APP_ERROR_CODE              = 30000
@@ -66,3 +68,22 @@ const (
 
 	REMOTE_SERVE_ERROR_CODE = 40000
 )
+
+type APIException struct {
+	StatusCode int    `json:"-"`
+	Code       int    `json:"code"`
+	Msg        string `json:"msg"`
+}
+
+func (e *APIException) Error() string {
+	return e.Msg
+}
+
+func NewAPIException(statusCode, code int, msg string) *APIException {
+	return &APIException{
+		StatusCode: statusCode,
+		Code:       code,
+		Msg:        msg,
+	}
+}
+
