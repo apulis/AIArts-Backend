@@ -29,6 +29,7 @@ func init() {
 	createTableIfNotExists(Templates{})
 	createTableIfNotExists(VisualJob{})
 	createTableIfNotExists(SavedImage{})
+	createTableIfNotExists(PrivilegedSetting{})
 
 	initVersionInfoTable()
 }

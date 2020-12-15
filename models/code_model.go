@@ -30,6 +30,8 @@ type CreateCodeEnv struct {
 	NumPsWorker     int    `json:"numPsWorker"`
 
 	FrameworkType string `json:"frameworkType"`
+	IsPrivileged  bool   `json:"isPrivileged"`
+	BypassCode    string `json:"BypassCode"`
 }
 
 type EndpointsRsp struct {

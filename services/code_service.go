@@ -110,7 +110,11 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 		params["hostNetwork"] = false
 	}
 
-	params["isPrivileged"] = false
+	params["isPrivileged"] = codeEnv.IsPrivileged
+	if codeEnv.IsPrivileged && codeEnv.BypassCode != "123456" {
+		return "", fmt.Errorf("invalid paramater")
+	}
+
 	params["interactivePorts"] = false
 
 	params["numpsworker"] = codeEnv.NumPsWorker
