@@ -1,26 +1,25 @@
 package services
 
 import (
-	"github.com/apulis/AIArtsBackend/database"
+	"github.com/apulis/AIArtsBackend/models"
 )
 
-var db = database.Db
 var id = "00000000-0000-0000-0000-000000000000"
 
-func UpsertPrivilegedSetting(settings models.PrivilegedSetting) error {
-	settings["id"] = id
+func UpsertPrivilegedSetting(setting models.PrivilegedSetting) error {
+	setting.Id = id
 
-	var settingsInDb = models.PrivilegedSetting
-	result := db.First(&settingsInDb, id)
+	var settingInDb models.PrivilegedSetting
+	result := db.First(&settingInDb, id)
 	if result.RowsAffected > 0 {
-		settingsInDb.IsEnable = settings.IsEnable
-		settingsInDb.BypassCode = settings.BypassCode
-		result = db.Save(&settingsInDb)
+		settingInDb.IsEnable = setting.IsEnable
+		settingInDb.BypassCode = setting.BypassCode
+		result = db.Save(&settingInDb)
 		if result.Error != nil {
 			return result.Error
 		}
 	} else {
-		result = db.Create(&settings)
+		result = db.Create(&setting)
 		if result.Error != nil {
 			return result.Error
 		}
@@ -30,12 +29,11 @@ func UpsertPrivilegedSetting(settings models.PrivilegedSetting) error {
 }
 
 func GetPrivilegedSetting() (models.PrivilegedSetting, error) {
-	var settingsInDb = models.PrivilegedSetting
-	result := db.First(&settingsInDb, id)
+	var settingInDb models.PrivilegedSetting
+	result := db.First(&settingInDb, id)
 	if result.Error != nil {
-		return nil, result.Error
-	}
-	else {
-		return settingsInDb, nil
+		return settingInDb, result.Error
+	} else {
+		return settingInDb, nil
 	}
 }

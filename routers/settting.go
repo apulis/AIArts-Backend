@@ -1,11 +1,13 @@
 package routers
 
 import (
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
 	"github.com/gin-gonic/gin"
 )
 
-func AddGrouSettings(r *gin.Engine) {
+func AddGrouSetting(r *gin.Engine) {
 
 	group := r.Group("/ai_arts/api/settings")
 	group.Use(Auth())
@@ -21,17 +23,17 @@ func AddGrouSettings(r *gin.Engine) {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/settings/privileged [post]
-func upsertPrivilegedSetting(c *gin.Context) {
-	var req = models.PrivilegedSetting
+func upsertPrivilegedSetting(c *gin.Context) error {
+	var req models.PrivilegedSetting
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	var err = services.UpsertPrivilegedSetting(req)
+	err = services.UpsertPrivilegedSetting(req)
 	if err != nil {
-		return AppError(APP_ERROR_CODE, err.Error())
+		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
 
 	return SuccessResp(c, gin.H{})
@@ -44,11 +46,11 @@ func upsertPrivilegedSetting(c *gin.Context) {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/settings/privileged [get]
-func getPrivilegedSetting(c *gin.Context) {
-	settings, err = services.GetPrivilegedSetting()
+func getPrivilegedSetting(c *gin.Context) error {
+	setting, err := services.GetPrivilegedSetting()
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	return SuccessResp(c, settings)
+	return SuccessResp(c, setting)
 }
