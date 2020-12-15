@@ -10,8 +10,8 @@ func AddGrouSettings(r *gin.Engine) {
 	group := r.Group("/ai_arts/api/settings")
 	group.Use(Auth())
 
-	group.POST("/privileged", wrapper(upsertPrivilegedSettings))
-	group.GET("/privileged", wrapper(getPrivilegedSettings))
+	group.POST("/privileged", wrapper(upsertPrivilegedSetting))
+	group.GET("/privileged", wrapper(getPrivilegedSetting))
 }
 
 // @Summary update or insert privileged job settings
@@ -21,15 +21,15 @@ func AddGrouSettings(r *gin.Engine) {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/settings/privileged [post]
-func upsertPrivilegedSettings(c *gin.Context) {
-	var req = models.PrivilegedSettings
+func upsertPrivilegedSetting(c *gin.Context) {
+	var req = models.PrivilegedSetting
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		return ParameterError(err.Error())
 	}
 
-	var err = services.UpsertPrivilegedSettings(req)
+	var err = services.UpsertPrivilegedSetting(req)
 	if err != nil {
 		return AppError(APP_ERROR_CODE, err.Error())
 	}
@@ -44,8 +44,8 @@ func upsertPrivilegedSettings(c *gin.Context) {
 // @Failure 400 {object} APIException "error"
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/settings/privileged [get]
-func getPrivilegedSettings(c *gin.Context) {
-	settings, err = services.GetPrivilegedSettings()
+func getPrivilegedSetting(c *gin.Context) {
+	settings, err = services.GetPrivilegedSetting()
 	if err != nil {
 		return ParameterError(err.Error())
 	}
