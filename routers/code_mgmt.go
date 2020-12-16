@@ -130,13 +130,13 @@ func createCodeEnv(c *gin.Context) error {
 
 	if req.CreateCodeEnv.IsPrivileged {
 		token := c.GetHeader("Authorization")
-		canSubmit, err := services.CanSubmitPrivilegedJob(token, req.CreateCodeEnv.BypassCode)
+		result, err := services.CanSubmitPrivilegedJob(token, req.CreateCodeEnv.BypassCode)
 		if err != nil {
 			return AppError(configs.APP_ERROR_CODE, err.Error())
 		}
 
-		if !canSubmit {
-			return AppError(configs.OPERATION_FORBIDDEN, "operation forbidden")
+		if result != configs.SUCCESS_CODE {
+			return AppError(result, "operation forbidden")
 		}
 	}
 

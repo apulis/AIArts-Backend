@@ -2,13 +2,14 @@ package services
 
 import (
 	"fmt"
-	"github.com/apulis/AIArtsBackend/configs"
-	"github.com/apulis/AIArtsBackend/models"
-	"github.com/gin-gonic/gin"
 	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/apulis/AIArtsBackend/configs"
+	"github.com/apulis/AIArtsBackend/models"
+	"github.com/gin-gonic/gin"
 )
 
 type Evaluation struct {
@@ -28,6 +29,9 @@ type Evaluation struct {
 	CreateTime  string            `json:"createTime"`
 	Desc        string            `json:"desc"`
 	VCName      string            `json:"vcName"`
+
+	IsPrivileged bool   `json:"isPrivileged"`
+	BypassCode   string `json:"BypassCode"`
 }
 
 func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (string, error) {
@@ -113,7 +117,7 @@ func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (s
 	return id.Id, nil
 }
 
-func GetEvaluations(userName string, req models.GetEvaluationsReq)  ([]*Evaluation, int, int, error) {
+func GetEvaluations(userName string, req models.GetEvaluationsReq) ([]*Evaluation, int, int, error) {
 
 	url := fmt.Sprintf(`%s/ListJobsV3?userName=%s&jobOwner=%s&vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, userName, userName, req.VCName,
@@ -233,7 +237,6 @@ func GetEvaluationLog(userName, id string, pageNum int) (*models.JobLog, error) 
 
 	return jobLog, nil
 }
-
 
 func GetRegexpLog(log string) (map[string]string, map[string]string) {
 	acc_reg, _ := regexp.Compile("Accuracy\\[(.*?)\\]")

@@ -27,6 +27,8 @@ type Training struct {
 	Command         string            `json:"command"`
 
 	FrameworkType string `json:"frameworkType"`
+	IsPrivileged  bool   `json:"isPrivileged"`
+	BypassCode    string `json:"BypassCode"`
 
 	ExperimentID uint64 `json:"experimentId,omitempty"`
 	Track        int    `json:"track,omitempty"`

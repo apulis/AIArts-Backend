@@ -145,6 +145,18 @@ func createTraining(c *gin.Context) error {
 		return AppError(configs.DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
 	}
 
+	if req.IsPrivileged {
+		token := c.GetHeader("Authorization")
+		result, err := services.CanSubmitPrivilegedJob(token, req.BypassCode)
+		if err != nil {
+			return AppError(configs.APP_ERROR_CODE, err.Error())
+		}
+
+		if result != configs.SUCCESS_CODE {
+			return AppError(result, "operation forbidden")
+		}
+	}
+
 	req.Engine = imageName
 	id, err = services.CreateTraining(c, userName, req)
 	if err != nil {

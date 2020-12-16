@@ -8,31 +8,37 @@ type PermissionListResult struct {
 	PermissionList []string `json:"permissionList"`
 }
 
-func CanSubmitPrivilegedJob(token string, bypassCode string) (bool, error) {
-	hasPermission, err := HasPermission(token, "SUBMIT_PRIVILEGE_JOB")
-	if err != nil {
-		return false, err
-	}
-
-	if !hasPermission {
-		return false, nil
-	}
-
+func CanSubmitPrivilegedJob(token string, bypassCode string) (int, error) {
 	setting, err := GetPrivilegedSetting()
 	if err != nil {
-		return false, err
+		return configs.OPERATION_FORBIDDEN, err
 	}
 
 	if !setting.IsEnable || setting.BypassCode == "" {
-		return false, nil
+		return configs.PRIVILEGE_JOB_NOT_ENABLE, nil
 	}
 
-	canSubmit := (bypassCode == setting.BypassCode)
+	hasPermission, err := HasPermission(token, "SUBMIT_PRIVILEGE_JOB")
+	if err != nil {
+		return configs.OPERATION_FORBIDDEN, err
+	}
 
-	return canSubmit, nil
+	if !hasPermission {
+		return configs.OPERATION_FORBIDDEN, nil
+	}
+
+	if bypassCode != setting.BypassCode {
+		return configs.PRIVILEGE_JOB_CODE_INVALID, nil
+	}
+
+	return configs.SUCCESS_CODE, nil
 }
 
-func HasPermission(token string, permission string) (bool, error) {
+func CanManagePrivilegeJob(token string) (bool, error) {
+	return hasPermission(token, "MANAGE_PRIVILEGE_JOB")
+}
+
+func hasPermission(token string, permission string) (bool, error) {
 	permissionList, err := getCurrentPermissionList(token)
 	if err != nil {
 		return false, err

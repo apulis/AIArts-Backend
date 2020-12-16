@@ -104,6 +104,18 @@ func createEvaluation(c *gin.Context) error {
 		req.VCName = models.DefaultVcName
 	}
 
+	if req.IsPrivileged {
+		token := c.GetHeader("Authorization")
+		result, err := services.CanSubmitPrivilegedJob(token, req.BypassCode)
+		if err != nil {
+			return AppError(configs.APP_ERROR_CODE, err.Error())
+		}
+
+		if result != configs.SUCCESS_CODE {
+			return AppError(result, "operation forbidden")
+		}
+	}
+
 	jobId, err := services.CreateEvaluation(c, username, req)
 	if err != nil {
 		return AppError(configs.CREATE_EVALUATION_FAILED_CODE, err.Error())
