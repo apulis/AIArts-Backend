@@ -32,7 +32,7 @@ func upsertPrivilegedSetting(c *gin.Context) error {
 	}
 
 	token := c.GetHeader("Authorization")
-	hasPermission, err := CanManagePrivilegeJob(token)
+	hasPermission, err := services.CanManagePrivilegeJob(token)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}

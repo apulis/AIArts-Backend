@@ -18,7 +18,7 @@ func CanSubmitPrivilegedJob(token string, bypassCode string) (int, error) {
 		return configs.PRIVILEGE_JOB_NOT_ENABLE, nil
 	}
 
-	canSubmit, err := CanSubmitPrivilegeJob(token)
+	canSubmit, err := canSubmitPrivilegeJob(token)
 	if err != nil {
 		return configs.OPERATION_FORBIDDEN, err
 	}
@@ -34,7 +34,7 @@ func CanSubmitPrivilegedJob(token string, bypassCode string) (int, error) {
 	return configs.SUCCESS_CODE, nil
 }
 
-func CanSubmitPrivilegeJob(token string) (bool, error) {
+func canSubmitPrivilegeJob(token string) (bool, error) {
 	return hasPermission(token, "SUBMIT_PRIVILEGE_JOB")
 }
 
