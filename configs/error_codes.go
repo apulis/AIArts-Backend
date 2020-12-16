@@ -8,10 +8,10 @@ const (
 	SERVER_ERROR_CODE    = 10003
 
 	// Request error codes
-	PARAMETER_ERROR_CODE   = 20001
-	AUTH_ERROR_CODE        = 20002
-	NAME_ALREADY_EXIST_CODE= 20003
-	NOT_IMPLEMENT_CODE     = 20004
+	PARAMETER_ERROR_CODE    = 20001
+	AUTH_ERROR_CODE         = 20002
+	NAME_ALREADY_EXIST_CODE = 20003
+	NOT_IMPLEMENT_CODE      = 20004
 
 	// APP error codes
 	APP_ERROR_CODE              = 30000
@@ -66,6 +66,9 @@ const (
 	// vc
 	VC_ERROR = 30701
 
+	// permission
+	OPERATION_FORBIDDEN = 30801
+
 	REMOTE_SERVE_ERROR_CODE = 40000
 )
 
@@ -86,4 +89,3 @@ func NewAPIException(statusCode, code int, msg string) *APIException {
 		Msg:        msg,
 	}
 }
-

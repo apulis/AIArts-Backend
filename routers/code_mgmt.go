@@ -128,6 +128,18 @@ func createCodeEnv(c *gin.Context) error {
 		return AppError(configs.DOCKER_IMAGE_NOT_FOUNT, "docker image not exist")
 	}
 
+	if req.CreateCodeEnv.IsPrivileged {
+		token := c.GetHeader("Authorization")
+		canSubmit, err := services.CanSubmitPrivilegedJob(token, req.CreateCodeEnv.BypassCode)
+		if err != nil {
+			return AppError(configs.APP_ERROR_CODE, err.Error())
+		}
+
+		if !canSubmit {
+			return AppError(configs.OPERATION_FORBIDDEN, "operation forbidden")
+		}
+	}
+
 	req.CreateCodeEnv.Engine = imageName
 	id, err = services.CreateCodeEnv(c, userName, req.CreateCodeEnv)
 	if err != nil {

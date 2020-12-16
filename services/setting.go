@@ -10,7 +10,7 @@ func UpsertPrivilegedSetting(setting models.PrivilegedSetting) error {
 	setting.Id = id
 
 	var settingInDb models.PrivilegedSetting
-	result := db.First(&settingInDb, id)
+	result := db.First(&settingInDb, "id = ?", id)
 	if result.RowsAffected > 0 {
 		settingInDb.IsEnable = setting.IsEnable
 		settingInDb.BypassCode = setting.BypassCode
@@ -30,7 +30,7 @@ func UpsertPrivilegedSetting(setting models.PrivilegedSetting) error {
 
 func GetPrivilegedSetting() (models.PrivilegedSetting, error) {
 	var settingInDb models.PrivilegedSetting
-	result := db.First(&settingInDb, id)
+	result := db.First(&settingInDb, "id = ?", id)
 	if result.Error != nil {
 		return settingInDb, result.Error
 	} else {

@@ -48,17 +48,17 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 	codes := make([]*models.CodeEnvItem, 0)
 	for _, v := range jobList.AllJobs {
 		codes = append(codes, &models.CodeEnvItem{
-			Id:         v.JobId,
-			Name:       v.JobName,
-			Engine:     v.JobParams.Image,
-			CodePath:   v.JobParams.CodePath,
-			Cmd:        v.JobParams.Cmd,
-			Status:     v.JobStatus,
-			CreateTime: v.JobTime,
-			JupyterUrl: "",
-			Desc:       v.JobParams.Desc,
+			Id:              v.JobId,
+			Name:            v.JobName,
+			Engine:          v.JobParams.Image,
+			CodePath:        v.JobParams.CodePath,
+			Cmd:             v.JobParams.Cmd,
+			Status:          v.JobStatus,
+			CreateTime:      v.JobTime,
+			JupyterUrl:      "",
+			Desc:            v.JobParams.Desc,
 			JobStatusDetail: v.JobStatusDetail,
-			JobErrMsg: v.ErrMsg,
+			JobErrMsg:       v.ErrMsg,
 		})
 	}
 
@@ -113,10 +113,6 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	}
 
 	params["isPrivileged"] = codeEnv.IsPrivileged
-	if codeEnv.IsPrivileged && codeEnv.BypassCode != "123456" {
-		return "", fmt.Errorf("invalid paramater")
-	}
-
 	params["interactivePorts"] = false
 
 	params["numpsworker"] = codeEnv.NumPsWorker
