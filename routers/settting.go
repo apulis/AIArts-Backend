@@ -31,6 +31,16 @@ func upsertPrivilegedSetting(c *gin.Context) error {
 		return ParameterError(err.Error())
 	}
 
+	token := c.GetHeader("Authorization")
+	hasPermission, err := HasPermission(token, "MANAGE_PRIVILEGE_JOB")
+	if err != nil {
+		return AppError(configs.APP_ERROR_CODE, err.Error())
+	}
+
+	if !hasPermission {
+		return AppError(configs.OPERATION_FORBIDDEN, "operation forbidden")
+	}
+
 	err = services.UpsertPrivilegedSetting(req)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
