@@ -14,6 +14,7 @@ func AddGrouSetting(r *gin.Engine) {
 
 	group.POST("/privileged", wrapper(upsertPrivilegedSetting))
 	group.GET("/privileged", wrapper(getPrivilegedSetting))
+	group.GET("/privileged/enable", wrapper(isPrivilegedEnable))
 }
 
 // @Summary update or insert privileged job settings
@@ -57,10 +58,38 @@ func upsertPrivilegedSetting(c *gin.Context) error {
 // @Failure 404 {object} APIException "not found"
 // @Router /ai_arts/api/settings/privileged [get]
 func getPrivilegedSetting(c *gin.Context) error {
+	token := c.GetHeader("Authorization")
+	hasPermission, err := services.CanManagePrivilegeJob(token)
+	if err != nil {
+		return AppError(configs.APP_ERROR_CODE, err.Error())
+	}
+
+	if !hasPermission {
+		return AppError(configs.OPERATION_FORBIDDEN, "operation forbidden")
+	}
+
 	setting, err := services.GetPrivilegedSetting()
 	if err != nil {
 		return ParameterError(err.Error())
 	}
+
+	return SuccessResp(c, setting)
+}
+
+// @Summary get whether privileged job is enabled
+// @Produce json
+// @Param privileged settings
+// @Success 200 {object} APISuccessResp "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/settings/privileged/enable [get]
+func isPrivilegedEnable(c *gin.Context) error {
+	setting, err := services.GetPrivilegedSetting()
+	if err != nil {
+		return ParameterError(err.Error())
+	}
+
+	setting.BypassCode = ""
 
 	return SuccessResp(c, setting)
 }
