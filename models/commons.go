@@ -196,6 +196,7 @@ type Job struct {
 	UserName  string    `json:"userName"`
 	VcName    string    `json:"vcName"`
 	ErrMsg    string    `json:"errorMsg"`
+	Duration  int    `json:"duration"`
 }
 
 type JobMeta struct {

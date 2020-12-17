@@ -283,24 +283,29 @@ func createBackgroundJob(userName string, vcName string, jobName string, logdir 
 }
 
 func renewStatusInfo(userName string) error {
+
 	visualJobList, err := models.GetAllVisualJobByArguments(userName, "", 1, -1, "", "", "", "")
 	if err != nil {
 		fmt.Printf("get visual job  err[%+v]\n", err)
 		return err
 	}
+
 	for _, job := range visualJobList {
 		backgroundJobId := job.RelateJobId
 		if job.Status == "paused" {
 			continue
 		}
+
 		url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, backgroundJobId)
 		params := make(map[string]interface{})
 		backgroundJob := &models.Job{}
+
 		err := DoRequest(url, "GET", nil, params, backgroundJob)
 		if err != nil {
 			fmt.Printf("get training err[%+v]\n", err)
 			return err
 		}
+
 		job.Status = backgroundJob.JobStatus
 		models.UpdateVisualJob(&job)
 		fmt.Printf(backgroundJobId)

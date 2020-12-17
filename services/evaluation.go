@@ -28,6 +28,7 @@ type Evaluation struct {
 	CreateTime  string            `json:"createTime"`
 	Desc        string            `json:"desc"`
 	VCName      string            `json:"vcName"`
+	Duration    int               `json:"duration"`
 }
 
 func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (string, error) {
@@ -146,6 +147,7 @@ func GetEvaluations(userName string, req models.GetEvaluationsReq)  ([]*Evaluati
 			CreateTime:  v.JobTime,
 			VCName:      v.VcName,
 			DatasetName: v.JobParams.Desc,
+			Duration:    v.Duration,
 		})
 	}
 
