@@ -136,20 +136,21 @@ func GetEvaluations(userName string, req models.GetEvaluationsReq) ([]*Evaluatio
 	evaluations := make([]*Evaluation, 0)
 	for _, v := range jobList.AllJobs {
 		evaluations = append(evaluations, &Evaluation{
-			Id:          v.JobId,
-			Name:        v.JobName,
-			Engine:      v.JobParams.Image,
-			DeviceType:  v.JobParams.GpuType,
-			CodePath:    v.JobParams.CodePath,
-			DeviceNum:   v.JobParams.Resourcegpu,
-			StartupFile: v.JobParams.StartupFile,
-			OutputPath:  v.JobParams.OutputPath,
-			DatasetPath: v.JobParams.DatasetPath,
-			Params:      nil,
-			Status:      v.JobStatus,
-			CreateTime:  v.JobTime,
-			VCName:      v.VcName,
-			DatasetName: v.JobParams.Desc,
+			Id:           v.JobId,
+			Name:         v.JobName,
+			Engine:       v.JobParams.Image,
+			DeviceType:   v.JobParams.GpuType,
+			CodePath:     v.JobParams.CodePath,
+			DeviceNum:    v.JobParams.Resourcegpu,
+			StartupFile:  v.JobParams.StartupFile,
+			OutputPath:   v.JobParams.OutputPath,
+			DatasetPath:  v.JobParams.DatasetPath,
+			Params:       nil,
+			Status:       v.JobStatus,
+			CreateTime:   v.JobTime,
+			VCName:       v.VcName,
+			DatasetName:  v.JobParams.Desc,
+			IsPrivileged: v.JobParams.IsPrivileged,
 		})
 	}
 
