@@ -32,6 +32,7 @@ type ConversionJob struct {
 	OutputPath       string    `json:"outputPath"`
 	ConversionStatus string    `json:"modelconversionStatus"`
 	ConversionType   string    `json:"modelconversionType"`
+	Duration         int       `json:"duration"`
 }
 
 type ConversionJobId struct {

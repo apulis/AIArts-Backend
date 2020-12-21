@@ -60,6 +60,7 @@ func GetAllCodeEnv(userName string, req models.GetAllJobsReq) ([]*models.CodeEnv
 			JobStatusDetail: v.JobStatusDetail,
 			JobErrMsg:       v.ErrMsg,
 			IsPrivileged:    v.JobParams.IsPrivileged,
+			Duration:        v.Duration,
 		})
 	}
 

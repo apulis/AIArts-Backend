@@ -32,6 +32,7 @@ type Evaluation struct {
 
 	IsPrivileged bool   `json:"isPrivileged"`
 	BypassCode   string `json:"BypassCode"`
+	Duration     int    `json:"duration"`
 }
 
 func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (string, error) {
@@ -151,6 +152,7 @@ func GetEvaluations(userName string, req models.GetEvaluationsReq) ([]*Evaluatio
 			VCName:       v.VcName,
 			DatasetName:  v.JobParams.Desc,
 			IsPrivileged: v.JobParams.IsPrivileged,
+			Duration:     v.Duration,
 		})
 	}
 

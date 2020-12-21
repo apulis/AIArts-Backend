@@ -17,6 +17,7 @@ type CodeEnvItem struct {
 	JobStatusDetail json.Token `json:"jobStatusDetail"`
 	JobErrMsg       string     `json:"errorMsg"`
 	IsPrivileged    bool       `json:"isPrivileged"`
+	Duration        int        `json:"duration"`
 }
 
 type CreateCodeEnv struct {

@@ -48,6 +48,7 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 			ExperimentID: uint64(experiment_id),
 			Track:        v.JobParams.Track,
 			IsPrivileged: v.JobParams.IsPrivileged,
+			Duration:     v.Duration,
 		})
 	}
 
