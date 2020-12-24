@@ -29,6 +29,7 @@ type Evaluation struct {
 	Desc        string            `json:"desc"`
 	VCName      string            `json:"vcName"`
 	Duration    int               `json:"duration"`
+	FrameworkType  string       `json:"frameworkType"`
 }
 
 func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (string, error) {
@@ -93,6 +94,7 @@ func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (s
 	params["interactivePorts"] = false
 	params["vcName"] = evaluation.VCName
 	params["team"] = evaluation.VCName
+	params["frameworkType"] = strings.TrimSpace(evaluation.FrameworkType)
 
 	id := &models.CreateJobReq{}
 	header := make(map[string]string)
