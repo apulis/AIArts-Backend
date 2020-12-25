@@ -1,7 +1,10 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/apulis/AIArtsBackend/models"
+	"github.com/jinzhu/gorm"
 )
 
 var id = "00000000-0000-0000-0000-000000000000"
@@ -11,6 +14,10 @@ func UpsertPrivilegedSetting(setting models.PrivilegedSetting) error {
 
 	var settingInDb models.PrivilegedSetting
 	result := db.First(&settingInDb, "id = ?", id)
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return result.Error
+	}
+
 	if result.RowsAffected > 0 {
 		settingInDb.IsEnable = setting.IsEnable
 		settingInDb.BypassCode = setting.BypassCode
@@ -31,7 +38,7 @@ func UpsertPrivilegedSetting(setting models.PrivilegedSetting) error {
 func GetPrivilegedSetting() (models.PrivilegedSetting, error) {
 	var settingInDb models.PrivilegedSetting
 	result := db.First(&settingInDb, "id = ?", id)
-	if result.Error != nil {
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return settingInDb, result.Error
 	} else {
 		return settingInDb, nil
