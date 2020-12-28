@@ -93,7 +93,7 @@ func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (s
 	params["enablejobpath"] = true
 	params["jobPath"] = "./"
 	params["hostNetwork"] = false
-	params["isPrivileged"] = false
+	params["isPrivileged"] = evaluation.IsPrivileged
 	params["interactivePorts"] = false
 	params["vcName"] = evaluation.VCName
 	params["team"] = evaluation.VCName

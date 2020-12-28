@@ -136,7 +136,7 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["jobPath"] = "./"
 
 	params["hostNetwork"] = false
-	params["isPrivileged"] = false
+	params["isPrivileged"] = training.IsPrivileged
 	params["interactivePorts"] = false
 
 	params["numpsworker"] = training.NumPs
