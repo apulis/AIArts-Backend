@@ -21,11 +21,12 @@ RUN apk --no-cache add git pkgconfig build-base && mkdir -p /go/src/apulis/AIArt
 WORKDIR /go/src/apulis/AIArtsBackend
 ADD ./go.mod .
 ADD ./go.sum .
-RUN go mod download && go get -u github.com/swaggo/swag/cmd/swag
+# RUN go mod download && go get -u github.com/swaggo/swag/cmd/swag
+RUN go mod download
 ADD . .
 
-RUN swag init --parseDependency --parseInternal && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
-
+# RUN swag init --parseDependency --parseInternal && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
+RUN  GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
 FROM alpine:3.11
 RUN apk --no-cache add ca-certificates libdrm
 WORKDIR /root/
