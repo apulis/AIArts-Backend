@@ -9,7 +9,7 @@ buildPlugin ( {
             'imageName': 'apulistech/aiarts_backend',
             'directory': '.',
             'dockerfilePath': 'deployment/Dockerfile',
-            'arch': ['amd64']
+            'arch': ['amd64','arm64']
         ]
     ]
 })
