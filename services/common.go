@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/database"
 	"github.com/apulis/AIArtsBackend/loggers"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/levigross/grequests"
-	"strconv"
-	"strings"
 )
 
 var db = database.Db
@@ -91,4 +92,18 @@ func GetDltsJobV2(userName, jobId string) (*models.Job, error) {
 	}
 
 	return job, nil
+}
+
+func GetJobRawLog(userName string, jobId string) (*models.JobRawLog, error) {
+	url := fmt.Sprintf("%s/GetJobRawLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+
+	rawLog := &models.JobRawLog{}
+
+	err := DoRequest(url, "GET", nil, nil, rawLog)
+	if err != nil {
+		fmt.Printf("get raw log err[%+v]\n", err)
+		return nil, err
+	}
+
+	return rawLog, nil
 }

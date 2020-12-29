@@ -3,6 +3,7 @@ package routers
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"github.com/apulis/AIArtsBackend/services"
@@ -18,6 +19,7 @@ func AddGroupGeneral(r *gin.Engine) {
 	group.GET("/images", wrapper(getImageList))
 	group.GET("/job/summary", wrapper(getJobSummary))
 	group.DELETE("/DeleteJob", wrapper(DeleteJob))
+	group.GET("/jobs/:id/raw_log", wrapper(getJobRawLog))
 }
 
 type GetResourceReq struct {
@@ -214,7 +216,6 @@ func getJobSummary(c *gin.Context) error {
 	var err error
 	var req GetJobSummaryReq
 
-
 	if err = c.Bind(&req); err != nil {
 		return ParameterError(err.Error())
 	}
@@ -252,4 +253,31 @@ func getImageList(c *gin.Context) error {
 	}
 
 	return SuccessResp(c, images)
+}
+
+// @Summary get job raw log
+// @Produce  json
+// @Param jobId uri string "job id"
+// @Success 200 {object} APISuccessRespGetResource "success"
+// @Failure 400 {object} APIException "error"
+// @Failure 404 {object} APIException "not found"
+// @Router /ai_arts/api/common/jobs/:id/raw_log [get]
+func getJobRawLog(c *gin.Context) error {
+
+	userName := getUsername(c)
+	if len(userName) == 0 {
+		return AppError(configs.NO_USRNAME, "no username")
+	}
+
+	id := c.Param("id")
+	if len(id) == 0 {
+		return AppError(configs.PARAMETER_ERROR_CODE, "job id invalid")
+	}
+
+	jobRawLog, err := services.GetJobRawLog(userName, id)
+	if err != nil {
+		return AppError(configs.APP_ERROR_CODE, err.Error())
+	}
+
+	return SuccessResp(c, jobRawLog)
 }
