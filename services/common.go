@@ -95,7 +95,7 @@ func GetDltsJobV2(userName, jobId string) (*models.Job, error) {
 }
 
 func GetJobRawLog(userName string, jobId string) (*models.JobRawLog, error) {
-	url := fmt.Sprintf("%s/GetJobRawLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, id)
+	url := fmt.Sprintf("%s/GetJobRawLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, jobId)
 
 	rawLog := &models.JobRawLog{}
 
