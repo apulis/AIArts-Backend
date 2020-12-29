@@ -248,8 +248,7 @@ func createBackgroundJob(userName string, vcName string, jobName string, logdir 
 	params["enableworkpath"] = true
 	params["enabledatapath"] = true
 	params["enablejobpath"] = true
-	params["jobPath"] = "job"
-
+	params["jobPath"] = "./"
 	params["hostNetwork"] = false
 
 	params["isPrivileged"] = false
