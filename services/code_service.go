@@ -106,7 +106,7 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	params["enableworkpath"] = true
 	params["enabledatapath"] = true
 	params["enablejobpath"] = true
-	params["jobPath"] = "job"
+	params["jobPath"] = "./"
 
 	if codeEnv.JobTrainingType == "PSDistJob" {
 		params["hostNetwork"] = true
