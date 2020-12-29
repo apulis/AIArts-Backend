@@ -7,8 +7,9 @@ import (
 )
 
 type ImageItem struct {
-	Image string `json:"image"`
-	Desc  string `json:"desc"`
+	Image    string `json:"image"`
+	Desc     string `json:"desc"`
+	Category string `json:"category"`
 }
 
 type ProjectConfig struct {
@@ -96,5 +97,5 @@ func init() {
 	if Config.File.CleanEverySeconds <= 0 {
 		Config.File.CleanEverySeconds = 600
 	}
-	Config.EnableTrack=true
+	Config.EnableTrack = true
 }

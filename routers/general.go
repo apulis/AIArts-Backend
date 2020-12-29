@@ -246,8 +246,9 @@ func getImageList(c *gin.Context) error {
 	for _, v := range configs.Config.Image {
 		for _, item := range v {
 			images = append(images, configs.ImageItem{
-				Image: item.Image,
-				Desc:  item.Desc,
+				Image:    item.Image,
+				Desc:     item.Desc,
+				Category: item.Category,
 			})
 		}
 	}
