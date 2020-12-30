@@ -107,9 +107,9 @@ func ListModelSets(username string, offset, limit int, orderBy,
 	total := 0
 
 	//whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0 and vcName='%s' ", username, vcName)
-	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance = 0  ", username)
+	whereQueryStr := fmt.Sprintf("creator='%s' and is_advance is false ", username)
 	if isAdvance {
-		whereQueryStr = fmt.Sprintf(" is_advance = 1 ")
+		whereQueryStr = fmt.Sprintf(" is_advance is true ")
 	}
 
 	if name != "" {
@@ -121,9 +121,9 @@ func ListModelSets(username string, offset, limit int, orderBy,
 	}
 
 	if strings.HasPrefix(use,`Avisualis`) {
-		whereQueryStr += "and `use` like '" + use + "%' "
+		whereQueryStr += "and 'use' like '" + use + "%' "
 	} else {
-		whereQueryStr += "and `use` not like 'Avisualis%' "
+		whereQueryStr += "and 'use' not like 'Avisualis%' "
 	}
 
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)

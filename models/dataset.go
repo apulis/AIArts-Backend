@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+
 const (
 	DATASET_UPLOAD_FROM_WEB 		int = 1
 	DATASET_UPLOAD_FROM_OTHER 		int = 2
@@ -37,11 +38,11 @@ func ListDatasets(offset, limit int, orderBy, order, name, status string, isTran
 	total := 0
 	//先查询该用户的所有数据集，再查询公开数据集
 	whereQueryStr := fmt.Sprintf("creator = '%s' ", username)
-	orQueryStr := fmt.Sprintf("is_private=0 ")
+	orQueryStr := fmt.Sprintf("is_private is false ")
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 	if isTranslated {
-		whereQueryStr += "and is_translated = 1 "
-		orQueryStr += "and is_translated = 1 "
+		whereQueryStr += "and is_translated is true "
+		orQueryStr += "and is_translated is true "
 	}
 	if name != "" {
 		whereQueryStr += "and name like '%" + name + "%' "
@@ -76,7 +77,7 @@ func GetDatasetById(id int) (Dataset, error) {
 }
 func DatasetIsExist(name, username string) error {
 	var dataset Dataset
-	whereQueryStr := fmt.Sprintf(" name = '%s' and (creator = '%s' or is_private = 0 ) ", name, username)
+	whereQueryStr := fmt.Sprintf(" name = '%s' and (creator = '%s' or is_private is false) ", name, username)
 	res := db.Where(whereQueryStr).Find(&dataset)
 	if res.Error != nil {
 		return res.Error
@@ -88,11 +89,11 @@ func ListDataSetsByName(offset, limit int, name, username string) ([]Dataset, in
 	total := 0
 	//展示指定用户的
 	res := db.Offset(offset).Limit(limit).Order("created_at desc").
-		Where("name=? and is_private=?", name, false).Or("name=? and creator=?", name, username).Find(&datasets)
+		Where("name=? and is_private is ?", name, false).Or("name=? and creator=?", name, username).Find(&datasets)
 	if res.Error != nil {
 		return datasets, total, res.Error
 	}
-	db.Model(&Dataset{}).Where("name=? and is_private=?", name, false).Or("name=? and is_private=?", name, false).Count(&total)
+	db.Model(&Dataset{}).Where("name=? and is_private is ?", name, false).Or("name=? and is_private is ?", name, false).Count(&total)
 
 	return datasets, total, nil
 }

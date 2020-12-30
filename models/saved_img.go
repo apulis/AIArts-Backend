@@ -25,7 +25,7 @@ func ListSavedImages(offset, limit int, orderBy, order, name, username string) (
 	total := 0
 
 	whereQueryStr := fmt.Sprintf("creator = '%s' ", username)
-	orQueryStr := fmt.Sprintf("is_private = 0 ")
+	orQueryStr := fmt.Sprintf("is_private is false ")
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
 
 	if name != "" {
