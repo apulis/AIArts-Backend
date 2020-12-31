@@ -83,7 +83,6 @@ func CreateEvaluation(c *gin.Context, userName string, evaluation Evaluation) (s
 	params["codePath"] = evaluation.CodePath
 	params["outputPath"] = evaluation.OutputPath
 	params["scriptParams"] = evaluation.Params
-	params["desc"] = fmt.Sprintf("%s^%s", evaluation.DatasetName, evaluation.ParamPath)
 	params["containerUserId"] = 0
 	params["jobtrainingtype"] = "RegularJob"
 	params["preemptionAllowed"] = false
