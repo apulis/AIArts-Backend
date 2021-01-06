@@ -149,7 +149,7 @@ func NewTemplateProvider(gormDb *gorm.DB) *TemplateProvider {
 	return &TemplateProvider{gormDb: gormDb}
 }
 
-func (this *TemplateProvider) TableName() string { return "ai_arts.templates" }
+func (this *TemplateProvider) TableName() string { return "templates" }
 
 func (this *TemplateProvider) GetDB() *gorm.DB { return this.gormDb }
 
@@ -157,6 +157,7 @@ func (this *TemplateProvider) GetDB() *gorm.DB { return this.gormDb }
 func (this *TemplateProvider) FindPage(order string, offset, limit int, query string, args ...interface{}) ([]*Templates, error) {
 
 	var tmp []*Templates
+
 	db := this.gormDb.Offset(offset).Limit(limit)
 
 	if query != "" {
