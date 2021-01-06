@@ -149,7 +149,7 @@ type JobParams struct {
 	Enabledatapath    bool       `json:"enabledatapath"`
 	Enablejobpath     bool       `json:"enablejobpath"`
 	Enableworkpath    bool       `json:"enableworkpath"`
-	Env               []string   `json:"env"`
+	Env               []EnvItem  `json:"env"`
 	FamilyToken       string     `json:"familyToken"`
 	GpuType           string     `json:"gpuType"`
 	HostNetwork       bool       `json:"hostNetwork"`
@@ -182,6 +182,12 @@ type JobParams struct {
 	ScriptParams map[string]string `json:"scriptParams"`
 	JobGroup     string            `json:"jobGroup"`
 	Track        int               `json:"track"`
+}
+
+type EnvItem struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+	Time  int64  `json:"time"`
 }
 
 type Job struct {
