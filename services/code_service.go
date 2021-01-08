@@ -234,9 +234,9 @@ func GetEndpoints(userName, id string) (error, *models.EndpointsRsp) {
 	// 获取ssh身份信息
 	// 1. 获取任务信息：workPath
 	// 2. 获取挂载路径信息
-	jobInfo, err2 := GetDltsJobV2(userName, id)
+	jobInfo, err2 := GetJob(userName, id)
 	if err2 != nil {
-		fmt.Printf("get GetDltsJobV2 err[%+v]\n", err)
+		fmt.Printf("get GetJob err[%+v]\n", err)
 		return err, nil
 	}
 

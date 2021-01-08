@@ -78,21 +78,6 @@ func GetResources(userName string) (interface{}, error) {
 	return resources, err
 }
 
-func GetDltsJobV2(userName, jobId string) (*models.Job, error) {
-
-	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, jobId)
-
-	params := make(map[string]interface{})
-	job := &models.Job{}
-
-	err := DoRequest(url, "GET", nil, params, job)
-	if err != nil {
-		fmt.Printf("GetDltsJobV2 err[%+v]\n", err)
-		return nil, err
-	}
-
-	return job, nil
-}
 
 func GetJobRawLog(userName string, jobId string) (*models.JobRawLog, error) {
 	url := fmt.Sprintf("%s/GetJobRawLog?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, jobId)
