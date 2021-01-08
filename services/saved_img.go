@@ -62,7 +62,8 @@ func getContainerSize(hostIp, containerId string) (uint64, error) {
 }
 
 func CreateSavedImage(name, version, description, jobId, username string, isPrivate bool) (int64, error) {
-	hostIp, containerId, err := getPodStatus(jobId)
+
+	hostIp, containerId, err := getPodStatus(username, jobId)
 	if err != nil {
 		return 0, err
 	}
@@ -143,9 +144,9 @@ func CreateSavedImage(name, version, description, jobId, username string, isPriv
 		// 读取任务信息
 		params := make(map[string] interface{})
 
-		jobInfo, err := GetDltsJobV2(username, jobId)
+		jobInfo, err := GetJob(username, jobId)
 		if err != nil {
-			fmt.Printf("get GetDltsJobV2 err[%+v]\n", err)
+			fmt.Printf("get GetJob err[%+v]\n", err)
 		}
 
 		if jobInfo != nil && len(jobInfo.JobParams.FrameworkType) > 0 {
@@ -200,16 +201,30 @@ func trimImageName(name string) string {
 	return name
 }
 
-func getPodStatus(podId string) (string, string, error) {
+func getPodStatus(username, jobId string) (string, string, error) {
+
 	config, err := clientcmd.BuildConfigFromFlags("", configs.Config.Imagesave.K8sconf)
 	if err != nil {
 		return "", "", err
 	}
+
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return "", "", err
 	}
-	pod, err := clientset.CoreV1().Pods("default").Get(context.TODO(), podId, metav1.GetOptions{})
+
+	// 检查是否分布式训练任务
+	jobInfo, err := GetJob(username, jobId)
+	if err != nil {
+		return "", "", err
+	}
+
+	podName := fmt.Sprintf("%s", jobId)
+	if jobInfo.JobParams.Jobtrainingtype == models.TrainingTypeDist {
+		podName = fmt.Sprintf("%s-ps0", jobId)
+	}
+
+	pod, err := clientset.CoreV1().Pods("default").Get(context.TODO(), podName, metav1.GetOptions{})
 	if err != nil {
 		return "", "", err
 	}
@@ -218,7 +233,7 @@ func getPodStatus(podId string) (string, string, error) {
 	containers := pod.Status.ContainerStatuses
 	containerId := ""
 	for _, container := range containers {
-		if container.Name == podId {
+		if container.Name == jobId {
 			containerId = strings.TrimPrefix(container.ContainerID, "docker://")
 		}
 	}

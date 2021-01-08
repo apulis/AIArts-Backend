@@ -67,3 +67,19 @@ func PauseJob(jobId, userName string) (interface{}, error) {
 	}
 	return ret, nil
 }
+
+func GetJob(userName, jobId string) (*models.Job, error) {
+
+	url := fmt.Sprintf("%s/GetJobDetailV2?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, jobId)
+
+	params := make(map[string]interface{})
+	job := &models.Job{}
+
+	err := DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		fmt.Printf("GetJob err[%+v]\n", err)
+		return nil, err
+	}
+
+	return job, nil
+}
