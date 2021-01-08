@@ -98,7 +98,7 @@ func CreateTemplate(userName string, scope int, jobType string, template models.
 	provider := models.NewTemplateProvider(database.Db)
 
 	record := &models.Templates{}
-	record.Load(scope, userName, jobType, template, true)
+	record.Load(scope, userName, jobType, template)
 
 	id, err := provider.Insert(record.ToMap())
 	return id, err
@@ -109,7 +109,7 @@ func UpdateTemplate(id int64, userName string, scope int, jobType string, templa
 	provider := models.NewTemplateProvider(database.Db)
 
 	record := &models.Templates{}
-	record.Load(scope, userName, jobType, template, false)
+	record.Load(scope, userName, jobType, template)
 
 	var err error
 	if id, err = provider.Update(id, record.ToMap()); id == 0 {
@@ -121,7 +121,7 @@ func UpdateTemplate(id int64, userName string, scope int, jobType string, templa
 
 func DeleteTemplate(userName string, id int64) error {
 	//return database.Db.Raw(`DELETE FROM ai_arts.templates where id=?`, id).Error
-	db := database.Db.Exec(`DELETE FROM ai_arts.templates where id=?`, id)
+	db := database.Db.Exec(`DELETE FROM templates where id=?`, id)
 	return db.Error
 }
 

@@ -15,6 +15,7 @@ type ImageItem struct {
 type ProjectConfig struct {
 	Port               int
 	ExtranetProtocol   string
+	Database		   string
 	Log                LogConfig
 	Db                 DbConfig
 	File               FileConfig
@@ -38,6 +39,11 @@ type LogConfig struct {
 }
 
 type DbConfig struct {
+	Mysql				DbStruct
+	PostgreSQL			DbStruct
+}
+
+type DbStruct struct {
 	Username     string
 	Password     string
 	Host         string

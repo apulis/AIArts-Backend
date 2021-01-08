@@ -146,6 +146,56 @@ func StopVisualJob(userName string, jobId int) error {
 	return nil
 }
 
+func PauseVisualJob(userName string, jobId int) error {
+	targetJob, err := models.GetVisualJobById(jobId)
+	if err != nil {
+		logger.Error("get job detail err ", err)
+		return err
+	}
+	url := fmt.Sprintf("%s/PauseJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, targetJob.RelateJobId)
+	params := make(map[string]interface{})
+
+	job := &models.Job{}
+	err = DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		logger.Error("pause background job err: ", err)
+		return err
+	}
+	targetJob.Status = "paused"
+	err = models.UpdateVisualJob(&targetJob)
+	if err != nil {
+		logger.Error("update background job err %s", err)
+		return err
+	}
+
+	return nil
+}
+
+func ResumeVisualJob(userName string, jobId int) error {
+	targetJob, err := models.GetVisualJobById(jobId)
+	if err != nil {
+		logger.Error("get job detail err ", err)
+		return err
+	}
+	url := fmt.Sprintf("%s/ResumeJob?userName=%s&jobId=%s", configs.Config.DltsUrl, userName, targetJob.RelateJobId)
+	params := make(map[string]interface{})
+
+	job := &models.Job{}
+	err = DoRequest(url, "GET", nil, params, job)
+	if err != nil {
+		logger.Error("resume background job err: ", err)
+		return err
+	}
+	targetJob.Status = "scheduling"
+	err = models.UpdateVisualJob(&targetJob)
+	if err != nil {
+		logger.Error("update background job err %s", err)
+		return err
+	}
+
+	return nil
+}
+
 func ContinueVisualJob(userName string, vcName string, jobId int) error {
 	targetJob, err := models.GetVisualJobById(jobId)
 	if err != nil {

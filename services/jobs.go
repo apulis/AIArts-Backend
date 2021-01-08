@@ -26,13 +26,13 @@ func GetJobsCount(req models.GetAllJobsReq) (int, error) {
 }
 
 func GetAllJobs(req models.GetAllJobsReq) (interface{}, error) {
-
 	url := fmt.Sprintf(`%s/ListAllJobs?vcName=%s&jobType=%s&pageNum=%d&pageSize=%d&jobStatus=%s&searchWord=%s&orderBy=%s&order=%s`,
 		configs.Config.DltsUrl, req.VCName,
 		req.JobType, req.PageNum, req.PageSize, req.JobStatus, url.QueryEscape(req.SearchWord),
 		req.OrderBy, req.Order)
 
 	var ret interface{}
+	logger.Info(url)
 	err := DoRequest(url, "GET", nil, nil, &ret)
 
 	if err != nil {

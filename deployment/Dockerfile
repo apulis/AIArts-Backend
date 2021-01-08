@@ -25,8 +25,10 @@ ADD ./go.sum .
 RUN go mod download
 ADD . .
 
-# RUN swag init --parseDependency --parseInternal && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
+
+#RUN swag init --parseDependency --parseInternal && GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
 RUN  GO111MODULE=${GO111MODULE} go build -o /go/bin/AIArtsBackend
+
 FROM alpine:3.11
 RUN apk --no-cache add ca-certificates libdrm
 WORKDIR /root/

@@ -5,14 +5,25 @@ log:
   filedir: logs
   filename: ai_arts_backend.log
 
+database: postgresql
+
 db:
-  username: root
-  password: corona@2020@wuhan
-  host: huawei-infra01.sigsus.cn
-  port: 3306
-  database: ai_arts
-  maxopenconns: 10
-  maxidleconns: 2
+  mysql:
+    username: root
+    password: corona@2020@wuhan
+    host: huawei-infra01.sigsus.cn
+    port: 3306
+    database: ai_arts
+    maxopenconns: 10
+    maxidleconns: 2
+  postgresql:
+    username: root
+    password: corona@2020@wuhan
+    host: huawei-infra01.sigsus.cn
+    port: 3306
+    database: ai_arts
+    maxopenconns: 10
+    maxidleconns: 2
 
 file:
   datasetdir: /test_data/dataset
