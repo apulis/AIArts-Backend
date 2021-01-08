@@ -233,7 +233,7 @@ func getPodStatus(username, jobId string) (string, string, error) {
 	containers := pod.Status.ContainerStatuses
 	containerId := ""
 	for _, container := range containers {
-		if container.Name == jobId {
+		if container.Name == podName {
 			containerId = strings.TrimPrefix(container.ContainerID, "docker://")
 		}
 	}
