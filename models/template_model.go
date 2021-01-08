@@ -11,7 +11,6 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
-	"time"
 )
 
 const (
@@ -90,25 +89,24 @@ func Insert(db *sql.DB, table string, data map[string]interface{}) (lastInsertId
 	}
 
 	idx, size := 0, len(data)
-	columns, placeholder, args := make([]string, size), make([]string, size), make([]interface{}, size)
+	columns,  args := make([]string, size),  make([]string, size)
 
 	for key, val := range data {
 		if !escapedScopePattern.MatchString(key) {
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
 		columns[idx] = quote(ToSnakeCase(key))
-		placeholder[idx] = "?"
-		args[idx] = val
+		if _, isInt := val.(int); isInt == true {
+			args[idx] = quoteValue(fmt.Sprintf("%d", val))
+		}else {
+			args[idx] = quoteValue(fmt.Sprintf("%s", val))
+		}
 		idx++
 	}
-
-	query := fmt.Sprintf("INSERT INTO %s(%s) values(%s)", quote(table), strings.Join(columns, ","), strings.Join(placeholder, ","))
-	result, err := db.Exec(query, args...)
-	if err != nil {
-		return 0, err
-	}
-
-	return result.LastInsertId()
+	lastInsertId = 0
+	query := fmt.Sprintf(`INSERT INTO %s( %s,"created_at","updated_at") values(%s,current_timestamp,current_timestamp)  RETURNING ID`, quote(table), strings.Join(columns, ","), strings.Join(args, ","))
+	err = db.QueryRow(query).Scan(&lastInsertId)
+	return lastInsertId,err
 }
 
 // MySql UPDATE ****** WHERE id = ?
@@ -122,22 +120,28 @@ func Update(db *sql.DB, table string, id int64, data map[string]interface{}) (ro
 	}
 
 	idx, size := 0, len(data)
-	querySegs, args := make([]string, size), make([]interface{}, size)
+	querySeqs := make([]string, size)
+
 	for key, val := range data {
 		if !escapedScopePattern.MatchString(key) {
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
-		querySegs[idx] = quote(ToSnakeCase(key)) + "=?"
-		args[idx] = val
+		if _, isInt := val.(int); isInt == true {
+			querySeqs[idx] =  quote(ToSnakeCase(key)) + "=" + quoteValue(fmt.Sprintf("%d", val))
+		}else {
+			querySeqs[idx] = quote(ToSnakeCase(key)) + "=" + quoteValue(fmt.Sprintf("%s", val))
+		}
 		idx++
 	}
 
-	query := fmt.Sprintf("UPDATE %s set %s WHERE id=%d", quote(table), strings.Join(querySegs, ","), id)
-	result, err := db.Exec(query, args...)
+	query := fmt.Sprintf(`UPDATE %s set %s ,"updated_at" = current_timestamp  WHERE id=%d`, quote(table), strings.Join(querySeqs, ","), id)
+
+	logger.Info(query)
+
+	result, err := db.Exec(query)
 	if err != nil {
 		return 0, err
 	}
-
 	return result.RowsAffected()
 }
 
@@ -218,15 +222,19 @@ func (this *TemplateProvider) FindById(id int64) (*Templates, error) {
 func quote(value string) string {
 
 	value = strings.TrimSpace(value)
-	if value[0] == '`' {
+	if value[0] == '"' {
 		return value
 	}
+	return `"` + strings.Replace(value, `.`, `"."`, -1) + `"`
+}
 
-	return "`" + strings.Replace(value, ".", "`.`", -1) + "`"
+// 字符转换
+func quoteValue(value string) string {
+	return `'` + value + `'`
 }
 
 // 数据库记录
-func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams, isNew bool) {
+func (this *Templates) Load(scope int, creator, jobType string, item TemplateParams) {
 
 	this.Scope = scope
 	this.JobType = jobType
@@ -234,17 +242,6 @@ func (this *Templates) Load(scope int, creator, jobType string, item TemplatePar
 	this.Name = item.Name
 	this.Creator = creator
 	this.Data = item
-
-	if isNew {
-		this.CreatedAt = UnixTime{
-			Time: time.Now(),
-		}
-		this.UpdatedAt = this.CreatedAt
-	} else {
-		this.UpdatedAt = UnixTime{
-			Time: time.Now(),
-		}
-	}
 }
 
 func (this *Templates) ToMap() map[string]interface{} {
