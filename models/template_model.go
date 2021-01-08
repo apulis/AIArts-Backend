@@ -95,7 +95,7 @@ func Insert(db *sql.DB, table string, data map[string]interface{}) (lastInsertId
 		if !escapedScopePattern.MatchString(key) {
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
-		columns[idx] = quote(ToSnakeCase(key))
+		columns[idx] = ToSnakeCase(key)
 		if _, isInt := val.(int); isInt == true {
 			args[idx] = quoteValue(fmt.Sprintf("%d", val))
 		}else {
@@ -104,7 +104,7 @@ func Insert(db *sql.DB, table string, data map[string]interface{}) (lastInsertId
 		idx++
 	}
 	lastInsertId = 0
-	query := fmt.Sprintf(`INSERT INTO %s( %s,"created_at","updated_at") values(%s,current_timestamp,current_timestamp)  RETURNING ID`, quote(table), strings.Join(columns, ","), strings.Join(args, ","))
+	query := fmt.Sprintf(`INSERT INTO %s( %s,created_at,updated_at) values(%s,current_timestamp,current_timestamp)  RETURNING ID`, table, strings.Join(columns, ","), strings.Join(args, ","))
 	err = db.QueryRow(query).Scan(&lastInsertId)
 	return lastInsertId,err
 }
@@ -127,14 +127,14 @@ func Update(db *sql.DB, table string, id int64, data map[string]interface{}) (ro
 			return 0, fmt.Errorf("invalid column: %s", key)
 		}
 		if _, isInt := val.(int); isInt == true {
-			querySeqs[idx] =  quote(ToSnakeCase(key)) + "=" + quoteValue(fmt.Sprintf("%d", val))
+			querySeqs[idx] =  ToSnakeCase(key) + "=" + quoteValue(fmt.Sprintf("%d", val))
 		}else {
-			querySeqs[idx] = quote(ToSnakeCase(key)) + "=" + quoteValue(fmt.Sprintf("%s", val))
+			querySeqs[idx] = ToSnakeCase(key) + "=" + quoteValue(fmt.Sprintf("%s", val))
 		}
 		idx++
 	}
 
-	query := fmt.Sprintf(`UPDATE %s set %s ,"updated_at" = current_timestamp  WHERE id=%d`, quote(table), strings.Join(querySeqs, ","), id)
+	query := fmt.Sprintf(`UPDATE %s set %s ,updated_at = current_timestamp  WHERE id=%d`, table, strings.Join(querySeqs, ","), id)
 
 	logger.Info(query)
 
