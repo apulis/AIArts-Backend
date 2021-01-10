@@ -48,6 +48,8 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 			ExperimentID: uint64(experiment_id),
 			Track:        v.JobParams.Track,
 			Duration:     v.Duration,
+			NumPs:        v.JobParams.Numps,
+			NumPsWorker:  v.JobParams.Numpsworker,
 		})
 	}
 
@@ -222,6 +224,8 @@ func GetTraining(userName, id string) (*models.Training, error) {
 
 	training.ExperimentID, _ = strconv.ParseUint(job.JobParams.JobGroup, 0, 0)
 	training.Track = job.JobParams.Track
+	training.NumPs = job.JobParams.Numps
+	training.NumPsWorker = job.JobParams.Numpsworker
 
 	return training, nil
 }
