@@ -47,9 +47,12 @@ func GetResource(userName, vcName string) (*models.VcInfo, error) {
 }
 
 func GetJobSummary(userName, jobType, vcName string) (map[string]int, error) {
-
-	url := fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s&vcName=%s", configs.Config.DltsUrl, userName, jobType, vcName)
-
+	var url string
+	if len(userName) == 0 {
+		url = fmt.Sprintf("%s/GetJobSummary?jobType=%s&vcName=%s", configs.Config.DltsUrl, jobType, vcName)
+	}else {
+		url = fmt.Sprintf("%s/GetJobSummary?userName=%s&jobType=%s&vcName=%s", configs.Config.DltsUrl, userName, jobType, vcName)
+	}
 	summary := make(map[string]int)
 	convert_summary := make(map[string]int)
 
