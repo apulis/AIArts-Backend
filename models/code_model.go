@@ -30,14 +30,17 @@ type CreateCodeEnv struct {
 	VCName     string `json:"vcName"`
 	Cmd        string `json:"cmd"`
 
-	IsPrivateImage  bool   `json:"private"`
-	JobTrainingType string `json:"jobTrainingType"`
-	NumPs           int    `json:"numPs"`
-	NumPsWorker     int    `json:"numPsWorker"`
+	IsPrivateImage   bool   `json:"private"`
+	JobTrainingType  string `json:"jobTrainingType"`
+	NumPs            int    `json:"numPs"`
+	NumPsWorker      int    `json:"numPsWorker"`
 
-	FrameworkType string `json:"frameworkType"`
 	IsPrivileged  bool   `json:"isPrivileged"`
 	BypassCode    string `json:"BypassCode"`
+
+	WorkerCmd        string    `json:"workerCmd"`
+	MasterCmd        string    `json:"masterCmd"`
+	FrameworkType    string    `json:"frameworkType"`
 }
 
 type EndpointsRsp struct {

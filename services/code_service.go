@@ -82,7 +82,6 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 	params["userName"] = userName
 	params["jobName"] = codeEnv.Name
 	params["jobType"] = models.JobTypeCodeEnv
-
 	params["frameworkType"] = strings.TrimSpace(codeEnv.FrameworkType)
 
 	params["image"] = codeEnv.Engine
@@ -110,6 +109,8 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 
 	if codeEnv.JobTrainingType == "PSDistJob" {
 		params["hostNetwork"] = true
+		params["workerCmd"] = codeEnv.WorkerCmd
+		params["masterCmd"] = codeEnv.MasterCmd
 	} else {
 		params["hostNetwork"] = false
 	}
