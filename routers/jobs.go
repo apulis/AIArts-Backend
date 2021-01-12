@@ -57,8 +57,7 @@ func GetAllJobSummary(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
-
-	summary, err := services.GetJobSummary(userName, req.JobType, req.VCName)
+	summary, err := services.GetJobSummary("", req.JobType, req.VCName)
 	if err != nil {
 		return AppError(configs.APP_ERROR_CODE, err.Error())
 	}
