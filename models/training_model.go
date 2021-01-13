@@ -33,6 +33,9 @@ type Training struct {
 	ExperimentID uint64 `json:"experimentId,omitempty"`
 	Track        int    `json:"track,omitempty"`
 	Duration       int `json:"duration"`
+
+	WorkerCmd        string    `json:"workerCmd"`
+	MasterCmd        string    `json:"masterCmd"`
 }
 
 func ValidHomePath(userName, path string) bool {

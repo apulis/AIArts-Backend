@@ -51,6 +51,8 @@ func GetAllTraining(userName string, req models.GetAllJobsReq) ([]*models.Traini
 			Duration:     v.Duration,
 			NumPs:        v.JobParams.Numps,
 			NumPsWorker:  v.JobParams.Numpsworker,
+			WorkerCmd:    v.JobParams.WorkerCmd,
+			MasterCmd:    v.JobParams.MasterCmd,
 		})
 	}
 
@@ -80,8 +82,10 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["cmd"] = "" // use StartupFile, params instead
 
 	if configs.Config.InteractiveModeJob {
+
 		params["cmd"] = "sleep infinity" // use StartupFile, params instead
 	} else if len(training.Command) > 0 {
+
 		params["cmd"] = training.Command
 	} else {
 
@@ -146,6 +150,9 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 	params["vcName"] = training.VCName
 	params["team"] = training.VCName
+
+	params["workerCmd"] = training.WorkerCmd
+	params["masterCmd"] = training.MasterCmd
 
 	header := make(map[string]string)
 	if value := c.GetHeader("Authorization"); len(value) != 0 {
@@ -227,6 +234,9 @@ func GetTraining(userName, id string) (*models.Training, error) {
 	training.Track = job.JobParams.Track
 	training.NumPs = job.JobParams.Numps
 	training.NumPsWorker = job.JobParams.Numpsworker
+
+	training.WorkerCmd = job.JobParams.WorkerCmd
+	training.MasterCmd = job.JobParams.MasterCmd
 
 	return training, nil
 }

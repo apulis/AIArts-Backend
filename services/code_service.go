@@ -109,8 +109,6 @@ func CreateCodeEnv(c *gin.Context, userName string, codeEnv models.CreateCodeEnv
 
 	if codeEnv.JobTrainingType == "PSDistJob" {
 		params["hostNetwork"] = true
-		params["workerCmd"] = codeEnv.WorkerCmd
-		params["masterCmd"] = codeEnv.MasterCmd
 	} else {
 		params["hostNetwork"] = false
 	}

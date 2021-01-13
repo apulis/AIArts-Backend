@@ -182,6 +182,9 @@ type JobParams struct {
 	ScriptParams map[string]string `json:"scriptParams"`
 	JobGroup     string            `json:"jobGroup"`
 	Track        int               `json:"track"`
+
+	WorkerCmd        string    `json:"workerCmd"`
+	MasterCmd        string    `json:"masterCmd"`
 }
 
 type EnvItem struct {
