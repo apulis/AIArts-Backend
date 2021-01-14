@@ -88,7 +88,7 @@ func GetJob(userName, jobId string) (*models.Job, error) {
 func IsDistributingJob(trainingType string) bool {
 
 	trainingType = strings.TrimSpace(strings.ToLower(trainingType))
-	distJob := strings.TrimSpace(models.TrainingTypeDist)
+	distJob := strings.TrimSpace(strings.ToLower(models.TrainingTypeDist))
 
 	if trainingType == distJob {
 		return true

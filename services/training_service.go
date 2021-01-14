@@ -81,6 +81,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["DeviceNum"] = training.DeviceNum
 	params["cmd"] = "" // use StartupFile, params instead
 
+	fmt.Printf("jobType: [%s]", training.JobTrainingType)
+
 	if configs.Config.InteractiveModeJob {
 
 		params["cmd"] = "sleep infinity"  // use StartupFile, params instead
@@ -89,6 +91,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 		params["workerCmd"] = training.WorkerCmd
 		params["masterCmd"] = training.MasterCmd
+
+		fmt.Printf("is distributing job")
 
 	} else if len(training.Command) > 0 {
 
