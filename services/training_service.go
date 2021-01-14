@@ -155,8 +155,8 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 	params["isPrivileged"] = training.IsPrivileged
 	params["interactivePorts"] = false
 
-	params["numpsworker"] = training.NumPs
-	params["numps"] = training.NumPsWorker
+	params["numps"] = training.NumPs
+	params["numpsworker"] = training.NumPsWorker
 
 	params["vcName"] = training.VCName
 	params["team"] = training.VCName
