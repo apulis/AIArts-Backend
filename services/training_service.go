@@ -91,17 +91,20 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 		params["workerCmd"] = training.WorkerCmd
 		params["masterCmd"] = training.MasterCmd
+		fmt.Printf("CreateTraining")
 
 		// 前端把字段放到了scriptParams里面了，做下兼容
 		if len(training.WorkerCmd) == 0 {
-			if _, ok := training.Params["WorkerCmd"]; ok {
-				params["workerCmd"] = training.Params["WorkerCmd"];
+			if _, ok := training.Params["workerCmd"]; ok {
+				params["workerCmd"] = training.Params["workerCmd"];
+				fmt.Printf("CreateTraining workerCmd", params["workerCmd"])
 			}
 		}
 
 		if len(training.MasterCmd) == 0 {
-			if _, ok := training.Params["MasterCmd"]; ok {
-				params["MasterCmd"] = training.Params["MasterCmd"];
+			if _, ok := training.Params["masterCmd"]; ok {
+				params["masterCmd"] = training.Params["masterCmd"];
+				fmt.Printf("CreateTraining masterCmd", params["masterCmd"])
 			}
 		}
 
