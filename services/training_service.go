@@ -92,6 +92,19 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 		params["workerCmd"] = training.WorkerCmd
 		params["masterCmd"] = training.MasterCmd
 
+		// 前端把字段放到了scriptParams里面了，做下兼容
+		if len(training.WorkerCmd) == 0 {
+			if _, ok := training.Params["WorkerCmd"]; ok {
+				params["workerCmd"] = training.Params["WorkerCmd"];
+			}
+		}
+
+		if len(training.MasterCmd) == 0 {
+			if _, ok := training.Params["MasterCmd"]; ok {
+				params["MasterCmd"] = training.Params["MasterCmd"];
+			}
+		}
+
 		fmt.Printf("is distributing job")
 
 	} else if len(training.Command) > 0 {
