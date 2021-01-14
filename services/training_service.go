@@ -83,7 +83,13 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 	if configs.Config.InteractiveModeJob {
 
-		params["cmd"] = "sleep infinity" // use StartupFile, params instead
+		params["cmd"] = "sleep infinity"  // use StartupFile, params instead
+
+	} else if IsDistributingJob(training.JobTrainingType) {
+
+		params["workerCmd"] = training.WorkerCmd
+		params["masterCmd"] = training.MasterCmd
+
 	} else if len(training.Command) > 0 {
 
 		params["cmd"] = training.Command
@@ -150,9 +156,6 @@ func CreateTraining(c *gin.Context, userName string, training models.Training) (
 
 	params["vcName"] = training.VCName
 	params["team"] = training.VCName
-
-	params["workerCmd"] = training.WorkerCmd
-	params["masterCmd"] = training.MasterCmd
 
 	header := make(map[string]string)
 	if value := c.GetHeader("Authorization"); len(value) != 0 {

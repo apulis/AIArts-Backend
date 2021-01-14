@@ -5,6 +5,7 @@ import (
 	"github.com/apulis/AIArtsBackend/configs"
 	"github.com/apulis/AIArtsBackend/models"
 	"net/url"
+	"strings"
 )
 
 func GetJobsCount(req models.GetAllJobsReq) (int, error) {
@@ -82,4 +83,16 @@ func GetJob(userName, jobId string) (*models.Job, error) {
 	}
 
 	return job, nil
+}
+
+func IsDistributingJob(trainingType string) bool {
+
+	trainingType = strings.TrimSpace(strings.ToLower(trainingType))
+	distJob := strings.TrimSpace(models.TrainingTypeDist)
+
+	if trainingType == distJob {
+		return true
+	} else {
+		return false
+	}
 }
