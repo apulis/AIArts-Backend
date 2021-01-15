@@ -42,6 +42,10 @@ type TemplateParams struct {
 	Params      map[string]string `json:"params,omitempty"`
 	Desc        string            `json:"desc,omitempty"`
 	CreateTime  string            `json:"createTime,omitempty"`
+	JobTrainingType string        `json:"jobTrainingType,omitempty"`
+	NumPs       string 			  `json:"NumPs"`
+	NumPsWorker string 			  `json:"NumPsWorker"`
+	FrameworkType string 		  `json:"frameworkType"`
 }
 
 type TemplateItem struct {
