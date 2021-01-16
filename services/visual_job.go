@@ -276,12 +276,12 @@ func createBackgroundJob(userName string, vcName string, jobName string, logdir 
 	params["jobName"] = jobName
 	params["jobType"] = models.JobTypeVisualJob
 
-	var visualJob_image_name = "apulistech/visualjob:1.0"
+	var visualJobImageName = "apulistech/visualjob:1.0"
 	// TODO: use docker manifest to avoid suffix name
 	//if find := strings.Contains(selectNodeDevice, "arm"); find {
 	//	visualJob_image_name = visualJob_image_name + "-arm64"
 	//}
-	params["image"] = ConvertPrivateImage(visualJob_image_name)
+	params["image"] = ConvertPrivateImage(visualJobImageName)
 	params["gpuType"] = selectNodeDevice
 	params["resourcegpu"] = 0
 
