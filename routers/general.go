@@ -256,12 +256,17 @@ func getImageList(c *gin.Context) error {
 	for _, v := range db_images {
 
 		item := ImageItem{
-			Image:    v.ImageFullName,
+			Image:       v.ImageFullName,
+			ImageType:   v.ImageType,
 			ImageParams: new(models.ImageParams),
 		}
 
 		item.Desc = v.Details.Desc
 		item.Category = v.Details.Category
+
+		item.Brand = v.Details.Brand
+		item.CPUArchType = v.Details.CPUArchType
+		item.DeviceType = v.Details.DeviceType
 
 		images = append(images, item)
 	}
