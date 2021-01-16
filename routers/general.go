@@ -40,6 +40,12 @@ type GetJobSummaryReq struct {
 	VCName   string `form:"vcName" json:"vcName"`
 }
 
+type ImageItem struct {
+	Image       			string `json:"image"`
+	ImageType   			string `json:"imageType"`
+	*models.ImageParams
+}
+
 func getUsername(c *gin.Context) string {
 
 	data, exists := c.Get("userName")
@@ -96,12 +102,14 @@ func getResource(c *gin.Context) error {
 	rsp.AIFrameworks = make(map[string][]string)
 
 	// 获取平台镜像列表
-	for k, v := range configs.Config.Image {
+	db_images, _, _ := models.ListImages(0, 1000)
+	for _, v := range db_images {
 
-		rsp.AIFrameworks[k] = make([]string, 0)
-		for _, item := range v {
-			rsp.AIFrameworks[k] = append(rsp.AIFrameworks[k], item.Image)
+		if _, ok := rsp.AIFrameworks[v.ImageType]; !ok {
+			rsp.AIFrameworks[v.ImageType] = make([]string, 0)
 		}
+
+		rsp.AIFrameworks[v.ImageType] = append(rsp.AIFrameworks[v.ImageType], v.ImageFullName)
 	}
 
 	// 获取平台配额数据
@@ -242,15 +250,20 @@ func getImageList(c *gin.Context) error {
 		return AppError(configs.NO_USRNAME, "no username")
 	}
 
-	images := make([]configs.ImageItem, 0)
-	for _, v := range configs.Config.Image {
-		for _, item := range v {
-			images = append(images, configs.ImageItem{
-				Image:    item.Image,
-				Desc:     item.Desc,
-				Category: item.Category,
-			})
+	images := make([]ImageItem, 0)
+	db_images, _, _ := models.ListImages(0, 1000)
+
+	for _, v := range db_images {
+
+		item := ImageItem{
+			Image:    v.ImageFullName,
+			ImageParams: new(models.ImageParams),
 		}
+
+		item.Desc = v.Details.Desc
+		item.Category = v.Details.Category
+
+		images = append(images, item)
 	}
 
 	return SuccessResp(c, images)

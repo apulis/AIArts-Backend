@@ -33,9 +33,9 @@ func init() {
 
 	createTableIfNotExists(ExpProject{})
 	createTableIfNotExists(Experiment{})
+	createTableIfNotExists(Image{})
 
 	db.Model(&Experiment{}).AddForeignKey("project_id", "exp_projects(id)", "RESTRICT", "RESTRICT")
-
 	initVersionInfoTable()
 
 }
@@ -339,4 +339,30 @@ type Paging struct {
 	PageNum  int    `form:"pageNum" json:"pageNum"`
 	PageSize int    `form:"pageSize" json:"pageSize"`
 	Keyword  string `form:"keyword" json:"keyword"`
+}
+
+// scan for scanner helper
+func scan(data interface{}, value interface{}) error {
+	if value == nil {
+		return nil
+	}
+
+	switch value.(type) {
+	case []byte:
+		return json.Unmarshal(value.([]byte), data)
+	case string:
+		return json.Unmarshal([]byte(value.(string)), data)
+	default:
+		return fmt.Errorf("val type is valid, is %+v", value)
+	}
+}
+
+// for valuer helper
+func value(data interface{}) (interface{}, error) {
+	vi := reflect.ValueOf(data)
+	// 判断是否为 0 值
+	if vi.IsZero() {
+		return nil, nil
+	}
+	return json.Marshal(data)
 }
