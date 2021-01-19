@@ -43,8 +43,8 @@ type TemplateParams struct {
 	Desc        string            `json:"desc,omitempty"`
 	CreateTime  string            `json:"createTime,omitempty"`
 	JobTrainingType string        `json:"jobTrainingType,omitempty"`
-	NumPs       int 			  `json:"NumPs"`
-	NumPsWorker int 			  `json:"NumPsWorker"`
+	NumPs       int 			  `json:"numPs"`
+	NumPsWorker int 			  `json:"numPsWorker"`
 	FrameworkType string 		  `json:"frameworkType"`
 }
 
