@@ -6,7 +6,7 @@ buildPlugin ( {
         [
             'compileContainer': '',
             'preBuild':[],
-            'imageName': 'apulistech/aiarts_backend',
+            'imageName': 'apulistech/aiarts-backend',
             'directory': '.',
             'dockerfilePath': 'deployment/Dockerfile',
             'arch': ['amd64','arm64']
