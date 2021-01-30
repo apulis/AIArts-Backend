@@ -121,9 +121,9 @@ func ListModelSets(username string, offset, limit int, orderBy,
 	}
 
 	if strings.HasPrefix(use,`Avisualis`) {
-		whereQueryStr += "and 'use' like '" + use + "%' "
+		whereQueryStr += "and use like '" + use + "%' "
 	} else {
-		whereQueryStr += "and 'use' not like 'Avisualis%' "
+		whereQueryStr += "and use not like 'Avisualis%' "
 	}
 
 	orderQueryStr := fmt.Sprintf("%s %s ", CamelToCase(orderBy), order)
